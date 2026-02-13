@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.anthropic.com)",
+      "WebFetch(domain:www.humanlayer.dev)",
+      "WebFetch(domain:alexop.dev)",
+      "WebFetch(domain:claude.com)",
+      "WebFetch(domain:www.builder.io)",
+      "WebFetch(domain:www.gend.co)",
+      "WebFetch(domain:dometrain.com)"
+    ]
+  }
+}
