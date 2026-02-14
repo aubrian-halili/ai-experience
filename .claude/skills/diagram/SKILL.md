@@ -1,6 +1,6 @@
 ---
 name: diagram
-description: Generate architecture diagrams using Mermaid syntax. Use when the user needs visual representations of systems, flows, data models, or state machines.
+description: Use when the user asks to "draw a diagram", "visualize this system", "create a flowchart", "show the architecture", mentions "ERD", "sequence diagram", "state machine", or needs visual representations of systems and flows.
 argument-hint: "[system or flow to diagram]"
 ---
 

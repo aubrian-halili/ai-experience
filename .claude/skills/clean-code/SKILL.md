@@ -1,6 +1,6 @@
 ---
 name: clean-code
-description: Code quality review, SOLID analysis, and refactoring suggestions. Use when the user wants code quality improvements or refactoring help.
+description: Use when the user asks to "clean up this code", "refactor this", "improve code quality", mentions "SOLID principles", "code smells", "technical debt", or wants refactoring suggestions and maintainability improvements.
 argument-hint: "[file or component to review]"
 ---
 

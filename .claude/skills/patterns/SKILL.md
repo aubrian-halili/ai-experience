@@ -1,6 +1,6 @@
 ---
 name: patterns
-description: Design pattern recommendations and implementation examples. Use when the user needs help choosing or implementing design patterns.
+description: Use when the user asks "which pattern should I use", "how to implement [pattern name]", mentions "factory", "strategy", "observer", "singleton", "decorator", or discusses code structure problems that patterns could solve.
 argument-hint: "[problem or pattern name]"
 ---
 

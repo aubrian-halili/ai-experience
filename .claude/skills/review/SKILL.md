@@ -1,6 +1,6 @@
 ---
 name: review
-description: Comprehensive code and architecture review with severity-rated findings. Use when the user requests code review, PR review, or architecture assessment.
+description: Use when the user asks to "review this code", "check this PR", "audit this file", "look at my changes", requests "code review", mentions "review" in context of code quality, or needs PR feedback.
 argument-hint: "[file, PR, or component to review]"
 ---
 

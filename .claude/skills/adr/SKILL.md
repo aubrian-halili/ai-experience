@@ -1,6 +1,6 @@
 ---
 name: adr
-description: Create Architecture Decision Records for documenting significant technical decisions.
+description: Use when the user asks to "document this decision", "create an ADR", "record this architecture choice", mentions "architecture decision record", or needs to document significant technical decisions with rationale and alternatives.
 argument-hint: "[decision title]"
 disable-model-invocation: true
 ---

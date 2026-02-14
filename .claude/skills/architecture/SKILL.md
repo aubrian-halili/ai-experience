@@ -1,6 +1,6 @@
 ---
 name: architecture
-description: System design and architecture guidance. Use when the user needs help with architecture decisions, scaling strategies, or system design.
+description: Use when the user asks "how should I design", "what's the best architecture", "how do I scale", mentions "system design", "scaling", "microservices vs monolith", or needs help with technical decisions and infrastructure planning.
 argument-hint: "[topic or system to design]"
 ---
 

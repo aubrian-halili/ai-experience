@@ -1,6 +1,6 @@
 ---
 name: explore
-description: Deep codebase exploration and functionality investigation. Use when the user asks "how does X work?", "explain this feature", or needs to understand existing code end-to-end.
+description: Use when the user asks "how does X work", "explain this feature", "trace this flow", "what does this module do", wants to understand existing code end-to-end, or needs deep codebase investigation.
 argument-hint: "[feature, module, or flow to investigate]"
 context: fork
 agent: Explore
