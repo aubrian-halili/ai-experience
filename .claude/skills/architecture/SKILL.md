@@ -4,34 +4,46 @@ description: System design and architecture guidance. Use when the user needs he
 argument-hint: "[topic or system to design]"
 ---
 
-Provide expert guidance on system architecture decisions, design approaches, and technical strategy.
+Provide expert guidance on system architecture decisions, design approaches, and technical strategy. Deliver actionable architecture blueprints that bridge design to implementation.
 
 ## Process
 
-1. **Clarify Requirements**
+1. **Analyze Existing Patterns**
+   - Find similar features or modules in codebase
+   - Document established conventions (naming, structure, patterns)
+   - Identify technology stack and abstraction layers
+   - Note relevant CLAUDE.md guidelines
+
+2. **Clarify Requirements**
    - Functional requirements (what the system does)
    - Non-functional requirements (scalability, latency, availability)
    - Constraints (budget, timeline, team skills, existing systems)
 
-2. **Estimate Scale**
+3. **Estimate Scale**
    - Users: DAU, MAU, peak concurrent
    - Data: Storage size, growth rate, retention
    - Traffic: QPS, read/write ratio, burst patterns
 
-3. **Define Components**
+4. **Define Components**
    - Core services and their responsibilities
    - Data stores and caching layers
    - External integrations and APIs
+   - Interface definitions and contracts
 
-4. **Design Interactions**
+5. **Design Interactions**
    - Synchronous vs asynchronous communication
    - API contracts and protocols
    - Error handling and retry strategies
 
-5. **Address Cross-Cutting Concerns**
+6. **Address Cross-Cutting Concerns**
    - Authentication and authorization
    - Logging, monitoring, alerting
    - Security and compliance
+
+7. **Create Implementation Blueprint**
+   - Map components to specific files
+   - Define build sequence with dependencies
+   - Specify verification approach
 
 ## Architecture Patterns
 
@@ -50,6 +62,9 @@ Provide expert guidance on system architecture decisions, design approaches, and
 ### Context
 [Understanding of requirements and constraints]
 
+### Existing Patterns Analysis
+[Summary of codebase conventions, relevant existing implementations, and patterns to follow]
+
 ### Proposed Architecture
 [High-level description with mermaid diagram]
 
@@ -63,6 +78,47 @@ Provide expert guidance on system architecture decisions, design approaches, and
 
 ### Risks & Mitigations
 - Risk: [Description] → Mitigation: [Approach]
+
+### Implementation Blueprint
+
+#### Files to Create
+| File | Purpose | Dependencies |
+|------|---------|--------------|
+| `src/domain/[entity].ts` | [What it defines] | None |
+| `src/application/[service].ts` | [What it does] | `[entity].ts` |
+
+#### Files to Modify
+| File | Change | Reason |
+|------|--------|--------|
+| `src/infrastructure/[existing].ts` | [What changes] | [Why needed] |
+
+#### Component Interfaces
+[TypeScript interface definitions for key components]
+
+### Build Sequence
+
+- [ ] **Phase 1: Domain Layer**
+  - [ ] Create entity types
+  - [ ] Define value objects
+  - [ ] Verify: Unit tests pass
+
+- [ ] **Phase 2: Application Layer**
+  - [ ] Implement service interfaces
+  - [ ] Create DTOs
+  - [ ] Verify: Integration tests pass
+
+- [ ] **Phase 3: Infrastructure Layer**
+  - [ ] Implement repositories
+  - [ ] Configure external services
+  - [ ] Verify: E2E tests pass
+
+### Critical Details Checklist
+
+- [ ] Error handling strategy defined
+- [ ] State management approach chosen
+- [ ] Testing strategy covers pyramid
+- [ ] Performance considerations addressed
+- [ ] Security requirements met
 
 ### Next Steps
 1. [Immediate action]

@@ -30,6 +30,7 @@ Systematically explore and explain how existing functionality works in the codeb
 - Error handling and recovery strategy
 - State management and side effects
 - Configuration that alters behavior (env vars, feature flags)
+- Performance considerations (bottlenecks, caching, async patterns)
 
 ### 4. Document
 
@@ -71,6 +72,14 @@ Present findings using the response format below.
 
 ### Design Patterns Observed
 - **[Pattern]** — [where and why] (`file:line`)
+
+### Performance Considerations
+- [Bottlenecks, caching strategies, async patterns, query optimization]
+
+### Essential Files
+| File | Purpose |
+|------|---------|
+| `path/to/file` | [Why this file is critical to understand the feature] |
 
 ### Observations
 - [Tech debt, implicit assumptions, undocumented edge cases]
