@@ -6,7 +6,9 @@
       "WebFetch(domain:claude.com)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(chmod:*)"
     ],
     "defaultMode": "plan"
   }
