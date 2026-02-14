@@ -6,6 +6,12 @@ argument-hint: "[file or component to review]"
 
 Provide code quality analysis, refactoring suggestions, and clean code guidance.
 
+## Review Philosophy
+
+- **Precision over completeness** — zero false positives matters more than exhaustive coverage
+- **Confidence gate** — internally score each finding 0-100; only report findings with confidence >= 80
+- If uncertain about a finding, leave it out rather than risk noise
+
 ## Review Checklist
 
 - [ ] Clear, intention-revealing names
@@ -29,6 +35,14 @@ Provide code quality analysis, refactoring suggestions, and clean code guidance.
 | **ISP** | Client depends on methods it doesn't use | Split into focused interfaces |
 | **DIP** | High-level module depends on concrete class | Inject abstractions |
 
+## Project Structure Compliance
+
+Validate against CLAUDE.md's defined layer structure:
+- **Domain** (`src/domain/`) must not import from infrastructure or presentation
+- **Infrastructure** (`src/infrastructure/`) must not contain business logic
+- **Presentation** (`src/presentation/`) must not bypass application layer to reach domain directly
+- Flag any cross-layer violations as findings
+
 ## Code Smells to Detect
 
 | Smell | Refactoring |
@@ -45,7 +59,12 @@ Provide code quality analysis, refactoring suggestions, and clean code guidance.
 ## Response Format
 
 For each finding, provide:
+- **Priority**: High | Medium | Low
 - **Location**: `file:line`
 - **Issue**: What's wrong and which principle it violates
 - **Impact**: Why it matters
 - **Fix**: Concrete refactoring with diff example
+
+---
+
+> For correctness, security, and performance review, use `/review` first.
