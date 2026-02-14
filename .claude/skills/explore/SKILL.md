@@ -91,3 +91,38 @@ Present findings using the response format below.
 **API Endpoint**: Route definition → middleware chain → handler → service logic → DB/external calls → response
 **Feature Flow**: UI trigger → API → service → data layer → async operations → event subscribers
 **Module**: Public API (exports) → internal structure → core abstractions → external consumer patterns
+
+## Context Preservation
+
+When investigating nested components, maintain dual context:
+
+1. **Global Context**: Original investigation target and user's intent
+   - What was the user trying to understand?
+   - What question needs to be answered?
+
+2. **Local Context**: Current component being analyzed
+   - What does this specific piece do?
+   - How does it relate to the global context?
+
+Always maintain both contexts—don't lose sight of the broader goal when deep in implementation details. Periodically resurface to connect findings back to the original question.
+
+## Error Handling
+
+When exploration is incomplete or uncertain:
+
+1. **Partial Results**: Present what was found with clear `[Incomplete]` markers
+2. **Confidence Flags**: Mark sections as `[High Confidence]` or `[Needs Verification]`
+3. **Dead Ends**: Document paths that couldn't be traced and why
+4. **Scope Limitations**: Explicitly state what was NOT explored (e.g., external services, dynamic dispatch)
+
+Never silently omit findings—surface limitations explicitly.
+
+## Related Skills
+
+| After This Skill | Consider Using | When |
+|-----------------|----------------|------|
+| `/explore` | `/diagram` | Visual representation would clarify the flow |
+| `/explore` | `/review` | Found issues that need formal review |
+| `/explore` | `/architecture` | Understanding suggests architectural improvements |
+| `/explore` | `/patterns` | Identified patterns need documentation or improvement |
+| `/explore` | `/adr` | Discovery warrants documenting a decision |

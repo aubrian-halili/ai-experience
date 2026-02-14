@@ -82,12 +82,87 @@ When an explicit file, PR, or component argument is provided, review that target
 - [What was done well]
 ```
 
+## Evaluation Gate
+
+Before finalizing the review, internally assess each criterion:
+
+| Criterion | Status | Notes |
+|-----------|--------|-------|
+| Critical issues identified and actionable? | PASS/FAIL | |
+| Security concerns addressed? | PASS/FAIL | |
+| Test coverage adequate? | PASS/NEEDS_IMPROVEMENT/FAIL | |
+| Performance risks evaluated? | PASS/NEEDS_IMPROVEMENT/FAIL | |
+| Architecture alignment verified? | PASS/NEEDS_IMPROVEMENT/FAIL | |
+
+**Overall**: PASS | NEEDS_IMPROVEMENT | FAIL
+
+- If **FAIL** on any criterion → must provide actionable feedback for each failing item
+- If **NEEDS_IMPROVEMENT** → include specific suggestions in Minor Improvements section
+- Only **PASS** overall when no Critical/High issues remain
+
+## Iteration Protocol
+
+For complex reviews, support iterative refinement:
+
+1. **Initial Pass**: Identify all potential findings
+2. **Self-Evaluation**: Score each finding against confidence threshold (>= 80)
+3. **Refinement**: Re-analyze low-confidence findings with additional context if available
+4. **Final Report**: Present only validated findings
+
+If user requests deeper analysis, explicitly re-run with expanded scope or lower confidence threshold.
+
+## Error Handling
+
+When analysis is incomplete or uncertain:
+
+1. **Partial Results**: Present what was found with clear `[Incomplete]` markers
+2. **Confidence Flags**: Mark sections as `[High Confidence]` or `[Needs Verification]`
+3. **Fallback Strategy**: If primary approach fails (e.g., can't access file), suggest alternative investigation paths
+4. **Scope Limitations**: Explicitly state what was NOT reviewed and why
+
+Never silently omit findings—surface limitations explicitly.
+
 ## Specialized Checklists
 
-**API Review**: REST conventions, error format consistency, auth, rate limiting, versioning, backward compat
-**Database Review**: Schema normalization, index coverage, N+1 queries, transactions, connection pooling
-**Security Review**: Input validation, output encoding, parameterized queries, token handling, CORS, dependency vulnerabilities
+### API Review Checklist
+- [ ] REST conventions followed (proper HTTP methods, status codes)
+- [ ] Error responses follow consistent format (RFC 7807 or project standard)
+- [ ] Authentication/authorization on all sensitive endpoints
+- [ ] Rate limiting configured appropriately
+- [ ] API versioning strategy clear and consistent
+- [ ] Backward compatibility considered for changes
+- [ ] Request/response validation in place
+- [ ] CORS configuration appropriate
+
+### Database Review Checklist
+- [ ] Schema properly normalized (or denormalized with justification)
+- [ ] Indexes cover common query patterns
+- [ ] N+1 query risks identified and mitigated
+- [ ] Transaction boundaries appropriate
+- [ ] Connection pooling configured
+- [ ] Migration strategy documented
+- [ ] Soft delete vs hard delete strategy clear
+- [ ] Data retention policy considered
+
+### Security Review Checklist
+- [ ] Input validation on all external inputs
+- [ ] Output encoding to prevent XSS
+- [ ] Parameterized queries (no SQL injection)
+- [ ] Token handling secure (storage, transmission, expiry)
+- [ ] Sensitive data not logged
+- [ ] Dependencies checked for known vulnerabilities
+- [ ] Secrets not hardcoded
+- [ ] Authentication state validated server-side
 
 ---
+
+## Related Skills
+
+| After This Skill | Consider Using | When |
+|-----------------|----------------|------|
+| `/review` | `/clean-code` | Deep SOLID analysis needed |
+| `/review` | `/architecture` | Structural concerns or design issues found |
+| `/review` | `/patterns` | Code structure could benefit from design patterns |
+| `/review` | `/adr` | Significant decision should be documented |
 
 > For deep code quality and SOLID analysis, use `/clean-code` after addressing critical issues.

@@ -6,6 +6,20 @@ argument-hint: "[topic or system to design]"
 
 Provide expert guidance on system architecture decisions, design approaches, and technical strategy. Deliver actionable architecture blueprints that bridge design to implementation.
 
+## Input Classification
+
+First, classify the request to determine the appropriate approach:
+
+| Type | Indicators | Approach |
+|------|-----------|----------|
+| **Greenfield** | "new system", "from scratch", "build new" | Full architecture process (all steps) |
+| **Evolution** | "add feature", "extend", "enhance" | Pattern analysis + incremental design |
+| **Migration** | "move to", "replace", "upgrade", "refactor" | Risk assessment + phased migration plan |
+| **Optimization** | "scale", "performance", "bottleneck" | Bottleneck analysis + targeted changes |
+| **Integration** | "connect", "integrate", "API" | Interface design + compatibility analysis |
+
+Select the approach before proceeding—this determines which process steps to emphasize.
+
 ## Process
 
 1. **Analyze Existing Patterns**
@@ -124,3 +138,24 @@ Provide expert guidance on system architecture decisions, design approaches, and
 1. [Immediate action]
 2. [Follow-up action]
 ```
+
+## Error Handling
+
+When analysis is incomplete or uncertain:
+
+1. **Partial Results**: Present what was designed with clear `[Incomplete]` markers
+2. **Confidence Flags**: Mark recommendations as `[High Confidence]` or `[Needs Verification]`
+3. **Assumption Documentation**: Explicitly list assumptions that could invalidate the design
+4. **Fallback Strategy**: If codebase exploration fails, proceed with stated assumptions and flag for validation
+
+Never silently skip sections—surface gaps and limitations explicitly.
+
+## Related Skills
+
+| After This Skill | Consider Using | When |
+|-----------------|----------------|------|
+| `/architecture` | `/patterns` | Need specific pattern implementation guidance |
+| `/architecture` | `/diagram` | Visual representation would clarify the design |
+| `/architecture` | `/adr` | Architectural decision should be formally documented |
+| `/architecture` | `/review` | Existing code needs evaluation against new architecture |
+| `/architecture` | `/explore` | Need to understand existing system before designing |

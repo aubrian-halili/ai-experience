@@ -44,3 +44,31 @@ Generate architecture diagrams using Mermaid syntax based on the user's descript
 **ERD**: `erDiagram` — data model relationships
 **Class**: `classDiagram` — object-oriented structure
 **State**: `stateDiagram-v2` — state transitions and lifecycle
+
+## Error Handling
+
+When diagram generation is incomplete or uncertain:
+
+1. **Partial Results**: Generate what's known with `[Incomplete]` markers for uncertain areas
+2. **Confidence Flags**: Add notes to diagram sections marked `[Needs Verification]`
+3. **Scope Limitations**: Explicitly state what was NOT included and why
+4. **Placeholder Nodes**: Use dashed lines or `???` labels for unknown components
+
+Example for incomplete information:
+```mermaid
+flowchart TD
+    A[Known Component] --> B[Known Component]
+    B -.-> C["??? Unknown Handler"]
+    style C fill:#ffcccc
+```
+
+Never silently omit components—surface gaps visually.
+
+## Related Skills
+
+| After This Skill | Consider Using | When |
+|-----------------|----------------|------|
+| `/diagram` | `/explore` | Need to understand components before visualizing |
+| `/diagram` | `/architecture` | Diagram reveals architectural improvements |
+| `/diagram` | `/adr` | Diagram documents an important decision |
+| `/diagram` | `/patterns` | Diagram shows pattern implementation |

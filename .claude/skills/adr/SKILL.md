@@ -49,3 +49,24 @@ docs/architecture/decisions/
 ├── adr-002-api-versioning-strategy.md
 └── adr-003-database-selection.md
 ```
+
+## Error Handling
+
+When ADR creation is incomplete or uncertain:
+
+1. **Partial Results**: Create ADR with `[TBD]` markers for sections needing input
+2. **Confidence Flags**: Mark consequences as `[Projected]` vs `[Confirmed]`
+3. **Missing Context**: Explicitly list questions that need answers before finalizing
+4. **Draft Status**: Use `Proposed` status until all sections are complete
+
+Never publish incomplete ADRs as `Accepted`—keep them `Proposed` until validated.
+
+## Related Skills
+
+| After This Skill | Consider Using | When |
+|-----------------|----------------|------|
+| `/adr` | `/architecture` | Decision needs full architecture analysis |
+| `/adr` | `/patterns` | Decision involves pattern selection |
+| `/adr` | `/diagram` | Decision would benefit from visual documentation |
+| `/adr` | `/review` | Implementation of decision needs review |
+| `/adr` | `/explore` | Need to understand existing system before deciding |
