@@ -1,10 +1,10 @@
 ---
 name: docs
-description: Use when the user asks to "write documentation", "create docs", "document this", "technical writing", mentions "README", "API docs", "RFC", "design doc", or needs help with technical documentation and collaborative writing.
-argument-hint: "[topic, file, or document type]"
+description: Use when the user asks to "write documentation", "create docs", "document this", "technical writing", "create a presentation", "make slides", "build a deck", mentions "README", "API docs", "RFC", "design doc", "PowerPoint", "slides", "deck", or needs technical documentation, presentations, and stakeholder communication.
+argument-hint: "[topic, document type, or presentation purpose]"
 ---
 
-Create and improve technical documentation including READMEs, API docs, RFCs, design documents, and technical specifications.
+Create and improve technical documentation, presentations, and stakeholder communications.
 
 ## When to Use
 
@@ -14,25 +14,29 @@ Create and improve technical documentation including READMEs, API docs, RFCs, de
 - Creating API documentation
 - Drafting RFCs and design documents
 - Technical specification writing
+- Architecture review presentations
+- Technical proposal decks
+- Project status updates
+- Executive summaries
 - Documentation review and improvement
-- Onboarding documentation
 
 ### Use a Different Approach When
 
-- Creating architecture diagrams → use `/diagram`
-- Recording architecture decisions → use `/adr`
+- Creating architecture diagrams only → use `/diagram`
+- Recording architecture decisions → use `/architecture --adr`
 - Code-level comments → handle inline during development
 
 ## Document Types
 
-| Type | Purpose | Audience |
-|------|---------|----------|
-| **README** | Project overview, quick start | New users, contributors |
-| **API Docs** | Endpoint reference | Developers integrating |
-| **RFC** | Propose significant changes | Team, stakeholders |
-| **Design Doc** | Technical design details | Engineers implementing |
-| **Runbook** | Operational procedures | Ops, on-call engineers |
-| **ADR** | Decision record | Future maintainers |
+| Type | Purpose | Audience | Format |
+|------|---------|----------|--------|
+| **README** | Project overview, quick start | New users, contributors | Markdown |
+| **API Docs** | Endpoint reference | Developers integrating | Markdown |
+| **RFC** | Propose significant changes | Team, stakeholders | Markdown |
+| **Design Doc** | Technical design details | Engineers implementing | Markdown |
+| **Runbook** | Operational procedures | Ops, on-call engineers | Markdown |
+| **Presentation** | Visual communication | Various audiences | Slides outline |
+| **Executive Summary** | Business value, ROI | C-level, stakeholders | Slides outline |
 
 ## Process
 
@@ -42,6 +46,7 @@ Based on the request, determine:
 - What type of document is needed
 - Who is the target audience
 - What level of detail is appropriate
+- What format (written docs vs. presentation)
 
 ### 2. Gather Information
 
@@ -81,7 +86,6 @@ Brief description of what this project does and why it exists.
 
 - Feature 1: Brief description
 - Feature 2: Brief description
-- Feature 3: Brief description
 
 ## Quick Start
 
@@ -116,7 +120,6 @@ console.log(result);
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `option1` | `string` | `"default"` | What this option does |
-| `option2` | `number` | `100` | What this option does |
 
 ## Examples
 
@@ -126,12 +129,6 @@ console.log(result);
 // Code example with comments
 ```
 
-### Example 2: Advanced Usage
-
-```typescript
-// More complex example
-```
-
 ## API Reference
 
 ### `functionName(param1, param2)`
@@ -139,15 +136,10 @@ console.log(result);
 Brief description of what the function does.
 
 **Parameters:**
-- `param1` (string): Description of param1
-- `param2` (number, optional): Description of param2
+- `param1` (string): Description
+- `param2` (number, optional): Description
 
-**Returns:** `ReturnType` - Description of return value
-
-**Example:**
-```typescript
-const result = functionName('value', 42);
-```
+**Returns:** `ReturnType` - Description
 
 ## Contributing
 
@@ -193,53 +185,13 @@ GET /users
 |-----------|------|----------|-------------|
 | `page` | integer | No | Page number (default: 1) |
 | `limit` | integer | No | Items per page (default: 20) |
-| `status` | string | No | Filter by status |
 
 **Response:**
 
 ```json
 {
-  "data": [
-    {
-      "id": "user_123",
-      "name": "John Doe",
-      "email": "john@example.com",
-      "status": "active",
-      "createdAt": "2024-01-15T10:30:00Z"
-    }
-  ],
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 100
-  }
-}
-```
-
-#### Create User
-
-```
-POST /users
-```
-
-**Request Body:**
-
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com"
-}
-```
-
-**Response:** `201 Created`
-
-```json
-{
-  "id": "user_123",
-  "name": "John Doe",
-  "email": "john@example.com",
-  "status": "pending",
-  "createdAt": "2024-01-15T10:30:00Z"
+  "data": [{ "id": "user_123", "name": "John Doe" }],
+  "pagination": { "page": 1, "limit": 20, "total": 100 }
 }
 ```
 
@@ -250,23 +202,6 @@ POST /users
 | 400 | `INVALID_REQUEST` | Request validation failed |
 | 401 | `UNAUTHORIZED` | Invalid or missing API key |
 | 404 | `NOT_FOUND` | Resource not found |
-| 429 | `RATE_LIMITED` | Too many requests |
-| 500 | `INTERNAL_ERROR` | Server error |
-
-**Error Response Format:**
-
-```json
-{
-  "error": {
-    "code": "INVALID_REQUEST",
-    "message": "Email is required",
-    "details": {
-      "field": "email",
-      "reason": "required"
-    }
-  }
-}
-```
 ```
 
 ### RFC Template
@@ -277,7 +212,6 @@ POST /users
 **Status:** Draft | In Review | Accepted | Rejected | Implemented
 **Author:** [Name]
 **Created:** YYYY-MM-DD
-**Updated:** YYYY-MM-DD
 
 ## Summary
 
@@ -295,19 +229,7 @@ High-level description of the solution.
 
 ### Technical Approach
 
-Detailed technical explanation.
-
-```typescript
-// Code examples showing key concepts
-```
-
-### Data Model
-
-Changes to data structures or schemas.
-
-### API Changes
-
-New or modified APIs.
+Detailed technical explanation with code examples.
 
 ### Migration Strategy
 
@@ -317,23 +239,15 @@ How to transition from current state.
 
 ### Alternative 1: [Name]
 
-**Description:** What this alternative involves
-
-**Pros:**
-- Pro 1
-- Pro 2
-
-**Cons:**
-- Con 1
-- Con 2
-
-**Why not chosen:** Reason
+**Pros:** [List]
+**Cons:** [List]
+**Why not chosen:** [Reason]
 
 ## Risks and Mitigations
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|------------|--------|------------|
-| Risk 1 | Medium | High | Mitigation strategy |
+| Risk 1 | Medium | High | Strategy |
 
 ## Open Questions
 
@@ -344,12 +258,6 @@ How to transition from current state.
 | Phase | Duration | Deliverable |
 |-------|----------|-------------|
 | Design | 1 week | Finalized RFC |
-| Implementation | 2 weeks | Working code |
-| Testing | 1 week | Test coverage |
-
-## References
-
-- [Related document](link)
 ```
 
 ### Design Document Template
@@ -381,20 +289,11 @@ Background information and current state.
 ```mermaid
 graph TD
     A[Component A] --> B[Component B]
-    B --> C[Component C]
 ```
 
 ### Component Design
 
-#### Component A
-
-Purpose and responsibility.
-
-```typescript
-interface ComponentA {
-  // Interface definition
-}
-```
+Purpose and responsibility with interface definitions.
 
 ### Data Flow
 
@@ -408,24 +307,170 @@ How errors are handled at each layer.
 
 - [ ] Phase 1: Foundation
 - [ ] Phase 2: Core features
-- [ ] Phase 3: Polish
 
 ## Testing Strategy
 
 How this will be tested.
 
-## Monitoring and Observability
-
-What metrics and logs will be added.
-
 ## Security Considerations
 
 Security implications and mitigations.
-
-## Dependencies
-
-External dependencies and risks.
 ```
+
+### Presentation Template
+
+```markdown
+## Presentation: [Title]
+
+**Purpose**: [What this presentation achieves]
+**Audience**: [Who will view this]
+**Duration**: [Estimated time]
+**Key Message**: [One sentence summary]
+
+---
+
+### Slide 1: Title
+
+**[Presentation Title]**
+
+[Subtitle / Context]
+[Presenter Name]
+[Date]
+
+---
+
+### Slide 2: Executive Summary
+
+**Key Takeaways**
+
+- Point 1: [Main insight]
+- Point 2: [Main insight]
+- Point 3: [Main insight]
+
+**Recommendation**: [Action requested]
+
+---
+
+### Slide 3: Context / Problem
+
+**Current State**
+
+[Describe the problem or opportunity]
+
+```mermaid
+graph LR
+    A[Current] --> B[Challenge] --> C[Impact]
+```
+
+**Why This Matters**: [Business impact]
+
+---
+
+### Slide 4: Proposed Solution
+
+**Architecture Overview**
+
+```mermaid
+graph TD
+    A[Component A] --> B[Component B]
+```
+
+**Key Components**:
+- Component A: [Purpose]
+- Component B: [Purpose]
+
+---
+
+### Slide 5: Trade-off Analysis
+
+**Options Considered**
+
+| Criterion | Option A | Option B | Option C |
+|-----------|----------|----------|----------|
+| Cost | $$ | $$$ | $ |
+| Complexity | Low | High | Medium |
+| Risk | Low | Medium | Low |
+
+**Recommendation**: Option A
+
+---
+
+### Slide 6: Implementation Plan
+
+**Roadmap**
+
+```mermaid
+gantt
+    title Implementation Timeline
+    section Phase 1
+    Foundation    :a1, 2024-01-01, 2w
+    section Phase 2
+    Core Features :a2, after a1, 3w
+```
+
+---
+
+### Slide 7: Risks and Mitigations
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| Risk 1 | Medium | High | [Strategy] |
+
+---
+
+### Slide 8: Resource Requirements
+
+- **Team**: [X engineers, Y weeks]
+- **Budget**: [$X for infrastructure/tools]
+- **Dependencies**: [External dependencies]
+
+---
+
+### Slide 9: Success Metrics
+
+| Metric | Current | Target | Timeline |
+|--------|---------|--------|----------|
+| Metric 1 | X | Y | 3 months |
+
+---
+
+### Slide 10: Next Steps
+
+**Immediate Actions**
+
+1. [Action 1] — Owner: [Name] — Due: [Date]
+2. [Action 2] — Owner: [Name] — Due: [Date]
+
+**Decision Needed**: [What approval is required]
+
+---
+
+### Slide 11: Q&A
+
+**Questions?**
+
+[Contact information]
+[Links to detailed documentation]
+
+---
+
+## Appendix
+
+### Appendix A: Technical Details
+[Deep dive content]
+
+### Appendix B: Cost Breakdown
+[Detailed analysis]
+```
+
+## Presentation Types
+
+| Type | Structure | Focus |
+|------|-----------|-------|
+| **Architecture Review** | Current → Challenges → Proposed → Migration → Risks | Design decisions |
+| **Technical Proposal** | Problem → Goals → Solution → Alternatives → Plan | Implementation details |
+| **Project Update** | Summary → Accomplishments → Metrics → Blockers → Plans | Progress status |
+| **Executive Summary** | Key Message → Context → Recommendation → Investment → ROI | Business value |
 
 ## Writing Guidelines
 
@@ -437,19 +482,12 @@ External dependencies and risks.
 4. **Show, don't tell** — Use code examples liberally
 5. **Define acronyms** — Spell out on first use
 
-### Code Examples
+### Presentation Guidelines
 
-```typescript
-// Good: Shows complete, runnable example
-import { Client } from 'library';
-
-const client = new Client({ apiKey: 'your-key' });
-const result = await client.fetch('/users');
-console.log(result);
-
-// Bad: Incomplete, unclear context
-client.fetch(url);
-```
+1. **One message per slide** — Don't overload
+2. **6x6 rule** — Max 6 bullets, 6 words each
+3. **Lead with conclusion** — Pyramid principle
+4. **Use diagrams** — Visualize architecture and data
 
 ### Documentation Review Checklist
 
@@ -468,12 +506,14 @@ client.fetch(url);
 | Missing context | Request access to relevant code |
 | Outdated docs | Flag discrepancies found |
 | Complex topic | Break into multiple documents |
+| Unclear audience | Ask who will view the content |
+| Too much content | Suggest splitting or using appendix |
 
 ## Related Skills
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/diagram` | Visual documentation needed |
-| `/adr` | Recording architecture decisions |
+| `/diagram` | Visual documentation only |
 | `/architecture` | Designing system before documenting |
+| `/architecture --adr` | Recording architecture decisions |
 | `/explore` | Understanding system before documenting |
