@@ -61,7 +61,8 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 
 ## Git Context
 
-- **Branch**: `[branch-name]`
+- **Ticket ID**: `[extracted from branch, e.g., UN-1234]`
+- **Branch**: `[branch-name, e.g., aubrian/UN-1234-fix-crash]`
 - **Recent commits**:
   - [commit summary 1]
   - [commit summary 2]
@@ -150,7 +151,8 @@ interface NewFeature {
 
 ## Git Context
 
-- **Branch**: `[branch-name]`
+- **Ticket ID**: `[extracted from branch, e.g., UN-1234]`
+- **Branch**: `[branch-name, e.g., aubrian/UN-1234-implement-feature]`
 - **Recent commits**:
   - [commit summary 1]
   - [commit summary 2]
@@ -217,19 +219,19 @@ When git context is available, auto-populate:
 
 | Branch Pattern | Extraction |
 |---------------|------------|
-| `feature/add-user-auth` | Title: "Add user auth" |
-| `fix/login-redirect` | Type: Bug, Title: "Login redirect" |
-| `aubrian/implement-caching` | Title: "Implement caching" |
-| `bugfix/PROJ-123-fix-crash` | Type: Bug, Related: PROJ-123 |
+| `aubrian/UN-1234-add-user-auth` | Ticket: UN-1234, Title: "Add user auth" |
+| `aubrian/UN-5678-fix-login-redirect` | Ticket: UN-5678, Type: Bug, Title: "Fix login redirect" |
+| `aubrian/PROJ-123-implement-caching` | Ticket: PROJ-123, Title: "Implement caching" |
+| `aubrian/UN-9012-refactor-auth-flow` | Ticket: UN-9012, Title: "Refactor auth flow" |
 
 ### From Commits
 
 | Commit Pattern | Extraction |
 |---------------|------------|
-| `feat: add login endpoint` | Title basis, Type: Task |
-| `fix: resolve null pointer` | Title basis, Type: Bug |
-| `Closes #123` or `Fixes #123` | Related ticket reference |
-| `[PROJ-456]` in message | Related ticket reference |
+| `UN-1234 feat: add login endpoint` | Ticket: UN-1234, Title basis, Type: Task |
+| `UN-1234 fix: resolve null pointer` | Ticket: UN-1234, Title basis, Type: Bug |
+| `Closes #123` or `Fixes #123` | Related GitHub issue reference |
+| `PROJ-456` prefix in message | Related Jira ticket reference |
 
 ### From Diff
 

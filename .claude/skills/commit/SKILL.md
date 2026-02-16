@@ -25,8 +25,8 @@ Generate semantic commit messages, manage branches, and maintain changelog follo
 ## Git Conventions Reference
 
 From CLAUDE.md:
-- **Commits**: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
-- **Branches**: `<username>/<feature-description>`
+- **Commits**: `UN-XXXX feat:`, `UN-XXXX fix:`, `UN-XXXX docs:`, `UN-XXXX refactor:`, `UN-XXXX test:`, `UN-XXXX chore:`
+- **Branches**: `<username>/UN-XXXX-<feature-description>`
 
 ## Process
 
@@ -44,24 +44,29 @@ git diff
 
 # View recent commits for style reference
 git log --oneline -5
+
+# Extract Jira ticket ID from branch name
+BRANCH=$(git branch --show-current)
+TICKET_ID=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
+# If TICKET_ID is empty, prompt user for ticket ID or note its absence
 ```
 
 ### 2. Classify Changes
 
 | Prefix | Use When | Example |
 |--------|----------|---------|
-| `feat:` | Adding new functionality | `feat: add user preferences API` |
-| `fix:` | Fixing a bug | `fix: resolve null pointer in auth flow` |
-| `docs:` | Documentation only | `docs: update API reference for v2` |
-| `refactor:` | Code change without behavior change | `refactor: extract validation logic` |
-| `test:` | Adding or modifying tests | `test: add coverage for edge cases` |
-| `chore:` | Maintenance, deps, config | `chore: update dependencies` |
+| `feat:` | Adding new functionality | `UN-1234 feat: add user preferences API` |
+| `fix:` | Fixing a bug | `UN-1234 fix: resolve null pointer in auth flow` |
+| `docs:` | Documentation only | `UN-1234 docs: update API reference for v2` |
+| `refactor:` | Code change without behavior change | `UN-1234 refactor: extract validation logic` |
+| `test:` | Adding or modifying tests | `UN-1234 test: add coverage for edge cases` |
+| `chore:` | Maintenance, deps, config | `UN-1234 chore: update dependencies` |
 
 ### 3. Generate Commit Message
 
 Structure:
 ```
-<type>(<scope>): <subject>
+<ticket-id> <type>(<scope>): <subject>
 
 <body>
 
@@ -69,6 +74,7 @@ Structure:
 ```
 
 Rules:
+- **Ticket ID**: Always prefix with Jira ticket ID extracted from branch name (e.g., `UN-1234`)
 - **Subject**: Imperative mood, no period, max 72 chars
 - **Body**: Explain what and why (not how)
 - **Footer**: Reference issues, breaking changes
@@ -100,13 +106,14 @@ git commit -m "<message>"
 
 ### Suggested Commit
 
+**Ticket**: `UN-1234`
 **Type**: `feat`
 **Scope**: `api`
 **Subject**: add user preferences endpoint
 
 **Full Message**:
 ```
-feat(api): add user preferences endpoint
+UN-1234 feat(api): add user preferences endpoint
 
 - Add GET/PUT endpoints for user preferences
 - Include validation for preference values
@@ -119,7 +126,7 @@ Closes #123
 
 ```bash
 git add src/api/users.ts tests/api/users.test.ts
-git commit -m "feat(api): add user preferences endpoint
+git commit -m "UN-1234 feat(api): add user preferences endpoint
 
 - Add GET/PUT endpoints for user preferences
 - Include validation for preference values
@@ -132,8 +139,8 @@ Closes #123"
 
 If you prefer a different style:
 
-1. `feat: add user preferences API`
-2. `feat(users): implement preferences management`
+1. `UN-1234 feat: add user preferences API`
+2. `UN-1234 feat(users): implement preferences management`
 ```
 
 ## Branch Management
@@ -141,20 +148,20 @@ If you prefer a different style:
 ### Creating Feature Branches
 
 ```bash
-# Format: <username>/<feature-description>
-git checkout -b aubrian/add-user-preferences
+# Format: <username>/UN-XXXX-<feature-description>
+git checkout -b aubrian/UN-1234-add-user-preferences
 
 # Or from a specific base
-git checkout -b aubrian/add-user-preferences origin/main
+git checkout -b aubrian/UN-1234-add-user-preferences origin/main
 ```
 
 ### Branch Naming Examples
 
 | Type | Pattern | Example |
 |------|---------|---------|
-| Feature | `<user>/add-<feature>` | `aubrian/add-dark-mode` |
-| Fix | `<user>/fix-<issue>` | `aubrian/fix-login-redirect` |
-| Refactor | `<user>/refactor-<scope>` | `aubrian/refactor-auth-flow` |
+| Feature | `<user>/<ticket>-add-<feature>` | `aubrian/UN-1234-add-dark-mode` |
+| Fix | `<user>/<ticket>-fix-<issue>` | `aubrian/UN-5678-fix-login-redirect` |
+| Refactor | `<user>/<ticket>-refactor-<scope>` | `aubrian/UN-9012-refactor-auth-flow` |
 
 ## Changelog Generation
 
@@ -195,15 +202,15 @@ When changes span multiple concerns:
 ```bash
 # Commit 1: Infrastructure change
 git add src/config/
-git commit -m "chore: update database configuration"
+git commit -m "UN-1234 chore: update database configuration"
 
 # Commit 2: Feature implementation
 git add src/services/ src/api/
-git commit -m "feat: add user preferences service"
+git commit -m "UN-1234 feat: add user preferences service"
 
 # Commit 3: Tests
 git add tests/
-git commit -m "test: add preferences service coverage"
+git commit -m "UN-1234 test: add preferences service coverage"
 ```
 
 ### Squash Before PR
@@ -223,6 +230,7 @@ git rebase -i HEAD~3
 | Mixed change types | Recommend splitting into multiple commits |
 | Unclear scope | Ask for clarification or suggest based on files |
 | Large changeset | Recommend breaking into atomic commits |
+| No ticket ID in branch | Prompt user: "No Jira ticket ID found in branch name. Expected format: `<username>/UN-XXXX-<feature>`. Provide a ticket ID or continue without one?" |
 
 ## Quick Reference
 
@@ -230,28 +238,28 @@ git rebase -i HEAD~3
 
 ```bash
 # Feature
-git commit -m "feat(scope): add new capability"
+git commit -m "UN-1234 feat(scope): add new capability"
 
 # Bug fix
-git commit -m "fix(scope): resolve specific issue"
+git commit -m "UN-1234 fix(scope): resolve specific issue"
 
 # Documentation
-git commit -m "docs: update README with examples"
+git commit -m "UN-1234 docs: update README with examples"
 
 # Refactoring
-git commit -m "refactor(scope): improve code structure"
+git commit -m "UN-1234 refactor(scope): improve code structure"
 
 # Tests
-git commit -m "test(scope): add missing test coverage"
+git commit -m "UN-1234 test(scope): add missing test coverage"
 
 # Maintenance
-git commit -m "chore: update dependencies"
+git commit -m "UN-1234 chore: update dependencies"
 ```
 
 ### Breaking Changes
 
 ```
-feat(api)!: change response format
+UN-1234 feat(api)!: change response format
 
 BREAKING CHANGE: Response now returns array instead of object
 ```

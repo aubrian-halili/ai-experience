@@ -48,8 +48,8 @@ project/
 
 ## Git Conventions
 
-- **Commits**: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
-- **Branches**: `<username>/<feature-description>`
+- **Commits**: `UN-XXXX feat:`, `UN-XXXX fix:`, `UN-XXXX docs:`, `UN-XXXX refactor:`, `UN-XXXX test:`, `UN-XXXX chore:`
+- **Branches**: `<username>/UN-XXXX-<feature-description>`
 
 ## Quality Gates
 

@@ -58,6 +58,11 @@ git diff --stat HEAD~5..HEAD 2>/dev/null || git diff --stat
 
 # Get commit messages for context
 git log origin/main..HEAD --pretty=format:"- %s" 2>/dev/null || git log -5 --pretty=format:"- %s"
+
+# Extract Jira ticket ID from branch name (primary source per CLAUDE.md)
+BRANCH=$(git branch --show-current)
+TICKET_ID=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
+# If TICKET_ID is empty, fall back to commit messages, then prompt user
 ```
 
 **Context sources:**
@@ -137,7 +142,8 @@ Generate formatted output for manual entry with copy-ready content.
 
 ---
 
-Reference this ticket in commits: `git commit -m "feat: implement feature [PROJECT-123]"`
+Reference this ticket in commits: `git commit -m "PROJECT-123 feat: implement feature"`
+Create a branch: `git checkout -b <username>/PROJECT-123-implement-feature`
 ```
 
 ### Manual Mode (Content Generated)
@@ -179,8 +185,9 @@ Reference this ticket in commits: `git commit -m "feat: implement feature [PROJE
 
 ---
 
-After creating the ticket, reference it in commits:
-`git commit -m "feat: implement feature [TICKET-ID]"`
+After creating the ticket, create a branch and reference the ticket in commits:
+`git checkout -b <username>/TICKET-ID-implement-feature`
+`git commit -m "TICKET-ID feat: implement feature"`
 ```
 
 ## Error Handling
@@ -194,6 +201,7 @@ After creating the ticket, reference it in commits:
 | Missing required fields | Prompt for specific information needed |
 | API error | Show error details, provide content for manual entry as fallback |
 | No git context | Proceed with user-provided information only |
+| Ticket ID already in branch | Note existing ticket ID from branch: "Branch already references `PROJ-123`. Creating a related ticket — link to existing if appropriate." |
 
 ## Argument Handling
 
@@ -218,14 +226,21 @@ After creating the ticket, reference it in commits:
 
 If project key is not specified, check for:
 
-1. Environment variable or MCP configuration
-2. Recent tickets in git commit messages (e.g., `PROJECT-123`)
-3. Ask user to specify project
+1. **Branch name (primary)**: Extract from current branch per CLAUDE.md convention (`<username>/UN-XXXX-<feature>`)
+2. Environment variable or MCP configuration
+3. Recent tickets in git commit messages (fallback)
+4. Ask user to specify project
 
-Extract from commit messages:
+Extract ticket ID:
 ```bash
-# Find ticket references in recent commits
-git log -20 --oneline | grep -oE '[A-Z]+-[0-9]+' | head -1
+# Primary: Extract from branch name (per CLAUDE.md convention)
+BRANCH=$(git branch --show-current)
+TICKET_ID=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
+
+# Fallback: Find ticket references in recent commits
+if [ -z "$TICKET_ID" ]; then
+  TICKET_ID=$(git log -20 --oneline | grep -oE '[A-Z]+-[0-9]+' | head -1)
+fi
 ```
 
 ## Related Skills
