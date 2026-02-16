@@ -26,7 +26,7 @@ Generate semantic commit messages, manage branches, and maintain changelog follo
 
 From CLAUDE.md:
 - **Commits**: `UN-XXXX feat:`, `UN-XXXX fix:`, `UN-XXXX docs:`, `UN-XXXX refactor:`, `UN-XXXX test:`, `UN-XXXX chore:`
-- **Branches**: `<username>/UN-XXXX-<feature-description>`
+- **Branches**: `UN-XXXX-<feature-description>`
 
 ## Process
 
@@ -148,20 +148,20 @@ If you prefer a different style:
 ### Creating Feature Branches
 
 ```bash
-# Format: <username>/UN-XXXX-<feature-description>
-git checkout -b aubrian/UN-1234-add-user-preferences
+# Format: UN-XXXX-<feature-description>
+git checkout -b UN-1234-add-user-preferences
 
 # Or from a specific base
-git checkout -b aubrian/UN-1234-add-user-preferences origin/main
+git checkout -b UN-1234-add-user-preferences origin/main
 ```
 
 ### Branch Naming Examples
 
 | Type | Pattern | Example |
 |------|---------|---------|
-| Feature | `<user>/<ticket>-add-<feature>` | `aubrian/UN-1234-add-dark-mode` |
-| Fix | `<user>/<ticket>-fix-<issue>` | `aubrian/UN-5678-fix-login-redirect` |
-| Refactor | `<user>/<ticket>-refactor-<scope>` | `aubrian/UN-9012-refactor-auth-flow` |
+| Feature | `UN-XXXX-add-<feature>` | `UN-1234-add-dark-mode` |
+| Fix | `UN-XXXX-fix-<issue>` | `UN-5678-fix-login-redirect` |
+| Refactor | `UN-XXXX-refactor-<scope>` | `UN-9012-refactor-auth-flow` |
 
 ## Changelog Generation
 
@@ -230,7 +230,7 @@ git rebase -i HEAD~3
 | Mixed change types | Recommend splitting into multiple commits |
 | Unclear scope | Ask for clarification or suggest based on files |
 | Large changeset | Recommend breaking into atomic commits |
-| No ticket ID in branch | Prompt user: "No Jira ticket ID found in branch name. Expected format: `<username>/UN-XXXX-<feature>`. Provide a ticket ID or continue without one?" |
+| No ticket ID in branch | Prompt user: "No Jira ticket ID found in branch name. Expected format: `UN-XXXX-<feature>`. Provide a ticket ID or continue without one?" |
 
 ## Quick Reference
 

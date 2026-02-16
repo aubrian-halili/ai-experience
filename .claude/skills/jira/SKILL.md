@@ -143,7 +143,7 @@ Generate formatted output for manual entry with copy-ready content.
 ---
 
 Reference this ticket in commits: `git commit -m "PROJECT-123 feat: implement feature"`
-Create a branch: `git checkout -b <username>/PROJECT-123-implement-feature`
+Create a branch: `git checkout -b PROJECT-123-implement-feature`
 ```
 
 ### Manual Mode (Content Generated)
@@ -186,7 +186,7 @@ Create a branch: `git checkout -b <username>/PROJECT-123-implement-feature`
 ---
 
 After creating the ticket, create a branch and reference the ticket in commits:
-`git checkout -b <username>/TICKET-ID-implement-feature`
+`git checkout -b TICKET-ID-implement-feature`
 `git commit -m "TICKET-ID feat: implement feature"`
 ```
 
@@ -226,7 +226,7 @@ After creating the ticket, create a branch and reference the ticket in commits:
 
 If project key is not specified, check for:
 
-1. **Branch name (primary)**: Extract from current branch per CLAUDE.md convention (`<username>/UN-XXXX-<feature>`)
+1. **Branch name (primary)**: Extract from current branch per CLAUDE.md convention (`UN-XXXX-<feature>`)
 2. Environment variable or MCP configuration
 3. Recent tickets in git commit messages (fallback)
 4. Ask user to specify project

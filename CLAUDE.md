@@ -49,7 +49,7 @@ project/
 ## Git Conventions
 
 - **Commits**: `UN-XXXX feat:`, `UN-XXXX fix:`, `UN-XXXX docs:`, `UN-XXXX refactor:`, `UN-XXXX test:`, `UN-XXXX chore:`
-- **Branches**: `<username>/UN-XXXX-<feature-description>`
+- **Branches**: `UN-XXXX-<feature-description>`
 
 ## Quality Gates
 

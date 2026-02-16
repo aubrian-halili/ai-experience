@@ -73,7 +73,7 @@ TICKET_ID=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
 **Priority order:**
 1. User-provided title from argument (auto-prefix with ticket ID if not included)
 2. Derive from single commit message (if only one commit)
-3. Derive from branch name (convert `aubrian/UN-1234-add-user-auth` → "UN-1234 Add user auth")
+3. Derive from branch name (convert `UN-1234-add-user-auth` → "UN-1234 Add user auth")
 
 **Title rules:**
 - Prefix with Jira ticket ID from branch (e.g., `UN-1234 Add user auth`)
@@ -100,7 +100,7 @@ Generated with Claude Code
 ```
 
 **Enhancements:**
-- Extract Jira ticket ID from branch name (e.g., `aubrian/UN-1234-add-auth` → `UN-1234`) → add to Jira section
+- Extract Jira ticket ID from branch name (e.g., `UN-1234-add-auth` → `UN-1234`) → add to Jira section
 - Detect `Closes #N`, `Fixes #N` in commits → add to description
 - Detect issue references in branch name (e.g., `issue-123`) → link GitHub issue
 
@@ -133,7 +133,7 @@ gh pr create --title "<title>" --body "<description>" --base <target-branch>
 ## Pull Request Created
 
 **Ticket**: UN-1234
-**Branch**: `aubrian/UN-1234-add-user-auth` → `main`
+**Branch**: `UN-1234-add-user-auth` → `main`
 **Title**: UN-1234 Add user authentication flow
 **URL**: https://github.com/owner/repo/pull/123
 
@@ -171,7 +171,7 @@ Use `/review 123` to self-review before requesting others.
 | Branch name (e.g., `develop`) | Use as target base branch |
 | Text string | Use as PR title |
 
-**Note:** Ticket ID is auto-extracted from branch name and prefixed to the PR title. If branch is `aubrian/UN-1234-add-oauth`, title becomes `UN-1234 Add OAuth2 support`.
+**Note:** Ticket ID is auto-extracted from branch name and prefixed to the PR title. If branch is `UN-1234-add-oauth`, title becomes `UN-1234 Add OAuth2 support`.
 
 **Examples:**
 - `/pr` → Auto-generate everything (ticket ID prefixed from branch)
@@ -190,15 +190,15 @@ Use `/review 123` to self-review before requesting others.
 | Push rejected | "Push rejected. Try `git pull --rebase origin <branch>` to sync" |
 | No gh CLI | "GitHub CLI (gh) not found. Install from https://cli.github.com/" |
 | Not authenticated | "Not authenticated with GitHub. Run `gh auth login`" |
-| No ticket ID in branch | Prompt user: "No Jira ticket ID found in branch name. Expected format: `<username>/UN-XXXX-<feature>`. Provide a ticket ID or create PR without one?" |
+| No ticket ID in branch | Prompt user: "No Jira ticket ID found in branch name. Expected format: `UN-XXXX-<feature>`. Provide a ticket ID or create PR without one?" |
 
 ## Issue Linking
 
 ### Jira Ticket (Primary)
 
 **Auto-detect from branch name:**
-- `aubrian/UN-1234-add-auth` → Extracts `UN-1234`, adds to PR title and Jira section
-- `aubrian/PROJ-567-fix-crash` → Extracts `PROJ-567`
+- `UN-1234-add-auth` → Extracts `UN-1234`, adds to PR title and Jira section
+- `PROJ-567-fix-crash` → Extracts `PROJ-567`
 - Uses regex `[A-Z]+-[0-9]+` (works for any Jira project prefix)
 
 ### GitHub Issues (Secondary)
@@ -212,7 +212,7 @@ Closes #123
 → Adds "Closes #123" to PR description
 
 **Auto-detect from branch:**
-- `aubrian/UN-1234-issue-123-add-auth` → Links GitHub issue #123 in addition to Jira ticket
+- `UN-1234-issue-123-add-auth` → Links GitHub issue #123 in addition to Jira ticket
 
 ## Draft PR Workflow
 
