@@ -2,6 +2,7 @@
 name: jira
 description: Use when the user asks to "create a Jira ticket", "file a bug", "add a task", "create an issue", mentions "Jira", "JIRA", "ticket", or needs to create issue tracker tickets.
 argument-hint: "[bug|task] [title or description]"
+disable-model-invocation: true
 ---
 
 Create Jira tickets with intelligent context gathering from git history, code changes, and structured templates.

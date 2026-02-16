@@ -9,7 +9,11 @@
       "Bash(git push:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(chmod:*)",
-      "Bash(gh pr create --help:*)"
+      "Bash(gh pr create --help:*)",
+      "Bash(done)",
+      "Bash(git checkout:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr create:*)"
     ],
     "defaultMode": "plan"
   }
