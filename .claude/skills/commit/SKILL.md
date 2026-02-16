@@ -103,15 +103,21 @@ Rules:
 ### 4. Execute Commit
 
 ```bash
-# Stage specific files
+# Stage specific files (preferred - avoids sensitive files)
 git add <file1> <file2>
 
-# Or stage all changes
-git add -A
+# Avoid: git add -A or git add . (can include .env, credentials, large binaries)
 
-# Commit with message
-git commit -m "<message>"
+# Commit with message using HEREDOC for proper formatting
+git commit -m "$(cat <<'EOF'
+<message>
+EOF
+)"
 ```
+
+**Important:**
+- Always prefer staging specific files over `git add -A` or `git add .`
+- Use HEREDOC format for multi-line commit messages to ensure correct formatting
 
 ## Response Format
 

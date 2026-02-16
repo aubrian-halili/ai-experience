@@ -94,9 +94,6 @@ TICKET_ID=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
 
 ## Test plan
 <verification steps - infer from changes or ask user>
-
----
-Generated with Claude Code
 ```
 
 **Enhancements:**
@@ -117,14 +114,37 @@ git push -u origin $(git branch --show-current)
 ### 6. Create Pull Request
 
 ```bash
-# Standard PR
-gh pr create --title "<title>" --body "<description>"
+# Standard PR (use HEREDOC for body to ensure correct formatting)
+gh pr create --title "<title>" --body "$(cat <<'EOF'
+## Jira
+UN-1234
+
+## Summary
+- Bullet points from commits
+
+## Test plan
+- Verification steps
+EOF
+)"
 
 # Draft PR (when --draft argument provided)
-gh pr create --title "<title>" --body "<description>" --draft
+gh pr create --title "<title>" --body "$(cat <<'EOF'
+## Jira
+UN-1234
+
+## Summary
+- Bullet points from commits
+
+## Test plan
+- Verification steps
+EOF
+)" --draft
 
 # With specific base branch
-gh pr create --title "<title>" --body "<description>" --base <target-branch>
+gh pr create --title "<title>" --body "$(cat <<'EOF'
+...
+EOF
+)" --base <target-branch>
 ```
 
 ## Response Format
