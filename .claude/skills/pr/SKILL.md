@@ -190,7 +190,7 @@ Use `/review 123` to self-review before requesting others.
 | Push rejected | "Push rejected. Try `git pull --rebase origin <branch>` to sync" |
 | No gh CLI | "GitHub CLI (gh) not found. Install from https://cli.github.com/" |
 | Not authenticated | "Not authenticated with GitHub. Run `gh auth login`" |
-| No ticket ID in branch | Prompt user: "No Jira ticket ID found in branch name. Expected format: `UN-XXXX-<feature>`. Provide a ticket ID or create PR without one?" |
+| No ticket ID in branch | Prompt user: "No Jira ticket ID found in branch name. Expected format: `UN-XXXX-<feature>`. Please provide a ticket ID to continue." Never create PR without ticket ID. |
 
 ## Issue Linking
 

@@ -25,8 +25,29 @@ Generate semantic commit messages, manage branches, and maintain changelog follo
 ## Git Conventions Reference
 
 From CLAUDE.md:
-- **Commits**: `UN-XXXX feat:`, `UN-XXXX fix:`, `UN-XXXX docs:`, `UN-XXXX refactor:`, `UN-XXXX test:`, `UN-XXXX chore:`
-- **Branches**: `UN-XXXX-<feature-description>`
+
+### Branch Naming
+
+Branches must be prefixed with the Jira ticket ID:
+
+`<JIRA-ID>-<feature-description>`
+
+Example: `UN-1234-add-user-auth`
+
+- Always ask for the Jira ticket ID before creating a new branch
+- Never create a branch without the Jira ticket ID prefix
+
+### Commit Messages
+
+Every commit message must start with the Jira ticket ID:
+
+`<JIRA-ID> <type>(<scope>): <description>`
+
+- Extract the Jira ticket ID from the current branch name — do not ask the user for it
+- If the branch name does not contain a Jira ticket ID, ask for one before committing
+- Never create a commit without the Jira ticket ID prefix
+
+**Types**: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
 
 ## Process
 
@@ -147,8 +168,14 @@ If you prefer a different style:
 
 ### Creating Feature Branches
 
+**Important:** Always ask the user for the Jira ticket ID before creating a branch. Never create a branch without the ticket ID prefix.
+
 ```bash
-# Format: UN-XXXX-<feature-description>
+# Format: <JIRA-ID>-<feature-description>
+# Example: UN-1234-add-user-preferences
+
+# First, ask: "What is the Jira ticket ID for this branch?"
+# Then create the branch with the ticket ID prefix:
 git checkout -b UN-1234-add-user-preferences
 
 # Or from a specific base
@@ -230,7 +257,7 @@ git rebase -i HEAD~3
 | Mixed change types | Recommend splitting into multiple commits |
 | Unclear scope | Ask for clarification or suggest based on files |
 | Large changeset | Recommend breaking into atomic commits |
-| No ticket ID in branch | Prompt user: "No Jira ticket ID found in branch name. Expected format: `UN-XXXX-<feature>`. Provide a ticket ID or continue without one?" |
+| No ticket ID in branch | Prompt user: "No Jira ticket ID found in branch name. Expected format: `UN-XXXX-<feature>`. Please provide a ticket ID to continue." Never commit without ticket ID. |
 
 ## Quick Reference
 
