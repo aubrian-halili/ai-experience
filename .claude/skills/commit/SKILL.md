@@ -2,6 +2,7 @@
 name: commit
 description: Use when the user asks to "commit changes", "create a commit", "commit this", mentions "git commit", "commit message", or needs help with semantic commits, branch management, or changelog generation.
 argument-hint: "[optional commit message or scope]"
+disable-model-invocation: true
 ---
 
 Generate semantic commit messages, manage branches, and maintain changelog following project conventions.
@@ -21,6 +22,7 @@ Generate semantic commit messages, manage branches, and maintain changelog follo
 - Reviewing changes before commit → use `/review`
 - Creating a pull request → use `/pr`
 - Understanding what changed → check `git diff`
+- Committing directly to main/master → create a feature branch first
 
 ## Git Conventions Reference
 
@@ -50,6 +52,25 @@ Every commit message must start with the Jira ticket ID:
 **Types**: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
 
 ## Process
+
+### 0. Check Current Branch
+
+```bash
+# Get current branch name
+BRANCH=$(git branch --show-current)
+
+# Check if on protected branch
+if [[ "$BRANCH" == "main" || "$BRANCH" == "master" ]]; then
+  echo "⚠️  Cannot commit directly to $BRANCH branch"
+  echo "Create a new branch first: git checkout -b <JIRA-ID>-<feature-description>"
+  exit 1
+fi
+```
+
+**Important:** Direct commits to `main` or `master` are not allowed. If on a protected branch:
+1. Ask for the Jira ticket ID
+2. Create a new branch with format: `<JIRA-ID>-<feature-description>`
+3. Then proceed with the commit
 
 ### 1. Analyze Changes
 
@@ -170,6 +191,22 @@ If you prefer a different style:
 2. `UN-1234 feat(users): implement preferences management`
 ```
 
+## Protected Branches
+
+### Policy
+- **Never commit directly to `main` or `master`**
+- Always work on feature branches
+- Feature branches must include Jira ticket ID prefix
+
+### Workflow When on Protected Branch
+
+If the current branch is `main` or `master`:
+
+1. **Stop** — do not commit
+2. **Ask** for Jira ticket ID and feature description
+3. **Create** new branch: `git checkout -b <JIRA-ID>-<feature-description>`
+4. **Then** proceed with staging and committing
+
 ## Branch Management
 
 ### Creating Feature Branches
@@ -264,6 +301,7 @@ git rebase -i HEAD~3
 | Unclear scope | Ask for clarification or suggest based on files |
 | Large changeset | Recommend breaking into atomic commits |
 | No ticket ID in branch | Prompt user: "No Jira ticket ID found in branch name. Expected format: `UN-XXXX-<feature>`. Please provide a ticket ID to continue." Never commit without ticket ID. |
+| On main/master branch | Prompt: "Direct commits to `main`/`master` are not allowed. Please provide a Jira ticket ID and feature description to create a new branch." Then create branch with `git checkout -b <JIRA-ID>-<feature>` before committing. |
 
 ## Quick Reference
 
