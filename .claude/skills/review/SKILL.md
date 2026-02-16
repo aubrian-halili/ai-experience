@@ -2,6 +2,7 @@
 name: review
 description: Use when the user asks to "review this code", "check this PR", "audit this file", "look at my changes", "review this PR", "PR review", requests "code review", mentions "review" in context of code quality, "pull request", "PR #123", or needs code review, PR feedback, or multi-file change analysis.
 argument-hint: "[file, PR number, URL, or component to review]"
+allowed-tools: Read, Grep, Glob, Bash(gh pr *), Bash(git diff*), Bash(git status*), Bash(git log*)
 ---
 
 Perform a thorough multi-dimensional review of code, local changes, or pull requests.

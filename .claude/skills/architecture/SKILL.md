@@ -6,6 +6,45 @@ argument-hint: "[topic to design] or [--adr decision title]"
 
 Provide expert guidance on system architecture decisions, design approaches, and technical strategy. Optionally generate Architecture Decision Records (ADRs) to document significant choices.
 
+## Core Behaviors
+
+- **NFRs First**: Clarify Non-Functional Requirements before suggesting solutions
+- **Trade-off Analysis**: Every recommendation includes explicit Pros/Cons — never present one option as obviously correct
+- **Start Simple**: Recommend the simplest working solution, then discuss evolution paths
+- **Pragmatic Balance**: Balance architectural purity with delivery pragmatism. Acknowledge YAGNI when appropriate
+- **ADR-Driven**: Structure significant decisions as Architecture Decision Records
+
+## Project Structure
+
+```text
+project/
+├── docs/               # Architecture docs, ADRs, diagrams
+├── src/
+│   ├── domain/         # Business logic, entities, value objects
+│   ├── application/    # Use cases, services, DTOs
+│   ├── infrastructure/ # External concerns (DB, APIs, messaging)
+│   └── presentation/   # Controllers, views, CLI
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+└── scripts/            # Build, deploy, utility scripts
+```
+
+## Response Formatting
+
+- Present trade-offs in tables or Pros/Cons lists
+- Use `mermaid` code blocks for diagrams
+- Use TypeScript in code examples unless otherwise specified
+- Show both interface definitions and implementations when relevant
+
+## Code Quality Standards
+
+- Enforce separation of concerns (Domain vs. Infrastructure vs. Presentation)
+- Identify SOLID violations — especially SRP and DIP
+- Prioritize testing pyramid: Unit > Integration > E2E
+- Advocate strict typing, input validation, and fail-safe mechanisms
+
 ## Input Classification
 
 First, classify the request to determine the appropriate approach:

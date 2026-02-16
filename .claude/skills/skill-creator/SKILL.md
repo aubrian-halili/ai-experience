@@ -108,6 +108,13 @@ Test the skill with real invocations and refine based on:
 | `name` | string | Skill identifier (kebab-case) | Yes |
 | `description` | string | Trigger phrases and purpose | Yes |
 | `argument-hint` | string | Placeholder shown to user | Optional |
+| `disable-model-invocation` | boolean | Prevent Claude auto-triggering (use for action skills like `/commit`, `/pr`) | Optional |
+| `user-invocable` | boolean | Hide from `/` menu if false (for internal/helper skills) | Optional |
+| `allowed-tools` | string | Restrict available tools (e.g., `Read, Grep, Glob, Bash(gh pr *)`) | Optional |
+| `model` | string | Override model for skill (e.g., `haiku`, `sonnet`, `opus`) | Optional |
+| `context` | string | Run in forked subagent if set to `fork` | Optional |
+| `agent` | string | Subagent type when context is forked (e.g., `Explore`, `Plan`) | Optional |
+| `hooks` | object | Skill-scoped hooks configuration | Optional |
 
 ## Error Handling
 
