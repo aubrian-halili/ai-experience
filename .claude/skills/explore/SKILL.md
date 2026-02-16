@@ -4,6 +4,7 @@ description: Use when the user asks "how does X work", "explain this feature", "
 argument-hint: "[feature, module, or flow to investigate]"
 context: fork
 agent: Explore
+allowed-tools: Read, Grep, Glob
 ---
 
 Systematically explore and explain how existing functionality works in the codebase.
