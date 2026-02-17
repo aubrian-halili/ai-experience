@@ -22,6 +22,8 @@ argument-hint: "[argument placeholder]"
 
 ## Process
 
+Use `$ARGUMENTS` if provided ([argument description]).
+
 ### 1. [First Step Name]
 
 <!-- What to do first -->
@@ -32,15 +34,7 @@ argument-hint: "[argument placeholder]"
 
 ### 3. [Third Step Name]
 
-<!-- Continue as needed -->
-
-## Response Format
-
-<!-- Describe expected output structure -->
-
-```
-[Template or example of expected output]
-```
+<!-- Continue as needed. Reference `@references/templates.md` for detailed response format templates if needed. -->
 
 ## Error Handling
 

@@ -21,13 +21,6 @@ Create Jira tickets with intelligent context gathering from git history and stru
 - Creating a PR after implementation → use `/pr`
 - Committing changes with ticket reference → use `/commit`
 
-## Input Classification
-
-| Keywords | Inferred Type |
-|----------|--------------|
-| error, bug, broken, crash, fail, regression, not working | Bug |
-| implement, refactor, update, configure, task, add, create | Task |
-
 ## Process
 
 ### 1. Pre-flight Checks
@@ -47,58 +40,25 @@ DIFF_STAT=$(git diff --stat HEAD~5..HEAD 2>/dev/null | tail -1)
 - Unclear ticket type → Ask user to clarify (bug or task)
 - Missing required fields → Prompt for specific information
 
-### 2. Classify Ticket Type
+### 2. Classify, Generate, and Create
 
-If not explicitly specified, infer from:
-1. User's argument (`/jira bug` or `/jira task`)
-2. Keywords in description
-3. Context clues from git history
+Use `$ARGUMENTS` if provided (handles ticket type and/or title).
 
-### 3. Generate Content
+**Classify ticket type** (priority order):
+1. User-provided type (`/jira bug` or `/jira task`)
+2. Keywords: `error, bug, broken, crash, fail, regression, not working` → Bug
+3. Keywords: `implement, refactor, update, configure, task, add, create` → Task
+4. Context clues from git history (commit types, diff patterns)
 
-Apply template from `@references/templates.md`:
-- **Bug**: Steps to reproduce, expected/actual behavior, environment
-- **Task**: Implementation details, acceptance criteria, dependencies
+**Generate content** — Apply template from `@references/templates.md`:
+- **Bug**: Steps to reproduce, expected/actual behavior, error messages
+- **Task**: Requirements, acceptance criteria, technical approach, dependencies
 
-### 4. Create Ticket
+**Create ticket:**
+- **MCP available**: Call `mcp__atlassian__create_issue` with project key (from branch or ask), issue type, summary, and formatted description
+- **MCP unavailable**: Generate copy-ready formatted content for manual entry
 
-**MCP available:**
-```
-mcp__atlassian__create_issue with:
-- Project key (from branch or ask user)
-- Issue type (Bug/Task)
-- Summary (title)
-- Description (formatted content)
-```
-
-**MCP unavailable:**
-Generate copy-ready content for manual entry.
-
-## Response Format
-
-```markdown
-## Jira Ticket [Created | Content]
-
-**Key**: PROJECT-123 (or "Manual entry required")
-**Type**: Bug | Task
-**Summary**: [Ticket title]
-**URL**: https://company.atlassian.net/browse/PROJECT-123
-
-### Description Preview
-[First 200 chars...]
-
-### Context Used
-- Branch: `UN-1234-feature-name`
-- Commits: 3 analyzed
-- Files: 5 changed
-
-### Next Steps
-1. [Add details | Copy to Jira]
-2. Set assignee and sprint
-3. Link related tickets
-
-Reference in commits: `git commit -m "PROJECT-123 feat: description"`
-```
+Show the user: ticket key/URL (if MCP), type, summary, and next steps.
 
 ## Argument Handling
 
@@ -108,11 +68,6 @@ Reference in commits: `git commit -m "PROJECT-123 feat: description"`
 | `bug` / `task` | Create with specified type |
 | `bug <title>` / `task <title>` | Create with type and title |
 
-**Examples:**
-- `/jira` → Gather context, ask for details
-- `/jira bug Login fails on mobile` → Create bug with title
-- `/jira task Implement API caching` → Create task with title
-
 ## Error Handling
 
 | Scenario | Response |
@@ -120,7 +75,6 @@ Reference in commits: `git commit -m "PROJECT-123 feat: description"`
 | MCP not available | Fall back to content generation |
 | Authentication error | "Configure Atlassian MCP credentials" |
 | Unknown project | Prompt for project key |
-| Unclear ticket type | Ask: "Bug or task?" |
 | API error | Provide content for manual entry |
 | No git context | Proceed with user input only |
 

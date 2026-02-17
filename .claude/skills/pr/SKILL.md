@@ -40,40 +40,30 @@ EXISTING_PR=$(gh pr list --head "$BRANCH" --json number,url --jq '.[0].url // em
 - PR already exists → Show existing PR URL
 - No ticket ID in branch → Ask user for ticket ID
 
-### 2. Generate PR Content
+### 2. Create PR
 
-**Title** (priority order):
-1. User-provided argument (auto-prefix ticket ID if missing)
+Use `$ARGUMENTS` if provided (handles `--draft`, custom title, or target branch).
+
+**Title generation** (priority order):
+1. User-provided title (auto-prefix ticket ID if missing)
 2. Single commit message (if only one commit)
 3. Branch name converted: `UN-1234-add-auth` → `UN-1234 Add auth`
 
-**Title rules:** Max 72 chars, imperative mood, no period, ticket ID prefix
+Title format: Max 72 chars, ticket ID prefix.
 
-**Description template:**
-```markdown
-## Jira
-<ticket-id from branch>
-
-## Summary
-<bullet points from commit messages>
-
-## Test plan
-<verification steps>
-```
-
-### 3. Push and Create PR
+**Push and create:**
 
 ```bash
 # Push branch if needed
 git push -u origin $(git branch --show-current)
 
-# Create PR (use HEREDOC for body)
+# Create PR with HEREDOC for body
 gh pr create --title "<TICKET-ID> <title>" --body "$(cat <<'EOF'
 ## Jira
-UN-1234
+<TICKET-ID>
 
 ## Summary
-- Bullet points from commits
+- Bullet points from commit messages
 
 ## Test plan
 - Verification steps
@@ -81,29 +71,9 @@ EOF
 )"
 ```
 
-**Variations:**
-- Add `--draft` for work-in-progress
-- Add `--base <branch>` for non-main target
+Add `--draft` for work-in-progress, `--base <branch>` for non-main target.
 
-## Response Format
-
-```markdown
-## Pull Request Created
-
-**Ticket**: UN-1234
-**Branch**: `UN-1234-add-user-auth` → `main`
-**Title**: UN-1234 Add user authentication flow
-**URL**: https://github.com/owner/repo/pull/123
-
-### Summary
-- Add login endpoint with JWT tokens
-- Implement password hashing with bcrypt
-
-### Next Steps
-1. Wait for CI checks
-2. Request review
-3. Address feedback
-```
+Show the user: ticket, branch, title, URL, and next steps.
 
 ## Argument Handling
 
@@ -118,34 +88,8 @@ EOF
 
 | Scenario | Response |
 |----------|----------|
-| On main/master | "Cannot create PR from default branch" |
-| No commits ahead | "No commits. Use `/commit` first" |
-| Uncommitted changes | "Commit or stash changes first" |
-| PR already exists | Show existing PR URL |
 | Push rejected | "Run `git pull --rebase origin <branch>`" |
 | No gh CLI | "Install from https://cli.github.com/" |
-| No ticket ID | "Provide Jira ticket ID to continue" |
-
-## Issue Linking
-
-**Jira (auto-detected from branch):**
-- `UN-1234-add-auth` → Extracts `UN-1234` for title and Jira section
-
-**GitHub issues (auto-detected from commits):**
-- `Closes #123` in commit → Added to PR description
-
-## Quick Reference
-
-```bash
-# Basic PR
-/pr
-
-# Draft PR
-/pr --draft
-
-# Custom title
-/pr "Add OAuth2 support"
-```
 
 ## Related Skills
 
