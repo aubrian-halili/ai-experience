@@ -14,36 +14,21 @@ Provide expert guidance on system architecture decisions, design approaches, and
 - **Pragmatic Balance**: Balance architectural purity with delivery pragmatism. Acknowledge YAGNI when appropriate
 - **ADR-Driven**: Structure significant decisions as Architecture Decision Records
 
-## Project Structure
+## When to Use
 
-```text
-project/
-├── docs/               # Architecture docs, ADRs, diagrams
-├── src/
-│   ├── domain/         # Business logic, entities, value objects
-│   ├── application/    # Use cases, services, DTOs
-│   ├── infrastructure/ # External concerns (DB, APIs, messaging)
-│   └── presentation/   # Controllers, views, CLI
-├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── e2e/
-└── scripts/            # Build, deploy, utility scripts
-```
+### This Skill Is For
 
-## Response Formatting
+- Designing new systems or major features
+- Evaluating architectural alternatives with trade-offs
+- Creating Architecture Decision Records (ADRs)
+- Scaling and performance optimization strategies
 
-- Present trade-offs in tables or Pros/Cons lists
-- Use `mermaid` code blocks for diagrams
-- Use TypeScript in code examples unless otherwise specified
-- Show both interface definitions and implementations when relevant
+### Use a Different Approach When
 
-## Code Quality Standards
-
-- Enforce separation of concerns (Domain vs. Infrastructure vs. Presentation)
-- Identify SOLID violations — especially SRP and DIP
-- Prioritize testing pyramid: Unit > Integration > E2E
-- Advocate strict typing, input validation, and fail-safe mechanisms
+- Implementing specific design patterns → use `/patterns`
+- Reviewing existing code quality → use `/review`
+- Understanding current system first → use `/explore`
+- Creating visual diagrams only → use `/diagram`
 
 ## Input Classification
 
@@ -62,44 +47,21 @@ First, classify the request to determine the appropriate approach:
 
 ### For Architecture Design
 
-1. **Analyze Existing Patterns**
-   - Find similar features or modules in codebase
-   - Document established conventions
-   - Identify technology stack and abstraction layers
-   - Note relevant CLAUDE.md guidelines
+Use `$ARGUMENTS` if provided (topic or system to design).
 
-2. **Clarify Requirements**
-   - Functional requirements (what the system does)
-   - Non-functional requirements (scalability, latency, availability)
-   - Constraints (budget, timeline, team skills, existing systems)
+1. **Analyze Existing Patterns** — Find similar features, document conventions, identify stack and layers
+2. **Clarify Requirements** — Functional requirements, non-functional requirements (scalability, latency, availability), constraints
+3. **Estimate Scale** — Users (DAU/MAU/peak), data (storage/growth/retention), traffic (QPS/read-write ratio/burst patterns)
+4. **Define Components** — Core services, data stores, caching, external integrations, interface definitions
+5. **Design Interactions** — Sync vs async, API contracts, error handling and retry strategies
+6. **Address Cross-Cutting Concerns** — Auth/authz, logging/monitoring/alerting, security/compliance
+7. **Create Implementation Blueprint** — Map components to files, define build sequence, specify verification
 
-3. **Estimate Scale**
-   - Users: DAU, MAU, peak concurrent
-   - Data: Storage size, growth rate, retention
-   - Traffic: QPS, read/write ratio, burst patterns
-
-4. **Define Components**
-   - Core services and their responsibilities
-   - Data stores and caching layers
-   - External integrations and APIs
-   - Interface definitions and contracts
-
-5. **Design Interactions**
-   - Synchronous vs asynchronous communication
-   - API contracts and protocols
-   - Error handling and retry strategies
-
-6. **Address Cross-Cutting Concerns**
-   - Authentication and authorization
-   - Logging, monitoring, alerting
-   - Security and compliance
-
-7. **Create Implementation Blueprint**
-   - Map components to specific files
-   - Define build sequence with dependencies
-   - Specify verification approach
+See `@references/response-templates.md` for detailed output structure.
 
 ### For ADR Generation
+
+Use `$ARGUMENTS` with `--adr` flag or decision title.
 
 1. Ask for decision context if not provided
 2. Identify decision drivers (what forces are at play?)
@@ -107,6 +69,9 @@ First, classify the request to determine the appropriate approach:
 4. Recommend a decision with clear rationale
 5. Document consequences (positive, negative, risks)
 6. Write ADR to `docs/architecture/decisions/adr-NNN-title.md`
+
+See `@references/response-templates.md` for ADR format.
+See `@references/adr-guidelines.md` for when to write ADRs and status definitions.
 
 ## Architecture Patterns
 
@@ -117,213 +82,15 @@ First, classify the request to determine the appropriate approach:
 | Event-Driven | Async workflows, audit trails, temporal decoupling | Loose coupling vs eventual consistency |
 | Serverless | Variable workloads, cost optimization | Reduced ops burden vs vendor lock-in |
 
-## Response Format
-
-### For Architecture Design
-
-```markdown
-## Architecture Recommendation
-
-### Context
-[Understanding of requirements and constraints]
-
-### Existing Patterns Analysis
-[Summary of codebase conventions and patterns to follow]
-
-### Proposed Architecture
-[High-level description with mermaid diagram]
-
-```mermaid
-graph TD
-    A[Client] --> B[API Gateway]
-    B --> C[Service]
-    C --> D[(Database)]
-```
-
-### Key Components
-| Component | Responsibility | Technology Options |
-|-----------|---------------|-------------------|
-
-### Trade-offs
-| Decision | Pros | Cons |
-|----------|------|------|
-
-### Risks & Mitigations
-- Risk: [Description] → Mitigation: [Approach]
-
-### Implementation Blueprint
-
-#### Files to Create
-| File | Purpose | Dependencies |
-|------|---------|--------------|
-| `src/domain/[entity].ts` | [What it defines] | None |
-| `src/application/[service].ts` | [What it does] | `[entity].ts` |
-
-#### Files to Modify
-| File | Change | Reason |
-|------|--------|--------|
-
-#### Component Interfaces
-[TypeScript interface definitions]
-
-### Build Sequence
-
-- [ ] **Phase 1: Domain Layer**
-  - [ ] Create entity types
-  - [ ] Define value objects
-  - [ ] Verify: Unit tests pass
-
-- [ ] **Phase 2: Application Layer**
-  - [ ] Implement service interfaces
-  - [ ] Create DTOs
-  - [ ] Verify: Integration tests pass
-
-- [ ] **Phase 3: Infrastructure Layer**
-  - [ ] Implement repositories
-  - [ ] Configure external services
-  - [ ] Verify: E2E tests pass
-
-### Critical Details Checklist
-
-- [ ] Error handling strategy defined
-- [ ] State management approach chosen
-- [ ] Testing strategy covers pyramid
-- [ ] Performance considerations addressed
-- [ ] Security requirements met
-
-### Next Steps
-1. [Immediate action]
-2. [Follow-up action]
-```
-
-### For ADR (--adr flag)
-
-```markdown
-# ADR-[NNN]: [Decision Title]
-
-**Status:** Proposed | Accepted | Deprecated | Superseded
-**Date:** YYYY-MM-DD
-**Author:** [Name]
-
-## Context
-
-[What is the issue that we're seeing that is motivating this decision?]
-
-## Decision Drivers
-
-- [Driver 1: e.g., scalability requirement]
-- [Driver 2: e.g., team expertise]
-- [Driver 3: e.g., time constraint]
-
-## Considered Options
-
-### Option 1: [Name]
-
-[Description of the option]
-
-**Pros:**
-- Pro 1
-- Pro 2
-
-**Cons:**
-- Con 1
-- Con 2
-
-### Option 2: [Name]
-
-[Description]
-
-**Pros:**
-- Pro 1
-
-**Cons:**
-- Con 1
-
-### Option 3: [Name]
-
-[Description]
-
-**Pros:**
-- Pro 1
-
-**Cons:**
-- Con 1
-
-## Decision
-
-We will use **[Option X]** because [rationale].
-
-## Consequences
-
-### Positive
-- [Benefit 1]
-- [Benefit 2]
-
-### Negative
-- [Drawback 1]
-- [Drawback 2]
-
-### Risks
-- [Risk 1]: [Mitigation]
-
-## Related Decisions
-
-- [Link to related ADR if applicable]
-
-## References
-
-- [Link to relevant documentation]
-```
-
-## ADR Guidelines
-
-### When to Write an ADR
-
-**Write one when:**
-- Choosing between multiple valid technical approaches
-- Adopting or changing frameworks/libraries
-- Defining API contracts or data formats
-- Establishing coding standards or patterns
-- Making infrastructure decisions
-- Changing system architecture
-
-**Skip when:**
-- Trivial decisions easily reversed
-- Standard practices with no alternatives
-- Bug fixes or routine maintenance
-
-### ADR Statuses
-
-| Status | Meaning |
-|--------|---------|
-| **Proposed** | Under discussion, not yet accepted |
-| **Accepted** | Decision made and in effect |
-| **Deprecated** | No longer applies, kept for history |
-| **Superseded** | Replaced by a newer ADR |
-
-### File Organization
-
-```text
-docs/architecture/decisions/
-├── README.md
-├── adr-001-use-typescript.md
-├── adr-002-api-versioning-strategy.md
-└── adr-003-database-selection.md
-```
-
 ## Error Handling
 
-When analysis is incomplete or uncertain:
-
-1. **Partial Results**: Present what was designed with clear `[Incomplete]` markers
-2. **Confidence Flags**: Mark recommendations as `[High Confidence]` or `[Needs Verification]`
-3. **Assumption Documentation**: Explicitly list assumptions that could invalidate the design
-4. **Fallback Strategy**: If codebase exploration fails, proceed with stated assumptions
-
-For ADRs:
-1. **Partial Results**: Create ADR with `[TBD]` markers for sections needing input
-2. **Draft Status**: Use `Proposed` status until all sections are complete
-3. **Missing Context**: Explicitly list questions that need answers
+| Scenario | Response |
+|----------|----------|
+| Incomplete analysis | Present partial results with `[Incomplete]` markers |
+| Uncertain recommendation | Mark as `[High Confidence]` or `[Needs Verification]` |
+| Missing information | Explicitly list assumptions that could invalidate design |
+| Codebase exploration fails | Proceed with stated assumptions, document fallback strategy |
+| Partial ADR | Create with `[TBD]` markers and `Proposed` status, list questions |
 
 Never silently skip sections—surface gaps and limitations explicitly.
 

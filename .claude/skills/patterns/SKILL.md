@@ -6,7 +6,25 @@ argument-hint: "[problem or pattern name]"
 
 Provide guidance on selecting and implementing design patterns for specific problems.
 
+## When to Use
+
+### This Skill Is For
+
+- Recommending design patterns for specific problems
+- Explaining and implementing specific patterns
+- Comparing pattern alternatives with trade-offs
+- Refactoring code smells using patterns
+- Validating pattern usage
+
+### Use a Different Approach When
+
+- Reviewing code quality → use `/clean-code` or `/review`
+- Making architectural decisions → use `/architecture`
+- Understanding existing code → use `/explore`
+
 ## Input Classification
+
+Use `$ARGUMENTS` if provided (problem description or pattern name).
 
 First, classify the request to determine the appropriate response:
 
@@ -17,8 +35,6 @@ First, classify the request to determine the appropriate response:
 | **Comparison** | "Factory vs Builder", "which is better" | Compare patterns → highlight trade-offs → recommend based on context |
 | **Refactoring** | "replace these switch statements", "too many conditionals" | Identify smell → suggest pattern → show transformation |
 | **Validation** | "is this the right pattern", "am I using this correctly" | Review usage → validate or suggest improvements |
-
-Select the approach before proceeding—this shapes the response structure.
 
 ## Pattern Selection Guide
 
@@ -32,40 +48,14 @@ Select the approach before proceeding—this shapes the response structure.
 | External service calls | Circuit Breaker, Retry |
 | Distributed transactions | Saga, Outbox |
 
-## Categories
-
-**Creational**: Factory, Abstract Factory, Builder, Singleton, Prototype
-**Structural**: Adapter, Bridge, Composite, Decorator, Facade, Proxy
-**Behavioral**: Strategy, Observer, Command, State, Chain of Responsibility
-**Integration**: Circuit Breaker, Retry with Backoff, Bulkhead, Saga, Outbox
-**Concurrency**: Producer-Consumer, Thread Pool, Actor Model
-
-## Response Format
-
-For each pattern recommendation:
-
-1. **Problem** — What specific problem does the user face?
-2. **Pattern** — Which pattern fits and why?
-3. **Implementation** — Typed code example (TypeScript/Go/Java/Rust)
-4. **Trade-offs** — What are the costs of this pattern?
-5. **Alternatives** — What else was considered and why it was rejected?
-
-## Anti-Patterns to Flag
-
-- **God Object**: One class doing everything
-- **Golden Hammer**: Using one pattern for everything
-- **Premature Abstraction**: Patterns before proven need
-- **Copy-Paste Programming**: Duplication instead of abstraction
-- **Spaghetti Code**: No clear structure or flow
-
 ## Error Handling
 
-When analysis is incomplete or uncertain:
-
-1. **Partial Results**: Present what was identified with clear `[Incomplete]` markers
-2. **Confidence Flags**: Mark recommendations as `[High Confidence]` or `[Needs Verification]`
-3. **Context Gaps**: If codebase context is missing, state assumptions explicitly
-4. **Alternative Paths**: If primary pattern recommendation is uncertain, present alternatives with trade-offs
+| Scenario | Response |
+|----------|----------|
+| Partial analysis | Present findings with clear `[Incomplete]` markers |
+| Uncertain recommendation | Mark as `[High Confidence]` or `[Needs Verification]` |
+| Missing context | State assumptions explicitly |
+| Multiple valid options | Present alternatives with trade-offs, let user decide |
 
 Never silently commit to a pattern—surface uncertainty and let the user decide.
 
@@ -75,6 +65,6 @@ Never silently commit to a pattern—surface uncertainty and let the user decide
 |-----------------|----------------|------|
 | `/patterns` | `/clean-code` | Pattern implementation needs quality review |
 | `/patterns` | `/architecture` | Pattern choice has broader architectural implications |
-| `/patterns` | `/adr` | Pattern decision should be documented |
+| `/patterns` | `/architecture --adr` | Pattern decision should be documented |
 | `/patterns` | `/diagram` | Pattern structure needs visualization |
 | `/patterns` | `/review` | Existing pattern usage needs evaluation |

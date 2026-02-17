@@ -9,6 +9,21 @@ allowed-tools: Read, Grep, Glob
 
 Systematically explore and explain how existing functionality works in the codebase.
 
+## When to Use
+
+### This Skill Is For
+
+- Understanding how existing features and flows work end-to-end
+- Tracing execution paths through the codebase
+- Mapping component interactions and dependencies
+- Investigating module structure and design patterns
+
+### Use a Different Approach When
+
+- Visualizing architecture → use `/diagram`
+- Reviewing code quality → use `/review` or `/clean-code`
+- Designing new architecture → use `/architecture`
+
 ## Process
 
 ### 1. Scope
@@ -35,56 +50,17 @@ Systematically explore and explain how existing functionality works in the codeb
 
 ### 4. Document
 
-Present findings using the response format below.
+Present findings with clear structure, file locations (`file:line`), and actionable observations.
 
-## Response Format
+## Output Principles
 
-```markdown
-## Exploration: [Feature/Functionality Name]
-
-### Overview
-[1-3 sentence summary]
-
-### Entry Points
-| Entry Point | Type | Location |
-|-------------|------|----------|
-| [Name] | [HTTP / Event / CLI / Cron] | `file:line` |
-
-### Execution Flow
-1. **[Step]** — `file:line`
-   - [What happens and why]
-
-### Key Components
-| Component | Responsibility | Location |
-|-----------|---------------|----------|
-| [Name] | [What it does] | `file:line` |
-
-### Data Flow
-[ASCII or mermaid diagram showing transformations and side effects]
-
-### Dependencies
-- **Internal**: `[Module]` — [purpose] (`file:line`)
-- **External**: `[Library/Service]` — [purpose]
-
-### Error Handling
-| Scenario | Strategy | Location |
-|----------|----------|----------|
-| [Case] | [What happens] | `file:line` |
-
-### Design Patterns Observed
-- **[Pattern]** — [where and why] (`file:line`)
-
-### Performance Considerations
-- [Bottlenecks, caching strategies, async patterns, query optimization]
-
-### Essential Files
-| File | Purpose |
-|------|---------|
-| `path/to/file` | [Why this file is critical to understand the feature] |
-
-### Observations
-- [Tech debt, implicit assumptions, undocumented edge cases]
-```
+- **Lead with overview** — 1-3 sentence summary before diving into details
+- **Show locations** — Use `file:line` format for all references
+- **Track data flow** — Visualize with diagrams where helpful
+- **Surface patterns** — Identify design patterns and architectural decisions
+- **Flag observations** — Tech debt, edge cases, implicit assumptions
+- **Essential files** — List critical files to understand the feature
+- **Use tables** — For structured information (entry points, components, dependencies)
 
 ## Exploration Strategies
 
@@ -109,12 +85,12 @@ Always maintain both contexts—don't lose sight of the broader goal when deep i
 
 ## Error Handling
 
-When exploration is incomplete or uncertain:
-
-1. **Partial Results**: Present what was found with clear `[Incomplete]` markers
-2. **Confidence Flags**: Mark sections as `[High Confidence]` or `[Needs Verification]`
-3. **Dead Ends**: Document paths that couldn't be traced and why
-4. **Scope Limitations**: Explicitly state what was NOT explored (e.g., external services, dynamic dispatch)
+| Scenario | Response |
+|----------|----------|
+| Partial results | Present findings with clear `[Incomplete]` markers |
+| Uncertain findings | Mark sections as `[High Confidence]` or `[Needs Verification]` |
+| Dead ends | Document paths that couldn't be traced and why |
+| Scope limited | Explicitly state what was NOT explored (e.g., external services, dynamic dispatch) |
 
 Never silently omit findings—surface limitations explicitly.
 
@@ -126,4 +102,4 @@ Never silently omit findings—surface limitations explicitly.
 | `/explore` | `/review` | Found issues that need formal review |
 | `/explore` | `/architecture` | Understanding suggests architectural improvements |
 | `/explore` | `/patterns` | Identified patterns need documentation or improvement |
-| `/explore` | `/adr` | Discovery warrants documenting a decision |
+| `/explore` | `/architecture --adr` | Discovery warrants documenting a decision |

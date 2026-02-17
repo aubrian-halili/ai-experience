@@ -7,7 +7,7 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 ```markdown
 ## Description
 
-[Brief description of the bug - what is happening]
+[Brief description of the bug]
 
 ## Steps to Reproduce
 
@@ -25,47 +25,13 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 
 ## Environment
 
-| Property | Value |
-|----------|-------|
-| OS | [e.g., macOS 14.0, Windows 11, Ubuntu 22.04] |
-| Browser | [e.g., Chrome 120, Safari 17] |
-| App Version | [e.g., v2.1.0, commit abc123] |
-| Node Version | [if applicable] |
-| Other | [any other relevant environment info] |
+[OS, browser/runtime, app version, relevant config]
 
-## Severity Assessment
-
-| Aspect | Assessment |
-|--------|------------|
-| Impact | [High/Medium/Low - how many users affected] |
-| Frequency | [Always/Sometimes/Rarely] |
-| Workaround | [Yes/No - is there a workaround available] |
-
-## Additional Context
-
-### Error Messages
+## Error Messages
 
 ```
-[Paste any error messages, stack traces, or logs here]
+[Error messages, stack traces, or logs]
 ```
-
-### Screenshots/Recordings
-
-[Attach or describe any visual evidence]
-
-### Related Information
-
-- Related tickets: [PROJ-XXX]
-- Related code: [file paths or links]
-- First noticed: [date or version]
-
-## Git Context
-
-- **Ticket ID**: `[extracted from branch, e.g., UN-1234]`
-- **Branch**: `[branch-name, e.g., UN-1234-fix-crash]`
-- **Recent commits**:
-  - [commit summary 1]
-  - [commit summary 2]
 
 ## Suggested Priority
 
@@ -81,7 +47,7 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 
 ## Background
 
-[Context and motivation for this task]
+[Context and motivation]
 
 ## Requirements
 
@@ -89,19 +55,15 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 
 - [ ] [Requirement 1]
 - [ ] [Requirement 2]
-- [ ] [Requirement 3]
 
 ### Non-Functional Requirements
 
-- [ ] [Performance requirement]
-- [ ] [Security requirement]
-- [ ] [Other NFR]
+- [ ] [Performance/security/other NFR]
 
 ## Acceptance Criteria
 
 - [ ] [Criterion 1 - specific, measurable]
 - [ ] [Criterion 2 - specific, measurable]
-- [ ] [Criterion 3 - specific, measurable]
 
 ## Technical Details
 
@@ -111,60 +73,21 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 
 ### Files to Modify
 
-| File | Change |
-|------|--------|
-| `path/to/file.ts` | [Description of change] |
-
-### Files to Create
-
-| File | Purpose |
-|------|---------|
-| `path/to/new/file.ts` | [Purpose] |
+[List key files and changes]
 
 ### Dependencies
 
-- [ ] [Dependency 1 - internal or external]
-- [ ] [Dependency 2]
-
-### API Changes
-
-[If applicable, describe API changes]
-
-```typescript
-// New endpoint or interface
-interface NewFeature {
-  // ...
-}
-```
+[Internal or external dependencies]
 
 ## Testing Requirements
 
-- [ ] Unit tests for [component]
-- [ ] Integration tests for [flow]
-- [ ] E2E tests for [scenario]
-
-## Documentation
-
-- [ ] Update README
-- [ ] Update API docs
-- [ ] Add inline code comments
-
-## Git Context
-
-- **Ticket ID**: `[extracted from branch, e.g., UN-1234]`
-- **Branch**: `[branch-name, e.g., UN-1234-implement-feature]`
-- **Recent commits**:
-  - [commit summary 1]
-  - [commit summary 2]
-- **Files changed**: [count] files
+- [ ] Unit tests
+- [ ] Integration tests
+- [ ] E2E tests (if needed)
 
 ## Suggested Priority
 
 [High/Medium/Low] - [Brief justification]
-
-## Estimated Scope
-
-[S/M/L/XL] - [Brief justification]
 ```
 
 ## Template Selection Guide
@@ -215,28 +138,14 @@ interface NewFeature {
 
 When git context is available, auto-populate:
 
-### From Branch Name
+**From branch name**: Extract ticket ID and title from pattern `PROJ-123-description`
 
-| Branch Pattern | Extraction |
-|---------------|------------|
-| `UN-1234-add-user-auth` | Ticket: UN-1234, Title: "Add user auth" |
-| `UN-5678-fix-login-redirect` | Ticket: UN-5678, Type: Bug, Title: "Fix login redirect" |
-| `PROJ-123-implement-caching` | Ticket: PROJ-123, Title: "Implement caching" |
-| `UN-9012-refactor-auth-flow` | Ticket: UN-9012, Title: "Refactor auth flow" |
+**From commits**:
+- `fix:` prefix → Bug type
+- `feat:` prefix → Task type
+- `Closes #123` → Related issue reference
 
-### From Commits
-
-| Commit Pattern | Extraction |
-|---------------|------------|
-| `UN-1234 feat: add login endpoint` | Ticket: UN-1234, Title basis, Type: Task |
-| `UN-1234 fix: resolve null pointer` | Ticket: UN-1234, Title basis, Type: Bug |
-| `Closes #123` or `Fixes #123` | Related GitHub issue reference |
-| `PROJ-456` prefix in message | Related Jira ticket reference |
-
-### From Diff
-
-| Change Pattern | Inference |
-|---------------|-----------|
-| New test files added | Include in Testing section |
-| Config files changed | Note in Environment/Technical Details |
-| Error handling added | May indicate bug fix context |
+**From diff**:
+- New tests → Testing section
+- Config changes → Environment/Technical Details
+- Error handling → Bug fix context

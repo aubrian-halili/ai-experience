@@ -13,7 +13,10 @@
       "Bash(done)",
       "Bash(git checkout:*)",
       "Bash(gh pr list:*)",
-      "Bash(gh pr create:*)"
+      "Bash(gh pr create:*)",
+      "WebFetch(domain:www.claude.com)",
+      "Bash(wc -l:*)",
+      "Bash(find:*)"
     ],
     "defaultMode": "plan"
   }

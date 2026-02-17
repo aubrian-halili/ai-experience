@@ -6,6 +6,20 @@ argument-hint: "[system or flow to diagram]"
 
 Generate architecture diagrams using Mermaid syntax based on the user's description or codebase.
 
+## When to Use
+
+### This Skill Is For
+
+- Visualizing system architecture and component interactions
+- Creating flowcharts for process workflows
+- Generating data models (ERD) and class diagrams
+
+### Use a Different Approach When
+
+- Understanding system first → use `/explore`
+- Designing architecture → use `/architecture`
+- Need implementation details beyond visualization → use `/patterns`
+
 ## Diagram Selection
 
 | Need | Diagram Type |
@@ -47,12 +61,12 @@ Generate architecture diagrams using Mermaid syntax based on the user's descript
 
 ## Error Handling
 
-When diagram generation is incomplete or uncertain:
-
-1. **Partial Results**: Generate what's known with `[Incomplete]` markers for uncertain areas
-2. **Confidence Flags**: Add notes to diagram sections marked `[Needs Verification]`
-3. **Scope Limitations**: Explicitly state what was NOT included and why
-4. **Placeholder Nodes**: Use dashed lines or `???` labels for unknown components
+| Scenario | Response |
+|----------|----------|
+| Incomplete information | Generate what's known with `[Incomplete]` markers |
+| Uncertain components | Add `[Needs Verification]` notes to diagram sections |
+| Scope limited | Explicitly state what was NOT included and why |
+| Unknown components | Use dashed lines or `???` labels for placeholders |
 
 Example for incomplete information:
 ```mermaid
@@ -70,5 +84,5 @@ Never silently omit components—surface gaps visually.
 |-----------------|----------------|------|
 | `/diagram` | `/explore` | Need to understand components before visualizing |
 | `/diagram` | `/architecture` | Diagram reveals architectural improvements |
-| `/diagram` | `/adr` | Diagram documents an important decision |
+| `/diagram` | `/architecture --adr` | Diagram documents an important decision |
 | `/diagram` | `/patterns` | Diagram shows pattern implementation |
