@@ -2,6 +2,7 @@
 name: architecture
 description: Use when the user asks "how should I design", "what's the best architecture", "how do I scale", "document this decision", "create an ADR", mentions "system design", "scaling", "microservices vs monolith", "architecture decision record", or needs help with technical decisions, infrastructure planning, or documenting architectural choices.
 argument-hint: "[topic to design] or [--adr decision title]"
+allowed-tools: Read, Grep, Glob, Write
 ---
 
 Provide expert guidance on system architecture decisions, design approaches, and technical strategy. Optionally generate Architecture Decision Records (ADRs) to document significant choices.
@@ -96,10 +97,10 @@ Never silently skip sections—surface gaps and limitations explicitly.
 
 ## Related Skills
 
-| After This Skill | Consider Using | When |
-|-----------------|----------------|------|
-| `/architecture` | `/patterns` | Need specific pattern implementation |
-| `/architecture` | `/diagram` | Visual representation would clarify |
-| `/architecture` | `/review` | Existing code needs evaluation |
-| `/architecture` | `/explore` | Need to understand existing system first |
-| `/architecture` | `/docs` | Need detailed documentation beyond ADR |
+| Skill | When to Use Instead |
+|-------|---------------------|
+| `/patterns` | Need specific pattern implementation |
+| `/diagram` | Visual representation would clarify |
+| `/review` | Existing code needs evaluation |
+| `/explore` | Need to understand existing system first |
+| `/docs` | Need detailed documentation beyond ADR |

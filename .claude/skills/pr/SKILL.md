@@ -3,6 +3,7 @@ name: pr
 description: Use when the user asks to "create a PR", "open a pull request", "submit for review", "push and create PR", mentions "PR", "pull request", or needs help creating and submitting changes for code review.
 argument-hint: "[optional: --draft, target branch, or PR title]"
 disable-model-invocation: true
+allowed-tools: Bash(git *, gh *), Read, Grep, Glob
 ---
 
 Create pull requests with auto-generated titles and descriptions from commit history.
@@ -90,10 +91,14 @@ Show the user: ticket, branch, title, URL, and next steps.
 |----------|----------|
 | Push rejected | "Run `git pull --rebase origin <branch>`" |
 | No gh CLI | "Install from https://cli.github.com/" |
+| gh auth failure | "Run `gh auth login` to authenticate" |
+| Branch protection rules | "Push to a feature branch instead, or request access" |
 
 ## Related Skills
 
 | Skill | When to Use Instead |
 |-------|---------------------|
+| `/jira` | Create Jira ticket before starting work |
+| `/feature` | Plan feature before implementing |
 | `/commit` | Commit changes before creating PR |
 | `/review` | Review a PR (yours or others) |

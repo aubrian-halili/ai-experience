@@ -96,10 +96,10 @@ Never silently omit findings—surface limitations explicitly.
 
 ## Related Skills
 
-| After This Skill | Consider Using | When |
-|-----------------|----------------|------|
-| `/explore` | `/diagram` | Visual representation would clarify the flow |
-| `/explore` | `/review` | Found issues that need formal review |
-| `/explore` | `/architecture` | Understanding suggests architectural improvements |
-| `/explore` | `/patterns` | Identified patterns need documentation or improvement |
-| `/explore` | `/architecture --adr` | Discovery warrants documenting a decision |
+| Skill | When to Use Instead |
+|-------|---------------------|
+| `/diagram` | Visual representation would clarify the flow |
+| `/review` | Found issues that need formal review |
+| `/architecture` | Understanding suggests architectural improvements |
+| `/patterns` | Identified patterns need documentation or improvement |
+| `/architecture --adr` | Discovery warrants documenting a decision |

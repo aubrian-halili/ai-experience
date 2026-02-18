@@ -2,6 +2,7 @@
 name: diagram
 description: Use when the user asks to "draw a diagram", "visualize this system", "create a flowchart", "show the architecture", mentions "ERD", "sequence diagram", "state machine", or needs visual representations of systems and flows.
 argument-hint: "[system or flow to diagram]"
+allowed-tools: Read, Grep, Glob
 ---
 
 Generate architecture diagrams using Mermaid syntax based on the user's description or codebase.
@@ -80,9 +81,9 @@ Never silently omit components—surface gaps visually.
 
 ## Related Skills
 
-| After This Skill | Consider Using | When |
-|-----------------|----------------|------|
-| `/diagram` | `/explore` | Need to understand components before visualizing |
-| `/diagram` | `/architecture` | Diagram reveals architectural improvements |
-| `/diagram` | `/architecture --adr` | Diagram documents an important decision |
-| `/diagram` | `/patterns` | Diagram shows pattern implementation |
+| Skill | When to Use Instead |
+|-------|---------------------|
+| `/explore` | Need to understand components before visualizing |
+| `/architecture` | Diagram reveals architectural improvements |
+| `/architecture --adr` | Diagram documents an important decision |
+| `/patterns` | Diagram shows pattern implementation |

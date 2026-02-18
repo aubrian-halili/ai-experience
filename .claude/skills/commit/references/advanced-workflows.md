@@ -22,11 +22,14 @@ git commit -m "UN-1234 test: add preferences service coverage"
 
 ## Squash Before PR
 
-```bash
-# Interactive rebase to squash
-git rebase -i HEAD~3
+Interactive rebase (`git rebase -i`) requires manual terminal input and is not supported in Claude Code. Instead:
 
-# Or squash merge when merging PR
+- Use GitHub's squash merge option when merging the PR
+- Or manually squash in your terminal outside of Claude Code
+
+```bash
+# Squash merge when merging PR (recommended)
+gh pr merge --squash
 ```
 
 ## Breaking Changes

@@ -2,6 +2,7 @@
 name: docs
 description: Use when the user asks to "write documentation", "create docs", "document this", "technical writing", "create a presentation", "make slides", "build a deck", mentions "README", "API docs", "RFC", "design doc", "PowerPoint", "slides", "deck", or needs technical documentation, presentations, and stakeholder communication.
 argument-hint: "[topic, document type, or presentation purpose]"
+allowed-tools: Read, Grep, Glob, Write
 ---
 
 Create and improve technical documentation, presentations, and stakeholder communications.

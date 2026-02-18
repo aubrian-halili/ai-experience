@@ -1,8 +1,9 @@
 ---
 name: commit
 description: Use when the user asks to "commit changes", "create a commit", "commit this", mentions "git commit", "commit message", or needs help with semantic commits or branch management.
-argument-hint: "[Ticket ID] [optional commit message or scope]"
+argument-hint: "[optional commit message or scope]"
 disable-model-invocation: true
+allowed-tools: Bash(git *), Read, Grep, Glob
 ---
 
 Generate semantic commit messages following project conventions (see CLAUDE.md).
@@ -55,7 +56,7 @@ git commit -m "$(cat <<'EOF'
 
 <body if needed>
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
@@ -69,6 +70,7 @@ EOF
 | Unclear scope | Ask for clarification or suggest based on files |
 | No ticket ID in branch | Ask user for ticket ID |
 | On main/master branch | Ask for ticket ID + description to create branch |
+| Pre-commit hook fails | Fix the issue, re-stage files, create a NEW commit (never amend) |
 
 ## Related Skills
 

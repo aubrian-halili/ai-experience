@@ -2,6 +2,7 @@
 name: skill-creator
 description: Use when the user asks to "create a skill", "build a new skill", "make a Claude skill", mentions "skill template", or wants to extend Claude's capabilities with custom workflows.
 argument-hint: "[skill name]"
+allowed-tools: Bash, Read, Grep, Glob, Write
 ---
 
 # Skill Creator

@@ -2,6 +2,7 @@
 name: clean-code
 description: Use when the user asks to "clean up this code", "refactor this", "improve code quality", mentions "SOLID principles", "code smells", "technical debt", or wants refactoring suggestions and maintainability improvements.
 argument-hint: "[file or component to review]"
+allowed-tools: Read, Grep, Glob
 ---
 
 Provide code quality analysis, refactoring suggestions, and clean code guidance.
@@ -82,11 +83,9 @@ Never silently omit findings—surface limitations explicitly.
 
 ## Related Skills
 
-| After This Skill | Consider Using | When |
-|-----------------|----------------|------|
-| `/clean-code` | `/review` | Need correctness, security, or performance review |
-| `/clean-code` | `/patterns` | Refactoring would benefit from design patterns |
-| `/clean-code` | `/architecture` | Structural issues suggest architectural problems |
-| `/clean-code` | `/architecture --adr` | Refactoring decision should be documented |
-
-> For correctness, security, and performance review, use `/review` first.
+| Skill | When to Use Instead |
+|-------|---------------------|
+| `/review` | Need correctness, security, or performance review |
+| `/patterns` | Refactoring would benefit from design patterns |
+| `/architecture` | Structural issues suggest architectural problems |
+| `/architecture --adr` | Refactoring decision should be documented |

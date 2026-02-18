@@ -16,7 +16,18 @@
       "Bash(gh pr create:*)",
       "WebFetch(domain:www.claude.com)",
       "Bash(wc -l:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "mcp__awslabs_aws-knowledge__aws___read_documentation",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(git -C /Users/aubrian.halili/Development/ai-experience log --oneline -10)",
+      "Bash(git -C /Users/aubrian.halili/Development/ai-experience show bf7a5f6 --stat)",
+      "Bash(git -C /Users/aubrian.halili/Development/ai-experience show bf7a5f6 -- .claude/skills/jira/references/templates.md)",
+      "WebFetch(domain:resources.anthropic.com)",
+      "WebFetch(domain:blog.davisvaughan.com)",
+      "WebFetch(domain:www.groff.dev)",
+      "WebFetch(domain:www.gend.co)",
+      "WebFetch(domain:github.com)",
+      "Bash(grep:*)"
     ],
     "defaultMode": "plan"
   }

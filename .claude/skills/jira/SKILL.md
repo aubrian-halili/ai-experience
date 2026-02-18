@@ -3,6 +3,7 @@ name: jira
 description: Use when the user asks to "create a Jira ticket", "file a bug", "add a task", "create an issue", mentions "Jira", "JIRA", "ticket", or needs to create issue tracker tickets.
 argument-hint: "[PROJECT] [bug|task] [title or description]"
 disable-model-invocation: true
+allowed-tools: mcp__atlassian__createJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__getVisibleJiraProjects, mcp__atlassian__getJiraProjectIssueTypesMetadata
 ---
 
 Create Jira tickets from the current conversation context with structured templates. Returns a ticket ID for use in branch creation and downstream workflows.
@@ -89,20 +90,6 @@ Show the user:
 | `PROJ bug <title>` / `PROJ task <title>` | Use specified project with type and title |
 
 **Argument parsing**: A leading all-caps token before `bug`/`task` (matching `[A-Z]+`) is treated as a project override.
-
-## Workflow
-
-```
-/jira → Ticket ID (e.g., UN-1234)
-  ↓
-git checkout -b UN-1234-short-description
-  ↓
-(implement changes)
-  ↓
-/commit → Commits prefixed with UN-1234
-  ↓
-/pr → PR titled with UN-1234
-```
 
 ## Error Handling
 

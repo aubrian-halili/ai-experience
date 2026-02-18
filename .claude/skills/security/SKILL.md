@@ -2,6 +2,7 @@
 name: security
 description: Use when the user asks to "review security", "check for vulnerabilities", "security audit", "threat model", mentions "OWASP", "XSS", "SQL injection", "authentication security", or needs security guidance and vulnerability assessment.
 argument-hint: "[file, component, or feature to assess]"
+allowed-tools: Read, Grep, Glob
 ---
 
 Provide comprehensive security guidance, vulnerability assessment, and secure-by-design recommendations.

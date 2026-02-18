@@ -2,6 +2,7 @@
 name: typescript
 description: Use when the user asks about "TypeScript", "TS types", "type error", "generics", "type inference", mentions "tsconfig", "strict mode", "type narrowing", or needs TypeScript-specific guidance, type definitions, and advanced typing patterns.
 argument-hint: "[code, type, or TypeScript question]"
+allowed-tools: Read, Grep, Glob
 ---
 
 Provide TypeScript-specific guidance including type definitions, generics, type inference, compiler configuration, and advanced typing patterns.
