@@ -1,7 +1,7 @@
 ---
 name: commit
 description: Use when the user asks to "commit changes", "create a commit", "commit this", mentions "git commit", "commit message", or needs help with semantic commits or branch management.
-argument-hint: "[optional commit message or scope]"
+argument-hint: "[Ticket ID] [optional commit message or scope]"
 disable-model-invocation: true
 ---
 
