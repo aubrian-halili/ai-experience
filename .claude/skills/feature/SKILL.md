@@ -2,6 +2,7 @@
 name: feature
 description: Use when the user asks to "implement a feature", "add new functionality", "build this feature", "feature development", mentions "user story", "feature spec", or needs structured feature planning and incremental implementation guidance.
 argument-hint: "[feature name or description]"
+allowed-tools: Read, Grep, Glob, Write
 ---
 
 Guide structured feature development from specification through incremental implementation with clear milestones and verification steps.

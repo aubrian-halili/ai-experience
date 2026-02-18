@@ -1,8 +1,9 @@
 ---
 name: commit
 description: Use when the user asks to "commit changes", "create a commit", "commit this", mentions "git commit", "commit message", or needs help with semantic commits or branch management.
-argument-hint: "[Ticket ID] [optional commit message or scope]"
+argument-hint: "[optional commit message or scope]"
 disable-model-invocation: true
+allowed-tools: Bash(git *), Read, Grep, Glob
 ---
 
 Generate semantic commit messages following project conventions (see CLAUDE.md).
@@ -35,7 +36,7 @@ TICKET_ID=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
 - No ticket ID in branch → Ask user for ticket ID
 - No changes → Nothing to commit
 
-### 2. Analyze and Commit
+### 2. Analyze & Present for Review
 
 Review `git status`, `git diff --cached`, `git diff`, and recent commits (`git log --oneline -5`).
 
@@ -43,7 +44,15 @@ Use `$ARGUMENTS` if provided (user's custom message or scope), otherwise generat
 
 Format: `<TICKET-ID> <type>(<scope>): <subject>` (max 72 chars)
 
-Show the user: staged changes, proposed commit message, then execute using HEREDOC:
+**Present to user:**
+- Show the files to be staged
+- Show the proposed commit message (with body if needed)
+- Ask the user to review and confirm before proceeding
+- If changes requested, regenerate and present again
+
+### 3. Stage & Commit
+
+**Only proceed after user approval.**
 
 ```bash
 # Stage specific files (never git add -A or git add .)
@@ -55,7 +64,7 @@ git commit -m "$(cat <<'EOF'
 
 <body if needed>
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
@@ -69,6 +78,7 @@ EOF
 | Unclear scope | Ask for clarification or suggest based on files |
 | No ticket ID in branch | Ask user for ticket ID |
 | On main/master branch | Ask for ticket ID + description to create branch |
+| Pre-commit hook fails | Fix the issue, re-stage files, create a NEW commit (never amend) |
 
 ## Related Skills
 

@@ -2,6 +2,7 @@
 name: patterns
 description: Use when the user asks "which pattern should I use", "how to implement [pattern name]", mentions "factory", "strategy", "observer", "singleton", "decorator", or discusses code structure problems that patterns could solve.
 argument-hint: "[problem or pattern name]"
+allowed-tools: Read, Grep, Glob
 ---
 
 Provide guidance on selecting and implementing design patterns for specific problems.
@@ -61,10 +62,10 @@ Never silently commit to a pattern—surface uncertainty and let the user decide
 
 ## Related Skills
 
-| After This Skill | Consider Using | When |
-|-----------------|----------------|------|
-| `/patterns` | `/clean-code` | Pattern implementation needs quality review |
-| `/patterns` | `/architecture` | Pattern choice has broader architectural implications |
-| `/patterns` | `/architecture --adr` | Pattern decision should be documented |
-| `/patterns` | `/diagram` | Pattern structure needs visualization |
-| `/patterns` | `/review` | Existing pattern usage needs evaluation |
+| Skill | When to Use Instead |
+|-------|---------------------|
+| `/clean-code` | Pattern implementation needs quality review |
+| `/architecture` | Pattern choice has broader architectural implications |
+| `/architecture --adr` | Pattern decision should be documented |
+| `/diagram` | Pattern structure needs visualization |
+| `/review` | Existing pattern usage needs evaluation |

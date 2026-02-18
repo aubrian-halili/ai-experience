@@ -2,6 +2,7 @@
 name: [skill-name]
 description: Use when the user [trigger phrases describing when this skill applies]. Examples: "[example phrase 1]", "[example phrase 2]".
 argument-hint: "[argument placeholder]"
+allowed-tools: [tools this skill needs, e.g., Read, Grep, Glob]
 ---
 
 # [Skill Title]

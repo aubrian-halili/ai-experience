@@ -87,7 +87,7 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 
 ## Suggested Priority
 
-[High/Medium/Low] - [Brief justification]
+[Critical/High/Medium/Low] - [Brief justification]
 ```
 
 ## Template Selection Guide
@@ -133,19 +133,3 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 - **M**: 1-3 days, few files, minimal dependencies
 - **L**: 3-5 days, multiple files/components, some dependencies
 - **XL**: > 5 days, significant changes, many dependencies
-
-## Auto-Population from Git Context
-
-When git context is available, auto-populate:
-
-**From branch name**: Extract ticket ID and title from pattern `PROJ-123-description`
-
-**From commits**:
-- `fix:` prefix → Bug type
-- `feat:` prefix → Task type
-- `Closes #123` → Related issue reference
-
-**From diff**:
-- New tests → Testing section
-- Config changes → Environment/Technical Details
-- Error handling → Bug fix context

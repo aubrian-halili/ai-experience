@@ -2,6 +2,7 @@
 name: review
 description: Use when the user asks to "review this code", "check this PR", "audit this file", "look at my changes", "review this PR", "PR review", requests "code review", mentions "review" in context of code quality, "pull request", "PR #123", or needs code review, PR feedback, or multi-file change analysis.
 argument-hint: "[file, PR number, URL, or component to review]"
+allowed-tools: Bash(git *, gh *), Read, Grep, Glob
 ---
 
 Perform a thorough multi-dimensional review of code, local changes, or pull requests.
@@ -107,9 +108,9 @@ Automatically detect review context based on input:
 
 ## Related Skills
 
-| After This Skill | Consider Using | When |
-|-----------------|----------------|------|
-| `/review` | `/clean-code` | Deep SOLID analysis needed |
-| `/review` | `/architecture` | Structural concerns found |
-| `/review` | `/patterns` | Code could benefit from design patterns |
-| `/review` | `/security` | Deep security audit needed |
+| Skill | When to Use Instead |
+|-------|---------------------|
+| `/clean-code` | Deep SOLID analysis needed |
+| `/architecture` | Structural concerns found |
+| `/patterns` | Code could benefit from design patterns |
+| `/security` | Deep security audit needed |

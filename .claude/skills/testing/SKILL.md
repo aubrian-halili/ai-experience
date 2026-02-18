@@ -2,6 +2,7 @@
 name: testing
 description: Use when the user asks to "write tests", "add test coverage", "test this feature", "create test cases", mentions "unit test", "integration test", "E2E test", "test strategy", or needs testing guidance and test scaffolding.
 argument-hint: "[file, feature, or component to test]"
+allowed-tools: Read, Grep, Glob, Write
 ---
 
 Provide comprehensive testing guidance, test scaffolding, and coverage analysis following the testing pyramid principles.
