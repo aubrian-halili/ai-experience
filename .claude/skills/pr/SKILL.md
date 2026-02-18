@@ -41,7 +41,7 @@ EXISTING_PR=$(gh pr list --head "$BRANCH" --json number,url --jq '.[0].url // em
 - PR already exists → Show existing PR URL
 - No ticket ID in branch → Ask user for ticket ID
 
-### 2. Create PR
+### 2. Prepare & Present for Review
 
 Use `$ARGUMENTS` if provided (handles `--draft`, custom title, or target branch).
 
@@ -52,7 +52,26 @@ Use `$ARGUMENTS` if provided (handles `--draft`, custom title, or target branch)
 
 Title format: Max 72 chars, ticket ID prefix.
 
-**Push and create:**
+**Body generation:**
+```
+## Jira
+<TICKET-ID>
+
+## Summary
+- Bullet points from commit messages
+
+## Test plan
+- Verification steps
+```
+
+**Present to user:**
+- Show the full PR details: ticket ID, title, body, flags (`--draft`, `--base <branch>`)
+- Ask the user to review and confirm before proceeding
+- If changes requested, regenerate and present again
+
+### 3. Push & Create PR
+
+**Only proceed after user approval.**
 
 ```bash
 # Push branch if needed

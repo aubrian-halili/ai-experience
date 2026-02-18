@@ -36,7 +36,7 @@ TICKET_ID=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
 - No ticket ID in branch → Ask user for ticket ID
 - No changes → Nothing to commit
 
-### 2. Analyze and Commit
+### 2. Analyze & Present for Review
 
 Review `git status`, `git diff --cached`, `git diff`, and recent commits (`git log --oneline -5`).
 
@@ -44,7 +44,15 @@ Use `$ARGUMENTS` if provided (user's custom message or scope), otherwise generat
 
 Format: `<TICKET-ID> <type>(<scope>): <subject>` (max 72 chars)
 
-Show the user: staged changes, proposed commit message, then execute using HEREDOC:
+**Present to user:**
+- Show the files to be staged
+- Show the proposed commit message (with body if needed)
+- Ask the user to review and confirm before proceeding
+- If changes requested, regenerate and present again
+
+### 3. Stage & Commit
+
+**Only proceed after user approval.**
 
 ```bash
 # Stage specific files (never git add -A or git add .)
