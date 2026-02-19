@@ -29,7 +29,8 @@
       "WebFetch(domain:github.com)",
       "Bash(grep:*)",
       "Bash(./.claude/skills/skill-creator/scripts/validate-skill.sh:*)",
-      "Skill(backoffice-database)"
+      "Bash(/Users/aubrian.halili/Development/ai-experience/.claude/skills/skill-creator/scripts/validate-skill.sh:*)",
+      "Bash(echo:*)"
     ],
     "defaultMode": "plan"
   }

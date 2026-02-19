@@ -2,6 +2,7 @@
 name: qred-repo
 description: Use when the user asks to "list files", "show directory", "read file", "find files", "search code", "grep for", "show me", mentions "file structure", "project layout", "codebase search", or needs lightweight repository navigation and code searching.
 argument-hint: "[path, glob pattern, search term, or git command]"
+allowed-tools: Bash(git log *, git blame *, git diff *, git show *), Read, Grep, Glob
 ---
 
 # Repository Navigator
