@@ -31,7 +31,9 @@
       "Bash(./.claude/skills/skill-creator/scripts/validate-skill.sh:*)",
       "Bash(/Users/aubrian.halili/Development/ai-experience/.claude/skills/skill-creator/scripts/validate-skill.sh:*)",
       "Bash(echo:*)",
-      "Bash(gh:*)"
+      "Bash(gh:*)",
+      "WebFetch(domain:docs.claude.com)",
+      "Bash(bash /Users/aubrian.halili/Development/ai-experience/.claude/skills/skill-creator/scripts/validate-skill.sh:*)"
     ],
     "defaultMode": "plan"
   }
