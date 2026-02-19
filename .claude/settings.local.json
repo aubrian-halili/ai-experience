@@ -27,7 +27,9 @@
       "WebFetch(domain:www.groff.dev)",
       "WebFetch(domain:www.gend.co)",
       "WebFetch(domain:github.com)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(./.claude/skills/skill-creator/scripts/validate-skill.sh:*)",
+      "Skill(backoffice-database)"
     ],
     "defaultMode": "plan"
   }
