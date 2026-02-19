@@ -2,6 +2,7 @@
 name: qred-repo
 description: Use when the user asks to "list repos", "show repo", "read file from repo", "search code", "find in org", "browse repo", "tree view", mentions "Qred repos", "GitHub org", "qred org", or needs layered repository exploration and code searching across the Qred GitHub organization.
 argument-hint: "[repo name, file path, search term, tree <repo>, or gh command]"
+allowed-tools: Bash(gh *)
 ---
 
 # Qred Repository Navigator
