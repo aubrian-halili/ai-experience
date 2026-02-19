@@ -127,12 +127,33 @@ Parse `$ARGUMENTS` to route to the correct operation type:
 
 **Purpose:** Find relevant code by keyword, not by browsing.
 
-1. Run `gh search code --owner Qred "<term>" --limit 10 --json path,repository,textMatches`
-2. For repo-scoped search: `gh search code --repo Qred/<repo> "<term>" --limit 10 --json path,repository,textMatches`
-3. Present matching files as a ranked list with repository, path, and matched text
+1. Run `gh search code --owner Qred "<term>" --limit 30 --json path,repository,textMatches`
+2. For repo-scoped search: `gh search code --repo Qred/<repo> "<term>" --limit 30 --json path,repository,textMatches`
+
+**Result presentation order:**
+
+3. **Summary header** — Always show scope and count first: `Found N results in M repositories` (org-wide) or `Found N results in Qred/<repo>` (repo-scoped)
+4. **Repository breakdown** (org-wide only) — Group by repo with match counts before showing individual files:
+   ```
+   Found 23 results in 4 repositories:
+   - qred-api (8 matches)
+   - qred-mcp-proxy (7 matches)
+   - qred-ui (5 matches)
+   - backoffice-db (3 matches)
+   ```
+5. **Individual matches** — Present matching files with `repo/path:line` format for editor-friendly references, with enough context to judge relevance before reading
+6. **Truncation block** (only when results = limit) — Show a multi-line refinement block:
+   ```
+   > Showing 30 results (limit reached) — results may be incomplete.
+   >
+   > Refine your search:
+   > - Narrow to a repo: `/qred-repo <term> in <repo-name>`
+   > - Narrow to a path: `gh search code --repo Qred/<repo> "<term>" path:src/`
+   > - Increase limit:   `gh search code --owner Qred "<term>" --limit 100`
+   ```
 
 **Guardrails:**
-- Cap results at 10 (use `--limit 10`)
+- Cap results at 30 (use `--limit 30`) — if results hit the cap, always show the truncation block with refinement commands
 - Do not auto-read all matching files — pick the 1-2 most relevant or let the user choose
 - Present matches with enough context to judge relevance before reading
 
@@ -197,7 +218,7 @@ Qred/<repo>
 |---|---|
 | Read README before code files | Documentation provides context that prevents misinterpretation |
 | Max 3 directory levels per operation | Prevents irrelevant file listing that dilutes attention |
-| Cap search at 10 results | Keeps output focused and actionable |
+| Cap search at 30 results; show refinement options on truncation | Keeps output focused — when results hit the cap, show a refinement block with copy-paste commands to narrow scope, filter by repo, or increase limit |
 | 300-line file threshold | Preserves context budget for what matters |
 | Skip binary/generated/lock files | These contain no useful information for exploration |
 | One file at a time | Maintains focus and prevents context overload |
@@ -213,7 +234,7 @@ Qred/<repo>
 | `/qred-repo tree qred-mcp-proxy` | Navigate: show directory tree (max 3 levels) |
 | `/qred-repo qred-mcp-proxy/src/` | Navigate: list files in `src/` directory |
 | `/qred-repo qred-mcp-proxy/README.md` | Read: file contents with 300-line guardrail |
-| `/qred-repo OAuth` | Search: find "OAuth" across all Qred repos (max 10 results) |
+| `/qred-repo OAuth` | Search: find "OAuth" across all Qred repos (max 30 results) |
 | `/qred-repo fetchUser in qred-api` | Search: find "fetchUser" in qred-api repo |
 | `/qred-repo prs qred-mcp-proxy` | Direct: list open PRs in qred-mcp-proxy |
 | `/qred-repo pr qred-mcp-proxy #42` | Direct: view PR #42 details |
