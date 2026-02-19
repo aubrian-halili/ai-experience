@@ -30,7 +30,8 @@
       "Bash(grep:*)",
       "Bash(./.claude/skills/skill-creator/scripts/validate-skill.sh:*)",
       "Bash(/Users/aubrian.halili/Development/ai-experience/.claude/skills/skill-creator/scripts/validate-skill.sh:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(gh:*)"
     ],
     "defaultMode": "plan"
   }
