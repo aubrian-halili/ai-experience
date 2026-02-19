@@ -73,25 +73,10 @@ Parse `$ARGUMENTS` to route to the correct operation type:
 
 ### 2. Execute Direct Operations
 
-**List Repos**
-1. Run `gh repo list Qred --limit 30 --no-archived --json name,description,url,isArchived,pushedAt`
-2. Present as a table with name, description, and last push date
-
-**List PRs**
-1. Run `gh pr list -R Qred/<repo> --limit 20 --json number,title,state,author,updatedAt`
-2. Present as a table with PR number, title, author, and last updated
-
-**View PR**
-1. Run `gh pr view <n> -R Qred/<repo> --json number,title,body,state,author`
-2. Present PR title, author, state, and body content
-
-**List Issues**
-1. Run `gh issue list -R Qred/<repo> --limit 20 --json number,title,state,author,updatedAt`
-2. Present as a table with issue number, title, author, and last updated
-
-**View Issue**
-1. Run `gh issue view <n> -R Qred/<repo> --json number,title,body,state,author`
-2. Present issue title, author, state, and body content
+For all direct operations, use `--json` to get structured data:
+- **List repos:** `gh repo list Qred --limit 30 --no-archived --json name,description,url,isArchived,pushedAt` → present as table with name, description, last push date
+- **List PRs/issues:** add `--json number,title,state,author,updatedAt` → present as table
+- **View PR/issue:** add `--json number,title,body,state,author` → present title, author, state, and body
 
 ### 3. Layered Exploration Workflow
 
@@ -103,25 +88,16 @@ Parse `$ARGUMENTS` to route to the correct operation type:
 2. Summarize the repo's purpose in 2-3 sentences
 3. Present: language, stars, last push, and key README sections
 
-**Guardrails:**
-- Never skip this layer when exploring a repo for the first time
-- Do not auto-navigate into directories — let the user decide where to go next
-
-**Follow-up suggestions:** Suggest `tree <repo>` for structure overview, or search for specific terms.
+**Guardrails:** Never skip this layer when exploring a repo for the first time. Do not auto-navigate into directories — let the user decide where to go next.
 
 #### Layer 2: Navigate
 
 **Purpose:** Understand directory structure without reading file contents.
 
 1. Run `gh api repos/Qred/<repo>/contents/<path>` to get directory listing
-2. Present as an indented tree view (see Tree View Format below)
+2. Present as an indented tree view (see `@references/formatting.md` for tree format)
 
-**Guardrails:**
-- Max 3 directory levels deep per operation
-- Max 30 entries per directory listing — if exceeded, show first 30 and note the remainder
-- Only follow paths relevant to the user's question — do not expand every directory
-
-**Follow-up suggestions:** Suggest searching for specific terms, or reading a specific file.
+**Guardrails:** Max 3 directory levels deep. Max 30 entries per directory — if exceeded, show first 30 and note the remainder. Only follow paths relevant to the user's question.
 
 #### Layer 3: Search
 
@@ -152,12 +128,7 @@ Parse `$ARGUMENTS` to route to the correct operation type:
    > - Increase limit:   `gh search code --owner Qred "<term>" --limit 100`
    ```
 
-**Guardrails:**
-- Cap results at 30 (use `--limit 30`) — if results hit the cap, always show the truncation block with refinement commands
-- Do not auto-read all matching files — pick the 1-2 most relevant or let the user choose
-- Present matches with enough context to judge relevance before reading
-
-**Follow-up suggestions:** Suggest reading specific files from the results, or narrowing the search.
+**Guardrails:** Cap results at 30 (`--limit 30`) — if results hit the cap, always show the truncation block. Do not auto-read all matching files — pick the 1-2 most relevant or let the user choose.
 
 #### Layer 4: Read
 
@@ -167,63 +138,15 @@ Parse `$ARGUMENTS` to route to the correct operation type:
 2. Decode the content: pipe through `jq -r '.content' | base64 -d`
 3. Present file contents in a syntax-highlighted code block
 
-**Guardrails:**
-- One file at a time — do not batch-read multiple files
-- **300-line threshold:** If a file exceeds 300 lines, show the first 100 lines and ask the user before showing more
-- Skip binary files, generated files, and lock files (e.g., `package-lock.json`, `yarn.lock`, `.min.js`, compiled output) — note that these were skipped
-- Summarize the file's purpose before presenting raw content
+**Guardrails:** One file at a time. **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more. Skip binary/generated/lock files (e.g., `package-lock.json`, `yarn.lock`, `.min.js`). Summarize the file's purpose before presenting raw content.
 
-**Follow-up suggestions:** Suggest reading related files, searching for specific symbols, or navigating to parent directory.
-
-### 4. Tree View Format
-
-When presenting directory structures, use this indented format:
-
-```
-Qred/<repo>
-+-- README.md
-+-- package.json
-+-- src/
-|   +-- index.ts
-|   +-- config/
-|   |   +-- database.ts
-|   |   +-- auth.ts
-|   +-- routes/
-|       +-- (...)
-+-- tests/
-|   +-- (...)
-+-- docs/
-    +-- architecture.md
-```
-
-- Use `+--` for entries and `|` for continuation lines
-- Annotate key directories with brief descriptions when their purpose is clear (e.g., `src/ — application source`)
-- Mark unexplored directories with `(...)` to indicate more content exists
-- Respect the 3-level depth limit — show `(...)` for deeper levels
-
-### 5. Present Results
+### 4. Present Results
 
 - **Context first** — State what was searched/listed and where
-- **Structured presentation** — Use tables for listings, code blocks for file contents and command output, tree format for directory structures
+- **Structured presentation** — Use tables for listings, code blocks for file contents, tree format for directories
 - **Bounded output** — Truncate large results with clear indicators of what was omitted
-- **Focused follow-ups** — Suggest next actions based on the current layer:
-  - After orient → suggest tree view or code search
-  - After navigate → suggest searching for terms or reading specific files
-  - After search → suggest reading the most relevant matching files
-  - After read → suggest related files, broader search, or navigating to parent directory
 
-## Guardrails
-
-| Rule | Rationale |
-|---|---|
-| Read README before code files | Documentation provides context that prevents misinterpretation |
-| Max 3 directory levels per operation | Prevents irrelevant file listing that dilutes attention |
-| Cap search at 30 results; show refinement options on truncation | Keeps output focused — when results hit the cap, show a refinement block with copy-paste commands to narrow scope, filter by repo, or increase limit |
-| 300-line file threshold | Preserves context budget for what matters |
-| Skip binary/generated/lock files | These contain no useful information for exploration |
-| One file at a time | Maintains focus and prevents context overload |
-| Summarize before raw content | Helps user decide relevance before committing attention |
-| Suggest next actions, don't auto-execute | User drives exploration depth — never auto-expand |
+For layer-specific follow-up suggestions, see `@references/formatting.md`.
 
 ## Example Invocations
 
@@ -231,30 +154,14 @@ Qred/<repo>
 |---|---|
 | `/qred-repo` | List repositories in the Qred org |
 | `/qred-repo qred-mcp-proxy` | Orient: view repo details, README, and summary |
-| `/qred-repo tree qred-mcp-proxy` | Navigate: show directory tree (max 3 levels) |
-| `/qred-repo qred-mcp-proxy/src/` | Navigate: list files in `src/` directory |
-| `/qred-repo qred-mcp-proxy/README.md` | Read: file contents with 300-line guardrail |
-| `/qred-repo OAuth` | Search: find "OAuth" across all Qred repos (max 30 results) |
-| `/qred-repo fetchUser in qred-api` | Search: find "fetchUser" in qred-api repo |
+| `/qred-repo OAuth` | Search: find "OAuth" across all Qred repos |
 | `/qred-repo prs qred-mcp-proxy` | Direct: list open PRs in qred-mcp-proxy |
-| `/qred-repo pr qred-mcp-proxy #42` | Direct: view PR #42 details |
-| `/qred-repo issues qred-api` | Direct: list open issues in qred-api |
-| `/qred-repo gh repo list Qred --language typescript` | Direct: pass-through gh command |
+
+For the full list, see `@references/examples-and-errors.md`.
 
 ## Error Handling
 
-| Scenario | Response |
-|---|---|
-| `gh` not installed | "GitHub CLI is not installed. Install with `brew install gh` and run `gh auth login`." |
-| Not authenticated | "Run `gh auth login` to authenticate with GitHub." |
-| No Qred org access | "Ensure your GitHub account has access to the Qred organization." |
-| Repo not found | Suggest listing repos with `/qred-repo` to find the correct name |
-| File/path not found | List parent directory contents to help navigate |
-| File too large (>300 lines) | Show first 100 lines and ask: "This file has N lines. Show more?" |
-| Directory >30 entries | Show first 30 entries and note: "Showing 30 of N entries. Narrow with a path or search." |
-| No search results | Suggest alternative terms, broader scope, or different repo |
-| PR/issue not found | Show error and suggest listing PRs/issues |
-| API rate limit | "GitHub API rate limit exceeded. Wait a few minutes and retry." |
+Pre-flight errors are handled in Step 0. For all runtime errors (repo not found, file too large, rate limits, etc.), show the error and suggest the most helpful next action. See `@references/examples-and-errors.md` for the full error handling table.
 
 ## Related Skills
 
