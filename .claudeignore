@@ -1,0 +1,11 @@
+node_modules/
+dist/
+build/
+.git/
+*.lock
+*.log
+.DS_Store
+coverage/
+.next/
+.cache/
+.turbo/

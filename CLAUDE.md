@@ -1,32 +1,45 @@
-# Project Conventions
+# AI Experience Project
 
-## Git Conventions
+## Project Overview
 
-### Branch Naming
+- This is a Claude Code skills and configuration repository
+- Skills live in `.claude/skills/<name>/SKILL.md` with optional `references/` subdirectories
+- Each skill is self-contained with frontmatter metadata defining capabilities
+- Skills reference each other via "Related Skills" sections for workflow integration
 
-Branches must be prefixed with the Jira ticket ID:
+## Project Structure
 
-`<JIRA-ID>-<feature-description>`
+```text
+.claude/
+├── skills/          # 17 specialized workflow skills
+├── rules/           # Modular instruction files
+└── settings.json    # Project-wide settings
+```
 
-Example: `UN-1234-add-user-auth`
+## Common Tasks
 
-- Always ask for the Jira ticket ID before creating a new branch
-- Never create a branch without the Jira ticket ID prefix
+- **Adding a skill**: Use `/skill-creator` to scaffold new skills
+- **Validating skills**: Run `.claude/skills/skill-creator/scripts/validate-skill.sh <skill-dir>`
+- **Creating PRs**: Use `/pr` skill for auto-generated titles/descriptions
+- **Code review**: Use `/review` skill for multi-dimensional analysis
 
-### Commit Messages
+## Testing
 
-Every commit message must start with the Jira ticket ID:
+- No automated test suite currently — manual verification only
+- When adding skills, validate with the skill-creator validation script
+- Test skills in real scenarios before committing
 
-`<JIRA-ID> <type>(<scope>): <description>`
+## Architecture Decisions
 
-- Extract the Jira ticket ID from the current branch name — do not ask the user for it
-- If the branch name does not contain a Jira ticket ID, ask for one before committing
-- Never create a commit without the Jira ticket ID prefix
-- Never commit directly to main/master
+- Skills follow the `SKILL.md + references/` pattern
+- Frontmatter defines metadata (name, description, tools, context)
+- Reference materials split into separate files for maintainability
+- Skills integrate via cross-references, not direct dependencies
 
-**Types**: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
+## Conventions
 
-## Code Style
+Detailed conventions are maintained in modular rule files:
 
-- Use TypeScript unless otherwise specified
-- Use `mermaid` code blocks for diagrams
+- @.claude/rules/git-conventions.md - Branch naming, commit format, Jira integration
+- @.claude/rules/code-style.md - TypeScript, formatting, diagrams
+- @.claude/rules/pr-conventions.md - PR titles, descriptions, review process
