@@ -3,7 +3,6 @@ name: pr
 description: Use when the user asks to "create a PR", "open a pull request", "submit for review", "push and create PR", mentions "PR", "pull request", or needs help creating and submitting changes for code review.
 argument-hint: "[optional: --draft, target branch, or PR title]"
 disable-model-invocation: true
-allowed-tools: Bash(git *, gh *), Read, Grep, Glob
 ---
 
 Create pull requests with auto-generated titles and descriptions from commit history.
@@ -38,7 +37,7 @@ EXISTING_PR=$(gh pr list --head "$BRANCH" --json number,url --jq '.[0].url // em
 - On `main`/`master` → Cannot create PR from default branch
 - No commits ahead → Use `/commit` first
 - Uncommitted changes → Commit or stash first
-- PR already exists → Show existing PR URL
+- PR already exists → Show existing PR URL, status, and next steps (view: `gh pr view`, push more commits: `git push`, edit: `gh pr edit`)
 - No ticket ID in branch → Ask user for ticket ID
 
 ### 2. Prepare & Present for Review
@@ -47,10 +46,11 @@ Use `$ARGUMENTS` if provided (handles `--draft`, custom title, or target branch)
 
 **Title generation** (priority order):
 1. User-provided title (auto-prefix ticket ID if missing)
-2. Single commit message (if only one commit)
-3. Branch name converted: `UN-1234-add-auth` → `UN-1234 Add auth`
+2. Single commit → use its message directly (already convention-formatted from `/commit`)
+3. Multiple commits → summarize with `<TICKET-ID> <type>(<scope>): <summary>`
+4. Fallback: branch name converted `UN-1234-add-auth` → `UN-1234 feat: add auth`
 
-Title format: Max 72 chars, ticket ID prefix.
+Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr-conventions.md)
 
 **Body generation:**
 ```
@@ -60,7 +60,10 @@ Title format: Max 72 chars, ticket ID prefix.
 ## Summary
 - Bullet points from commit messages
 
-## Test plan
+## Breaking Changes
+- None / List breaking changes
+
+## Test Plan
 - Verification steps
 ```
 
@@ -73,27 +76,39 @@ Title format: Max 72 chars, ticket ID prefix.
 
 **Only proceed after user approval.**
 
+**Safety note:** If the remote branch exists and has diverged (e.g., after rebase), never use `git push --force` without explicit user confirmation.
+
 ```bash
-# Push branch if needed
+# Push branch if needed (check if remote exists first)
 git push -u origin $(git branch --show-current)
 
 # Create PR with HEREDOC for body
-gh pr create --title "<TICKET-ID> <title>" --body "$(cat <<'EOF'
+gh pr create --title "<TICKET-ID> <type>(<scope>): <description>" --body "$(cat <<'EOF'
 ## Jira
 <TICKET-ID>
 
 ## Summary
 - Bullet points from commit messages
 
-## Test plan
+## Breaking Changes
+- None / List breaking changes
+
+## Test Plan
 - Verification steps
 EOF
 )"
 ```
 
-Add `--draft` for work-in-progress, `--base <branch>` for non-main target.
+Add `--draft` for work-in-progress, `--base <branch>` for non-main target, `--label <name>` to add labels.
 
-Show the user: ticket, branch, title, URL, and next steps.
+### 4. Verify
+
+After successful PR creation:
+```bash
+gh pr view --json number,url,title,state
+```
+
+Show the user: PR number, URL, title, state, and next steps (e.g., request reviews, monitor CI).
 
 ## Argument Handling
 
@@ -101,14 +116,16 @@ Show the user: ticket, branch, title, URL, and next steps.
 |----------|----------|
 | (none) | Auto-generate title/description |
 | `--draft` | Create as draft PR |
-| Branch name | Use as target base branch |
+| `--label <name>` | Add label(s) to the PR |
+| Branch name | Use as target base branch with `--base` |
 | Text string | Use as PR title (ticket ID auto-prefixed) |
 
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
-| Push rejected | "Run `git pull --rebase origin <branch>`" |
+| Push rejected | "Run `git pull --rebase origin <branch>`" or check for diverged history |
+| Remote branch diverged | Never use `--force` without explicit user confirmation |
 | No gh CLI | "Install from https://cli.github.com/" |
 | gh auth failure | "Run `gh auth login` to authenticate" |
 | Branch protection rules | "Push to a feature branch instead, or request access" |

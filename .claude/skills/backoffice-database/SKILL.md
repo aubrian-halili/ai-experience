@@ -5,9 +5,7 @@ argument-hint: "[database or table name, or SQL query]"
 allowed-tools: mcp__qred-postgres__list_databases, mcp__qred-postgres__list_schemas, mcp__qred-postgres__list_tables_in_schema, mcp__qred-postgres__read_schema_of_table, mcp__qred-postgres__query
 ---
 
-# Backoffice Database Explorer
-
-Explore PostgreSQL database schemas and run read-only queries using the qred-postgres MCP server.
+Explore PostgreSQL database schemas and run read-only queries using the qred-postgres MCP server. All operations are strictly read-only.
 
 ## When to Use
 
@@ -24,9 +22,28 @@ Explore PostgreSQL database schemas and run read-only queries using the qred-pos
 - Visualizing database relationships as ERD → use `/diagram`
 - Making database changes → this skill is read-only, use appropriate database tools
 
+## Safety Principles
+
+- **Read-only only** — Never execute INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE, CREATE, or any DDL/DML. Only SELECT, WITH, SHOW, EXPLAIN, and DESCRIBE are permitted
+- **No credential exposure** — Never include connection strings, passwords, or auth tokens in output
+- **Bounded results** — Always LIMIT queries; cap at 50 rows unless the user explicitly requests more
+- **Explicit scope** — State the target database and schema before every operation
+
 ## Process
 
-### 1. Determine Intent
+### 1. Pre-flight
+
+**Check MCP availability:**
+- Call `mcp__qred-postgres__list_databases` to verify the MCP server is reachable
+- MCP available → Proceed to step 2
+- MCP unavailable → Stop with error: "The qred-postgres MCP server is not configured. Install and configure it to use this skill."
+
+**Set defaults:**
+- **Default database**: `qred_se_db`
+- **Default schema**: `public`
+- Parse `$ARGUMENTS` to override if a different database or schema is specified
+
+### 2. Determine Intent
 
 Parse `$ARGUMENTS` to understand what the user wants:
 
@@ -38,13 +55,7 @@ Parse `$ARGUMENTS` to understand what the user wants:
 | `schema_name` | Schema tables | List tables in that schema |
 | `database_name` (all lowercase, no dots) | Database schemas | List schemas in that database |
 
-### 2. Connect to Database
-
-- **Default database**: `qred_se_db`
-- **Default schema**: `public`
-- Parse arguments to override if a different database is specified
-
-### 3. Execute Exploration
+### 3. Execute
 
 Based on intent, use the appropriate MCP tool:
 
@@ -72,33 +83,35 @@ Based on intent, use the appropriate MCP tool:
 1. Call `mcp__qred-postgres__list_schemas` with the specified database name
 2. Present list of schemas
 
-### 4. Present Results
+### 4. Verify Results
 
-Format output for readability:
-
-- **Lists**: Use bullet points for databases, schemas, tables
-- **Table schemas**: Use markdown tables with columns: Column Name | Data Type | Nullable | Default | Constraints
-- **Query results**: Use markdown tables with proper column headers
-- **Always include**: Database name, schema name (when relevant), row counts for queries
+- Confirm the MCP call returned data successfully
+- If empty result set → Note "Query returned 0 rows" explicitly
+- If entity not found (database, schema, or table) → Fall through to Error Handling
+- Present results following Output Principles
 
 ## Output Principles
 
 - **Context first** — Always show which database and schema you're querying
-- **Structured presentation** — Use tables for structured data
+- **Structured presentation** — Use markdown tables for structured data (schemas: Column Name | Data Type | Nullable | Default | Constraints; query results: proper column headers)
+- **Lists** — Use bullet points for databases, schemas, and table lists
+- **Row counts** — Always include row counts for query results
 - **Row limits** — For large result sets, show first 50 rows and indicate if truncated
 - **Next steps** — Suggest related queries or tables to explore based on results
 - **File references** — If exploring schema that maps to application models, reference relevant code files
 
-## Example Invocations
+## Argument Handling
 
-| Invocation | What It Does |
-|------------|--------------|
-| `/backoffice-database` | List all databases, show schemas and tables in `qred_se_db` |
-| `/backoffice-database users` | Show schema for `public.users` table |
-| `/backoffice-database public.orders` | Show schema for `public.orders` table |
-| `/backoffice-database SELECT * FROM users LIMIT 10` | Query first 10 users |
-| `/backoffice-database accounting` | List tables in `accounting` schema |
-| `/backoffice-database other_db` | List schemas in `other_db` database |
+| Argument | Behavior |
+|----------|----------|
+| (none) | List all databases, show schemas and tables in `qred_se_db` |
+| `users` | Show schema for `public.users` table |
+| `public.orders` | Show schema for `public.orders` table |
+| `SELECT * FROM users LIMIT 10` | Query first 10 users |
+| `accounting` | List tables in `accounting` schema |
+| `other_db` | List schemas in `other_db` database |
+
+**Disambiguation:** A bare word like `accounting` could be a schema name or a database name. Default to schema lookup within the current database first. If no schema is found, retry as a database name. If neither matches, report not found and list available schemas and databases.
 
 ## Error Handling
 

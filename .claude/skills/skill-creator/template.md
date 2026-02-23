@@ -5,9 +5,13 @@ argument-hint: "[argument placeholder]"
 allowed-tools: [tools this skill needs, e.g., Read, Grep, Glob]
 ---
 
-# [Skill Title]
+<!-- One-line description of what this skill does. No H1 heading. -->
 
-<!-- One-line description of what this skill does -->
+## [Domain] Philosophy
+
+- **[Principle 1]** — [explanation]
+- **[Principle 2]** — [explanation]
+- **[Principle 3]** — [explanation]
 
 ## When to Use
 
@@ -15,27 +19,57 @@ allowed-tools: [tools this skill needs, e.g., Read, Grep, Glob]
 
 - [Primary use case 1]
 - [Primary use case 2]
+- [Primary use case 3]
 
 ### Use a Different Approach When
 
-- [Exclusion case 1]
-- [Exclusion case 2]
+- [Exclusion case 1] → use `/[other-skill]`
+- [Exclusion case 2] → use `/[other-skill]`
 
-## Process
+## Input Classification
 
 Use `$ARGUMENTS` if provided ([argument description]).
 
-### 1. [First Step Name]
+First, classify the request type:
 
-<!-- What to do first -->
+| Type | Indicators | Approach |
+|------|-----------|----------|
+| **[Type 1]** | [trigger phrases] | Steps 1–N; emphasis on [step] |
+| **[Type 2]** | [trigger phrases] | Steps 1–N; emphasis on [step] |
 
-### 2. [Second Step Name]
+## Process
 
-<!-- What to do next -->
+### 1. Pre-flight
 
-### 3. [Third Step Name]
+- Classify request using the Input Classification table
+- [Pre-flight check 1]
+- [Pre-flight check 2]
 
-<!-- Continue as needed. Reference `@references/templates.md` for detailed response format templates if needed. -->
+**Stop conditions:**
+- [Condition 1] → [action]
+- [Condition 2] → [action]
+
+### 2. [Step Name]
+
+- [Sub-step with bullets]
+- [Sub-step with bullets]
+
+### 3. [Step Name]
+
+- [Sub-step with bullets]
+- [Sub-step with bullets]
+
+## Output Principles
+
+- **[Principle 1]** — [explanation]
+- **[Principle 2]** — [explanation]
+
+## Argument Handling
+
+| Argument | Behavior |
+|----------|----------|
+| (none) | [What to do when no argument is provided] |
+| [Argument type] | [Behavior] |
 
 ## Error Handling
 
@@ -43,6 +77,8 @@ Use `$ARGUMENTS` if provided ([argument description]).
 |----------|----------|
 | [Error case 1] | [How to handle] |
 | [Error case 2] | [How to handle] |
+
+Never [closing principle about what the skill should never silently do].
 
 ## Related Skills
 
