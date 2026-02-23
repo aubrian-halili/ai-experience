@@ -52,6 +52,8 @@ Classify `$ARGUMENTS` to determine the testing workflow:
 | Integration | Some (20%) | Medium | Component interactions |
 | E2E | Few (10%) | Slow | Full user flows |
 
+**Branch point:** New Tests / TDD → steps 1–4 (iterative for TDD). Coverage Gap → steps 1, 2, 5, 3–4. Test Strategy → steps 1–2. Failing Tests → steps 1, 6.
+
 ## Process
 
 ### 1. Pre-flight
@@ -159,7 +161,7 @@ Target thresholds:
 | Test framework mismatch | Detect project conventions, adapt templates to the framework in use |
 | Scope too broad (>20 files) | Prioritize by risk and coverage gaps, note files not covered |
 
-Never silently skip test levels or coverage gaps — surface what was tested, what was not, and why.
+Never silently skip test levels or coverage gaps—surface what was tested, what was not, and why.
 
 ## Related Skills
 
