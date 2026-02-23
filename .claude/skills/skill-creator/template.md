@@ -8,6 +8,7 @@ allowed-tools: [tools this skill needs, e.g., Read, Grep, Glob]
 # model: sonnet                    # Uncomment to override model: haiku, sonnet, opus
 # context: fork                    # Uncomment to run in isolated subagent context
 # agent: Explore                   # Required when context: fork (Explore, Plan, general-purpose)
+# hooks:                           # Uncomment for skill-scoped hooks configuration
 ---
 
 <!-- One-line description of what this skill does. No H1 heading. -->

@@ -2,12 +2,14 @@
 
 ## Context Window Principles
 
-Skills consume context tokens. Optimize by:
+Skills consume context tokens. The system budget is ~2% of the context window (~16,000 chars as a practical fallback). Optimize by:
 
-1. **Front-load essentials** — Put critical instructions in SKILL.md directly
-2. **Defer details** — Use `@references/` for supplementary guidance
-3. **Avoid redundancy** — Don't repeat what's in project CLAUDE.md
-4. **Trim examples** — One good example beats three mediocre ones
+1. **Description efficiency** — Descriptions are always in context for auto-invocable skills. Keep under 500 chars. Use `disable-model-invocation: true` for action skills to exclude from auto-invoke context
+2. **Front-load essentials** — Put critical instructions in SKILL.md directly
+3. **Defer details** — Use `@references/` for supplementary guidance
+4. **Avoid redundancy** — Don't repeat what's in project CLAUDE.md
+5. **Trim examples** — One good example beats three mediocre ones
+6. **Manual-only for actions** — Skills that perform destructive or external actions (deploy, push, delete) should set `disable-model-invocation: true` to avoid accidental auto-invocation and to save context budget
 
 ## Degrees of Freedom
 
@@ -118,6 +120,7 @@ Use **gerund form** (verb + -ing) for skill names when possible:
 
 - `$ARGUMENTS` — all arguments passed when invoking
 - `$ARGUMENTS[N]` or `$N` — specific argument by index (0-based)
+- `${CLAUDE_SESSION_ID}` — unique session identifier, useful for per-session logging or temp file isolation
 - `` !`command` `` — dynamic context injection; shell command output replaces placeholder before skill content is sent to Claude
 
 **Example use case**: Inject current git branch into skill instructions
@@ -176,7 +179,13 @@ Skills are loaded in priority order (highest to lowest):
 3. **Project skills** (`.claude/skills/`)
 4. **Plugin skills** (MCP plugins)
 
+**When to use each level**:
+- **Personal skills** (`~/.claude/skills/`): Role-specific workflows that apply across all your projects (e.g., your PR style, personal code review checklist). Available only to you, not committed to any repo.
+- **Project skills** (`.claude/skills/`): Team-shareable, project-specific workflows committed to the repo. All team members get them automatically.
+- **Enterprise skills**: Organization-wide standards enforced across all projects and users.
+- **Plugin skills**: Distributed via MCP plugins for cross-project reuse without committing to individual repos. Useful for shared tooling across an organization's repos.
+
 **Best practices**:
-- **Personal skills**: Workflows specific to your role
-- **Project skills**: Team-shareable, project-specific workflows
-- **Don't duplicate**: Check existing skills before creating new ones
+- **Don't duplicate**: Check existing skills at all levels before creating new ones
+- **Promote upward**: If a personal skill proves useful across the team, move it to project level
+- **Keep personal lean**: Only keep skills in `~/.claude/skills/` that are truly personal preference

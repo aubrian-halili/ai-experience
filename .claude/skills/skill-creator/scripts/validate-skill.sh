@@ -18,7 +18,7 @@ VERBOSE=false
 VALIDATE_ALL=false
 
 # Known tools list for validation
-KNOWN_TOOLS="Bash Read Grep Glob Write Edit WebFetch WebSearch Skill Task AskUserQuestion EnterPlanMode ExitPlanMode TaskCreate TaskUpdate TaskList TaskGet TaskOutput TaskStop"
+KNOWN_TOOLS="Bash Read Grep Glob Write Edit WebFetch WebSearch Skill Task AskUserQuestion EnterPlanMode ExitPlanMode TaskCreate TaskUpdate TaskList TaskGet TaskOutput TaskStop NotebookEdit ToolSearch ListMcpResourcesTool ReadMcpResourceTool"
 
 usage() {
     echo "Usage: $0 [OPTIONS] <skill-name>"
@@ -203,23 +203,66 @@ validate_body_length() {
 validate_recommended_sections() {
     local skill_file="$1"
 
-    # Check for recommended sections
-    if ! grep -q "^## When to Use" "$skill_file"; then
-        warn "Recommended section '## When to Use' not found"
-    else
-        pass "Section '## When to Use' present"
+    # Check for all canonical body sections (all warnings, not errors)
+    local sections=(
+        "Philosophy"
+        "When to Use"
+        "Input Classification"
+        "Process"
+        "Output Principles"
+        "Argument Handling"
+        "Error Handling"
+        "Related Skills"
+    )
+
+    for section in "${sections[@]}"; do
+        if ! grep -q "^## .*${section}" "$skill_file"; then
+            warn "Recommended section '${section}' not found"
+        else
+            pass "Section '${section}' present"
+        fi
+    done
+
+    return 0
+}
+
+validate_context_agent_coupling() {
+    local frontmatter="$1"
+
+    # If context: fork is set, require agent field
+    if echo "$frontmatter" | grep -q "^context: *fork"; then
+        if ! echo "$frontmatter" | grep -q "^agent:"; then
+            warn "context: fork requires an 'agent' field (Explore, Plan, general-purpose)"
+            return 0
+        fi
+
+        local agent=$(echo "$frontmatter" | grep "^agent:" | sed 's/agent: *//')
+        if ! echo "$agent" | grep -qE '^(Explore|Plan|general-purpose)$'; then
+            warn "agent '$agent' is not a recognized subagent type (expected: Explore, Plan, general-purpose)"
+        else
+            pass "context: fork with valid agent: $agent"
+        fi
     fi
 
-    if ! grep -q "^## Process" "$skill_file"; then
-        warn "Recommended section '## Process' not found"
-    else
-        pass "Section '## Process' present"
+    return 0
+}
+
+validate_action_skill_safety() {
+    local frontmatter="$1"
+    local skill_file="$2"
+
+    # Only check if allowed-tools includes Bash
+    if ! echo "$frontmatter" | grep -q "^allowed-tools:.*Bash"; then
+        return 0
     fi
 
-    if ! grep -q "^## Error Handling" "$skill_file"; then
-        warn "Recommended section '## Error Handling' not found"
-    else
-        pass "Section '## Error Handling' present"
+    # Check if skill content mentions potentially destructive actions
+    if grep -qiE 'deploy|push|delete|production|rm -rf|force.push|drop.table' "$skill_file"; then
+        if ! echo "$frontmatter" | grep -q "^disable-model-invocation: *true"; then
+            warn "Skill uses Bash and mentions destructive actions but disable-model-invocation is not set to true"
+        else
+            pass "Action skill has disable-model-invocation: true"
+        fi
     fi
 
     return 0
@@ -360,6 +403,8 @@ validate_skill() {
     validate_recommended_sections "$skill_file"
     validate_references "$skill_file" "$skill_dir"
     validate_allowed_tools "$frontmatter"
+    validate_context_agent_coupling "$frontmatter"
+    validate_action_skill_safety "$frontmatter" "$skill_file"
     validate_placeholders "$skill_file"
 
     # Summary
