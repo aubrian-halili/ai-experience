@@ -135,7 +135,7 @@ First, classify the request type:
 | Cannot determine project strictness | State assumption (`strict: true` default), ask user to confirm |
 | Migration scope too broad | Recommend incremental migration starting with the highest-value files (shared types, API boundaries) |
 
-Never silently assume strictness level or TypeScript version — surface assumptions explicitly and let the user confirm.
+Never silently assume strictness level or TypeScript version—surface assumptions explicitly and let the user confirm.
 
 ## Related Skills
 

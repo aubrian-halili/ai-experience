@@ -7,6 +7,14 @@ allowed-tools: Bash(gh *)
 
 Layered repository exploration and code searching across the Qred GitHub organization — orient first, then navigate, search, and read only what is relevant.
 
+## Exploration Philosophy
+
+- **Orient before reading** — understand a repo's purpose and structure before opening any code file
+- **Search, don't scan** — use keyword search to find relevant code instead of reading files sequentially
+- **Read the minimum** — only open files directly relevant to the question at hand
+- **Documentation first** — always prefer README and docs over source code for understanding intent
+- **Bound every operation** — limit search results, truncate large files, and cap directory depth
+
 ## When to Use
 
 ### This Skill Is For
@@ -25,25 +33,7 @@ Layered repository exploration and code searching across the Qred GitHub organiz
 - Reviewing code quality or PR changes → use `/review`
 - Querying PostgreSQL databases → use `/backoffice-database`
 
-## Exploration Philosophy
-
-1. **Orient before reading** — Understand a repo's purpose and structure before opening any code file
-2. **Search, don't scan** — Use keyword search to find relevant code instead of reading files sequentially
-3. **Read the minimum** — Only open files directly relevant to the question at hand
-4. **Documentation first** — Always prefer README and docs over source code for understanding intent
-5. **Bound every operation** — Limit search results, truncate large files, and cap directory depth
-
-## Process
-
-### 1. Pre-flight
-
-1. Run `gh auth status` and confirm authentication is active
-2. **Stop conditions:**
-   - `gh` not installed → "Install with `brew install gh`, then `gh auth login`."
-   - Not authenticated → "Run `gh auth login` to authenticate."
-   - No Qred org access → "Ensure your GitHub account has access to the Qred organization."
-
-### 2. Determine Intent
+## Input Classification
 
 Parse `$ARGUMENTS` to route to the correct operation type:
 
@@ -68,6 +58,22 @@ Parse `$ARGUMENTS` to route to the correct operation type:
 | Search term (no path separators) | Search code across org | Layer 3: Search |
 | `<term> in <repo>` | Search code in specific repo | Layer 3: Search |
 | `<repo>/<file-path>` | Read file contents | Layer 4: Read |
+
+## Process
+
+### 1. Pre-flight
+
+1. Run `gh auth status` and confirm authentication is active
+2. **Stop conditions:**
+   - `gh` not installed → "Install with `brew install gh`, then `gh auth login`."
+   - Not authenticated → "Run `gh auth login` to authenticate."
+   - No Qred org access → "Ensure your GitHub account has access to the Qred organization."
+
+### 2. Route Request
+
+Route `$ARGUMENTS` using the Input Classification tables:
+- **Direct operations** → proceed to step 3
+- **Exploration operations** → proceed to step 4 at the specified entry layer
 
 ### 3. Execute Direct Operations
 
@@ -157,6 +163,8 @@ For all direct operations, use `--json` to get structured data:
 | `<repo>/<file-path>` | Read: file contents with 300-line guardrail |
 | `prs/issues <repo>` or `pr/issue <repo> #<n>` | Direct: list or view PRs/issues |
 | Starts with `gh` | Direct: pass-through gh command |
+
+See `@references/examples-and-errors.md` for full invocation examples and detailed error responses.
 
 ## Error Handling
 

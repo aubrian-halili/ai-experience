@@ -94,3 +94,89 @@ Before finalizing a skill:
 - [ ] **Graceful**: Handles missing inputs and edge cases
 - [ ] **Connected**: Links to related skills where appropriate
 - [ ] **Tested**: Verified with real invocations
+
+## Naming Conventions
+
+Use **gerund form** (verb + -ing) for skill names when possible:
+
+**Recommended patterns**:
+- `processing-pdfs` — gerund form (preferred)
+- `pdf-processing` — noun phrase (acceptable)
+- `process-pdfs` — action-oriented (acceptable)
+
+**Avoid**:
+- Vague names: `helper`, `utils`, `tools`
+- Overly generic: `documents`, `data`, `files`
+- Reserved words: `anthropic-helper`, `claude-tools`
+- Inconsistent patterns within your skill collection
+
+**Why this matters**: Consistent naming makes skills easier to reference, understand at a glance, and organize. The name becomes the `/slash-command`.
+
+## Dynamic Context Injection
+
+**String substitution variables** available in skill content:
+
+- `$ARGUMENTS` — all arguments passed when invoking
+- `$ARGUMENTS[N]` or `$N` — specific argument by index (0-based)
+- `` !`command` `` — dynamic context injection; shell command output replaces placeholder before skill content is sent to Claude
+
+**Example use case**: Inject current git branch into skill instructions
+
+```markdown
+Current branch: !`git rev-parse --abbrev-ref HEAD`
+```
+
+Claude sees: "Current branch: feature/auth-flow" (output replaced at runtime).
+
+## Subagent Patterns
+
+Use `context: fork` + `agent` field to run skills in isolated subagent context (no conversation history):
+
+```yaml
+context: fork
+agent: Explore
+```
+
+**When to use**:
+- Deep codebase investigation where conversation history is noise
+- Tasks requiring specialized agent capabilities
+- Operations that should not leak into main conversation
+
+**Available agents**: `Explore`, `Plan`, `general-purpose`
+
+**Tradeoff**: Subagent has no conversation context but focused instructions.
+
+## Testing Strategy
+
+**Test with multiple models**: Skills work differently across Haiku (fast/economical), Sonnet (balanced), and Opus (powerful reasoning).
+
+- **Haiku**: Does the skill provide enough guidance?
+- **Sonnet**: Is the skill clear and efficient?
+- **Opus**: Does the skill avoid over-explaining?
+
+**A/B Iteration Pattern**:
+1. Work with Claude A (expert) to refine the skill
+2. Test with Claude B (fresh instance with skill loaded) on real tasks
+3. Observe Claude B's behavior and bring insights back to Claude A
+4. Iterate: refine → test → observe → repeat
+
+**Evaluation-driven development**:
+1. Identify gaps by running Claude without the skill
+2. Create 3+ evaluation scenarios
+3. Establish baseline performance
+4. Write minimal instructions to pass evaluations
+5. Iterate based on real usage
+
+## Skill Location Hierarchy
+
+Skills are loaded in priority order (highest to lowest):
+
+1. **Enterprise skills** (organization-wide)
+2. **Personal skills** (`~/.claude/skills/`)
+3. **Project skills** (`.claude/skills/`)
+4. **Plugin skills** (MCP plugins)
+
+**Best practices**:
+- **Personal skills**: Workflows specific to your role
+- **Project skills**: Team-shareable, project-specific workflows
+- **Don't duplicate**: Check existing skills before creating new ones

@@ -7,6 +7,13 @@ disable-model-invocation: true
 
 Create pull requests with auto-generated titles and descriptions from commit history.
 
+## PR Philosophy
+
+- **User confirmation** — always present the complete PR details for review before creating; never push or open a PR without explicit approval
+- **Convention compliance** — titles and descriptions follow project conventions (pr-conventions.md); ticket ID is always present
+- **Safety-first** — never force push, never push to main, never skip divergence checks; ask before destructive actions
+- **Commit-driven content** — PR title and description are generated from commit history, not invented; quality commits produce quality PRs
+
 ## When to Use
 
 ### This Skill Is For
@@ -20,6 +27,18 @@ Create pull requests with auto-generated titles and descriptions from commit his
 - Committing changes first → use `/commit`
 - Reviewing an existing PR → use `/review`
 - Draft PR workflows → see `@references/draft-workflow.md`
+
+## Input Classification
+
+Determine PR workflow from `$ARGUMENTS`:
+
+| Input | Intent | Approach |
+|-------|--------|----------|
+| (none) | Full PR workflow | Steps 1-4; auto-generate title and description |
+| `--draft` | Draft PR | Steps 1-4; add `--draft` flag |
+| PR title text | Custom title | Steps 1-4; use provided title (auto-prefix ticket ID) |
+| Branch name | Target base branch | Steps 1-4; use as `--base` argument |
+| `--label <name>` | Labeled PR | Steps 1-4; add label to PR |
 
 ## Process
 
@@ -110,6 +129,13 @@ gh pr view --json number,url,title,state
 
 Show the user: PR number, URL, title, state, and next steps (e.g., request reviews, monitor CI).
 
+## Output Principles
+
+- **PR preview before creation** — present the complete PR (title, body, flags) for user review before pushing or creating
+- **Convention-formatted title** — `<TICKET-ID> <type>(<scope>): <description>` with max 72 chars, per pr-conventions.md
+- **Structured body** — every PR body includes Jira reference, Summary, Breaking Changes, and Test Plan sections
+- **Actionable result** — after creation, show PR number, URL, and next steps (request reviews, monitor CI)
+
 ## Argument Handling
 
 | Argument | Behavior |
@@ -130,6 +156,8 @@ Show the user: PR number, URL, title, state, and next steps (e.g., request revie
 | gh auth failure | "Run `gh auth login` to authenticate" |
 | Branch protection rules | "Push to a feature branch instead, or request access" |
 
+Never force push or create a PR from the default branch — always verify branch state and user intent before pushing.
+
 ## Related Skills
 
 | Skill | When to Use Instead |
@@ -138,3 +166,4 @@ Show the user: PR number, URL, title, state, and next steps (e.g., request revie
 | `/feature` | Plan feature before implementing |
 | `/commit` | Commit changes before creating PR |
 | `/review` | Review a PR (yours or others) |
+| `/explore` | Understand changes before creating PR |

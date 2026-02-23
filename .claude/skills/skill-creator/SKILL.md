@@ -13,6 +13,7 @@ Create new Claude Code skills following established patterns and best practices.
 - **Progressive disclosure** — start with essentials (frontmatter, opening paragraph, process); let reference files carry depth so skills stay scannable
 - **Degrees of freedom** — match constraint level to task variability; creative tasks need principles, mechanical tasks need strict templates (see `@references/best-practices.md`)
 - **Fail-safe design** — handle missing inputs with clear guidance and stop conditions; a skill that silently proceeds with wrong assumptions is worse than one that asks
+- **Consistent naming** — use gerund form (verb + -ing) for skill names when possible; avoid vague, generic, or reserved words (see `@references/best-practices.md` for conventions)
 
 ## When to Use
 
@@ -133,18 +134,18 @@ Test the skill with real invocations and refine based on:
 
 ## Frontmatter Reference
 
-| Field | Type | Description | Required |
-|-------|------|-------------|----------|
-| `name` | string | Skill identifier; lowercase letters, numbers, hyphens only (max 64 chars). Becomes the `/slash-command`. If omitted, uses directory name. | No (recommended) |
-| `description` | string | Trigger phrases and purpose. Claude uses this to decide when to auto-invoke. If omitted, uses first paragraph of markdown. | Recommended |
-| `argument-hint` | string | Placeholder shown during autocomplete (e.g., `[issue-number]`, `[filename] [format]`) | No |
-| `allowed-tools` | string | Tools available without per-use approval when skill is active (e.g., `Read, Grep, Glob`) | No |
-| `disable-model-invocation` | boolean | Prevent Claude auto-triggering; use for action skills like `/commit`, `/pr` that should be manual-only | No |
-| `user-invocable` | boolean | Set `false` to hide from `/` menu; use for background knowledge skills | No |
-| `model` | string | Override model for skill execution (e.g., `haiku`, `sonnet`, `opus`) | No |
-| `context` | string | Set to `fork` to run in isolated subagent context (no conversation history) | No |
-| `agent` | string | Subagent type when `context: fork` (e.g., `Explore`, `Plan`, `general-purpose`) | No |
-| `hooks` | object | Skill-scoped hooks configuration (see Hooks documentation) | No |
+| Field | Type | Description | Required | Usage |
+|-------|------|-------------|----------|-------|
+| `name` | string | Skill identifier; lowercase letters, numbers, hyphens only (max 64 chars). Becomes the `/slash-command`. If omitted, uses directory name. | No (recommended) | Common |
+| `description` | string | Trigger phrases and purpose. Claude uses this to decide when to auto-invoke. If omitted, uses first paragraph of markdown. | Recommended | Common |
+| `argument-hint` | string | Placeholder shown during autocomplete (e.g., `[issue-number]`, `[filename] [format]`) | No | Common |
+| `allowed-tools` | string | Tools available without per-use approval when skill is active (e.g., `Read, Grep, Glob`) | No | Common |
+| `disable-model-invocation` | boolean | Prevent Claude auto-triggering; use for action skills like `/commit`, `/pr` that should be manual-only | No | Common |
+| `user-invocable` | boolean | Set `false` to hide from `/` menu; use for background knowledge skills | No | Advanced |
+| `model` | string | Override model for skill execution (e.g., `haiku`, `sonnet`, `opus`) | No | Advanced |
+| `context` | string | Set to `fork` to run in isolated subagent context (no conversation history) | No | Advanced |
+| `agent` | string | Subagent type when `context: fork` (e.g., `Explore`, `Plan`, `general-purpose`) | No | Advanced |
+| `hooks` | object | Skill-scoped hooks configuration (see Hooks documentation) | No | Advanced |
 
 **String substitution variables** available in skill content:
 - `$ARGUMENTS` — all arguments passed when invoking the skill

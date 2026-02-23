@@ -2,12 +2,12 @@
 name: architecture
 description: Use when the user asks "how should I design", "what's the best architecture", "how do I scale", "document this decision", "create an ADR", mentions "system design", "scaling", "microservices vs monolith", "architecture decision record", or needs help with technical decisions, infrastructure planning, or documenting architectural choices.
 argument-hint: "[topic to design] or [--adr decision title]"
-allowed-tools: Read, Grep, Glob, Write
+allowed-tools: Read, Grep, Glob, Write, Edit
 ---
 
 Provide expert guidance on system architecture decisions, design approaches, and technical strategy. Generates Architecture Decision Records (ADRs) when requested.
 
-## Design Principles
+## Architecture Philosophy
 
 - **NFRs First** — Clarify Non-Functional Requirements before suggesting solutions
 - **Trade-off Analysis** — Every recommendation includes explicit Pros/Cons — never present one option as obviously correct
@@ -37,11 +37,11 @@ Classify `$ARGUMENTS` to determine the appropriate workflow:
 
 | Type | Indicators | Approach |
 |------|-----------|----------|
-| **Greenfield** | "new system", "from scratch", "build new" | Full architecture process (steps 1–5) |
-| **Evolution** | "add feature", "extend", "enhance" | Pattern analysis + incremental design (steps 1–5) |
-| **Migration** | "move to", "replace", "upgrade" | Risk assessment + phased plan (steps 1–5) |
-| **Optimization** | "scale", "performance", "bottleneck" | Bottleneck analysis + targeted changes (steps 1–5) |
-| **Integration** | "connect", "integrate", "API" | Interface design + compatibility (steps 1–5) |
+| **Greenfield** | "new system", "from scratch", "build new" | Full process (steps 1–5); emphasis on requirements (step 3) |
+| **Evolution** | "add feature", "extend", "enhance" | Steps 1–5; emphasis on existing patterns (step 2) and incremental design (step 4) |
+| **Migration** | "move to", "replace", "upgrade" | Steps 1–5; emphasis on risk assessment and phased planning (step 4) |
+| **Optimization** | "scale", "performance", "bottleneck" | Steps 1–5; emphasis on existing analysis (step 2) and targeted changes (step 4) |
+| **Integration** | "connect", "integrate", "API" | Steps 1–5; emphasis on interface design and compatibility (step 4) |
 | **ADR** | `--adr`, "document decision", "record choice" | ADR generation process (steps 1–2, 6–8) |
 
 ## Process
@@ -115,6 +115,13 @@ Classify `$ARGUMENTS` to determine the appropriate workflow:
 | Microservices | Large teams, complex domains, independent scaling | Flexibility vs operational complexity |
 | Event-Driven | Async workflows, audit trails, temporal decoupling | Loose coupling vs eventual consistency |
 | Serverless | Variable workloads, cost optimization | Reduced ops burden vs vendor lock-in |
+
+## Output Principles
+
+- **Trade-off transparency** — always present pros/cons for each option; never present a single approach as obviously correct without acknowledging alternatives
+- **Diagram-first** — include mermaid diagrams showing component relationships and data flow; visual clarity precedes detailed text
+- **Actionable blueprints** — map every recommendation to concrete files, build sequence, and verification steps; designs should be immediately implementable
+- **Confidence signaling** — explicitly mark recommendations as `[High Confidence]` or `[Needs Verification]`; surface assumptions and knowledge gaps
 
 ## Argument Handling
 

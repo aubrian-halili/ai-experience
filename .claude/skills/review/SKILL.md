@@ -41,6 +41,15 @@ Classify `$ARGUMENTS` to determine the review workflow:
 | **Branch Diff** | Branch name | Branch comparison review (steps 1–3) |
 | **Pull Request** | PR number (`123`, `#123`) or PR URL | Full PR review (steps 1, 4–5) |
 
+## Severity Levels
+
+| Level | Description | Action |
+|-------|-------------|--------|
+| **Critical** | Security vulnerability, data loss risk, crash | Must fix before merge |
+| **High** | Bug, significant perf issue, bad practice | Should fix before merge |
+| **Medium** | Code smell, maintainability concern | Fix soon, can merge |
+| **Note** | Style, minor improvement, question | Optional |
+
 ## Process
 
 **Branch point:** Local review → steps 1–3. PR review → steps 1, 4–5.
@@ -68,7 +77,7 @@ Classify `$ARGUMENTS` to determine the review workflow:
 
 ### 3. Report Local Findings (Local only)
 
-Present findings using severity levels and the Local Changes template from `@references/templates.md`.
+Present findings using the Severity Levels defined above and the Local Changes template from `@references/templates.md`.
 
 **No findings case:** If analysis produces no findings above the confidence threshold, explicitly state: "No findings above confidence threshold. Code meets review standards for the dimensions analyzed."
 
@@ -110,15 +119,6 @@ Present findings using severity levels and the Local Changes template from `@ref
 Present findings using the Pull Request Review template from `@references/templates.md`.
 
 Apply confidence gate — only flag findings scored >= 80.
-
-## Severity Levels
-
-| Level | Description | Action |
-|-------|-------------|--------|
-| **Critical** | Security vulnerability, data loss risk, crash | Must fix before merge |
-| **High** | Bug, significant perf issue, bad practice | Should fix before merge |
-| **Medium** | Code smell, maintainability concern | Fix soon, can merge |
-| **Note** | Style, minor improvement, question | Optional |
 
 ## Output Principles
 

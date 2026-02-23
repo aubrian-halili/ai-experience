@@ -9,13 +9,13 @@ allowed-tools: Read, Grep, Glob
 
 Systematically explore and explain how existing functionality works in the codebase.
 
-## Exploration Principles
+## Exploration Philosophy
 
-1. **Overview first, details second** — 1-3 sentence summary before diving into specifics
-2. **Evidence-based** — Every claim references a file location (`file:line`)
-3. **Dual context** — Never lose the original question while deep in implementation details
-4. **Surface patterns** — Identify design patterns, architectural decisions, and implicit assumptions
-5. **Explicit gaps** — Flag incomplete traces, dead ends, and areas not explored
+- **Overview first, details second** — provide a 1-3 sentence summary before diving into specifics; context prevents readers from getting lost
+- **Evidence-based** — every claim references a file location (`file:line`); ungrounded assertions waste the user's time
+- **Dual context** — never lose the original question while deep in implementation details; periodically resurface to connect findings
+- **Surface patterns** — identify design patterns, architectural decisions, and implicit assumptions; understanding the "why" matters as much as the "what"
+- **Explicit gaps** — flag incomplete traces, dead ends, and areas not explored; what you didn't find is as important as what you did
 
 ## When to Use
 
@@ -31,6 +31,19 @@ Systematically explore and explain how existing functionality works in the codeb
 - Visualizing architecture → use `/diagram`
 - Reviewing code quality → use `/review` or `/clean-code`
 - Designing new architecture → use `/architecture`
+
+## Input Classification
+
+Determine exploration workflow from `$ARGUMENTS`:
+
+| Input | Intent | Approach |
+|-------|--------|----------|
+| Feature name (e.g., `authentication`) | Trace feature end-to-end | Steps 1-5; emphasis on discovery (step 2) |
+| File path (e.g., `src/auth/login.ts`) | Explore from file | Steps 1-5; start at specified file |
+| Directory (e.g., `src/auth/`) | Explore module | Steps 1-5; emphasis on structure and interactions |
+| Flow description (e.g., `user login flow`) | Trace execution path | Steps 1-5; emphasis on data and control flow |
+| Component name (e.g., `AuthService`) | Trace component usage | Steps 1-5; emphasis on callers and dependencies |
+| (none) | Ask user | Pre-flight stop |
 
 ## Exploration Strategies
 
@@ -97,6 +110,13 @@ When investigating nested components, maintain dual context:
    - How does it relate to the global context?
 
 Always maintain both contexts—don't lose sight of the broader goal when deep in implementation details. Periodically resurface to connect findings back to the original question.
+
+## Output Principles
+
+- **Evidence over assertion** — every finding references a specific `file:line`; never claim behavior without pointing to the code that implements it
+- **Structured presentation** — use tables for entry points, components, and dependencies; use bullet lists for findings and observations
+- **Completeness markers** — tag explored paths as `[High Confidence]` or `[Needs Verification]`; tag unexplored areas as `[Incomplete]`
+- **Actionable next steps** — conclude with recommended follow-up skills (`/diagram`, `/review`, `/architecture`) when findings warrant deeper analysis
 
 ## Argument Handling
 
