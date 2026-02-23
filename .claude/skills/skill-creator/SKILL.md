@@ -2,7 +2,7 @@
 name: skill-creator
 description: Use when the user asks to "create a skill", "build a new skill", "make a Claude skill", mentions "skill template", or wants to extend Claude's capabilities with custom workflows.
 argument-hint: "[skill name]"
-allowed-tools: Bash, Read, Grep, Glob, Write
+allowed-tools: Bash, Read, Grep, Glob, Write, Edit
 ---
 
 Create new Claude Code skills following established patterns and best practices. References `@template.md` for scaffolding and `@references/best-practices.md` for design principles.
@@ -90,6 +90,9 @@ This creates the skill directory and a SKILL.md from `@template.md` with the ski
 Edit the generated SKILL.md following the optimized skill pattern:
 
 1. **Frontmatter**: Set name, description with trigger phrases, argument-hint, allowed-tools (see Frontmatter Reference below)
+
+> **Context budget**: Descriptions are always in context for auto-invocable skills. Keep under 500 chars. Set `disable-model-invocation: true` for action skills to exclude from auto-invoke context.
+
 2. **Opening paragraph**: One-line purpose statement (no H1 heading)
 3. **Philosophy**: 3–5 bold-dash principles that guide the skill's decisions
 4. **When to Use**: Clear inclusion/exclusion criteria with skill cross-references
@@ -125,12 +128,15 @@ Test the skill with real invocations and refine based on:
 | Section | Purpose | Required |
 |---------|---------|----------|
 | Frontmatter | Metadata for skill discovery and invocation | Yes |
-| Introduction | Quick orientation on skill purpose | Yes |
-| When to Use | Helps Claude decide if skill applies | Recommended |
-| Process | Step-by-step execution guide | Yes |
-| Response Format | Output structure expectations | Recommended |
-| Error Handling | Graceful degradation guidance | Recommended |
-| Related Skills | Cross-references for discovery | Optional |
+| Introduction | Quick orientation (no H1 heading) | Yes |
+| [Domain] Philosophy | 3-5 guiding principles | Yes |
+| When to Use | Inclusion/exclusion criteria | Yes |
+| Input Classification | Maps request types to workflow variations | Yes |
+| Process | Step-by-step with Pre-flight and stop conditions | Yes |
+| Output Principles | Bold-dash bullets on what good output looks like | Yes |
+| Argument Handling | Table mapping argument types to behaviors | Yes |
+| Error Handling | Scenario table + closing "Never..." principle | Yes |
+| Related Skills | Cross-references with "When to Use Instead" | Recommended |
 
 ## Frontmatter Reference
 

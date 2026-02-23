@@ -14,6 +14,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 WITH_REFERENCES=false
+WITH_SCRIPTS=false
 FORCE_OVERWRITE=false
 
 usage() {
@@ -23,6 +24,7 @@ usage() {
     echo ""
     echo "Options:"
     echo "  --with-references    Create references/ subdirectory"
+    echo "  --with-scripts       Create scripts/ subdirectory"
     echo "  --force              Overwrite existing skill without prompt"
     echo "  -h, --help           Show this help message"
     echo ""
@@ -32,6 +34,7 @@ usage() {
     echo "Example:"
     echo "  $0 code-review"
     echo "  $0 --with-references api-client"
+    echo "  $0 --with-references --with-scripts api-client"
     exit 1
 }
 
@@ -40,6 +43,10 @@ while [[ $# -gt 0 ]]; do
     case $1 in
         --with-references)
             WITH_REFERENCES=true
+            shift
+            ;;
+        --with-scripts)
+            WITH_SCRIPTS=true
             shift
             ;;
         --force)
@@ -128,29 +135,39 @@ if [ "$WITH_REFERENCES" = true ]; then
     echo -e "${GREEN}✓ Created references/ directory${NC}"
 fi
 
+# Create scripts directory if requested
+if [ "$WITH_SCRIPTS" = true ]; then
+    mkdir -p "$SKILL_DIR/scripts"
+    echo -e "${GREEN}✓ Created scripts/ directory${NC}"
+fi
+
 echo -e "${GREEN}✓ Created skill: $SKILL_NAME${NC}"
 echo ""
 echo "Directory: $SKILL_DIR"
 echo ""
+STEP=1
 echo "Next steps:"
-echo "  1. Edit $SKILL_DIR/SKILL.md"
+echo "  $STEP. Edit $SKILL_DIR/SKILL.md"
 echo "     - Update the description with trigger phrases"
 echo "     - Define when to use this skill"
 echo "     - Write the process steps"
-echo "     - Specify the response format"
+echo "     - Add output principles and error handling"
 echo ""
+STEP=$((STEP + 1))
 if [ "$WITH_REFERENCES" = true ]; then
-    echo "  2. Add reference files to $SKILL_DIR/references/"
+    echo "  $STEP. Add reference files to $SKILL_DIR/references/"
     echo "     - Link with @references/filename.md from SKILL.md"
     echo ""
-    echo "  3. Validate the skill:"
-else
-    echo "  2. Validate the skill:"
+    STEP=$((STEP + 1))
 fi
+if [ "$WITH_SCRIPTS" = true ]; then
+    echo "  $STEP. Add scripts to $SKILL_DIR/scripts/"
+    echo "     - Make scripts executable: chmod +x scripts/*.sh"
+    echo ""
+    STEP=$((STEP + 1))
+fi
+echo "  $STEP. Validate the skill:"
 echo "     $SCRIPT_DIR/validate-skill.sh $SKILL_NAME"
 echo ""
-if [ "$WITH_REFERENCES" = true ]; then
-    echo "  4. Test by invoking /$SKILL_NAME"
-else
-    echo "  3. Test by invoking /$SKILL_NAME"
-fi
+STEP=$((STEP + 1))
+echo "  $STEP. Test by invoking /$SKILL_NAME"
