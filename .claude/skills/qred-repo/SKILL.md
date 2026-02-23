@@ -5,8 +5,6 @@ argument-hint: "[repo name, file path, search term, tree <repo>, or gh command]"
 allowed-tools: Bash(gh *)
 ---
 
-# Qred Repository Navigator
-
 Layered repository exploration and code searching across the Qred GitHub organization — orient first, then navigate, search, and read only what is relevant.
 
 ## When to Use
@@ -37,15 +35,15 @@ Layered repository exploration and code searching across the Qred GitHub organiz
 
 ## Process
 
-### 0. Pre-flight Check
+### 1. Pre-flight
 
 1. Run `gh auth status` and confirm authentication is active
-2. Stop conditions:
+2. **Stop conditions:**
    - `gh` not installed → "Install with `brew install gh`, then `gh auth login`."
    - Not authenticated → "Run `gh auth login` to authenticate."
    - No Qred org access → "Ensure your GitHub account has access to the Qred organization."
 
-### 1. Determine Intent
+### 2. Determine Intent
 
 Parse `$ARGUMENTS` to route to the correct operation type:
 
@@ -71,14 +69,14 @@ Parse `$ARGUMENTS` to route to the correct operation type:
 | `<term> in <repo>` | Search code in specific repo | Layer 3: Search |
 | `<repo>/<file-path>` | Read file contents | Layer 4: Read |
 
-### 2. Execute Direct Operations
+### 3. Execute Direct Operations
 
 For all direct operations, use `--json` to get structured data:
 - **List repos:** `gh repo list Qred --limit 30 --no-archived --json name,description,url,isArchived,pushedAt` → present as table with name, description, last push date
 - **List PRs/issues:** add `--json number,title,state,author,updatedAt` → present as table
 - **View PR/issue:** add `--json number,title,body,state,author` → present title, author, state, and body
 
-### 3. Layered Exploration Workflow
+### 4. Layered Exploration Workflow
 
 #### Layer 1: Orient
 
@@ -140,28 +138,40 @@ For all direct operations, use `--json` to get structured data:
 
 **Guardrails:** One file at a time. **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more. Skip binary/generated/lock files (e.g., `package-lock.json`, `yarn.lock`, `.min.js`). Summarize the file's purpose before presenting raw content.
 
-### 4. Present Results
+## Output Principles
 
 - **Context first** — State what was searched/listed and where
-- **Structured presentation** — Use tables for listings, code blocks for file contents, tree format for directories
+- **Structured presentation** — Use tables for listings, code blocks for file contents, tree format for directories (see `@references/formatting.md`)
 - **Bounded output** — Truncate large results with clear indicators of what was omitted
+- **Follow-up suggestions** — After each layer, suggest the natural next action (see `@references/formatting.md`)
 
-For layer-specific follow-up suggestions, see `@references/formatting.md`.
+## Argument Handling
 
-## Example Invocations
-
-| Invocation | What It Does |
+| Argument | Behavior |
 |---|---|
-| `/qred-repo` | List repositories in the Qred org |
-| `/qred-repo qred-mcp-proxy` | Orient: view repo details, README, and summary |
-| `/qred-repo OAuth` | Search: find "OAuth" across all Qred repos |
-| `/qred-repo prs qred-mcp-proxy` | Direct: list open PRs in qred-mcp-proxy |
-
-For the full list, see `@references/examples-and-errors.md`.
+| (none) or `repos` | List repositories in the Qred org |
+| Repo name (e.g., `qred-mcp-proxy`) | Orient: view repo details, README, and summary |
+| `tree <repo>` or `<repo>/<path>/` | Navigate: tree view or directory listing |
+| Search term (no path separators) | Search: find term across all Qred repos |
+| `<term> in <repo>` | Search: find term in a specific repo |
+| `<repo>/<file-path>` | Read: file contents with 300-line guardrail |
+| `prs/issues <repo>` or `pr/issue <repo> #<n>` | Direct: list or view PRs/issues |
+| Starts with `gh` | Direct: pass-through gh command |
 
 ## Error Handling
 
-Pre-flight errors are handled in Step 0. For all runtime errors (repo not found, file too large, rate limits, etc.), show the error and suggest the most helpful next action. See `@references/examples-and-errors.md` for the full error handling table.
+| Scenario | Response |
+|---|---|
+| `gh` not installed | "Install with `brew install gh`, then `gh auth login`." |
+| Not authenticated | "Run `gh auth login` to authenticate." |
+| No Qred org access | "Ensure your GitHub account has access to the Qred organization." |
+| Repo not found | List repos with `/qred-repo` to find the correct name |
+| File/path not found | List parent directory contents to help navigate |
+| File too large (>300 lines) | Show first 100 lines and ask before showing more |
+| No search results | Suggest alternative terms, broader scope, or different repo |
+| API rate limit | "GitHub API rate limit exceeded. Wait a few minutes and retry." |
+
+When an error occurs, always show the error and suggest the most helpful next action.
 
 ## Related Skills
 
@@ -170,3 +180,5 @@ Pre-flight errors are handled in Step 0. For all runtime errors (repo not found,
 | `/explore` | Deep end-to-end investigation of locally cloned code |
 | `/review` | Code quality review or PR audit |
 | `/backoffice-database` | Exploring PostgreSQL database schemas and data |
+| `/diagram` | Visualize repo architecture or relationships |
+| `/architecture` | Design or evaluate architecture after repo exploration |

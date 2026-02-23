@@ -9,6 +9,14 @@ allowed-tools: Read, Grep, Glob
 
 Systematically explore and explain how existing functionality works in the codebase.
 
+## Exploration Principles
+
+1. **Overview first, details second** — 1-3 sentence summary before diving into specifics
+2. **Evidence-based** — Every claim references a file location (`file:line`)
+3. **Dual context** — Never lose the original question while deep in implementation details
+4. **Surface patterns** — Identify design patterns, architectural decisions, and implicit assumptions
+5. **Explicit gaps** — Flag incomplete traces, dead ends, and areas not explored
+
 ## When to Use
 
 ### This Skill Is For
@@ -24,13 +32,26 @@ Systematically explore and explain how existing functionality works in the codeb
 - Reviewing code quality → use `/review` or `/clean-code`
 - Designing new architecture → use `/architecture`
 
+## Exploration Strategies
+
+**Single Function**: Read signature → trace body → resolve called functions → check callers for context
+**API Endpoint**: Route definition → middleware chain → handler → service logic → DB/external calls → response
+**Feature Flow**: UI trigger → API → service → data layer → async operations → event subscribers
+**Module**: Public API (exports) → internal structure → core abstractions → external consumer patterns
+
 ## Process
 
-### 1. Scope
+### 1. Pre-flight
 
 - Identify the investigation target from `$ARGUMENTS`
-- If broad, ask which aspect to focus on first
+- Classify using the Exploration Strategies table above
 - Determine depth: Surface (quick orientation) | Standard (full flow) | Deep (internals + edge cases)
+
+**Stop conditions:**
+- No `$ARGUMENTS` provided → ask user what to investigate
+- Target not found in codebase → report and stop
+- Target is ambiguous (multiple matches) → ask user to clarify
+- Scope is overly broad (e.g., "how does everything work") → ask user to narrow focus
 
 ### 2. Discover
 
@@ -50,24 +71,18 @@ Systematically explore and explain how existing functionality works in the codeb
 
 ### 4. Document
 
-Present findings with clear structure, file locations (`file:line`), and actionable observations.
+- Present findings with clear structure, file locations (`file:line`), and actionable observations
+- List essential files to understand the feature
+- Use tables for structured information (entry points, components, dependencies)
+- Include diagrams (suggest `/diagram` for complex flows) where helpful
+- Connect findings back to the user's original question
 
-## Output Principles
+### 5. Verify
 
-- **Lead with overview** — 1-3 sentence summary before diving into details
-- **Show locations** — Use `file:line` format for all references
-- **Track data flow** — Visualize with diagrams where helpful
-- **Surface patterns** — Identify design patterns and architectural decisions
-- **Flag observations** — Tech debt, edge cases, implicit assumptions
-- **Essential files** — List critical files to understand the feature
-- **Use tables** — For structured information (entry points, components, dependencies)
-
-## Exploration Strategies
-
-**Single Function**: Read signature → trace body → resolve called functions → check callers for context
-**API Endpoint**: Route definition → middleware chain → handler → service logic → DB/external calls → response
-**Feature Flow**: UI trigger → API → service → data layer → async operations → event subscribers
-**Module**: Public API (exports) → internal structure → core abstractions → external consumer patterns
+- Confirm the original question has been answered
+- Check that all traced paths have been documented or marked `[Incomplete]`
+- Note any areas intentionally not explored and why
+- If findings suggest deeper analysis, recommend related skills (`/architecture`, `/diagram`, `/review`)
 
 ## Context Preservation
 
@@ -83,6 +98,17 @@ When investigating nested components, maintain dual context:
 
 Always maintain both contexts—don't lose sight of the broader goal when deep in implementation details. Periodically resurface to connect findings back to the original question.
 
+## Argument Handling
+
+| Argument | Behavior |
+|----------|----------|
+| (none) | Ask user what to investigate |
+| Feature name (e.g., `authentication`) | Search for related files and trace the feature end-to-end |
+| File path (e.g., `src/auth/login.ts`) | Start exploration from the specified file |
+| Directory (e.g., `src/auth/`) | Explore the module structure and interactions |
+| Flow description (e.g., `user login flow`) | Trace the flow from trigger to completion |
+| Component name (e.g., `AuthService`) | Search for the component, trace its usage and dependencies |
+
 ## Error Handling
 
 | Scenario | Response |
@@ -91,6 +117,9 @@ Always maintain both contexts—don't lose sight of the broader goal when deep i
 | Uncertain findings | Mark sections as `[High Confidence]` or `[Needs Verification]` |
 | Dead ends | Document paths that couldn't be traced and why |
 | Scope limited | Explicitly state what was NOT explored (e.g., external services, dynamic dispatch) |
+| Target not found | Report the missing target and ask user to verify the name or path |
+| Scope too broad | Ask user to narrow scope to a specific feature, module, or flow |
+| File access fails | Note inaccessible files and suggest alternative investigation approaches |
 
 Never silently omit findings—surface limitations explicitly.
 

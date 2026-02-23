@@ -5,77 +5,103 @@ argument-hint: "[skill name]"
 allowed-tools: Bash, Read, Grep, Glob, Write
 ---
 
-# Skill Creator
+Create new Claude Code skills following established patterns and best practices. References `@template.md` for scaffolding and `@references/best-practices.md` for design principles.
 
-Create new Claude Code skills following established patterns and best practices.
+## Skill Design Philosophy
 
-## References
+- **Context efficiency** — minimize token usage; front-load critical instructions in SKILL.md and defer supplementary detail to `@references/` files
+- **Progressive disclosure** — start with essentials (frontmatter, opening paragraph, process); let reference files carry depth so skills stay scannable
+- **Degrees of freedom** — match constraint level to task variability; creative tasks need principles, mechanical tasks need strict templates (see `@references/best-practices.md`)
+- **Fail-safe design** — handle missing inputs with clear guidance and stop conditions; a skill that silently proceeds with wrong assumptions is worse than one that asks
 
-- `@template.md` — Reusable SKILL.md template with placeholders
-- `@references/best-practices.md` — Detailed design principles and quality checklist
+## When to Use
 
-## When to Create a Skill
-
-### Good Candidates
+### This Skill Is For
 
 - Repetitive workflows with consistent structure (e.g., PR reviews, code generation)
 - Domain-specific tasks requiring specialized context (e.g., company coding standards)
 - Multi-step processes that benefit from guided execution
 - Tasks where output format consistency matters
 
-### Skip Creating a Skill When
+### Use a Different Approach When
 
 - One-off tasks that won't repeat
 - Simple queries that don't need structured output
-- Tasks already well-handled by existing skills
+- Tasks already well-handled by existing skills → check `/explore` to find them
 
-## Core Principles
+## Input Classification
 
-| Principle | Description |
-|-----------|-------------|
-| Context Efficiency | Minimize token usage; load references only when needed |
-| Progressive Disclosure | Start with essentials, defer details to linked files |
-| Degrees of Freedom | Match constraint level to task variability |
-| Fail-Safe Design | Handle missing inputs gracefully with clear guidance |
+Use `$ARGUMENTS` if provided (skill name or description).
+
+First, classify the request type:
+
+| Type | Indicators | Approach |
+|------|-----------|----------|
+| **New Skill** | "create a skill", "build a skill for", skill name provided | Steps 1–7; full workflow from requirements to validation |
+| **Skill Update** | "optimize", "improve", "update this skill" | Steps 1, 3–5, 7; skip init, focus on structural alignment with peers |
+| **Skill Validation** | "validate", "check this skill" | Step 6 only; run validation script and report |
+| **Template Question** | "how to write a skill", "skill structure" | Steps 1–2 only; explain Skill Anatomy and Frontmatter Reference |
+| **Skill Review** | "review this skill", "is this skill good" | Steps 1, 3–5, 7; audit against quality checklist in `@references/best-practices.md` |
 
 ## Process
 
-### 1. Understand Requirements
+### 1. Pre-flight
+
+- Classify request using the Input Classification table
+- If `$ARGUMENTS` contains a skill name, validate it is kebab-case (`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`)
+- Check if a skill with that name already exists in `.claude/skills/`
+- Review existing skills via Glob to avoid overlap with the proposed skill's scope
+
+**Stop conditions:**
+- No `$ARGUMENTS` and no skill description provided → ask user for a skill name or description of the workflow they want to automate
+- Proposed skill duplicates an existing skill's scope → suggest updating the existing skill instead
+- Request is not about skill creation or management → redirect to the appropriate skill
+
+### 2. Gather Requirements
 
 Ask clarifying questions:
-- What triggers this skill? (trigger phrases)
-- What inputs does it need? (arguments)
-- What outputs should it produce? (format, structure)
-- How variable are the outputs? (degrees of freedom)
+- What triggers this skill? (natural phrases users would say)
+- What inputs does it need? (`$ARGUMENTS` format)
+- What outputs should it produce? (format, structure, degrees of freedom)
+- Which tools does it need? (Read-only guidance vs. file-writing action)
+- Should Claude auto-invoke it, or manual-only (`disable-model-invocation`)?
 
-### 2. Plan the Skill
+### 3. Plan Structure
 
 Determine:
-- Skill name (kebab-case, descriptive)
+- Skill name (kebab-case, descriptive, max 64 characters)
 - Directory structure needs (references, scripts, examples)
-- Whether templates or examples better serve the use case
+- Whether templates or examples better serve the use case (see `@references/best-practices.md`, Output Pattern Selection)
+- Constraint level: high freedom (creative), medium (structured), or low (mechanical)
 
-### 3. Initialize
+### 4. Initialize
 
-Run the init script to create boilerplate:
+Run the init script to scaffold the boilerplate:
 
 ```bash
 ./.claude/skills/skill-creator/scripts/init-skill.sh [skill-name]
 ```
 
-### 4. Author the SKILL.md
+This creates the skill directory and a SKILL.md from `@template.md` with the skill name substituted.
 
-Edit the generated SKILL.md:
+### 5. Author the SKILL.md
 
-1. **Frontmatter**: Set name, description with trigger phrases, argument-hint
-2. **Introduction**: One-line purpose statement
-3. **When to Use**: Clear inclusion/exclusion criteria
-4. **Process**: Step-by-step workflow
-5. **Response Format**: Expected output structure
-6. **Error Handling**: How to handle edge cases
-7. **Related Skills**: Cross-references to complementary skills
+Edit the generated SKILL.md following the optimized skill pattern:
 
-### 5. Validate
+1. **Frontmatter**: Set name, description with trigger phrases, argument-hint, allowed-tools (see Frontmatter Reference below)
+2. **Opening paragraph**: One-line purpose statement (no H1 heading)
+3. **Philosophy**: 3–5 bold-dash principles that guide the skill's decisions
+4. **When to Use**: Clear inclusion/exclusion criteria with skill cross-references
+5. **Input Classification**: Table mapping request types to indicators and process step emphasis
+6. **Process**: Numbered steps with Pre-flight (including stop conditions), bullet-list sub-steps, and branching for different input types
+7. **Output Principles**: 3–4 bold-dash bullets describing what good output looks like
+8. **Argument Handling**: Table mapping argument types to behaviors
+9. **Error Handling**: 6–8 scenarios in a table + closing "Never..." principle
+10. **Related Skills**: 4–5 entries with "When to Use Instead" descriptions
+
+Cross-reference `@references/best-practices.md` for anti-patterns and quality checklist.
+
+### 6. Validate
 
 Run validation to check structure:
 
@@ -83,12 +109,15 @@ Run validation to check structure:
 ./.claude/skills/skill-creator/scripts/validate-skill.sh [skill-name]
 ```
 
-### 6. Iterate
+Verify against the quality checklist: Discoverable, Scoped, Efficient, Guided, Graceful, Connected, Tested (see `@references/best-practices.md`).
+
+### 7. Iterate
 
 Test the skill with real invocations and refine based on:
-- Missing edge cases
-- Unclear instructions
-- Output format issues
+- Missing edge cases or input types
+- Unclear instructions that cause wrong behavior
+- Output format issues or missing context
+- Comparison against peer skills for structural consistency
 
 ## Skill Anatomy
 
@@ -106,29 +135,60 @@ Test the skill with real invocations and refine based on:
 
 | Field | Type | Description | Required |
 |-------|------|-------------|----------|
-| `name` | string | Skill identifier (kebab-case) | Yes |
-| `description` | string | Trigger phrases and purpose | Yes |
-| `argument-hint` | string | Placeholder shown to user | Optional |
-| `disable-model-invocation` | boolean | Prevent Claude auto-triggering (use for action skills like `/commit`, `/pr`) | Optional |
-| `user-invocable` | boolean | Hide from `/` menu if false (for internal/helper skills) | Optional |
-| `model` | string | Override model for skill (e.g., `haiku`, `sonnet`, `opus`) | Optional |
-| `context` | string | Run in forked subagent if set to `fork` | Optional |
-| `agent` | string | Subagent type when context is forked (e.g., `Explore`, `Plan`) | Optional |
-| `hooks` | object | Skill-scoped hooks configuration | Optional |
+| `name` | string | Skill identifier; lowercase letters, numbers, hyphens only (max 64 chars). Becomes the `/slash-command`. If omitted, uses directory name. | No (recommended) |
+| `description` | string | Trigger phrases and purpose. Claude uses this to decide when to auto-invoke. If omitted, uses first paragraph of markdown. | Recommended |
+| `argument-hint` | string | Placeholder shown during autocomplete (e.g., `[issue-number]`, `[filename] [format]`) | No |
+| `allowed-tools` | string | Tools available without per-use approval when skill is active (e.g., `Read, Grep, Glob`) | No |
+| `disable-model-invocation` | boolean | Prevent Claude auto-triggering; use for action skills like `/commit`, `/pr` that should be manual-only | No |
+| `user-invocable` | boolean | Set `false` to hide from `/` menu; use for background knowledge skills | No |
+| `model` | string | Override model for skill execution (e.g., `haiku`, `sonnet`, `opus`) | No |
+| `context` | string | Set to `fork` to run in isolated subagent context (no conversation history) | No |
+| `agent` | string | Subagent type when `context: fork` (e.g., `Explore`, `Plan`, `general-purpose`) | No |
+| `hooks` | object | Skill-scoped hooks configuration (see Hooks documentation) | No |
+
+**String substitution variables** available in skill content:
+- `$ARGUMENTS` — all arguments passed when invoking the skill
+- `$ARGUMENTS[N]` or `$N` — specific argument by 0-based index
+- `` !`command` `` — dynamic context; shell command output replaces the placeholder before skill content is sent to Claude
+
+## Output Principles
+
+- **Scaffold, don't over-specify** — generate the structural skeleton with clear placeholders; let the skill author fill in domain-specific content rather than guessing it
+- **Optimized pattern by default** — every generated skill should include the standard sections (Philosophy, Input Classification, Process with Pre-flight, Output Principles, Argument Handling, Error Handling, Related Skills)
+- **Inline references** — wire up `@references/` links within process steps, not as a standalone References section; this teaches skills to load context only when needed
+- **Validate before done** — always run the validation script and quality checklist before presenting the skill as complete
+
+## Argument Handling
+
+| Argument | Behavior |
+|----------|----------|
+| (none) | Ask user for a skill name or description of the workflow to automate |
+| Skill name (e.g., `deploy`) | Start full creation workflow with that name |
+| Skill name + description (e.g., `deploy production deployment workflow`) | Start creation with name and use description to pre-fill requirements |
+| `validate [skill-name]` | Run validation script only |
+| `optimize [skill-name]` | Audit existing skill against optimized pattern, recommend structural improvements |
 
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
-| No skill name provided | Prompt for skill name with examples |
-| Invalid skill name format | Explain kebab-case requirement |
-| Skill already exists | Warn and ask for confirmation to overwrite |
-| Missing required section | Guide user to complete the section |
+| No skill name provided | Ask for a skill name with examples of good kebab-case names |
+| Invalid skill name format | Explain kebab-case requirement: lowercase letters, numbers, hyphens (max 64 chars) |
+| Skill already exists | Warn user, ask whether to update existing skill or choose a different name |
+| Skill scope overlaps existing skill | Show the overlapping skill, suggest extending it instead of creating a duplicate |
+| Missing required section in authored skill | Guide user to complete the section; reference Skill Anatomy table |
+| Init script fails | Check script permissions (`chmod +x`), verify template.md exists at expected path |
+| Validation script reports warnings | Distinguish errors from warnings; fix errors, evaluate warnings case-by-case |
+| Generated skill too long (>500 lines) | Move supplementary content to `references/` files; keep SKILL.md under 500 lines per official guidance |
+
+Never create a skill without running validation — an unvalidated skill may fail silently when invoked.
 
 ## Related Skills
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/explore` | To understand existing skill implementations |
-| `/review` | To review a skill before finalizing |
-| `/clean-code` | To refactor an existing skill |
+| `/explore` | Understand existing skill implementations before creating similar ones |
+| `/review` | Review a skill's quality before finalizing |
+| `/clean-code` | Refactor an existing skill for maintainability |
+| `/typescript` | TypeScript-specific guidance for skills that produce TypeScript code |
+| `/patterns` | Design patterns to implement within a skill's process |

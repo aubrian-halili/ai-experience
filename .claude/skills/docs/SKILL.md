@@ -7,6 +7,14 @@ allowed-tools: Read, Grep, Glob, Write
 
 Create and improve technical documentation, presentations, and stakeholder communications.
 
+## Documentation Philosophy
+
+1. **Lead with the point** — State the main idea first
+2. **Use active voice** — "The function returns" not "A value is returned"
+3. **Be specific** — "Returns in 50ms" not "Returns quickly"
+4. **Show, don't tell** — Use code examples liberally
+5. **Define acronyms** — Spell out on first use
+
 ## When to Use
 
 ### This Skill Is For
@@ -41,27 +49,42 @@ Create and improve technical documentation, presentations, and stakeholder commu
 
 ## Process
 
-Use `$ARGUMENTS` if provided (topic, document type, or presentation purpose).
+### 1. Pre-flight
 
-1. **Identify Document Type** — Determine type, audience, detail level, and format
-2. **Gather Information** — Review code/docs, identify key concepts, note examples, list dependencies
-3. **Structure Content** — Follow appropriate template from `@references/templates.md`
-4. **Write with Clarity** — Use clear language, include code examples, add diagrams, define terms
-5. **Review and Refine** — Check accuracy, verify code examples work, ensure completeness
+Parse `$ARGUMENTS` to determine document type and topic.
 
-See `@references/templates.md` for README, API Docs, RFC, Design Doc, and Presentation templates.
+- Classify using the Document Types table above
+- Check for existing documentation in the project (README, docs/, etc.)
+- If updating existing docs, read the current content first
 
-## Writing Guidelines
+**Stop conditions:**
+- No topic or type specified → ask user what to document
+- Unclear audience → ask who will read the document
+- Existing document found at target path → ask whether to update or create new
 
-### Clarity Principles
+### 2. Gather & Structure
 
-1. **Lead with the point** — State the main idea first
-2. **Use active voice** — "The function returns" not "A value is returned"
-3. **Be specific** — "Returns in 50ms" not "Returns quickly"
-4. **Show, don't tell** — Use code examples liberally
-5. **Define acronyms** — Spell out on first use
+- Read relevant source code, existing docs, and dependencies
+- Identify key concepts, APIs, and examples
+- Select appropriate template from `@references/templates.md`
+- Build content outline following the template structure
+- For presentations, apply Presentation Guidelines below
 
-### Presentation Guidelines
+### 3. Present for Review
+
+- Show the proposed document: type, target path, full content
+- Ask the user to review and confirm before writing to disk
+- If changes requested, revise and present again
+
+### 4. Write & Verify
+
+- **Only proceed after user approval**
+- Create the target directory if it doesn't exist
+- Write the document to disk
+- Verify the file was created successfully
+- Note any sections marked `[TBD]` that need follow-up
+
+## Presentation Guidelines
 
 1. **One message per slide** — Don't overload
 2. **6x6 rule** — Max 6 bullets, 6 words each
@@ -77,6 +100,19 @@ See `@references/templates.md` for README, API Docs, RFC, Design Doc, and Presen
 | **Project Update** | Summary → Accomplishments → Metrics → Blockers → Plans | Progress status |
 | **Executive Summary** | Key Message → Context → Recommendation → Investment → ROI | Business value |
 
+## Argument Handling
+
+| Argument | Behavior |
+|----------|----------|
+| (none) | Ask what to document |
+| Topic (e.g., `auth system`) | Create documentation for the topic, ask document type if unclear |
+| `--readme` | Generate project README |
+| `--api` | Generate API documentation |
+| `--rfc [title]` | Generate RFC document |
+| `--design [title]` | Generate design document |
+| `--runbook [topic]` | Generate operational runbook |
+| `--slides [topic]` | Generate presentation outline |
+
 ## Error Handling
 
 | Scenario | Response |
@@ -87,6 +123,9 @@ See `@references/templates.md` for README, API Docs, RFC, Design Doc, and Presen
 | Complex topic | Break into multiple documents |
 | Unclear audience | Ask who will view the content |
 | Too much content | Suggest splitting or using appendix |
+| Existing file at target path | Ask user whether to overwrite, update, or choose a different path |
+| Target directory missing | Create the directory, then write |
+| Template not applicable | Adapt the closest template or build a custom structure |
 
 ## Related Skills
 

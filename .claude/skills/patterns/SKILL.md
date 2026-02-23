@@ -7,6 +7,13 @@ allowed-tools: Read, Grep, Glob
 
 Provide guidance on selecting and implementing design patterns for specific problems.
 
+## Pattern Design Principles
+
+1. **Simplest fit** — Choose the simplest pattern that solves the problem; resist over-engineering
+2. **Composition over inheritance** — Prefer patterns that compose behavior (Strategy, Decorator) over deep class hierarchies
+3. **Codebase alignment** — Patterns must fit the project's language idioms, existing conventions, and team familiarity
+4. **Proven need** — Patterns solve recurring, demonstrated problems, not hypothetical future ones
+
 ## When to Use
 
 ### This Skill Is For
@@ -23,11 +30,46 @@ Provide guidance on selecting and implementing design patterns for specific prob
 - Making architectural decisions → use `/architecture`
 - Understanding existing code → use `/explore`
 
+## Process
+
+### 1. Pre-flight
+
+- Classify request using the Input Classification table
+- Determine scope from `$ARGUMENTS`
+- Search codebase for existing pattern usage
+- Check for architecture docs or ADRs that constrain pattern choices
+
+**Stop conditions:**
+
+- No `$ARGUMENTS` provided → ask user what problem to solve or pattern to investigate
+- Problem description too vague to classify → ask user to describe the specific behavior or structure problem
+- Request is actually an architecture decision → redirect to `/architecture`
+
+### 2. Analyze
+
+- Problem domain: what varies, what is stable, what forces drive the design
+- Existing code: current structure, language idioms, conventions
+- Constraints: team size, language features, performance, existing abstractions
+- Prior patterns already in use in the codebase
+
+### 3. Recommend
+
+- Select pattern(s) using Pattern Selection Guide
+- Explain **why** the pattern fits: forces resolved, trade-offs accepted
+- Show implementation sketch in project's language/style
+- For comparisons: side-by-side with trade-off matrix
+- For refactoring: before/after transformation
+
+### 4. Verify
+
+- Confirm recommendation addresses the original problem
+- Discuss trade-offs and potential downsides
+- Suggest complementary patterns
+- Recommend `/architecture` or `/feature` or `/clean-code` for next steps as appropriate
+
 ## Input Classification
 
-Use `$ARGUMENTS` if provided (problem description or pattern name).
-
-First, classify the request to determine the appropriate response:
+Classify the request to determine the appropriate approach:
 
 | Type | Indicators | Approach |
 |------|-----------|----------|
@@ -49,14 +91,28 @@ First, classify the request to determine the appropriate response:
 | External service calls | Circuit Breaker, Retry |
 | Distributed transactions | Saga, Outbox |
 
+## Argument Handling
+
+| Argument | Behavior |
+|----------|----------|
+| (none) | Ask user what problem to solve or pattern to investigate |
+| Problem description (e.g., `handling multiple payment methods`) | Problem-First workflow: analyze and recommend |
+| Pattern name (e.g., `Strategy pattern`) | Pattern-First workflow: explain and show implementation |
+| Comparison (e.g., `Factory vs Builder`) | Comparison workflow: side-by-side trade-off analysis |
+| File path (e.g., `src/payments/processor.ts`) | Read the file, identify pattern opportunities or validate existing patterns |
+
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
 | Partial analysis | Present findings with clear `[Incomplete]` markers |
 | Uncertain recommendation | Mark as `[High Confidence]` or `[Needs Verification]` |
-| Missing context | State assumptions explicitly |
+| Missing context | State assumptions explicitly and ask user to confirm |
 | Multiple valid options | Present alternatives with trade-offs, let user decide |
+| Target file not found | Report the missing file and ask user to verify the path |
+| Scope too broad | Ask user to narrow to a specific problem, module, or pattern family |
+| Pattern not applicable | Explain why the pattern does not fit and suggest alternatives |
+| Codebase access limited | Note inaccessible files and suggest alternative investigation approaches |
 
 Never silently commit to a pattern—surface uncertainty and let the user decide.
 

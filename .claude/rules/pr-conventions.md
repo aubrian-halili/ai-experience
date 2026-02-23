@@ -14,4 +14,3 @@ Example: `UN-1234 feat(skills): add new security skill`
 - Reference the Jira ticket
 - Describe testing performed
 - List any breaking changes
-- Tag relevant reviewers

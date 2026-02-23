@@ -3,7 +3,6 @@ name: commit
 description: Use when the user asks to "commit changes", "create a commit", "commit this", mentions "git commit", "commit message", or needs help with semantic commits or branch management.
 argument-hint: "[optional commit message or scope]"
 disable-model-invocation: true
-allowed-tools: Bash(git *), Read, Grep, Glob
 ---
 
 Generate semantic commit messages following project conventions (see CLAUDE.md).
@@ -18,8 +17,11 @@ Generate semantic commit messages following project conventions (see CLAUDE.md).
 ### Use a Different Approach When
 
 - Creating a pull request → use `/pr`
-- Generating changelog → see `@references/changelog.md`
 - Advanced multi-commit workflows → see `@references/advanced-workflows.md`
+
+### See Also
+
+- After committing, generate changelog entries → see `@references/changelog.md`
 
 ## Process
 
@@ -38,14 +40,19 @@ TICKET_ID=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
 
 ### 2. Analyze & Present for Review
 
-Review `git status`, `git diff --cached`, `git diff`, and recent commits (`git log --oneline -5`).
+Review current state:
+- `git status` - Overall status
+- `git diff --cached` - Already staged changes
+- `git diff` - Unstaged changes
+- `git log --oneline -5` - Recent commit history
 
 Use `$ARGUMENTS` if provided (user's custom message or scope), otherwise generate appropriate commit message.
 
 Format: `<TICKET-ID> <type>(<scope>): <subject>` (max 72 chars)
 
 **Present to user:**
-- Show the files to be staged
+- Show **staged files** separately from **unstaged files**
+- Warn if sensitive files are present (`.env`, `.env.*`, `credentials.json`, `*.pem`, `*.key`)
 - Show the proposed commit message (with body if needed)
 - Ask the user to review and confirm before proceeding
 - If changes requested, regenerate and present again
@@ -54,8 +61,14 @@ Format: `<TICKET-ID> <type>(<scope>): <subject>` (max 72 chars)
 
 **Only proceed after user approval.**
 
+**Safety rules:**
+- Stage specific files by name (never `git add -A` or `git add .`)
+- Never stage sensitive files (`.env`, `.env.*`, `credentials.json`, `*.pem`, `*.key`)
+- Never use `--no-verify` to skip hooks unless explicitly requested by user
+- Use only these git commands: `status`, `diff`, `log`, `branch`, `add`, `commit`, `stash`
+
 ```bash
-# Stage specific files (never git add -A or git add .)
+# Stage specific files
 git add <file1> <file2>
 
 # Commit with HEREDOC for multi-line messages
@@ -69,6 +82,16 @@ EOF
 )"
 ```
 
+### 4. Verify
+
+After successful commit:
+```bash
+git status
+git log --oneline -1
+```
+
+Show the result to the user to confirm the commit was created successfully.
+
 ## Error Handling
 
 | Scenario | Response |
@@ -79,6 +102,8 @@ EOF
 | No ticket ID in branch | Ask user for ticket ID |
 | On main/master branch | Ask for ticket ID + description to create branch |
 | Pre-commit hook fails | Fix the issue, re-stage files, create a NEW commit (never amend) |
+| Sensitive files detected | Warn user, ask if they should be added to `.gitignore` |
+| User requests `--no-verify` | Confirm intent, warn about skipping hooks |
 
 ## Related Skills
 
