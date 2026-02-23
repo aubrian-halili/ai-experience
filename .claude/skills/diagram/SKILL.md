@@ -7,13 +7,13 @@ allowed-tools: Read, Grep, Glob
 
 Generate architecture diagrams using Mermaid syntax based on the user's description or codebase.
 
-## Guidelines
+## Diagram Philosophy
 
-1. **One diagram, one purpose** — don't overload a single diagram
-2. **Label relationships** — show what flows between components
-3. **Include a legend** when using custom notation
-4. **Use consistent notation** throughout
-5. **Start with the highest useful abstraction level** — zoom in only if asked
+- **One diagram, one purpose** — don't overload a single diagram; split multi-concern visualizations
+- **Label relationships** — show what flows between components, not just that they connect
+- **Consistent notation** — use the same shapes, colors, and line styles for the same concepts throughout
+- **Start at highest abstraction** — begin with the most useful abstraction level; zoom in only when asked
+- **Include legends** — when using custom notation or color coding, always provide a legend
 
 ## When to Use
 
@@ -28,6 +28,18 @@ Generate architecture diagrams using Mermaid syntax based on the user's descript
 - Understanding system first → use `/explore`
 - Designing architecture → use `/architecture`
 - Need implementation details beyond visualization → use `/patterns`
+
+## Input Classification
+
+Determine diagram workflow from `$ARGUMENTS`:
+
+| Input | Intent | Approach |
+|-------|--------|----------|
+| Topic/concept (e.g., `auth flow`) | Describe system | Steps 1-4; emphasis on requirements gathering (step 1) |
+| File path (e.g., `src/auth/login.ts`) | Diagram from code | Steps 1-4; emphasis on code reading (step 2) |
+| Directory (e.g., `src/auth/`) | Diagram module | Steps 1-4; emphasis on code reading (step 2) |
+| Component name (e.g., `LoginService`) | Diagram interactions | Steps 1-4; emphasis on search + generation (steps 1-2) |
+| (none) | Ask user | Pre-flight stop |
 
 ## Diagram Selection
 
@@ -85,6 +97,13 @@ Generate architecture diagrams using Mermaid syntax based on the user's descript
 **ERD**: `erDiagram` — data model relationships
 **Class**: `classDiagram` — object-oriented structure
 **State**: `stateDiagram-v2` — state transitions and lifecycle
+
+## Output Principles
+
+- **Mermaid code block first** — present the diagram before explanations; let the visual speak first
+- **Explain key relationships** — after the diagram, call out important connections and components the user should focus on
+- **Surface gaps visually** — use dashed lines, `???` labels, and colored styling for incomplete or unverified sections (not prose disclaimers)
+- **Offer extension paths** — suggest zoom-in options or complementary diagrams for areas that deserve more detail
 
 ## Argument Handling
 

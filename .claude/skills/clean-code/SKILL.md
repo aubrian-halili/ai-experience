@@ -2,16 +2,18 @@
 name: clean-code
 description: Use when the user asks to "clean up this code", "refactor this", "improve code quality", mentions "SOLID principles", "code smells", "technical debt", or wants refactoring suggestions and maintainability improvements.
 argument-hint: "[file or component to review]"
-allowed-tools: Read, Grep, Glob
+allowed-tools: Read, Grep, Glob, Edit
 ---
 
 Provide code quality analysis, refactoring suggestions, and clean code guidance.
 
-## Review Philosophy
+## Clean Code Philosophy
 
-- **Precision over completeness** — zero false positives matters more than exhaustive coverage
+- **Precision over completeness** — zero false positives matters more than exhaustive coverage; if uncertain about a finding, leave it out rather than risk noise
 - **Confidence gate** — internally score each finding 0-100; only report findings with confidence >= 80
-- If uncertain about a finding, leave it out rather than risk noise
+- **Readability over cleverness** — code is read far more than written; favor clarity
+- **Incremental improvement** — suggest practical refactoring steps, not rewrites; leave the code better than found
+- **Context-aware** — respect existing patterns and conventions in the codebase; don't impose alien style
 
 ## When to Use
 
@@ -27,19 +29,24 @@ Provide code quality analysis, refactoring suggestions, and clean code guidance.
 - Implementing specific design patterns → use `/patterns`
 - Addressing structural/architectural issues → use `/architecture`
 
+## Input Classification
+
+Determine analysis scope from `$ARGUMENTS`:
+
+| Input | Scope | Approach |
+|-------|-------|----------|
+| File path (e.g., `src/auth/login.ts`) | Single file | Steps 1-4; full analysis |
+| Directory (e.g., `src/auth/`) | Directory files | Steps 1-4; prioritize by complexity |
+| Component name (e.g., `LoginService`) | Search + analyze | Steps 1-4; emphasis on search (step 1) |
+| Line range (e.g., `src/auth/login.ts:50-100`) | Focused lines | Steps 1-4; emphasis on analysis (step 2) |
+| (none) | Ask user | Pre-flight stop |
+
 ## Process
 
 ### 1. Pre-flight
 
-Determine analysis scope from `$ARGUMENTS`:
-
-| Input | Scope |
-|-------|-------|
-| File path (e.g., `src/auth/login.ts`) | Analyze the single file |
-| Directory (e.g., `src/auth/`) | Analyze files in the directory, prioritize by complexity |
-| Component name (e.g., `LoginService`) | Search for the component by name, analyze matching files |
-| Line range (e.g., `src/auth/login.ts:50-100`) | Focus analysis on the specified line range |
-| (none) | Ask user to specify a file or component |
+- Reference Input Classification table to determine scope from `$ARGUMENTS`
+- Validate target exists and is readable
 
 **Stop conditions:**
 - Target file or component not found → report and stop
@@ -101,6 +108,13 @@ Group findings by priority (High first, then Medium, then Low).
 | Switch Statements | Polymorphism |
 | Speculative Generality | Remove unused abstraction |
 | Duplicate Code | Extract Method/Class |
+
+## Output Principles
+
+- **Prioritized findings** — group by priority (High, Medium, Low); most impactful issues first
+- **Concrete fixes** — every finding includes a specific refactoring with diff example, not just a complaint
+- **Principle attribution** — link each finding to the SOLID principle or code smell it violates
+- **Explicit completeness** — state which analysis dimensions were covered and which could not be evaluated
 
 ## Argument Handling
 

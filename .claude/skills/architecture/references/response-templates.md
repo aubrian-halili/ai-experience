@@ -13,6 +13,14 @@ Templates for architecture design recommendations and Architecture Decision Reco
 ### Existing Patterns Analysis
 [Summary of codebase conventions and patterns to follow]
 
+### Non-Functional Requirements
+| Requirement | Target | Priority |
+|-------------|--------|----------|
+| **Scalability** | [e.g., 10K concurrent users] | High |
+| **Latency** | [e.g., p95 < 200ms] | High |
+| **Availability** | [e.g., 99.9% uptime] | Medium |
+| **Durability** | [e.g., no data loss] | High |
+
 ### Proposed Architecture
 [High-level description with mermaid diagram]
 
@@ -52,6 +60,63 @@ graph TD
 ### Next Steps
 1. [Immediate action]
 2. [Follow-up action]
+```
+
+## Migration Plan Template
+
+For phased migrations, replacements, or system transitions:
+
+```markdown
+## Migration Plan: [Source] → [Target]
+
+### Context
+[Current state and motivation for migration]
+
+### Migration Strategy
+**Approach:** [Big bang | Strangler fig | Parallel run | Phased rollout]
+
+**Rationale:** [Why this strategy fits the constraints]
+
+### Migration Phases
+
+#### Phase 1: [Name]
+- **Goal:** [What this phase achieves]
+- **Duration:** [Estimated time]
+- **Steps:**
+  1. [Action item]
+  2. [Action item]
+- **Success Criteria:** [How to validate this phase]
+- **Rollback Plan:** [How to revert if issues arise]
+
+#### Phase 2: [Name]
+- **Goal:** [What this phase achieves]
+- **Duration:** [Estimated time]
+- **Steps:**
+  1. [Action item]
+- **Success Criteria:** [How to validate]
+- **Rollback Plan:** [How to revert]
+
+### Data Migration Strategy
+- **Approach:** [Dual-write | Batch migration | Event replay]
+- **Validation:** [How to verify data integrity]
+- **Cutover Plan:** [Final switchover steps]
+
+### Rollback Strategy
+- **Trigger Conditions:** [What situations require rollback]
+- **Rollback Steps:**
+  1. [Action]
+  2. [Action]
+- **Recovery Time:** [How long rollback takes]
+
+### Monitoring & Validation
+- **Key Metrics:** [What to monitor during migration]
+- **Alerts:** [What conditions should trigger alerts]
+- **Verification:** [How to confirm migration success]
+
+### Risks & Mitigations
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| [Risk description] | High/Medium/Low | High/Medium/Low | [How to address] |
 ```
 
 ## ADR Template

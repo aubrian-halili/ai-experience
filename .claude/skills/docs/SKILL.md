@@ -9,11 +9,11 @@ Create and improve technical documentation, presentations, and stakeholder commu
 
 ## Documentation Philosophy
 
-1. **Lead with the point** — State the main idea first
-2. **Use active voice** — "The function returns" not "A value is returned"
-3. **Be specific** — "Returns in 50ms" not "Returns quickly"
-4. **Show, don't tell** — Use code examples liberally
-5. **Define acronyms** — Spell out on first use
+- **Lead with the point** — state the main idea first; bury the lede and readers stop reading
+- **Use active voice** — "The function returns" not "A value is returned"; active voice is shorter and clearer
+- **Be specific** — "Returns in 50ms" not "Returns quickly"; vague claims erode trust
+- **Show, don't tell** — use code examples liberally; one working example teaches more than three paragraphs
+- **Define acronyms** — spell out on first use; readers should never have to guess terminology
 
 ## When to Use
 
@@ -35,6 +35,18 @@ Create and improve technical documentation, presentations, and stakeholder commu
 - Recording architecture decisions → use `/architecture --adr`
 - Code-level comments → handle inline during development
 
+## Input Classification
+
+Determine documentation workflow from `$ARGUMENTS`:
+
+| Input | Intent | Approach |
+|-------|--------|----------|
+| Topic (e.g., `auth system`) | Create new docs | Steps 1-4; determine type in pre-flight |
+| Type flag (`--readme`, `--api`, `--rfc`, etc.) | Specific doc type | Steps 1-4; skip type classification |
+| `--slides [topic]` | Create presentation | Steps 1-4; apply Presentation Guidelines |
+| Existing doc path (e.g., `docs/api.md`) | Update/improve docs | Steps 1, 3-4; read existing content first |
+| (none) | Ask user | Pre-flight stop |
+
 ## Document Types
 
 | Type | Purpose | Audience | Format |
@@ -53,7 +65,8 @@ Create and improve technical documentation, presentations, and stakeholder commu
 
 Parse `$ARGUMENTS` to determine document type and topic.
 
-- Classify using the Document Types table above
+- Classify request using the Input Classification table
+- Determine specific document type using the Document Types table
 - Check for existing documentation in the project (README, docs/, etc.)
 - If updating existing docs, read the current content first
 
@@ -86,10 +99,10 @@ Parse `$ARGUMENTS` to determine document type and topic.
 
 ## Presentation Guidelines
 
-1. **One message per slide** — Don't overload
-2. **6x6 rule** — Max 6 bullets, 6 words each
-3. **Lead with conclusion** — Pyramid principle
-4. **Use diagrams** — Visualize architecture and data flow
+- **One message per slide** — don't overload; each slide should answer exactly one question
+- **6x6 rule** — max 6 bullets, 6 words each; dense slides lose the audience
+- **Lead with conclusion** — pyramid principle; state the recommendation first, then supporting evidence
+- **Use diagrams** — visualize architecture and data flow; a diagram replaces a thousand words of description
 
 ## Presentation Types
 
@@ -99,6 +112,13 @@ Parse `$ARGUMENTS` to determine document type and topic.
 | **Technical Proposal** | Problem → Goals → Solution → Alternatives → Plan | Implementation details |
 | **Project Update** | Summary → Accomplishments → Metrics → Blockers → Plans | Progress status |
 | **Executive Summary** | Key Message → Context → Recommendation → Investment → ROI | Business value |
+
+## Output Principles
+
+- **Template-driven structure** — every document follows a template from `@references/templates.md`; consistent structure reduces cognitive load for readers
+- **Audience-calibrated depth** — match technical depth to the target audience identified in the Document Types table; an executive summary is not an RFC
+- **Reviewable drafts** — always present the full document for user review before writing to disk; documentation is collaborative
+- **Actionable completeness** — mark unfinished sections with `[TBD]` rather than omitting them; visible gaps are better than invisible ones
 
 ## Argument Handling
 
@@ -126,6 +146,8 @@ Parse `$ARGUMENTS` to determine document type and topic.
 | Existing file at target path | Ask user whether to overwrite, update, or choose a different path |
 | Target directory missing | Create the directory, then write |
 | Template not applicable | Adapt the closest template or build a custom structure |
+
+Never write a document to disk without user approval or silently omit incomplete sections — surface gaps as `[TBD]` and state audience assumptions explicitly.
 
 ## Related Skills
 

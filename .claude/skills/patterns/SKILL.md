@@ -7,12 +7,12 @@ allowed-tools: Read, Grep, Glob
 
 Provide guidance on selecting and implementing design patterns for specific problems.
 
-## Pattern Design Principles
+## Pattern Philosophy
 
-1. **Simplest fit** — Choose the simplest pattern that solves the problem; resist over-engineering
-2. **Composition over inheritance** — Prefer patterns that compose behavior (Strategy, Decorator) over deep class hierarchies
-3. **Codebase alignment** — Patterns must fit the project's language idioms, existing conventions, and team familiarity
-4. **Proven need** — Patterns solve recurring, demonstrated problems, not hypothetical future ones
+- **Simplest fit** — choose the simplest pattern that solves the problem; resist over-engineering
+- **Composition over inheritance** — prefer patterns that compose behavior (Strategy, Decorator) over deep class hierarchies
+- **Codebase alignment** — patterns must fit the project's language idioms, existing conventions, and team familiarity
+- **Proven need** — patterns solve recurring, demonstrated problems, not hypothetical future ones
 
 ## When to Use
 
@@ -29,6 +29,18 @@ Provide guidance on selecting and implementing design patterns for specific prob
 - Reviewing code quality → use `/clean-code` or `/review`
 - Making architectural decisions → use `/architecture`
 - Understanding existing code → use `/explore`
+
+## Input Classification
+
+Classify the request to determine the appropriate approach:
+
+| Type | Indicators | Approach |
+|------|-----------|----------|
+| **Problem-First** | "how do I handle...", "what pattern for..." | Analyze problem → recommend pattern → show implementation |
+| **Pattern-First** | "how to implement Factory", "show me Strategy" | Explain pattern → show implementation → discuss when to use |
+| **Comparison** | "Factory vs Builder", "which is better" | Compare patterns → highlight trade-offs → recommend based on context |
+| **Refactoring** | "replace these switch statements", "too many conditionals" | Identify smell → suggest pattern → show transformation |
+| **Validation** | "is this the right pattern", "am I using this correctly" | Review usage → validate or suggest improvements |
 
 ## Process
 
@@ -67,18 +79,6 @@ Provide guidance on selecting and implementing design patterns for specific prob
 - Suggest complementary patterns
 - Recommend `/architecture` or `/feature` or `/clean-code` for next steps as appropriate
 
-## Input Classification
-
-Classify the request to determine the appropriate approach:
-
-| Type | Indicators | Approach |
-|------|-----------|----------|
-| **Problem-First** | "how do I handle...", "what pattern for..." | Analyze problem → recommend pattern → show implementation |
-| **Pattern-First** | "how to implement Factory", "show me Strategy" | Explain pattern → show implementation → discuss when to use |
-| **Comparison** | "Factory vs Builder", "which is better" | Compare patterns → highlight trade-offs → recommend based on context |
-| **Refactoring** | "replace these switch statements", "too many conditionals" | Identify smell → suggest pattern → show transformation |
-| **Validation** | "is this the right pattern", "am I using this correctly" | Review usage → validate or suggest improvements |
-
 ## Pattern Selection Guide
 
 | Problem | Consider |
@@ -90,6 +90,13 @@ Classify the request to determine the appropriate approach:
 | Decoupling components | Observer, Mediator |
 | External service calls | Circuit Breaker, Retry |
 | Distributed transactions | Saga, Outbox |
+
+## Output Principles
+
+- **Why before what** — explain why a pattern fits the problem before showing implementation; forces and trade-offs matter more than syntax
+- **Implementation in context** — show pattern code in the project's language and style, not textbook examples; reuse existing abstractions
+- **Trade-off transparency** — explicitly state what the pattern costs (complexity, indirection, learning curve) alongside what it solves
+- **Confidence signaling** — mark recommendations as `[High Confidence]` or `[Needs Verification]` so the user knows how certain the advice is
 
 ## Argument Handling
 

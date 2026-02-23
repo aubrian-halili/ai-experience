@@ -9,11 +9,11 @@ Guide structured feature development from specification through incremental impl
 
 ## Development Philosophy
 
-1. **Incremental delivery** — Ship working slices, not layers; each milestone produces demonstrable value
-2. **Specification before code** — Clarify scope, acceptance criteria, and non-scope before writing implementation
-3. **User approval gates** — Present plans for review before implementation; never proceed on assumptions
-4. **Test-driven confidence** — Write tests first to encode expectations, then implement to satisfy them
-5. **Scope discipline** — Build exactly what's needed; track out-of-scope items explicitly and defer them
+- **Incremental delivery** — ship working slices, not layers; each milestone produces demonstrable value
+- **Specification before code** — clarify scope, acceptance criteria, and non-scope before writing implementation
+- **User approval gates** — present plans for review before implementation; never proceed on assumptions
+- **Test-driven confidence** — write tests first to encode expectations, then implement to satisfy them
+- **Scope discipline** — build exactly what's needed; track out-of-scope items explicitly and defer them
 
 ## When to Use
 
@@ -86,6 +86,13 @@ For each milestone:
 - Check that implementation follows existing codebase patterns identified in Pre-flight
 - Note any deferred items or out-of-scope work for follow-up
 - If feature warrants it, recommend `/review` for formal code review
+
+## Output Principles
+
+- **Plan before code** — always present the feature specification and milestone breakdown for user review before writing any implementation
+- **Milestone-driven progress** — each milestone produces a working, verifiable increment; never deliver untestable intermediate states
+- **Explicit scope boundaries** — clearly state what is in-scope, out-of-scope, and deferred; surface any scope creep immediately
+- **Test-first verification** — every acceptance criterion maps to a test; untested criteria are not verified
 
 ## Argument Handling
 

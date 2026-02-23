@@ -7,6 +7,14 @@ allowed-tools: mcp__qred-postgres__list_databases, mcp__qred-postgres__list_sche
 
 Explore PostgreSQL database schemas and run read-only queries using the qred-postgres MCP server. All operations are strictly read-only.
 
+## Database Philosophy
+
+- **Read-only only** — Never execute INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE, CREATE, or any DDL/DML. Only SELECT, WITH, SHOW, EXPLAIN, and DESCRIBE are permitted
+- **No credential exposure** — Never include connection strings, passwords, or auth tokens in output
+- **Bounded results** — Always LIMIT queries; cap at 50 rows unless the user explicitly requests more
+- **Explicit scope** — State the target database and schema before every operation
+- **Progressive exploration** — Start with high-level overview (databases → schemas → tables) before diving into detailed queries; guide users toward discovering structure naturally
+
 ## When to Use
 
 ### This Skill Is For
@@ -22,38 +30,36 @@ Explore PostgreSQL database schemas and run read-only queries using the qred-pos
 - Visualizing database relationships as ERD → use `/diagram`
 - Making database changes → this skill is read-only, use appropriate database tools
 
-## Safety Principles
+## Input Classification
 
-- **Read-only only** — Never execute INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE, CREATE, or any DDL/DML. Only SELECT, WITH, SHOW, EXPLAIN, and DESCRIBE are permitted
-- **No credential exposure** — Never include connection strings, passwords, or auth tokens in output
-- **Bounded results** — Always LIMIT queries; cap at 50 rows unless the user explicitly requests more
-- **Explicit scope** — State the target database and schema before every operation
+Parse `$ARGUMENTS` to understand what the user wants:
+
+| Argument Pattern | Intent | Approach |
+|------------------|--------|----------|
+| (empty) | Overview | Steps 1, 3–4; list databases, schemas, and tables |
+| `table_name` or `schema.table_name` | Table schema | Steps 1, 3–4; emphasis on schema inspection |
+| `SELECT ...` or SQL query | Query data | Steps 1, 3–4; emphasis on query validation and execution |
+| `schema_name` | Schema tables | Steps 1, 3–4; list tables in schema |
+| `database_name` (all lowercase, no dots) | Database schemas | Steps 1, 3–4; list schemas in database |
+
+**Disambiguation:** A bare word like `accounting` could be a schema or database name. Default to schema lookup within the current database first. If no schema is found, retry as a database name. If neither matches, report not found and list available options.
 
 ## Process
 
 ### 1. Pre-flight
 
-**Check MCP availability:**
 - Call `mcp__qred-postgres__list_databases` to verify the MCP server is reachable
-- MCP available → Proceed to step 2
-- MCP unavailable → Stop with error: "The qred-postgres MCP server is not configured. Install and configure it to use this skill."
+- Set default database: `qred_se_db`
+- Set default schema: `public`
+- Parse `$ARGUMENTS` to determine intent using Input Classification table
 
-**Set defaults:**
-- **Default database**: `qred_se_db`
-- **Default schema**: `public`
-- Parse `$ARGUMENTS` to override if a different database or schema is specified
+**Stop conditions:**
+- MCP server unreachable → "The qred-postgres MCP server is not configured. Install and configure it to use this skill."
+- No arguments provided → show database overview (list databases, schemas, and tables)
 
 ### 2. Determine Intent
 
-Parse `$ARGUMENTS` to understand what the user wants:
-
-| Argument Pattern | Intent | Action |
-|-----------------|--------|--------|
-| (empty) | Overview | List databases and default database schemas |
-| `table_name` or `schema.table_name` | Table schema | Read table structure with columns and types |
-| `SELECT ...` or SQL query | Query data | Execute read-only query |
-| `schema_name` | Schema tables | List tables in that schema |
-| `database_name` (all lowercase, no dots) | Database schemas | List schemas in that database |
+Reference the Input Classification table to map `$ARGUMENTS` to the appropriate workflow (Overview, Table Schema, Query Data, Schema Tables, or Database Schemas)
 
 ### 3. Execute
 
@@ -92,13 +98,10 @@ Based on intent, use the appropriate MCP tool:
 
 ## Output Principles
 
-- **Context first** — Always show which database and schema you're querying
-- **Structured presentation** — Use markdown tables for structured data (schemas: Column Name | Data Type | Nullable | Default | Constraints; query results: proper column headers)
-- **Lists** — Use bullet points for databases, schemas, and table lists
-- **Row counts** — Always include row counts for query results
-- **Row limits** — For large result sets, show first 50 rows and indicate if truncated
-- **Next steps** — Suggest related queries or tables to explore based on results
-- **File references** — If exploring schema that maps to application models, reference relevant code files
+- **Context first** — Always show which database and schema you're querying before presenting results
+- **Structured presentation** — Use markdown tables for schemas (Column Name | Data Type | Nullable | Constraints) and query results (proper headers); use bullet lists for databases, schemas, and table names; always include row counts and indicate if results are truncated
+- **Bounded results** — For large result sets, show first 50 rows with clear truncation notice (e.g., "Showing 50 of 1,247 rows")
+- **Next steps** — Suggest related queries or tables to explore based on results; if exploring schema that maps to application models, reference relevant code files
 
 ## Argument Handling
 
@@ -111,7 +114,6 @@ Based on intent, use the appropriate MCP tool:
 | `accounting` | List tables in `accounting` schema |
 | `other_db` | List schemas in `other_db` database |
 
-**Disambiguation:** A bare word like `accounting` could be a schema name or a database name. Default to schema lookup within the current database first. If no schema is found, retry as a database name. If neither matches, report not found and list available schemas and databases.
 
 ## Error Handling
 
@@ -126,9 +128,13 @@ Based on intent, use the appropriate MCP tool:
 | Authentication error | "PostgreSQL connection failed. Check MCP server configuration and credentials." |
 | Connection timeout | "Database connection timeout. Check server availability and network." |
 
+Never execute a write operation or expose credentials — if a query appears to modify data, refuse it and explain why.
+
 ## Related Skills
 
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/explore` | To investigate application code, not database |
 | `/diagram` | To visualize database relationships as ERD |
+| `/architecture` | To design or evaluate database architecture decisions |
+| `/docs` | To document database schema or data models |

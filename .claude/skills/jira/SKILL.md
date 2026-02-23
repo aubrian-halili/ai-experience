@@ -7,6 +7,14 @@ disable-model-invocation: true
 
 Create Jira tickets from the current conversation context with structured templates. Returns a ticket ID for use in branch creation and downstream workflows.
 
+## Ticket Philosophy
+
+- **Context from conversation** — extract ticket content from the current session discussion, not from git history or guesswork
+- **User confirmation** — always present ticket details for review before creating; never file a ticket without explicit approval
+- **Template-driven content** — use structured templates for consistent, actionable tickets; every field should be filled or explicitly marked as unknown
+- **Graceful degradation** — if MCP is unavailable, generate copy-ready content for manual entry rather than failing
+- **Duplicate awareness** — search for existing tickets before creating new ones; avoid cluttering the backlog
+
 ## When to Use
 
 ### This Skill Is For
@@ -21,6 +29,18 @@ Create Jira tickets from the current conversation context with structured templa
 - Planning a feature first → use `/feature`
 - Creating a PR after implementation → use `/pr`
 - Committing changes with ticket reference → use `/commit`
+
+## Input Classification
+
+Determine ticket type and template from `$ARGUMENTS`:
+
+| Input | Intent | Approach |
+|-------|--------|----------|
+| Bug indicators (`bug`, errors, crashes) | File bug report | Steps 1-7; apply Bug template from `@references/templates.md` |
+| Task indicators (`task`, implement, refactor) | Create task ticket | Steps 1-7; apply Task template |
+| Story indicators (`story`, user wants, feature request) | Create user story | Steps 1-7; apply Task template with user story focus |
+| Project override (`PROJ <type>`) | Create in specific project | Steps 1-7; use specified project instead of default UN |
+| (none / ambiguous) | Infer from conversation | Steps 1-7; emphasis on type resolution (step 2) |
 
 ## Process
 
@@ -108,6 +128,13 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 - **Suggested branch name**: `<TICKET-ID>-<short-description>` (e.g., `UN-1234-fix-login-timeout`)
 - **Workflow reminder**: Create branch → implement → `/commit` → `/pr`
 
+## Output Principles
+
+- **Ticket preview first** — present the complete ticket summary for user approval before creation; no surprises
+- **Actionable results** — include ticket ID, URL, suggested branch name, and workflow next steps after creation
+- **Template compliance** — all tickets follow structured templates with required fields filled; incomplete sections noted explicitly
+- **Workflow continuity** — connect the ticket to downstream workflows: create branch → implement → `/commit` → `/pr`
+
 ## Argument Handling
 
 | Argument | Behavior |
@@ -134,6 +161,8 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 | Assignee not found | Warn user, create ticket without assignee |
 | Verification fetch fails | Warn user, provide ticket ID and suggest checking Jira |
 
+Never create a ticket without user confirmation or skip duplicate checking — surface existing tickets before filing new ones.
+
 ## Related Skills
 
 | Skill | When to Use Instead |
@@ -141,3 +170,5 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 | `/feature` | Plan feature before creating ticket |
 | `/commit` | Commit with ticket reference (after branch created) |
 | `/pr` | Create pull request (after commits made) |
+| `/explore` | Understand codebase before filing a ticket |
+| `/review` | Review code changes before filing related tickets |

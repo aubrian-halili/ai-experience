@@ -3,6 +3,11 @@ name: [skill-name]
 description: Use when the user [trigger phrases describing when this skill applies]. Examples: "[example phrase 1]", "[example phrase 2]".
 argument-hint: "[argument placeholder]"
 allowed-tools: [tools this skill needs, e.g., Read, Grep, Glob]
+# disable-model-invocation: true  # Uncomment for manual-only skills (e.g., /commit, /deploy)
+# user-invocable: false            # Uncomment to hide from / menu (background knowledge)
+# model: sonnet                    # Uncomment to override model: haiku, sonnet, opus
+# context: fork                    # Uncomment to run in isolated subagent context
+# agent: Explore                   # Required when context: fork (Explore, Plan, general-purpose)
 ---
 
 <!-- One-line description of what this skill does. No H1 heading. -->
