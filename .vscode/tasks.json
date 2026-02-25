@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "transpile",
+      "type": "shell",
+      "command": "node build-debug.mjs",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "copy-package-json",
+      "type": "shell",
+      "command": "cp package.json dist/",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "install-deps",
+      "type": "shell",
+      "command": "cd dist && npm install --omit=dev",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "build",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "transpile",
+        "copy-package-json",
+        "install-deps"
+      ],
+      "group": "build"
+    }
+  ]
+}
