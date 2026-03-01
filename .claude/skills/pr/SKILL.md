@@ -2,6 +2,7 @@
 name: pr
 description: Use when the user asks to "create a PR", "open a pull request", "submit for review", "push and create PR", mentions "PR", "pull request", or needs help creating and submitting changes for code review.
 argument-hint: "[optional: --draft, target branch, or PR title]"
+allowed-tools: Bash(git *, gh *), Read, Grep, Glob
 disable-model-invocation: true
 ---
 
@@ -43,6 +44,8 @@ Determine PR workflow from `$ARGUMENTS`:
 ## Process
 
 ### 1. Pre-flight Checks
+
+Parse `$ARGUMENTS` for flags (`--draft`, `--base`, `--label`) and gather branch state:
 
 ```bash
 BRANCH=$(git branch --show-current)
@@ -140,11 +143,11 @@ Show the user: PR number, URL, title, state, and next steps (e.g., request revie
 
 | Argument | Behavior |
 |----------|----------|
-| (none) | Auto-generate title/description |
+| (none) | Auto-generate title and description |
 | `--draft` | Create as draft PR |
-| `--label <name>` | Add label(s) to the PR |
+| PR title text | Use as PR title (ticket ID auto-prefixed) |
 | Branch name | Use as target base branch with `--base` |
-| Text string | Use as PR title (ticket ID auto-prefixed) |
+| `--label <name>` | Add label(s) to the PR |
 
 ## Error Handling
 

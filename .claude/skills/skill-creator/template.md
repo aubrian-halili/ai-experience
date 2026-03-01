@@ -11,6 +11,8 @@ allowed-tools: [tools this skill needs, e.g., Read, Grep, Glob]
 # hooks:                           # Uncomment for skill-scoped hooks configuration
 ---
 
+<!-- String substitution variables: $ARGUMENTS (all args), $ARGUMENTS[N] or $N (by index), ${CLAUDE_SESSION_ID} (session ID), !`command` (shell output) -->
+
 <!-- One-line description of what this skill does. No H1 heading. -->
 
 ## [Domain] Philosophy

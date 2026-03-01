@@ -12,6 +12,8 @@ Perform a thorough multi-dimensional review of code, local changes, or pull requ
 - **Precision over completeness** — zero false positives matters more than exhaustive coverage
 - **Confidence gate** — internally score each finding 0-100; only report findings with confidence >= 80
 - **Uncertainty principle** — if uncertain about a finding, leave it out rather than risk noise
+- **Context-aware** — respect existing patterns and conventions; cross-reference CLAUDE.md before flagging style issues
+- **Constructive balance** — pair criticism with positive observations; reviews that only list problems discourage contributors
 
 ## When to Use
 
@@ -34,12 +36,13 @@ Perform a thorough multi-dimensional review of code, local changes, or pull requ
 
 Classify `$ARGUMENTS` to determine the review workflow:
 
-| Type | Indicators | Approach |
-|------|-----------|----------|
-| **Uncommitted Changes** | No argument | Diff-based local review (steps 1–3) |
-| **Single File** | File path | Direct file review (steps 1–3) |
-| **Branch Diff** | Branch name | Branch comparison review (steps 1–3) |
-| **Pull Request** | PR number (`123`, `#123`) or PR URL | Full PR review (steps 1, 4–5) |
+| Input | Intent | Approach |
+|-------|--------|----------|
+| (none) | Review uncommitted changes | Diff-based local review |
+| File path (e.g., `src/auth/login.ts`) | Review specific file | Direct file analysis |
+| Component name (e.g., `AuthService`) | Review matching files | Locate component, review matches |
+| Branch name (e.g., `feature/auth`) | Review branch changes | Branch diff against base |
+| PR number/URL (e.g., `123`, `#123`, URL) | Review pull request | Full PR analysis via `gh` |
 
 ## Severity Levels
 
@@ -52,7 +55,7 @@ Classify `$ARGUMENTS` to determine the review workflow:
 
 ## Process
 
-**Branch point:** Local review → steps 1–3. PR review → steps 1, 4–5.
+**Branch point:** Local review → steps 1–3, 6. PR review → steps 1, 4–6.
 
 ### 1. Pre-flight
 
@@ -120,6 +123,13 @@ Present findings using the Pull Request Review template from `@references/templa
 
 Apply confidence gate — only flag findings scored >= 80.
 
+### 6. Verify
+
+- Confirm all files or diff hunks in scope were evaluated; note any that were skipped with rationale
+- Verify every reported finding includes a `file:line` reference and a severity from the Severity Levels table
+- Sanity-check severity distribution — if all findings are Critical or all are Note, re-evaluate consistency
+- Suggest next steps: recommend related skills for deeper analysis, or state merge readiness for PR reviews
+
 ## Output Principles
 
 - **Severity-first ordering** — group findings by severity (Critical first), not by file or dimension
@@ -133,10 +143,9 @@ Apply confidence gate — only flag findings scored >= 80.
 |----------|----------|
 | (none) | Review local uncommitted changes (`git diff` + `git diff --cached`) |
 | File path (e.g., `src/auth/login.ts`) | Review the specific file |
-| PR number (e.g., `123`, `#123`) | Full pull request review via `gh` |
-| PR URL (e.g., `github.com/.../pull/123`) | Extract PR number, full pull request review |
-| Branch name (e.g., `feature/auth`) | Review branch diff against base branch |
 | Component name (e.g., `AuthService`) | Locate component files, review matching files |
+| Branch name (e.g., `feature/auth`) | Review branch diff against base branch |
+| PR number/URL (e.g., `123`, `#123`, or PR URL) | Full pull request review via `gh` |
 
 ## Error Handling
 

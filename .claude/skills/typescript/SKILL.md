@@ -35,24 +35,22 @@ Provide TypeScript-specific guidance including type definitions, generics, type 
 
 ## Input Classification
 
-Use `$ARGUMENTS` if provided (code snippet, type, error message, or TypeScript question).
+Classify `$ARGUMENTS` to determine the TypeScript guidance scope:
 
-First, classify the request type:
-
-| Type | Indicators | Approach |
-|------|-----------|----------|
-| **Type Error** | Error message, `TS2xxx` code, "why does this fail" | Steps 1–5; emphasis on Diagnose (step 3) with error decomposition |
-| **Type Design** | "how to type X", "generic for", "interface vs type" | Steps 1–5; emphasis on Design (step 3) with pattern recommendation |
-| **Configuration** | "tsconfig", "strict mode", "module resolution" | Steps 1–5; emphasis on Recommend (step 4) with option-by-option impact |
-| **Migration** | "convert to TypeScript", "add types to", "JS to TS" | Steps 1–5; emphasis on Context (step 2) for incremental adoption path |
-| **Type Narrowing** | "type guard", "discriminated union", "narrowing" | Steps 1–5; emphasis on Design (step 3) with narrowing strategy |
-| **Declaration** | "declare module", ".d.ts", "third-party types" | Steps 1–5; emphasis on Recommend (step 4) with declaration patterns |
+| Input | Intent | Approach |
+|-------|--------|----------|
+| (none) | Determine TypeScript question | Ask user for specific question, error, or file path |
+| Code snippet (e.g., `function foo<T>(x: T)`) | Analyze types in snippet | Type analysis with tsconfig context check |
+| Error message (e.g., `Type 'string' is not assignable to type 'number'`) | Diagnose type error | Error decomposition and type conflict tracing |
+| File path (e.g., `src/models/user.ts`) | Analyze file types | Read file, evaluate type definitions and usage |
+| tsconfig question (e.g., `strictNullChecks`) | Explain configuration | Option impact analysis with recommendation |
+| Pattern request (e.g., `branded types`, `discriminated union`) | Explain type pattern | Pattern lookup from `@references/patterns.md` |
 
 ## Process
 
 ### 1. Pre-flight
 
-- Classify request using the Input Classification table
+- Classify TypeScript scope from `$ARGUMENTS` using the Input Classification table
 - If `$ARGUMENTS` contains a file path, read the file via Read
 - If `$ARGUMENTS` contains an error message, extract the error code (e.g., `TS2345`) and isolate the conflicting types
 - If `$ARGUMENTS` contains a code snippet, identify the TypeScript version and strictness context
@@ -71,7 +69,7 @@ First, classify the request type:
 - For type errors: identify the expected type, actual type, and the assignment or call site
 - For type design: identify what varies, what is constrained, and what the consumer API should look like
 
-### 3. Diagnose or Design
+### 3. Diagnose
 
 **For type errors and inference issues:**
 - Break the error into constituent parts (expected vs actual, constraint chain)

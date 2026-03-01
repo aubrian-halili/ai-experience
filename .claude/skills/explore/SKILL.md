@@ -54,11 +54,12 @@ Determine exploration workflow from `$ARGUMENTS`:
 
 ## Process
 
+**Throughout all steps**, maintain dual context: the user's original question (global) and the current component (local). Resurface periodically to connect local findings back to the global question.
+
 ### 1. Pre-flight
 
-- Identify the investigation target from `$ARGUMENTS`
-- Classify using the Exploration Strategies table above
-- Determine depth: Surface (quick orientation) | Standard (full flow) | Deep (internals + edge cases)
+- Parse `$ARGUMENTS` and map to the appropriate intent (Feature Name, File Path, Directory, Flow Description, Component Name, or Ask User) using the Input Classification table
+- Select exploration strategy from the Exploration Strategies section above and determine depth: Surface (quick orientation) | Standard (full flow) | Deep (internals + edge cases)
 
 **Stop conditions:**
 - No `$ARGUMENTS` provided → ask user what to investigate
@@ -96,20 +97,6 @@ Determine exploration workflow from `$ARGUMENTS`:
 - Check that all traced paths have been documented or marked `[Incomplete]`
 - Note any areas intentionally not explored and why
 - If findings suggest deeper analysis, recommend related skills (`/architecture`, `/diagram`, `/review`)
-
-## Context Preservation
-
-When investigating nested components, maintain dual context:
-
-1. **Global Context**: Original investigation target and user's intent
-   - What was the user trying to understand?
-   - What question needs to be answered?
-
-2. **Local Context**: Current component being analyzed
-   - What does this specific piece do?
-   - How does it relate to the global context?
-
-Always maintain both contexts—don't lose sight of the broader goal when deep in implementation details. Periodically resurface to connect findings back to the original question.
 
 ## Output Principles
 

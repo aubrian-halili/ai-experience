@@ -35,33 +35,25 @@ Layered repository exploration and code searching across the Qred GitHub organiz
 
 ## Input Classification
 
-Parse `$ARGUMENTS` to route to the correct operation type:
+Parse `$ARGUMENTS` to determine operation type — direct operations execute immediately, while exploration operations enter the layered workflow at the appropriate layer:
 
-**Direct Operations** — Execute immediately, no layered workflow required:
-
-| Argument Pattern | Intent | Command |
-|---|---|---|
-| (empty) or `repos` | List Qred org repos | `gh repo list Qred --limit 30` |
-| `prs <repo>` or `pr list <repo>` | List PRs | `gh pr list -R Qred/<repo>` |
-| `pr <repo> #<n>` | View specific PR | `gh pr view <n> -R Qred/<repo>` |
-| `issues <repo>` | List issues | `gh issue list -R Qred/<repo>` |
-| `issue <repo> #<n>` | View specific issue | `gh issue view <n> -R Qred/<repo>` |
-| Starts with `gh` | Pass-through gh command | Execute as-is |
-
-**Exploration Operations** — Enter the layered workflow at the appropriate layer:
-
-| Argument Pattern | Intent | Entry Layer |
-|---|---|---|
-| Repo name only (e.g., `qred-mcp-proxy`) | View repo | Layer 1: Orient |
-| `tree <repo>` or `tree <repo>/<path>` | Tree view | Layer 2: Navigate |
-| `<repo>/` or `<repo>/<path>/` | Browse directory | Layer 2: Navigate |
-| Search term (no path separators) | Search code across org | Layer 3: Search |
-| `<term> in <repo>` | Search code in specific repo | Layer 3: Search |
-| `<repo>/<file-path>` | Read file contents | Layer 4: Read |
+| Input | Intent | Approach |
+|-------|--------|----------|
+| (empty) or `repos` | List repositories | Direct; execute immediately |
+| `prs <repo>` or `pr <repo> #<n>` | List or view PRs | Direct; execute immediately |
+| `issues <repo>` or `issue <repo> #<n>` | List or view issues | Direct; execute immediately |
+| Starts with `gh` | Pass-through command | Direct; execute as-is |
+| Repo name (e.g., `qred-mcp-proxy`) | Orient to repo | Layered; enter at Layer 1 |
+| `tree <repo>` or `<repo>/<path>/` | Navigate structure | Layered; enter at Layer 2 |
+| Search term (no path separators) | Search code across org | Layered; enter at Layer 3 |
+| `<term> in <repo>` | Search code in repo | Layered; enter at Layer 3 |
+| `<repo>/<file-path>` | Read file contents | Layered; enter at Layer 4 |
 
 ## Process
 
 ### 1. Pre-flight
+
+Parse `$ARGUMENTS` and validate GitHub CLI access:
 
 1. Run `gh auth status` and confirm authentication is active
 2. **Stop conditions:**
@@ -110,27 +102,27 @@ For all direct operations, use `--json` to get structured data:
 1. Run `gh search code --owner Qred "<term>" --limit 30 --json path,repository,textMatches`
 2. For repo-scoped search: `gh search code --repo Qred/<repo> "<term>" --limit 30 --json path,repository,textMatches`
 
-**Result presentation order:**
+**Result presentation:**
 
-3. **Summary header** — Always show scope and count first: `Found N results in M repositories` (org-wide) or `Found N results in Qred/<repo>` (repo-scoped)
-4. **Repository breakdown** (org-wide only) — Group by repo with match counts before showing individual files:
-   ```
-   Found 23 results in 4 repositories:
-   - qred-api (8 matches)
-   - qred-mcp-proxy (7 matches)
-   - qred-ui (5 matches)
-   - backoffice-db (3 matches)
-   ```
-5. **Individual matches** — Present matching files with `repo/path:line` format for editor-friendly references, with enough context to judge relevance before reading
-6. **Truncation block** (only when results = limit) — Show a multi-line refinement block:
-   ```
-   > Showing 30 results (limit reached) — results may be incomplete.
-   >
-   > Refine your search:
-   > - Narrow to a repo: `/qred-repo <term> in <repo-name>`
-   > - Narrow to a path: `gh search code --repo Qred/<repo> "<term>" path:src/`
-   > - Increase limit:   `gh search code --owner Qred "<term>" --limit 100`
-   ```
+- **Summary header** — Always show scope and count first: `Found N results in M repositories` (org-wide) or `Found N results in Qred/<repo>` (repo-scoped)
+- **Repository breakdown** (org-wide only) — Group by repo with match counts before showing individual files:
+  ```
+  Found 23 results in 4 repositories:
+  - qred-api (8 matches)
+  - qred-mcp-proxy (7 matches)
+  - qred-ui (5 matches)
+  - backoffice-db (3 matches)
+  ```
+- **Individual matches** — Present matching files with `repo/path:line` format for editor-friendly references, with enough context to judge relevance before reading
+- **Truncation block** (only when results = limit) — Show a multi-line refinement block:
+  ```
+  > Showing 30 results (limit reached) — results may be incomplete.
+  >
+  > Refine your search:
+  > - Narrow to a repo: `/qred-repo <term> in <repo-name>`
+  > - Narrow to a path: `gh search code --repo Qred/<repo> "<term>" path:src/`
+  > - Increase limit:   `gh search code --owner Qred "<term>" --limit 100`
+  ```
 
 **Guardrails:** Cap results at 30 (`--limit 30`) — if results hit the cap, always show the truncation block. Do not auto-read all matching files — pick the 1-2 most relevant or let the user choose.
 
@@ -144,6 +136,12 @@ For all direct operations, use `--json` to get structured data:
 
 **Guardrails:** One file at a time. **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more. Skip binary/generated/lock files (e.g., `package-lock.json`, `yarn.lock`, `.min.js`). Summarize the file's purpose before presenting raw content.
 
+### 5. Verify
+
+- Confirm the user's question has been answered by the layer(s) executed
+- Note any repos, paths, or search terms that returned no results
+- Suggest the natural next action using the follow-up table in `@references/formatting.md`
+
 ## Output Principles
 
 - **Context first** — State what was searched/listed and where
@@ -154,15 +152,16 @@ For all direct operations, use `--json` to get structured data:
 ## Argument Handling
 
 | Argument | Behavior |
-|---|---|
+|----------|----------|
 | (none) or `repos` | List repositories in the Qred org |
+| `prs <repo>` or `pr <repo> #<n>` | List or view PRs in the specified repo |
+| `issues <repo>` or `issue <repo> #<n>` | List or view issues in the specified repo |
+| Starts with `gh` | Execute as pass-through gh command |
 | Repo name (e.g., `qred-mcp-proxy`) | Orient: view repo details, README, and summary |
 | `tree <repo>` or `<repo>/<path>/` | Navigate: tree view or directory listing |
 | Search term (no path separators) | Search: find term across all Qred repos |
 | `<term> in <repo>` | Search: find term in a specific repo |
 | `<repo>/<file-path>` | Read: file contents with 300-line guardrail |
-| `prs/issues <repo>` or `pr/issue <repo> #<n>` | Direct: list or view PRs/issues |
-| Starts with `gh` | Direct: pass-through gh command |
 
 See `@references/examples-and-errors.md` for full invocation examples and detailed error responses.
 
@@ -179,7 +178,7 @@ See `@references/examples-and-errors.md` for full invocation examples and detail
 | No search results | Suggest alternative terms, broader scope, or different repo |
 | API rate limit | "GitHub API rate limit exceeded. Wait a few minutes and retry." |
 
-When an error occurs, always show the error and suggest the most helpful next action.
+Never present results without context—always state what was searched, where, and what was omitted.
 
 ## Related Skills
 

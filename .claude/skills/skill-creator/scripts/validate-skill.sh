@@ -18,7 +18,7 @@ VERBOSE=false
 VALIDATE_ALL=false
 
 # Known tools list for validation
-KNOWN_TOOLS="Bash Read Grep Glob Write Edit WebFetch WebSearch Skill Task AskUserQuestion EnterPlanMode ExitPlanMode TaskCreate TaskUpdate TaskList TaskGet TaskOutput TaskStop NotebookEdit ToolSearch ListMcpResourcesTool ReadMcpResourceTool"
+KNOWN_TOOLS="Bash Read Grep Glob Write Edit WebFetch WebSearch Skill Task AskUserQuestion EnterPlanMode ExitPlanMode TaskCreate TaskUpdate TaskList TaskGet TaskOutput TaskStop NotebookEdit ToolSearch ListMcpResourcesTool ReadMcpResourceTool Agent EnterWorktree"
 
 usage() {
     echo "Usage: $0 [OPTIONS] <skill-name>"
@@ -232,16 +232,61 @@ validate_context_agent_coupling() {
     # If context: fork is set, require agent field
     if echo "$frontmatter" | grep -q "^context: *fork"; then
         if ! echo "$frontmatter" | grep -q "^agent:"; then
-            warn "context: fork requires an 'agent' field (Explore, Plan, general-purpose)"
+            warn "context: fork requires an 'agent' field (Explore, Plan, general-purpose, or custom from .claude/agents/)"
             return 0
         fi
 
         local agent=$(echo "$frontmatter" | grep "^agent:" | sed 's/agent: *//')
-        if ! echo "$agent" | grep -qE '^(Explore|Plan|general-purpose)$'; then
-            warn "agent '$agent' is not a recognized subagent type (expected: Explore, Plan, general-purpose)"
+        if echo "$agent" | grep -qE '^(Explore|Plan|general-purpose)$'; then
+            pass "context: fork with valid built-in agent: $agent"
         else
-            pass "context: fork with valid agent: $agent"
+            # Check for custom agent definition in .claude/agents/
+            local project_root
+            project_root=$(git rev-parse --show-toplevel 2>/dev/null || echo "")
+            local custom_agent_file="$project_root/.claude/agents/${agent}.md"
+
+            if [ -n "$project_root" ] && [ -f "$custom_agent_file" ]; then
+                pass "context: fork with custom agent: $agent (found $custom_agent_file)"
+            else
+                warn "agent '$agent' is not a recognized subagent type (expected: Explore, Plan, general-purpose) and no custom agent found at .claude/agents/${agent}.md"
+            fi
         fi
+    fi
+
+    return 0
+}
+
+validate_model_field() {
+    local frontmatter="$1"
+
+    if ! echo "$frontmatter" | grep -q "^model:"; then
+        pass "No model field (optional)"
+        return 0
+    fi
+
+    local model=$(echo "$frontmatter" | grep "^model:" | sed 's/model: *//')
+    if ! echo "$model" | grep -qE '^(haiku|sonnet|opus)$'; then
+        error "Invalid model '$model' (expected: haiku, sonnet, opus)"
+    else
+        pass "Model field valid: $model"
+    fi
+
+    return 0
+}
+
+validate_user_invocable_field() {
+    local frontmatter="$1"
+
+    if ! echo "$frontmatter" | grep -q "^user-invocable:"; then
+        pass "No user-invocable field (optional)"
+        return 0
+    fi
+
+    local value=$(echo "$frontmatter" | grep "^user-invocable:" | sed 's/user-invocable: *//')
+    if ! echo "$value" | grep -qE '^(true|false)$'; then
+        error "Invalid user-invocable '$value' (expected: true or false)"
+    else
+        pass "user-invocable field valid: $value"
     fi
 
     return 0
@@ -326,15 +371,29 @@ validate_allowed_tools() {
     local tools=$(echo "$frontmatter" | grep "^allowed-tools:" | sed 's/allowed-tools: *//')
     info "Allowed tools: $tools"
 
+    # Normalize commas inside parentheses to semicolons before splitting
+    # This prevents Bash(git *, gh *) from splitting incorrectly on the inner comma
+    # Uses perl for cross-platform compatibility (BSD sed lacks loop support)
+    local normalized
+    normalized=$(echo "$tools" | perl -pe 's/\(([^)]*)\)/"(" . ($1 =~ s#,#;#gr) . ")"/ge')
+
     # Split by comma and validate each tool
-    IFS=',' read -ra TOOL_ARRAY <<< "$tools"
+    IFS=',' read -ra TOOL_ARRAY <<< "$normalized"
     for tool in "${TOOL_ARRAY[@]}"; do
         # Trim whitespace
         tool=$(echo "$tool" | xargs)
 
-        # Check against known tools (basic validation)
-        if ! echo "$KNOWN_TOOLS" | grep -qw "$tool"; then
-            warn "Unknown tool '$tool' in allowed-tools (may be MCP tool)"
+        # Restore semicolons back to commas inside parentheses
+        tool=$(echo "$tool" | sed 's/;/,/g')
+
+        # Extract base tool name (strip parenthesized glob patterns)
+        local base_tool=$(echo "$tool" | sed 's/(.*//')
+
+        # Check against known tools (basic validation using base name)
+        if ! echo "$KNOWN_TOOLS" | grep -qw "$base_tool"; then
+            warn "Unknown tool '$base_tool' in allowed-tools (may be MCP tool)"
+        else
+            pass "Tool '$tool' recognized (base: $base_tool)"
         fi
     done
     pass "Allowed-tools field validated"
@@ -404,6 +463,8 @@ validate_skill() {
     validate_references "$skill_file" "$skill_dir"
     validate_allowed_tools "$frontmatter"
     validate_context_agent_coupling "$frontmatter"
+    validate_model_field "$frontmatter"
+    validate_user_invocable_field "$frontmatter"
     validate_action_skill_safety "$frontmatter" "$skill_file"
     validate_placeholders "$skill_file"
 

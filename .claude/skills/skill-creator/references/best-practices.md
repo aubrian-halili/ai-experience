@@ -2,7 +2,7 @@
 
 ## Context Window Principles
 
-Skills consume context tokens. The system budget is ~2% of the context window (~16,000 chars as a practical fallback). Optimize by:
+Skills consume context tokens. The system budget is ~2% of the context window (~16,000 chars as a practical fallback). Override with the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable if skills need more room. Optimize by:
 
 1. **Description efficiency** — Descriptions are always in context for auto-invocable skills. Keep under 500 chars. Use `disable-model-invocation: true` for action skills to exclude from auto-invoke context
 2. **Front-load essentials** — Put critical instructions in SKILL.md directly
@@ -145,7 +145,7 @@ agent: Explore
 - Tasks requiring specialized agent capabilities
 - Operations that should not leak into main conversation
 
-**Available agents**: `Explore`, `Plan`, `general-purpose`
+**Available agents**: `Explore`, `Plan`, `general-purpose`, or custom agents defined in `.claude/agents/<name>.md`
 
 **Tradeoff**: Subagent has no conversation context but focused instructions.
 
@@ -170,6 +170,51 @@ agent: Explore
 4. Write minimal instructions to pass evaluations
 5. Iterate based on real usage
 
+## Extended Thinking
+
+Skills can enable extended thinking (deeper reasoning) by including the keyword **"ultrathink"** in their content. When Claude encounters this keyword during skill execution, it activates extended thinking mode for more thorough analysis.
+
+**When to use**: Complex analysis skills, architecture decisions, security audits, or any skill where deeper reasoning improves output quality.
+
+**Pattern**:
+```markdown
+## Process
+
+### 1. Deep Analysis
+
+ultrathink
+
+Analyze the codebase considering:
+- [complex criteria requiring extended reasoning]
+```
+
+**Tradeoff**: Extended thinking increases latency and token usage. Only use for skills where reasoning depth meaningfully improves results.
+
+## Visual Output Generation
+
+Skills can generate visual output (HTML pages, diagrams, reports) by bundling scripts in their directory and executing them during the skill process.
+
+**Pattern**:
+```markdown
+## Process
+
+### 3. Generate Visual Report
+
+Run the bundled visualization script:
+
+\`\`\`bash
+./.claude/skills/my-skill/scripts/generate-report.sh $ARGUMENTS
+\`\`\`
+
+The script generates an HTML file and opens it in the default browser.
+```
+
+**Best practices**:
+- Bundle scripts in the skill's `scripts/` directory
+- Use `allowed-tools: Bash` to permit script execution
+- Generate self-contained HTML (inline CSS/JS) for portability
+- Output to a temp directory or the project's build directory
+
 ## Skill Location Hierarchy
 
 Skills are loaded in priority order (highest to lowest):
@@ -189,3 +234,8 @@ Skills are loaded in priority order (highest to lowest):
 - **Don't duplicate**: Check existing skills at all levels before creating new ones
 - **Promote upward**: If a personal skill proves useful across the team, move it to project level
 - **Keep personal lean**: Only keep skills in `~/.claude/skills/` that are truly personal preference
+
+### Monorepo & Plugin Namespacing
+
+- **Monorepo auto-discovery**: Nested `.claude/skills/` directories in subdirectories are auto-loaded. Each package in a monorepo can define its own skills without collisions
+- **Plugin namespace**: Plugin skills use `plugin-name:skill-name` format (e.g., `my-plugin:deploy`) to prevent collisions with project or personal skills of the same name

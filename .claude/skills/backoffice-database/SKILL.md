@@ -36,11 +36,11 @@ Parse `$ARGUMENTS` to understand what the user wants:
 
 | Argument Pattern | Intent | Approach |
 |------------------|--------|----------|
-| (empty) | Overview | Steps 1, 3–4; list databases, schemas, and tables |
-| `table_name` or `schema.table_name` | Table schema | Steps 1, 3–4; emphasis on schema inspection |
-| `SELECT ...` or SQL query | Query data | Steps 1, 3–4; emphasis on query validation and execution |
-| `schema_name` | Schema tables | Steps 1, 3–4; list tables in schema |
-| `database_name` (all lowercase, no dots) | Database schemas | Steps 1, 3–4; list schemas in database |
+| (empty) | Overview | Steps 1–3; list databases, schemas, and tables |
+| `table_name` or `schema.table_name` | Table schema | Steps 1–3; emphasis on schema inspection |
+| `SELECT ...` or SQL query | Query data | Steps 1–3; emphasis on query validation and execution |
+| `schema_name` | Schema tables | Steps 1–3; list tables in schema |
+| `database_name` (all lowercase, no dots) | Database schemas | Steps 1–3; list schemas in database |
 
 **Disambiguation:** A bare word like `accounting` could be a schema or database name. Default to schema lookup within the current database first. If no schema is found, retry as a database name. If neither matches, report not found and list available options.
 
@@ -51,17 +51,14 @@ Parse `$ARGUMENTS` to understand what the user wants:
 - Call `mcp__qred-postgres__list_databases` to verify the MCP server is reachable
 - Set default database: `qred_se_db`
 - Set default schema: `public`
-- Parse `$ARGUMENTS` to determine intent using Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate workflow (Overview, Table Schema, Query Data, Schema Tables, or Database Schemas) using the Input Classification table
 
-**Stop conditions:**
+**Stop condition:**
 - MCP server unreachable → "The qred-postgres MCP server is not configured. Install and configure it to use this skill."
-- No arguments provided → show database overview (list databases, schemas, and tables)
 
-### 2. Determine Intent
+**Default routing:** No arguments provided → proceed with Overview workflow (list databases, schemas, and tables)
 
-Reference the Input Classification table to map `$ARGUMENTS` to the appropriate workflow (Overview, Table Schema, Query Data, Schema Tables, or Database Schemas)
-
-### 3. Execute
+### 2. Execute
 
 Based on intent, use the appropriate MCP tool:
 
@@ -76,7 +73,7 @@ Based on intent, use the appropriate MCP tool:
 3. Present columns, types, constraints, and indexes
 
 **SQL Query**
-1. Validate query is read-only (starts with SELECT, WITH, SHOW, EXPLAIN, etc.)
+1. Validate query is read-only (must start with SELECT, WITH, SHOW, EXPLAIN, or DESCRIBE)
 2. Call `mcp__qred-postgres__query` with the SQL and default database
 3. Present results in a clear table format
 4. If query fails, show error and suggest corrections
@@ -89,7 +86,7 @@ Based on intent, use the appropriate MCP tool:
 1. Call `mcp__qred-postgres__list_schemas` with the specified database name
 2. Present list of schemas
 
-### 4. Verify Results
+### 3. Verify Results
 
 - Confirm the MCP call returned data successfully
 - If empty result set → Note "Query returned 0 rows" explicitly
