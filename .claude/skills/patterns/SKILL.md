@@ -32,22 +32,21 @@ Provide guidance on selecting and implementing design patterns for specific prob
 
 ## Input Classification
 
-Classify the request to determine the appropriate approach:
+Determine pattern workflow from `$ARGUMENTS`:
 
-| Type | Indicators | Approach |
-|------|-----------|----------|
-| **Problem-First** | "how do I handle...", "what pattern for..." | Analyze problem → recommend pattern → show implementation |
-| **Pattern-First** | "how to implement Factory", "show me Strategy" | Explain pattern → show implementation → discuss when to use |
-| **Comparison** | "Factory vs Builder", "which is better" | Compare patterns → highlight trade-offs → recommend based on context |
-| **Refactoring** | "replace these switch statements", "too many conditionals" | Identify smell → suggest pattern → show transformation |
-| **Validation** | "is this the right pattern", "am I using this correctly" | Review usage → validate or suggest improvements |
+| Input | Intent | Approach |
+|-------|--------|----------|
+| Problem description (e.g., `handling multiple payment methods`) | Recommend pattern | Steps 1-4; emphasis on analysis (step 2) |
+| Pattern name (e.g., `Strategy pattern`) | Explain pattern | Steps 1-4; emphasis on recommendation (step 3) |
+| Comparison (e.g., `Factory vs Builder`) | Compare patterns | Steps 1-4; side-by-side trade-off analysis (step 3) |
+| File path (e.g., `src/payments/processor.ts`) | Analyze existing code | Steps 1-4; emphasis on discovery (step 2) |
+| (none) | Determine intent | Ask user what problem to solve or pattern to investigate |
 
 ## Process
 
 ### 1. Pre-flight
 
-- Classify request using the Input Classification table
-- Determine scope from `$ARGUMENTS`
+- Parse `$ARGUMENTS` and map to the appropriate intent (Recommend Pattern, Explain Pattern, Compare Patterns, Analyze Existing Code, or Determine Intent) using the Input Classification table
 - Search codebase for existing pattern usage
 - Check for architecture docs or ADRs that constrain pattern choices
 
@@ -103,10 +102,10 @@ Classify the request to determine the appropriate approach:
 | Argument | Behavior |
 |----------|----------|
 | (none) | Ask user what problem to solve or pattern to investigate |
-| Problem description (e.g., `handling multiple payment methods`) | Problem-First workflow: analyze and recommend |
-| Pattern name (e.g., `Strategy pattern`) | Pattern-First workflow: explain and show implementation |
-| Comparison (e.g., `Factory vs Builder`) | Comparison workflow: side-by-side trade-off analysis |
-| File path (e.g., `src/payments/processor.ts`) | Read the file, identify pattern opportunities or validate existing patterns |
+| Problem description (`handling multiple payment methods`) | Analyze problem and recommend suitable patterns |
+| Pattern name (`Strategy pattern`) | Explain pattern and show implementation in project context |
+| Comparison (`Factory vs Builder`) | Compare patterns side-by-side with trade-off analysis |
+| File path (`src/payments/processor.ts`) | Read the file, identify pattern opportunities or validate existing patterns |
 
 ## Error Handling
 

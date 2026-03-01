@@ -34,18 +34,29 @@ Guide structured feature development from specification through incremental impl
 
 ## Input Classification
 
-| Type | Indicators | Approach |
+| Input | Intent | Approach |
+|-------|--------|----------|
+| Feature name (e.g., `user authentication`) | Develop feature | Determine Feature Type, full Steps 1-5 |
+| Feature + scope (e.g., `add OAuth to login`) | Scoped enhancement | Steps 1-5; emphasis on impact analysis (step 2) |
+| User story (e.g., `as a user I want...`) | Story-driven development | Extract requirements from story, determine Feature Type, Steps 1-5 |
+| File path / directory (e.g., `src/auth/`) | Module-scoped feature | Steps 1-5; analyze existing module first (step 2) |
+| (none) | Ask user | Pre-flight stop |
+
+## Feature Types
+
+| Type | Indicators | Strategy |
 |------|-----------|----------|
-| **Greenfield** | "new feature", "add capability" | Full specification + implementation |
-| **Enhancement** | "improve", "extend", "add to existing" | Impact analysis + incremental change |
-| **Integration** | "connect", "integrate with" | Interface design + compatibility check |
-| **Migration** | "replace", "upgrade" | Parallel implementation + switchover |
+| **Greenfield** | "new feature", "add capability" | Full specification + implementation from scratch |
+| **Enhancement** | "improve", "extend", "add to existing" | Impact analysis + incremental change to existing code |
+| **Integration** | "connect", "integrate with" | Interface design + compatibility verification |
+| **Migration** | "replace", "upgrade" | Parallel implementation + switchover plan |
 
 ## Process
 
 ### 1. Pre-flight
 
-- Determine feature type from `$ARGUMENTS` using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate intent (Feature Name, Feature + Scope, User Story, File Path, or Ask User) using the Input Classification table
+- Determine the Feature Type (Greenfield, Enhancement, Integration, or Migration) from the Feature Types section above
 - Search for related existing features, patterns, and conventions in the codebase
 - Check for existing specs or documentation related to the feature
 

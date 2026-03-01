@@ -3,6 +3,7 @@ name: jira
 description: Use when the user asks to "create a Jira ticket", "file a bug", "add a task", "create an issue", mentions "Jira", "JIRA", "ticket", or needs to create issue tracker tickets.
 argument-hint: "[PROJECT] [bug|task|story] [title or description] [--assignee <user>]"
 disable-model-invocation: true
+allowed-tools: mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__createJiraIssue, mcp__atlassian__lookupJiraAccountId, mcp__atlassian__getJiraIssue
 ---
 
 Create Jira tickets from the current conversation context with structured templates. Returns a ticket ID for use in branch creation and downstream workflows.
@@ -32,42 +33,35 @@ Create Jira tickets from the current conversation context with structured templa
 
 ## Input Classification
 
-Determine ticket type and template from `$ARGUMENTS`:
+Determine ticket creation intent from `$ARGUMENTS`:
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| Bug indicators (`bug`, errors, crashes) | File bug report | Steps 1-7; apply Bug template from `@references/templates.md` |
-| Task indicators (`task`, implement, refactor) | Create task ticket | Steps 1-7; apply Task template |
-| Story indicators (`story`, user wants, feature request) | Create user story | Steps 1-7; apply Task template with user story focus |
-| Project override (`PROJ <type>`) | Create in specific project | Steps 1-7; use specified project instead of default UN |
-| (none / ambiguous) | Infer from conversation | Steps 1-7; emphasis on type resolution (step 2) |
+| Type keyword (e.g., `bug`, `task`, `story`) | Create typed ticket | Steps 1-6; apply template for specified type from `@references/templates.md` |
+| Type + title (e.g., `bug fix login timeout`) | Typed ticket with title | Steps 1-6; skip title inference |
+| Project + type (e.g., `PROJ bug`) | Project-scoped ticket | Steps 1-6; use specified project instead of default UN |
+| Project + type + title (e.g., `PROJ bug fix login`) | Fully specified ticket | Steps 1-6; minimal inference needed |
+| (none / ambiguous) | Infer from conversation | Steps 1-6; emphasis on type resolution (step 1) |
 
 ## Process
 
-### 1. Pre-flight Checks
+### 1. Pre-flight
 
-**Check MCP availability:**
-- MCP available → Create ticket directly via Atlassian MCP
-- MCP unavailable → Generate formatted content for manual entry
+- Parse `$ARGUMENTS` and map to the appropriate intent (Type Keyword, Type + Title, Project + Type, Project + Type + Title, or Infer from Conversation) using the Input Classification table
+- Resolve project: user-provided project code from arguments, or default to `UN`
+- Resolve ticket type (priority order):
+  1. User-provided type (`bug`, `task`, or `story` in arguments)
+  2. Conversation keywords: `error, bug, broken, crash, fail, regression, not working` → Bug
+  3. Conversation keywords: `user story, as a user, user wants, feature request` → Story
+  4. Conversation keywords: `implement, refactor, update, configure, task, add, create` → Task
+  5. Cannot determine → Ask user
+- Check MCP availability: MCP available → create directly via Atlassian MCP; MCP unavailable → generate content for manual entry
 
 **Stop conditions:**
-- Unclear ticket type and cannot infer from conversation → Ask user to clarify (bug, task, or story)
-- No meaningful conversation context and no title provided → Prompt user to describe the issue or task
+- Unclear ticket type and cannot infer from conversation → ask user to clarify (bug, task, or story)
+- No meaningful conversation context and no title provided → prompt user to describe the issue or task
 
-### 2. Resolve Project and Type
-
-**Project** (priority order):
-1. User-provided project code in arguments (`/jira PROJ bug title`)
-2. Default: `UN`
-
-**Ticket type** (priority order):
-1. User-provided type (`/jira bug`, `/jira task`, or `/jira story`)
-2. Conversation keywords: `error, bug, broken, crash, fail, regression, not working` → Bug
-3. Conversation keywords: `user story, as a user, user wants, feature request` → Story
-4. Conversation keywords: `implement, refactor, update, configure, task, add, create` → Task
-5. Cannot determine → Ask user
-
-### 3. Check for Duplicates
+### 2. Check for Duplicates
 
 Before gathering content, search for existing tickets with a similar summary in the same project:
 
@@ -76,7 +70,7 @@ Before gathering content, search for existing tickets with a similar summary in 
 - If similar tickets found → Present them to the user and ask whether to proceed with creation or link to an existing ticket
 - If no matches → Proceed to content gathering
 
-### 4. Gather Content from Conversation
+### 3. Gather Content from Conversation
 
 Summarize from the current session — do NOT use git history for content:
 - **What problem or need was identified** (becomes the description)
@@ -97,7 +91,7 @@ Apply the appropriate template from `@references/templates.md`. Story tickets us
 
 If no clear signal, default to Medium.
 
-### 5. Confirm with User
+### 4. Confirm with User
 
 Present a summary of the ticket details:
 - **Project**: The project key (e.g., UN)
@@ -109,13 +103,13 @@ Present a summary of the ticket details:
 
 Ask the user to confirm before creating the ticket. This prevents incorrect tickets from being filed.
 
-### 6. Create Ticket
+### 5. Create Ticket
 
 - **MCP available**: Call `mcp__atlassian__createJiraIssue` with project key, issue type, summary, and formatted description
   - If `--assignee` provided, use `mcp__atlassian__lookupJiraAccountId` to resolve the user, then include the assignee in the creation call
 - **MCP unavailable**: Generate copy-ready formatted content for manual entry
 
-### 7. Verify and Present Result
+### 6. Verify and Present Result
 
 **Verification** (MCP only):
 - Fetch the created ticket back using `mcp__atlassian__getJiraIssue` to confirm it exists
@@ -140,13 +134,12 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 | Argument | Behavior |
 |----------|----------|
 | (none) | Use `UN` project, infer type from conversation |
-| `bug` / `task` / `story` | Use `UN` project with specified type |
-| `bug <title>` / `task <title>` / `story <title>` | Use `UN` project with type and title |
-| `PROJ bug` / `PROJ task` / `PROJ story` | Use specified project with type |
-| `PROJ bug <title>` / `PROJ task <title>` / `PROJ story <title>` | Use specified project with type and title |
-| `--assignee <user>` | Assign ticket to specified user |
+| Type keyword (`bug`, `task`, `story`) | Use `UN` project with specified type |
+| Type + title (`bug fix login timeout`) | Use `UN` project with specified type and title |
+| Project + type (`PROJ bug`) | Use specified project with type |
+| Project + type + title (`PROJ bug fix login`) | Use specified project with type and title |
 
-**Argument parsing**: A leading all-caps token before `bug`/`task`/`story` (matching `[A-Z]+`) is treated as a project override. The `--assignee` flag can appear anywhere in the arguments.
+**Modifiers:** `--assignee <user>` can appear anywhere in arguments to assign the ticket. A leading all-caps token before `bug`/`task`/`story` (matching `[A-Z]+`) is treated as a project override.
 
 ## Error Handling
 

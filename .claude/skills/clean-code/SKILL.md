@@ -45,10 +45,11 @@ Determine analysis scope from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-- Reference Input Classification table to determine scope from `$ARGUMENTS`
+- Parse `$ARGUMENTS` and map to the appropriate scope (Single File, Directory, Component Search, Line Range, or Ask User) using the Input Classification table
 - Validate target exists and is readable
 
 **Stop conditions:**
+- No arguments provided → ask user to specify a file or component
 - Target file or component not found → report and stop
 - Target is unreadable or binary → report and stop
 - Scope is overly broad (e.g., entire repo root) → ask user to narrow scope
@@ -64,7 +65,7 @@ Read target code and evaluate against these 6 analysis dimensions:
 - **Dead code** — No commented-out code, no unreachable branches
 - **Security** — Security considerations addressed (input validation, data exposure)
 
-For each dimension, cross-reference the SOLID Checks and Code Smells tables below to identify specific violations. Apply the confidence gate from Review Philosophy — only flag findings scored >= 80 confidence internally.
+For each dimension, cross-reference the SOLID Checks and Code Smells tables below to identify specific violations. Apply the confidence gate from Clean Code Philosophy — only flag findings scored >= 80 confidence internally.
 
 ### 3. Report Findings
 

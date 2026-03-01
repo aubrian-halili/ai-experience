@@ -63,9 +63,7 @@ Determine documentation workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-Parse `$ARGUMENTS` to determine document type and topic.
-
-- Classify request using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate intent (Topic, Type Flag, Slides, Existing Doc Path, or Ask User) using the Input Classification table
 - Determine specific document type using the Document Types table
 - Check for existing documentation in the project (README, docs/, etc.)
 - If updating existing docs, read the current content first

@@ -34,31 +34,22 @@ Provide comprehensive testing guidance, test scaffolding, and coverage analysis 
 
 ## Input Classification
 
-Classify `$ARGUMENTS` to determine the testing workflow:
+Classify `$ARGUMENTS` to determine the testing scope:
 
-| Type | Indicators | Approach |
-|------|-----------|----------|
-| **New Tests** | "write tests for", "add tests", file path | Analyze target, generate tests (steps 1–4) |
-| **Coverage Gap** | "improve coverage", "increase coverage", "untested" | Coverage analysis first, then targeted tests (steps 1, 2, 5, 3–4) |
-| **Test Strategy** | "test strategy", "testing plan", feature name | Strategy design without immediate implementation (steps 1–2) |
-| **Failing Tests** | "fix tests", "tests are broken", "debug test" | Diagnose failure, then fix (steps 1, 6) |
-| **TDD Guidance** | "TDD", "test-driven", "test first" | Write tests before implementation (steps 1–4, iterative) |
-
-## Testing Pyramid
-
-| Level | Quantity | Speed | Scope |
-|-------|----------|-------|-------|
-| Unit | Many (70%) | Fast | Single function/class |
-| Integration | Some (20%) | Medium | Component interactions |
-| E2E | Few (10%) | Slow | Full user flows |
-
-**Branch point:** New Tests / TDD → steps 1–4 (iterative for TDD). Coverage Gap → steps 1, 2, 5, 3–4. Test Strategy → steps 1–2. Failing Tests → steps 1, 6.
+| Input | Intent | Approach |
+|-------|--------|----------|
+| (none) | Determine test target | Ask user to specify scope |
+| File path (e.g., `src/auth/login.ts`) | Test specific file | Analyze exports, generate unit tests |
+| Directory path (e.g., `src/auth/`) | Test directory files | Systematic analysis, prioritize by complexity |
+| Component name (e.g., `AuthService`) | Test component | Locate component, generate tests for matches |
+| Feature description (e.g., `payment flow`) | Test feature end-to-end | Trace feature, tests at all pyramid levels |
+| Coverage request (e.g., `improve coverage`) | Analyze coverage gaps | Run coverage analysis, report untested paths |
 
 ## Process
 
 ### 1. Pre-flight
 
-- Classify testing request from `$ARGUMENTS` using the Input Classification table
+- Classify testing scope from `$ARGUMENTS` using the Input Classification table
 - Verify target files/components exist via Glob and Read
 - Detect test framework and runner: search for `jest.config`, `vitest.config`, `mocha`, `.mocharc`, `playwright.config`, or `cypress.config`
 - Check for existing tests: search `tests/`, `__tests__/`, `*.test.ts`, `*.spec.ts` near the target
@@ -82,7 +73,14 @@ Map the target code to test types using this guide:
 | Database operations | Integration | Data persistence |
 | User flows | E2E | End-to-end behavior |
 
-- Apply the Testing Pyramid ratios to determine test distribution
+Apply the Testing Pyramid ratios to determine test distribution:
+
+| Level | Quantity | Speed | Scope |
+|-------|----------|-------|-------|
+| Unit | Many (70%) | Fast | Single function/class |
+| Integration | Some (20%) | Medium | Component interactions |
+| E2E | Few (10%) | Slow | Full user flows |
+
 - Identify dependencies that need mocking or stubbing
 - For coverage gap requests: run existing coverage first, identify uncovered branches and functions
 - Cross-reference with `@references/patterns.md` for async, timer, and error boundary patterns
@@ -122,13 +120,21 @@ Target thresholds:
 - Prioritize coverage gaps by risk: error handling and security paths first
 - For coverage gap requests: present a prioritized list of files/functions to test next
 
-### 6. Diagnose Failing Tests (Failing Tests only)
+### 6. Diagnose Failures
 
+- If all tests pass, skip to Verify
 - Read the test file and the target source code
 - Identify failure type: assertion mismatch, runtime error, timeout, setup/teardown issue
 - Check for common causes: stale mocks, changed API contracts, non-deterministic behavior (timers, network)
 - Propose a fix with before/after diff example
 - If the failure reveals a bug in the source code (not the test), flag it and recommend `/review`
+
+### 7. Verify
+
+- Confirm all applicable test levels (unit, integration, E2E) were addressed; note any skipped levels with rationale
+- Review generated tests against the Testing Pyramid ratios; flag significant imbalances (e.g., all E2E, no unit tests)
+- If coverage analysis was performed, present before/after comparison and confirm targets from step 5 were met or gaps documented
+- Suggest next steps: remaining coverage gaps, related skills (`/review` for test quality, `/security` for security tests), or state test completeness with confidence level
 
 ## Output Principles
 

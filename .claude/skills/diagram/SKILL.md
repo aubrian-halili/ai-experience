@@ -58,12 +58,13 @@ Determine diagram workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` to determine what to visualize
+- Parse `$ARGUMENTS` and map to the appropriate intent (Topic/Concept, File Path, Directory, Component Name, or Ask User) using the Input Classification table
 - If analyzing existing code, verify target files are accessible via Glob/Read
 - If from a description, check if enough detail is provided to proceed
 - Classify the request using the Diagram Selection table above
 
 **Stop conditions:**
+- No arguments provided → ask user what to visualize
 - Target file or directory not found → report and stop
 - Description too vague to select a diagram type → ask user to clarify
 - Scope is ambiguous (e.g., "diagram everything") → ask user to narrow focus
@@ -72,7 +73,7 @@ Determine diagram workflow from `$ARGUMENTS`:
 
 - Read source code if diagramming an existing system
 - Select diagram type from the Diagram Selection table
-- Build the Mermaid diagram following Guidelines
+- Build the Mermaid diagram following Diagram Philosophy principles
 - Use the Mermaid Reference section for correct syntax
 
 ### 3. Present
@@ -92,6 +93,7 @@ Determine diagram workflow from `$ARGUMENTS`:
 
 **C4 Context**: `C4Context` — system with users and external dependencies
 **C4 Container**: `C4Container` — high-level technical components inside the system
+**C4 Component**: `C4Component` — internal components within a container
 **Sequence**: `sequenceDiagram` — interactions over time between participants
 **Flowchart**: `flowchart TD/LR` — process flows and decision points
 **ERD**: `erDiagram` — data model relationships

@@ -12,6 +12,8 @@ Provide comprehensive security guidance, vulnerability assessment, and secure-by
 - **Defense in depth** — assess multiple security layers; a single control failure should not mean full compromise
 - **Assume breach** — evaluate what happens when a control fails, not just whether it exists
 - **Least privilege** — verify that code and configurations request minimum necessary access
+- **Scope before depth** — define assessment boundaries first; thorough analysis of a focused area beats shallow coverage of everything
+- **Practical remediation** — every finding must include a concrete fix; identifying vulnerabilities without actionable guidance wastes effort
 
 ## When to Use
 
@@ -32,23 +34,22 @@ Provide comprehensive security guidance, vulnerability assessment, and secure-by
 
 ## Input Classification
 
-Use `$ARGUMENTS` if provided (file path, component name, or feature to assess).
+Classify `$ARGUMENTS` to determine the assessment scope:
 
-First, classify the security assessment type:
-
-| Type | Indicators | Approach |
-|------|-----------|----------|
-| **Code Audit** | "check this code", "review for vulnerabilities" | Steps 1–6; emphasis on vulnerability assessment (step 4) |
-| **Threat Model** | "threat model", "attack surface", "risk assessment" | Steps 1–6; emphasis on threat identification (step 3) |
-| **Design Review** | "is this secure", "security architecture" | Steps 1–6; emphasis on scope and threat model (steps 2–3) |
-| **Remediation** | "fix this vulnerability", "secure this" | Steps 1–6; emphasis on reporting with fix examples (step 6) |
-| **Checklist** | "security checklist", "pre-deploy check" | Steps 1–6; systematic verification using `@references/checklists.md` |
+| Input | Intent | Approach |
+|-------|--------|----------|
+| (none) | Assess security of current scope | Ask user to specify target |
+| File path (e.g., `src/auth/login.ts`) | Audit specific file | Code-level vulnerability scan |
+| Directory path (e.g., `src/auth/`) | Audit directory files | Systematic directory analysis |
+| Component name (e.g., `AuthService`) | Audit component security | Locate component, assess matches |
+| Feature description (e.g., `payment flow`) | Trace and assess feature | End-to-end security analysis |
+| Checklist request (e.g., `API checklist`) | Run security checklist | Apply checklist from `@references/checklists.md` |
 
 ## Process
 
 ### 1. Pre-flight
 
-- Classify assessment type from `$ARGUMENTS` using the Input Classification table
+- Classify assessment scope from `$ARGUMENTS` using the Input Classification table
 - Verify target files/components exist and are readable
 - For file-based audits: confirm files exist via Glob, read target code
 - For component/feature assessments: locate relevant files via Grep
@@ -104,6 +105,13 @@ For each finding, provide:
 - Defense-in-depth recommendations
 
 **No findings case:** If assessment produces no vulnerabilities, explicitly state: "No vulnerabilities identified in the assessed scope. Confidence level: [High/Medium/Low] based on coverage of [X of 10] OWASP categories."
+
+### 7. Verify
+
+- Confirm all trust boundaries and OWASP categories in scope were evaluated; note any skipped with rationale
+- Verify every finding includes a DREAD score, OWASP category reference, and concrete remediation
+- Sanity-check severity distribution — if all findings are High or all are Low, re-evaluate scoring consistency
+- Suggest next steps: recommend related skills, manual pen testing, or state security clearance with confidence level
 
 ## Output Principles
 

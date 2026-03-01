@@ -2,9 +2,13 @@
 name: commit
 description: Use when the user asks to "commit changes", "create a commit", "commit this", mentions "git commit", "commit message", or needs help with semantic commits or branch management.
 argument-hint: "[optional commit message or scope]"
-allowed-tools: Bash, Read, Grep, Glob
+allowed-tools: Bash(git *), Read, Grep, Glob
 disable-model-invocation: true
 ---
+
+**Current branch:** !`git branch --show-current`
+**Recent commits:**
+!`git log --oneline -3`
 
 Generate semantic commit messages following project conventions (see CLAUDE.md).
 
@@ -44,7 +48,7 @@ Determine commit workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight Checks
 
-Extract branch and ticket ID:
+Extract ticket ID (branch name is pre-loaded above):
 ```bash
 BRANCH=$(git branch --show-current)
 TICKET_ID=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
@@ -66,6 +70,8 @@ Review current state:
 Use `$ARGUMENTS` if provided (user's custom message or scope), otherwise generate appropriate commit message.
 
 Format: `<TICKET-ID> <type>(<scope>): <subject>` (max 72 chars)
+
+**Types:** `feat` (new feature), `fix` (bug fix), `refactor` (restructure), `docs` (documentation), `test` (testing), `chore` (maintenance)
 
 **Present to user:**
 - Show **staged files** separately from **unstaged files**

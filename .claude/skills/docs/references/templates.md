@@ -244,6 +244,78 @@ How this will be tested.
 Security implications and mitigations.
 ```
 
+## Runbook Template
+
+```markdown
+# Runbook: [Title]
+
+**Owner:** [Team or individual]
+**Last Updated:** YYYY-MM-DD
+**Review Cadence:** [Quarterly / After each incident]
+
+## Overview
+
+What this runbook covers and when to use it.
+
+## Prerequisites
+
+- Access requirements (VPN, SSH keys, console access)
+- Required tools and versions
+- Relevant dashboards and monitoring links
+
+## Procedure
+
+### Step 1: [Action]
+
+```bash
+# Command or action
+```
+
+**Expected output:** [What you should see]
+**If this fails:** Go to Troubleshooting > [Section]
+
+### Step 2: [Action]
+
+```bash
+# Command or action
+```
+
+**Expected output:** [What you should see]
+
+## Verification
+
+How to confirm the procedure succeeded.
+
+- [ ] Check 1: [What to verify]
+- [ ] Check 2: [What to verify]
+
+## Troubleshooting
+
+| Symptom | Likely Cause | Resolution |
+|---------|-------------|------------|
+| [Error or symptom] | [Root cause] | [Fix steps] |
+
+## Escalation
+
+| Severity | Contact | Channel |
+|----------|---------|---------|
+| P1 (service down) | [On-call engineer] | [PagerDuty / Slack channel] |
+| P2 (degraded) | [Team lead] | [Slack channel] |
+
+## Rollback
+
+Steps to revert if the procedure causes issues:
+
+1. [Rollback step 1]
+2. [Rollback step 2]
+
+## Change Log
+
+| Date | Author | Change |
+|------|--------|--------|
+| YYYY-MM-DD | [Name] | Initial version |
+```
+
 ## Presentation Template
 
 ```markdown

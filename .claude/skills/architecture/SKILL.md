@@ -5,6 +5,9 @@ argument-hint: "[topic to design] or [--adr decision title]"
 allowed-tools: Read, Grep, Glob, Write, Edit
 ---
 
+**Existing ADRs:**
+!`ls docs/architecture/decisions/adr-*.md 2>/dev/null || echo "No ADRs found"`
+
 Provide expert guidance on system architecture decisions, design approaches, and technical strategy. Generates Architecture Decision Records (ADRs) when requested.
 
 ## Architecture Philosophy
@@ -52,7 +55,7 @@ Classify `$ARGUMENTS` to determine the appropriate workflow:
 
 - Determine workflow from `$ARGUMENTS` and Input Classification
 - Check for existing architecture docs (`docs/architecture/`, `ARCHITECTURE.md`, `docs/adr/`)
-- Check for existing ADRs (list files in `docs/architecture/decisions/`)
+- Review existing ADRs (pre-loaded above); if none found, numbering starts at `adr-001`
 - If no arguments provided, ask the user what to design or analyze
 
 ### 2. Analyze Existing Patterns
@@ -66,6 +69,8 @@ Classify `$ARGUMENTS` to determine the appropriate workflow:
 - Estimate scale — Users (DAU/MAU/peak), data (storage/growth/retention), traffic (QPS/read-write ratio/burst patterns)
 
 ### 4. Design Architecture (Design only)
+
+ultrathink
 
 - **Define Components** — Core services, data stores, caching, external integrations, interface definitions
 - **Design Interactions** — Sync vs async, API contracts, error handling and retry strategies
@@ -101,11 +106,8 @@ Classify `$ARGUMENTS` to determine the appropriate workflow:
 
 - Create the ADR directory if it doesn't exist
 - Write ADR file to `docs/architecture/decisions/adr-NNN-title.md`
-- Verify the file was created:
-  ```bash
-  ls docs/architecture/decisions/adr-NNN-title.md
-  ```
-- Show the file path to confirm success
+- Verify the file was created by reading it back with Read or listing the directory with Glob
+- Show the file path and confirm success
 
 ## Architecture Patterns
 

@@ -150,12 +150,13 @@ Test the skill with real invocations and refine based on:
 | `user-invocable` | boolean | Set `false` to hide from `/` menu; use for background knowledge skills | No | Advanced |
 | `model` | string | Override model for skill execution (e.g., `haiku`, `sonnet`, `opus`) | No | Advanced |
 | `context` | string | Set to `fork` to run in isolated subagent context (no conversation history) | No | Advanced |
-| `agent` | string | Subagent type when `context: fork` (e.g., `Explore`, `Plan`, `general-purpose`) | No | Advanced |
+| `agent` | string | Subagent type when `context: fork` (e.g., `Explore`, `Plan`, `general-purpose`, or custom from `.claude/agents/`) | No | Advanced |
 | `hooks` | object | Skill-scoped hooks configuration (see Hooks documentation) | No | Advanced |
 
 **String substitution variables** available in skill content:
 - `$ARGUMENTS` — all arguments passed when invoking the skill
 - `$ARGUMENTS[N]` or `$N` — specific argument by 0-based index
+- `${CLAUDE_SESSION_ID}` — unique session identifier; useful for per-session logging or temp file isolation
 - `` !`command` `` — dynamic context; shell command output replaces the placeholder before skill content is sent to Claude
 
 ## Output Principles
