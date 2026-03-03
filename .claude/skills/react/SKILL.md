@@ -8,11 +8,11 @@ argument-hint: "[component name, pattern question, or leave blank for guidance]"
 
 ## React Philosophy
 
-1. **Composition over inheritance** — Build complex UIs by combining small, focused components. Never use class inheritance for component reuse.
-2. **Colocate what changes together** — Keep styles, tests, types, and logic near the component that owns them. Feature folders over type folders.
-3. **Minimal state, derive the rest** — Store only the source of truth in state. Compute everything else in render or with selectors.
-4. **Server state is not client state** — Use RTK Query for server-cached data. Use Redux slices only for truly client-owned state (UI preferences, form drafts, auth tokens).
-5. **Render predictability** — Components are pure functions of props and state. Side effects belong in hooks, thunks, or RTK Query lifecycle callbacks — never in render.
+- **Composition over inheritance** — Build complex UIs by combining small, focused components. Never use class inheritance for component reuse.
+- **Colocate what changes together** — Keep styles, tests, types, and logic near the component that owns them. Feature folders over type folders.
+- **Minimal state, derive the rest** — Store only the source of truth in state. Compute everything else in render or with selectors.
+- **Server state is not client state** — Use RTK Query for server-cached data. Use Redux slices only for truly client-owned state (UI preferences, form drafts, auth tokens).
+- **Render predictability** — Components are pure functions of props and state. Side effects belong in hooks, thunks, or RTK Query lifecycle callbacks — never in render.
 
 ## When to Use
 
@@ -29,37 +29,40 @@ argument-hint: "[component name, pattern question, or leave blank for guidance]"
 
 ### Use a Different Approach When
 
-| Scenario | Use Instead |
-|----------|-------------|
-| Pure TypeScript types/utilities | `/typescript` |
-| Backend API implementation | `/aws` |
-| General testing strategy | `/testing` |
-| Architecture decisions (ADRs) | `/architecture` |
-| Security concerns (XSS, auth) | `/security` |
+- Pure TypeScript types/utilities → use `/typescript`
+- Backend API implementation → use `/aws`
+- General testing strategy → use `/testing`
+- Architecture decisions (ADRs) → use `/architecture`
+- Security concerns (XSS, auth) → use `/security`
 
 ## Input Classification
 
-| Input Pattern | Classification | Workflow |
-|---------------|---------------|----------|
-| Component name or description | **New Component** | Scaffold component + types + test file |
-| "hook" or custom hook name | **Custom Hook** | Design hook API, implement, test with `renderHook` |
-| "slice", "store", "state", Redux keyword | **State Management** | Design slice/selectors or configure store |
-| "query", "mutation", "API", "cache", RTK Query keyword | **RTK Query** | Define API endpoints with tags and cache config |
-| "test" or "testing" with component context | **Testing** | Write RTL tests following query priority |
-| "slow", "re-render", "memo", "performance" | **Performance** | Diagnose and optimize with profiling guidance |
-| "bug", "broken", "not working", error description | **Bug Fix** | Pre-flight analysis, root cause, targeted fix |
-| "refactor" or structural change request | **Refactor** | Analyze current structure, propose incremental changes |
-| File path (`.tsx`, `.jsx`, `.ts` in component dir) | **File Analysis** | Read file, identify issues or improvement opportunities |
-| No argument | **Guidance** | Show available workflows and ask for context |
+Classify `$ARGUMENTS` to determine the React development scope:
+
+| Input | Intent | Approach |
+|-------|--------|----------|
+| (none) | Determine React task | Ask user for component, hook, file path, or question |
+| Name or description (e.g., `UserProfile`, `useAuth hook`) | Scaffold or design | Create component/hook with types and test file |
+| File path (e.g., `src/components/Header.tsx`) | Analyze existing code | Read file, evaluate patterns, types, and test coverage |
+| Action + target (e.g., `test LoginForm`, `create cart slice`) | Execute targeted operation | Apply workflow for testing, scaffolding, or optimization |
+| Bug/error description (e.g., `infinite re-renders`, `state not updating`) | Diagnose and fix | Root cause analysis with targeted fix |
+| Concept/pattern question (e.g., `RTK Query caching`, `compound components`) | Explain pattern | Pattern lookup from `@references/patterns.md` with examples |
 
 ## Process
 
 ### 1. Pre-flight
 
+- Classify React scope from `$ARGUMENTS` using the Input Classification table
 - Detect project setup: check for `package.json` dependencies (`react`, `@reduxjs/toolkit`, `react-router`, etc.)
 - Find existing patterns: scan for component conventions, file structure, naming
 - Identify testing setup: look for Jest config, RTL utilities, MSW handlers
 - Check for existing store configuration and API definitions
+
+**Stop conditions:**
+- No `$ARGUMENTS` and no React file context provided → ask user to specify component, hook, or file
+- Target file or component not found → report and ask user to verify the path
+- No React detected in `package.json` → warn, offer to proceed or scaffold setup
+- Request is not React-specific (general TypeScript, backend) → redirect to appropriate skill
 
 ### 2. Context Analysis
 
@@ -105,21 +108,18 @@ Apply testing patterns from @references/testing.md:
 - **TypeScript first** — All code includes types. No `any` unless explicitly justified.
 - **Testable by design** — Every component and hook is designed for easy testing.
 - **Minimal API surface** — Props interfaces expose only what consumers need.
-- **Consistent naming** — `useXxx` for hooks, `XxxSlice` for slices, `xxxApi` for RTK Query.
-- **No premature abstraction** — Three instances before extracting a pattern.
+- **Pragmatic conventions** — Follow naming conventions (`useXxx`, `XxxSlice`, `xxxApi`); extract shared patterns only after three instances.
 
 ## Argument Handling
 
 | Argument | Behavior |
 |----------|----------|
-| `UserProfile` | Create a `UserProfile` component with types and test |
-| `useAuth hook` | Design and implement a `useAuth` custom hook |
-| `create a slice for cart` | Scaffold a Redux Toolkit slice for cart feature |
-| `RTK Query for /users` | Define an RTK Query API for the users endpoint |
-| `test LoginForm` | Write RTL tests for the `LoginForm` component |
-| `optimize ProductList` | Profile and optimize `ProductList` re-renders |
-| `src/components/Header.tsx` | Read and analyze the Header component |
-| _(empty)_ | Show available workflows and ask what to build |
+| _(empty)_ | Show available workflows and ask for context |
+| Name or description (e.g., `UserProfile`, `useAuth hook`) | Scaffold component/hook with types and test file |
+| File path (e.g., `src/components/Header.tsx`) | Read file, analyze patterns and issues |
+| Action + target (e.g., `test LoginForm`, `create cart slice`) | Execute targeted workflow (test, scaffold, optimize) |
+| Bug/error description (e.g., `LoginForm re-renders on every keystroke`) | Diagnose root cause, recommend fix |
+| Concept/pattern question (e.g., `RTK Query cache invalidation`) | Explain pattern with examples from references |
 
 ## Error Handling
 
@@ -131,6 +131,8 @@ Apply testing patterns from @references/testing.md:
 | Conflicting state patterns (context + Redux for same data) | Flag the conflict and recommend consolidation |
 | Missing TypeScript config | Warn and offer to proceed with JS or set up TS |
 
+Never silently assume component architecture or state management approach—surface assumptions explicitly and let the user confirm.
+
 ## Related Skills
 
 | Skill | When to Use Instead |
@@ -140,4 +142,3 @@ Apply testing patterns from @references/testing.md:
 | `/patterns` | Design patterns not specific to React |
 | `/clean-code` | General code quality and refactoring principles |
 | `/security` | XSS prevention, auth flows, input sanitization |
-| `/aws` | Backend APIs that React consumes via RTK Query |

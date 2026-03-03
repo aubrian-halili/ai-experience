@@ -8,11 +8,11 @@ argument-hint: "[service name, pattern question, or leave blank for guidance]"
 
 ## AWS Serverless Philosophy
 
-1. **Least privilege always** — Every Lambda function, API, and resource gets the minimum IAM permissions required. Start with zero access and add only what's needed.
-2. **Design for failure** — Everything fails eventually. Use retries with exponential backoff, dead-letter queues, circuit breakers, and idempotent handlers.
-3. **Prefer managed services** — Use DynamoDB over self-managed databases, API Gateway over custom routing, SQS over custom queuing. Let AWS handle the undifferentiated heavy lifting.
-4. **Cost awareness** — Serverless costs scale with usage. Optimize cold starts, right-size memory, use reserved capacity for predictable workloads, and monitor with CloudWatch.
-5. **Infrastructure as code** — Every resource lives in SAM/CloudFormation templates. No manual console changes. Templates are the source of truth.
+- **Least privilege always** — Every Lambda function, API, and resource gets the minimum IAM permissions required. Start with zero access and add only what's needed.
+- **Design for failure** — Everything fails eventually. Use retries with exponential backoff, dead-letter queues, circuit breakers, and idempotent handlers.
+- **Prefer managed services** — Use DynamoDB over self-managed databases, API Gateway over custom routing, SQS over custom queuing. Let AWS handle the undifferentiated heavy lifting.
+- **Cost awareness** — Serverless costs scale with usage. Optimize cold starts, right-size memory, use reserved capacity for predictable workloads, and monitor with CloudWatch.
+- **Infrastructure as code** — Every resource lives in SAM/CloudFormation templates. No manual console changes. Templates are the source of truth.
 
 ## When to Use
 
@@ -29,38 +29,41 @@ argument-hint: "[service name, pattern question, or leave blank for guidance]"
 
 ### Use a Different Approach When
 
-| Scenario | Use Instead |
-|----------|-------------|
-| Frontend React code | `/react` |
-| Pure TypeScript design | `/typescript` |
-| General testing strategy | `/testing` |
-| Architecture decision records | `/architecture` |
-| Non-AWS security patterns | `/security` |
+- Frontend React code → use `/react`
+- Pure TypeScript design → use `/typescript`
+- General testing strategy → use `/testing`
+- Architecture decision records → use `/architecture`
+- Non-AWS security patterns → use `/security`
 
 ## Input Classification
 
-| Input Pattern | Classification | Workflow |
-|---------------|---------------|----------|
-| "Lambda", function name, handler | **Lambda** | Design handler with middleware, error handling, types |
-| "API", "Gateway", "endpoint", "REST" | **API Gateway** | Configure routes, validation, CORS, auth |
-| "DynamoDB", "table", "query", "GSI" | **DynamoDB** | Design table schema, access patterns, operations |
-| "SAM", "CloudFormation", "template", "deploy" | **SAM/CFN** | Write or update IaC templates |
-| "IAM", "policy", "role", "permissions" | **IAM** | Design least-privilege policies |
-| "S3", "bucket", "upload", "presigned" | **S3** | Configure bucket, lifecycle, access patterns |
-| "error", "timeout", "cold start", debug keywords | **Debugging** | Diagnose with CloudWatch, X-Ray, local testing |
-| "architecture", "design", "event-driven" | **Architecture** | Design serverless system with event flows |
-| File path (`.yaml`, `.yml`, `template.*`) | **Template Analysis** | Read and analyze SAM/CFN template |
-| No argument | **Guidance** | Show available workflows and ask for context |
+Classify `$ARGUMENTS` to determine the serverless workflow scope:
+
+| Input | Intent | Approach |
+|-------|--------|----------|
+| (none) | Determine target service or question | Ask user to specify service, resource, or question |
+| Service name or description (e.g., `Lambda for uploads`, `DynamoDB orders table`) | Design for specific service | Create handler, template, schema, or policy from references |
+| File path (e.g., `template.yaml`, `src/handlers/orders.ts`) | Analyze existing code or template | Read file, evaluate patterns, security, and structure |
+| Action + target (e.g., `deploy user-api`, `add GSI to orders table`) | Modify existing infrastructure | Apply workflow for template, IAM, or config changes |
+| Bug/error description (e.g., `Lambda timeout`, `API Gateway 502`) | Diagnose and fix issue | Root cause analysis with CloudWatch, X-Ray, local testing |
+| Concept/pattern question (e.g., `single-table design`, `event-driven patterns`) | Explain pattern or concept | Pattern lookup and guidance from references |
 
 ## Process
 
 ### 1. Pre-flight
 
+- Classify serverless workflow scope from `$ARGUMENTS` using the Input Classification table
 - Find existing SAM/CloudFormation templates (`template.yaml`, `template.yml`, `*.template.*`)
 - Check `samconfig.toml` for deployment configuration
 - Scan for existing Lambda handlers and their runtime
 - Identify shared layers, utilities, and middleware patterns
 - Check for existing IAM policies and roles
+
+**Stop conditions:**
+- No `$ARGUMENTS` provided → ask user to specify a service, resource, or question
+- Referenced file or template not found → report missing path, ask user to verify
+- Request is outside AWS serverless scope (e.g., EC2 instances, container orchestration) → note limitation, suggest appropriate tools
+- No SAM/CloudFormation templates and no handler code found → offer to scaffold a new project structure
 
 ### 2. Context Analysis
 
@@ -77,7 +80,7 @@ Apply patterns from reference materials:
 - SAM templates: @references/sam-templates.md
 - Security: @references/security.md
 
-Use `ultrathink` for complex architectural decisions. Leverage AWS documentation MCP tools (`aws___search_documentation`, `aws___read_documentation`) for current service limits, quotas, and API specifics.
+Leverage AWS documentation MCP tools (`aws___search_documentation`, `aws___read_documentation`) for current service limits, quotas, and API specifics.
 
 Key rules:
 - Always use TypeScript for Lambda handlers
@@ -116,22 +119,19 @@ The user controls all deployment actions (`sam deploy`, `aws` CLI commands).
 
 - **Template-first** — Infrastructure changes are always SAM/CloudFormation, never console instructions.
 - **Least privilege** — Every IAM policy is scoped to specific actions and resources.
-- **Typed handlers** — Lambda handlers use TypeScript with AWS SDK v3 types.
-- **Error resilient** — Every handler includes structured error handling and logging.
+- **Production-ready handlers** — Lambda handlers use TypeScript with AWS SDK v3 types, structured error handling, and CloudWatch-compatible logging.
 - **Cost conscious** — Recommendations include cost implications when relevant.
 
 ## Argument Handling
 
 | Argument | Behavior |
 |----------|----------|
+| _(empty)_ | Ask user to specify a service, resource, or question |
 | `Lambda for processing uploads` | Design S3-triggered Lambda with handler and template |
-| `DynamoDB table for orders` | Design single-table schema with access patterns |
-| `API Gateway for user service` | Configure REST API with routes, auth, and CORS |
-| `SAM template` | Scaffold or review SAM template |
-| `IAM policy for Lambda` | Design least-privilege execution role |
-| `debug Lambda timeout` | Diagnose timeout with CloudWatch and optimization steps |
 | `template.yaml` | Read and analyze the SAM template |
-| _(empty)_ | Show available workflows and ask what to build |
+| `deploy user-api` | Apply deployment workflow for the specified service |
+| `debug Lambda timeout` | Diagnose timeout with CloudWatch and optimization steps |
+| `single-table design` | Explain DynamoDB single-table design pattern from references |
 
 ## Error Handling
 
@@ -144,6 +144,8 @@ The user controls all deployment actions (`sam deploy`, `aws` CLI commands).
 | Cold start concerns | Recommend optimization strategies from patterns reference |
 | Unsupported runtime | Warn and suggest migration path to supported runtime |
 
+Never silently skip security checks or assume IAM permissions are correct—surface all findings and coverage limitations explicitly.
+
 ## Related Skills
 
 | Skill | When to Use Instead |
@@ -153,4 +155,3 @@ The user controls all deployment actions (`sam deploy`, `aws` CLI commands).
 | `/architecture` | System design decisions and ADRs |
 | `/testing` | Testing strategies for Lambda and integrations |
 | `/diagram` | Visualizing AWS architecture with diagrams |
-| `/react` | Frontend that consumes these APIs |
