@@ -1,6 +1,6 @@
 ---
 name: debug
-description: Use when the user asks to "debug this", "fix this bug", "why is this failing", "trace this error", has a failing test, encounters unexpected behavior, or needs structured debugging methodology.
+description: Use when the user asks to "debug this", "fix this bug", "why is this failing", "trace this error", has a failing test, or encounters unexpected behavior.
 argument-hint: "[bug description, error message, or failing test]"
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit
 ---
@@ -14,6 +14,21 @@ Systematically diagnose and fix bugs using a structured reproduce-isolate-hypoth
 - **One hypothesis at a time** — test hypotheses sequentially, not in bulk; changing multiple things obscures the root cause
 - **Analysis paralysis guard** — if 5+ files read without forming a hypothesis, stop and regroup with what you know
 - **Evidence over intuition** — trace the actual execution path, don't guess from code reading alone
+
+## Iron Laws
+
+> - NO fixes without reproducing the bug first
+> - ONE hypothesis at a time — never shotgun debug
+> - If 3+ fixes failed, stop and question the architecture
+
+## Rationalization Guard
+
+| Excuse | Reality |
+|--------|---------|
+| "The fix is obvious, skip reproduction" | Can't verify a fix without confirming the bug first |
+| "Let me refactor while I'm here" | Scope creep during debugging obscures root cause |
+| "I'll just change a few things and see" | Shotgun debugging wastes time and hides causation |
+| "The stack trace tells me everything" | Stack traces show symptoms, not root causes |
 
 ## When to Use
 

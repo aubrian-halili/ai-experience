@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Use when the user asks to "verify implementation", "check if done", "validate completeness", "did I miss anything", "check for stubs", or needs post-implementation verification against a plan or acceptance criteria.
+description: Use when the user asks to "verify implementation", "check if done", "validate completeness", "did I miss anything", "check for stubs", or references a plan or acceptance criteria to verify against.
 argument-hint: "[plan file, feature name, or acceptance criteria]"
 context: fork
 agent: Explore
@@ -16,6 +16,15 @@ Verify that an implementation fully achieves its intended goals using three-leve
 - **Anti-pattern awareness** — actively scan for common shortcuts that masquerade as completion (stubs, TODOs, empty catches)
 - **Confidence markers** — distinguish between verified facts and assumptions; surface uncertainty explicitly
 - **Goal-backward** — verify against the intended outcome (observable truths), not just the code that was written
+
+## Rationalization Guard
+
+| Excuse | Reality |
+|--------|---------|
+| "The file exists so it's wired" | Existence is Level 1; you haven't checked Level 3 |
+| "I wrote it, I know it works" | The anti-pattern list exists because experienced devs write stubs too |
+| "Tests pass so it's complete" | Passing tests verify behavior, not wiring or substance |
+| "It's just a config change, no verification needed" | Config errors are silent failures; verify the runtime loads the value |
 
 ## When to Use
 
@@ -181,6 +190,7 @@ Include:
 | All checks pass | Report PASS with confidence; recommend `/review` for code quality |
 | Critical anti-patterns found | Report immediately with exact locations; recommend fixing before PR |
 | Plan file outdated | Warn user that plan may not reflect current implementation |
+| User asks to skip verification | Explain what verification protects against; offer reduced-scope check rather than none |
 
 Never silently skip verification steps — surface limitations and skipped items explicitly.
 

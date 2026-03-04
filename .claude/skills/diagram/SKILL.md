@@ -1,6 +1,6 @@
 ---
 name: diagram
-description: Use when the user asks to "draw a diagram", "visualize this system", "create a flowchart", "show the architecture", mentions "ERD", "sequence diagram", "state machine", or needs visual representations of systems and flows.
+description: Use when the user asks to "draw a diagram", "visualize this system", "create a flowchart", "show the architecture", mentions "ERD", "sequence diagram", or "state machine".
 argument-hint: "[system or flow to diagram]"
 allowed-tools: Read, Grep, Glob
 ---

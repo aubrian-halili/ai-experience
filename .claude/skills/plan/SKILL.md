@@ -1,8 +1,8 @@
 ---
 name: plan
-description: Use when the user asks to "plan a project", "break down this epic", "decompose this ticket", "create a plan", "what's the approach for", or needs to bridge the gap between a goal/ticket and structured implementation phases.
+description: Use when the user asks to "plan a project", "break down this epic", "decompose this ticket", "create a plan", or "what's the approach for".
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
-allowed-tools: Read, Grep, Glob, Write, Skill
+allowed-tools: Read, Grep, Glob, Write, Skill, TaskCreate, TaskUpdate, TaskList
 ---
 
 Decompose goals, epics, or Jira tickets into structured implementation phases with clear deliverables, using goal-backward verification to ensure every phase contributes to observable outcomes.
@@ -102,6 +102,12 @@ This is the critical step that prevents "building the wrong thing correctly."
 - Create or update `.planning/STATE.md` using the template from `@references/templates.md`
 - Record: current phase, completed phases, active blockers, key decisions, next steps
 - This file enables session continuity — another session can read it and pick up where this one left off
+
+After user approves the plan, convert phases into tracked tasks:
+- Create a task for each phase using `TaskCreate` with the phase goal as subject and observable truths as description
+- Set dependencies between tasks using `addBlockedBy` matching the phase dependency graph
+- As phases are implemented (via `/feature` or direct work), update task status via `TaskUpdate`
+- Use `TaskList` to check progress across sessions
 
 ## Output Principles
 

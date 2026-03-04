@@ -1,6 +1,6 @@
 ---
 name: architecture
-description: Use when the user asks "how should I design", "what's the best architecture", "how do I scale", "document this decision", "create an ADR", mentions "system design", "scaling", "microservices vs monolith", "architecture decision record", or needs help with technical decisions, infrastructure planning, or documenting architectural choices.
+description: Use when the user asks "how should I design", "what's the best architecture", "how do I scale", "document this decision", "create an ADR", mentions "system design", "scaling", "microservices vs monolith", or "architecture decision record".
 argument-hint: "[topic to design] or [--adr decision title]"
 allowed-tools: Read, Grep, Glob, Write, Edit
 ---

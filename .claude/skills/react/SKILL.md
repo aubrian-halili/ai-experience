@@ -1,6 +1,6 @@
 ---
 name: react
-description: React development guidance including component design, hooks, Redux Toolkit, RTK Query, state management, and testing with React Testing Library. Use when working with React components, Redux slices, RTK Query APIs, custom hooks, JSX/TSX files, or frontend state management.
+description: Use when the user asks about React, components, hooks, Redux Toolkit, RTK Query, state management, React Testing Library, mentions "custom hooks", "JSX", "TSX", or "frontend state management".
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, WebSearch, WebFetch
 user-invocable: true
 argument-hint: "[component name, pattern question, or leave blank for guidance]"

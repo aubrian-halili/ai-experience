@@ -1,8 +1,8 @@
 ---
 name: feature
-description: Use when the user asks to "implement a feature", "add new functionality", "build this feature", "feature development", mentions "user story", "feature spec", or needs structured feature planning and incremental implementation guidance.
+description: Use when the user asks to "implement a feature", "add new functionality", "build this feature", "feature development", mentions "user story", or "feature spec".
 argument-hint: "[feature name or description]"
-allowed-tools: Read, Grep, Glob, Write
+allowed-tools: Read, Grep, Glob, Write, TaskCreate, TaskUpdate, TaskList
 ---
 
 Guide structured feature development from specification through incremental implementation with clear milestones and verification steps.
@@ -14,6 +14,21 @@ Guide structured feature development from specification through incremental impl
 - **User approval gates** — present plans for review before implementation; never proceed on assumptions
 - **Test-driven confidence** — write tests first to encode expectations, then implement to satisfy them
 - **Scope discipline** — build exactly what's needed; track out-of-scope items explicitly and defer them
+
+## Iron Laws
+
+> - NO implementation before Definition of Done is written
+> - NO milestone marked complete without verification evidence
+> - Tests-first or delete the code and start over
+
+## Rationalization Guard
+
+| Excuse | Reality |
+|--------|---------|
+| "Let me write the code first, tests after" | Tests-after is verification theater, not TDD |
+| "This milestone is too small to verify" | Small milestones are exactly where verification is cheapest |
+| "The plan is in my head" | Unwritten plans drift; observable truths prevent scope creep |
+| "I'll track tasks manually" | Manual tracking drops items; use TaskCreate for accountability |
 
 ## When to Use
 
@@ -88,11 +103,18 @@ Guide structured feature development from specification through incremental impl
 
 **Only proceed after user approval of the plan.**
 
+After approval, convert the plan into tracked tasks:
+- Create a task for each milestone using `TaskCreate` with clear subject and description
+- Set task dependencies using `addBlockedBy` where phases depend on prior phases
+- Update each task to `in_progress` when starting and `completed` when verified
+
 For each milestone:
-1. Write tests first encoding the acceptance criteria (TDD)
-2. Implement minimum viable code to pass the tests
-3. Verify against the milestone's verification criteria
-4. Commit with clear message following project conventions
+1. Mark the milestone task as `in_progress` via `TaskUpdate`
+2. Write tests first encoding the acceptance criteria (TDD)
+3. Implement minimum viable code to pass the tests
+4. Verify against the milestone's verification criteria
+5. Mark the milestone task as `completed` via `TaskUpdate`
+6. Commit with clear message following project conventions
 
 ### 5. Verify
 

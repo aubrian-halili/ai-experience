@@ -11,6 +11,26 @@ Skills consume context tokens. The system budget is ~2% of the context window (~
 5. **Trim examples** — One good example beats three mediocre ones
 6. **Manual-only for actions** — Skills that perform destructive or external actions (deploy, push, delete) should set `disable-model-invocation: true` to avoid accidental auto-invocation and to save context budget
 
+## CSO Principle: Description as Trigger, Not Summary
+
+The `description` field in skill frontmatter serves as the **Context-Sensitive Orchestration (CSO)** trigger — it tells Claude _when_ to invoke the skill, not _what_ the skill does.
+
+**Rule:** Descriptions must contain ONLY trigger conditions (user phrases, keywords, situations). Never include workflow summaries, process steps, or capability lists.
+
+**Good** (trigger conditions only):
+```yaml
+description: Use when the user asks to "debug this", "fix this bug", "why is this failing", "trace this error", has a failing test, or encounters unexpected behavior.
+```
+
+**Bad** (workflow summary):
+```yaml
+description: Systematically diagnose bugs using reproduce-isolate-hypothesize-fix-verify methodology with built-in guards against analysis paralysis.
+```
+
+**Why this matters:** Auto-invocable skill descriptions are loaded into every conversation. Trigger-only descriptions keep the context budget lean and improve routing accuracy. Workflow summaries waste tokens and confuse the routing heuristic — they describe _what_ the skill does (which belongs in the skill body) rather than _when_ to use it.
+
+**Audit check:** Read each description and ask: "Does this tell me WHEN to use the skill, or WHAT the skill does?" If the answer is "what", rewrite it.
+
 ## Degrees of Freedom
 
 Match constraint level to task variability:

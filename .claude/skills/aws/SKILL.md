@@ -1,6 +1,6 @@
 ---
 name: aws
-description: AWS serverless development guidance including Lambda, API Gateway, DynamoDB, S3, SAM/CloudFormation templates, IAM policies, and security best practices. Use when working with AWS services, serverless architecture, infrastructure as code, or cloud deployment.
+description: Use when the user asks about AWS, Lambda, API Gateway, DynamoDB, S3, CloudFormation, SAM templates, IAM policies, mentions "serverless", "infrastructure as code", or "cloud deployment".
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, WebSearch, WebFetch
 user-invocable: true
 argument-hint: "[service name, pattern question, or leave blank for guidance]"
