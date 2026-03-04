@@ -1,6 +1,6 @@
 ---
 name: backoffice-database
-description: Use when the user asks to "explore the database", "show tables", "describe table", "query the database", "database schema", mentions "backoffice db", "PostgreSQL", "postgres tables", or needs to inspect database structure and run read-only queries.
+description: Use when the user asks to "explore the database", "show tables", "describe table", "query the database", "database schema", mentions "backoffice db", "PostgreSQL", or "postgres tables".
 argument-hint: "[database or table name, or SQL query]"
 allowed-tools: mcp__qred-postgres__list_databases, mcp__qred-postgres__list_schemas, mcp__qred-postgres__list_tables_in_schema, mcp__qred-postgres__read_schema_of_table, mcp__qred-postgres__query
 ---
@@ -135,3 +135,4 @@ Never execute a write operation or expose credentials — if a query appears to 
 | `/diagram` | To visualize database relationships as ERD |
 | `/architecture` | To design or evaluate database architecture decisions |
 | `/docs` | To document database schema or data models |
+| `/testing` | Write integration tests for database queries |

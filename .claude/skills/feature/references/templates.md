@@ -164,3 +164,64 @@ if (featureFlags.isEnabled('new-feature')) {
 ```
 
 **Best for**: Risk mitigation, A/B testing, gradual rollout to users, easy rollback.
+
+## Definition of Done Template
+
+Use this template during Step 3 (Design & Present) to define observable truths before implementation begins.
+
+```markdown
+### Definition of Done
+
+Observable truths that must be TRUE when this feature is complete:
+
+#### Artifacts
+- [ ] [File/export that must exist — e.g., `src/auth/middleware.ts` exports `authMiddleware`]
+
+#### Behavior
+- [ ] [Runtime behavior that must be verifiable — e.g., POST /api/login returns 200 with valid credentials]
+
+#### Integration
+- [ ] [Wiring that must be in place — e.g., auth middleware applied to /api/protected/* routes]
+
+#### Quality
+- [ ] [Test/pattern requirement — e.g., all auth endpoints have integration tests]
+```
+
+**Guidelines for writing observable truths:**
+- Each truth must be independently verifiable (can check it without context)
+- Use specific file paths, endpoint URLs, or command outputs
+- Avoid subjective truths ("code is clean", "good performance") — make them measurable
+- Every milestone should satisfy at least one observable truth
+
+## Verification Checklist Template
+
+Use this template during Step 5 (Verify) for three-level verification.
+
+```markdown
+### Verification Results
+
+#### Level 1: Existence
+| Artifact | Status | Path |
+|----------|--------|------|
+| [Expected artifact] | [EXISTS / MISSING] | `path/to/file` |
+
+#### Level 2: Substance
+| Artifact | Status | Evidence |
+|----------|--------|----------|
+| [Artifact] | [SUBSTANTIVE / STUB / PARTIAL] | `file:line` — [brief note] |
+
+#### Level 3: Wiring
+| Connection | Status | Evidence |
+|------------|--------|----------|
+| [Expected wiring] | [WIRED / ORPHANED / PARTIAL] | `file:line` — [brief note] |
+
+#### Anti-Pattern Scan
+| Finding | Severity | Location | Action |
+|---------|----------|----------|--------|
+| [Anti-pattern] | [Critical/High/Medium/Low] | `file:line` | [Fix needed] |
+
+#### Summary
+- Observable truths satisfied: X/Y
+- Anti-patterns found: N (C critical, H high, M medium, L low)
+- Overall: [PASS / PARTIAL / FAIL]
+```

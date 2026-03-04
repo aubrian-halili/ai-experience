@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Use when the user asks to "commit changes", "create a commit", "commit this", mentions "git commit", "commit message", or needs help with semantic commits or branch management.
+description: Use when the user asks to "commit changes", "create a commit", "commit this", mentions "git commit", or "commit message".
 argument-hint: "[optional commit message or scope]"
 allowed-tools: Bash(git *), Read, Grep, Glob
 disable-model-invocation: true
@@ -19,6 +19,13 @@ Generate semantic commit messages following project conventions (see CLAUDE.md).
 - **Safety-first** — stage specific files by name, never `git add -A` or `.`; never stage sensitive files
 - **User confirmation** — always present the proposed commit for review before executing; never commit without explicit approval
 - **Hook compliance** — never skip pre-commit hooks with `--no-verify` unless explicitly requested; if hooks fail, fix the issue and create a NEW commit
+
+## Iron Laws
+
+> - NEVER stage with `git add -A` or `git add .`
+> - NEVER skip pre-commit hooks
+> - NEVER commit without user approval
+> - ONE logical change per commit — split if mixed
 
 ## When to Use
 
@@ -154,3 +161,4 @@ Never commit without user approval or stage files with `git add -A` — always s
 | `/pr` | Create pull request after committing |
 | `/explore` | Understand changes before deciding what to commit |
 | `/clean-code` | Clean up code before committing |
+| `/jira` | Look up or update Jira ticket details |

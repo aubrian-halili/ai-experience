@@ -128,6 +128,5 @@ Never silently commit to a pattern—surface uncertainty and let the user decide
 |-------|---------------------|
 | `/clean-code` | Pattern implementation needs quality review |
 | `/architecture` | Pattern choice has broader architectural implications |
-| `/architecture --adr` | Pattern decision should be documented |
 | `/diagram` | Pattern structure needs visualization |
 | `/review` | Existing pattern usage needs evaluation |

@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Use when the user asks to "write tests", "add test coverage", "test this feature", "create test cases", mentions "unit test", "integration test", "E2E test", "test strategy", or needs testing guidance and test scaffolding.
+description: Use when the user asks to "write tests", "add test coverage", "test this feature", "create test cases", mentions "unit test", "integration test", "E2E test", or "test strategy".
 argument-hint: "[file, feature, or component to test]"
 allowed-tools: Read, Grep, Glob, Write
 ---
@@ -14,6 +14,21 @@ Provide comprehensive testing guidance, test scaffolding, and coverage analysis 
 - **Determinism over coverage** — a flaky test is worse than a missing test; eliminate non-deterministic behavior before adding coverage
 - **Fast feedback loop** — unit tests run in seconds, integration tests in minutes; slow tests indicate wrong test level
 - **Behavior, not implementation** — test what the code does (inputs/outputs, side effects), not how it does it; refactors should not break tests
+
+## Iron Laws
+
+> - NO production code without a failing test first
+> - If you wrote code before the test, delete it and start over
+> - Never mock what you don't own
+
+## Rationalization Guard
+
+| Excuse | Reality |
+|--------|---------|
+| "Too simple to test" | Simple paths are where wrong assumptions live |
+| "Integration tests cover this" | Unit and integration tests answer different questions |
+| "I'll add tests later" | Tests-later means tests-never; coverage debt compounds |
+| "Mocking is too complex here" | Complex mocking signals wrong abstraction boundaries |
 
 ## When to Use
 
@@ -178,3 +193,5 @@ Never silently skip test levels or coverage gaps—surface what was tested, what
 | `/security` | Security-focused testing |
 | `/clean-code` | Refactor test code for maintainability |
 | `/explore` | Understand codebase context before testing unfamiliar code |
+| `/debug` | Investigate a failing test or unexpected behavior |
+| `/typescript` | Type-safe mocks, generics in test utilities |

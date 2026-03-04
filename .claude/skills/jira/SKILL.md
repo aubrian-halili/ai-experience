@@ -1,6 +1,6 @@
 ---
 name: jira
-description: Use when the user asks to "create a Jira ticket", "file a bug", "add a task", "create an issue", mentions "Jira", "JIRA", "ticket", or needs to create issue tracker tickets.
+description: Use when the user asks to "create a Jira ticket", "file a bug", "add a task", "create an issue", mentions "Jira", "JIRA", or "ticket".
 argument-hint: "[PROJECT] [bug|task|story] [title or description] [--assignee <user>]"
 disable-model-invocation: true
 allowed-tools: mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__createJiraIssue, mcp__atlassian__lookupJiraAccountId, mcp__atlassian__getJiraIssue
@@ -164,4 +164,3 @@ Never create a ticket without user confirmation or skip duplicate checking — s
 | `/commit` | Commit with ticket reference (after branch created) |
 | `/pr` | Create pull request (after commits made) |
 | `/explore` | Understand codebase before filing a ticket |
-| `/review` | Review code changes before filing related tickets |

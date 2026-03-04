@@ -1,6 +1,6 @@
 ---
 name: review
-description: Use when the user asks to "review this code", "check this PR", "audit this file", "look at my changes", "review this PR", "PR review", requests "code review", mentions "review" in context of code quality, "pull request", "PR #123", or needs code review, PR feedback, or multi-file change analysis.
+description: Use when the user asks to "review this code", "check this PR", "audit this file", "look at my changes", "review this PR", "PR review", requests "code review", mentions "review" in context of code quality, or references "pull request", "PR #123".
 argument-hint: "[file, PR number, URL, or component to review]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob
 ---
@@ -70,6 +70,18 @@ Classify `$ARGUMENTS` to determine the review workflow:
 - No local changes found (for local review) → report and suggest specifying a file or PR number
 - PR review requested but `gh` not authenticated → provide `gh auth login` instructions and stop
 - Ambiguous argument (could be file path or component name) → search codebase, prefer exact file match
+
+### 1.5. Extract Intent
+
+Before analyzing code quality, establish what the code is supposed to do:
+
+- **For PR reviews:** Read the PR description and any linked Jira ticket to understand the intended behavior
+- **For file reviews:** Ask what the code was supposed to accomplish if not obvious from context
+- **For local changes:** Infer intent from commit messages, branch name, and diff context
+
+This enables two-stage analysis:
+- **Stage 1 — Spec Compliance:** Does the code implement the stated intent? Flag gaps between what was requested and what was built. If Stage 1 fails, report spec compliance issues before proceeding.
+- **Stage 2 — Code Quality:** Is the code well-written? Only perform quality review after confirming the code addresses the right problem.
 
 ### 2. Analyze Local Changes (Local only)
 

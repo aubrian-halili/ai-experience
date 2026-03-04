@@ -1,6 +1,6 @@
 ---
 name: clean-code
-description: Use when the user asks to "clean up this code", "refactor this", "improve code quality", mentions "SOLID principles", "code smells", "technical debt", or wants refactoring suggestions and maintainability improvements.
+description: Use when the user asks to "clean up this code", "refactor this", "improve code quality", mentions "SOLID principles", "code smells", or "technical debt".
 argument-hint: "[file or component to review]"
 allowed-tools: Read, Grep, Glob, Edit
 ---
@@ -148,4 +148,3 @@ Never silently omit findings—surface limitations explicitly.
 | `/review` | Need correctness, security, or performance review |
 | `/patterns` | Refactoring would benefit from design patterns |
 | `/architecture` | Structural issues suggest architectural problems |
-| `/architecture --adr` | Refactoring decision should be documented |

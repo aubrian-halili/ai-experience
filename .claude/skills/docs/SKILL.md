@@ -1,6 +1,6 @@
 ---
 name: docs
-description: Use when the user asks to "write documentation", "create docs", "document this", "technical writing", "create a presentation", "make slides", "build a deck", mentions "README", "API docs", "RFC", "design doc", "PowerPoint", "slides", "deck", or needs technical documentation, presentations, and stakeholder communication.
+description: Use when the user asks to "write documentation", "create docs", "document this", "technical writing", "create a presentation", "make slides", "build a deck", mentions "README", "API docs", "RFC", "design doc", "PowerPoint", "slides", or "deck".
 argument-hint: "[topic, document type, or presentation purpose]"
 allowed-tools: Read, Grep, Glob, Write
 ---
@@ -153,5 +153,5 @@ Never write a document to disk without user approval or silently omit incomplete
 |-------|---------------------|
 | `/diagram` | Visual documentation only |
 | `/architecture` | Designing system before documenting |
-| `/architecture --adr` | Recording architecture decisions |
 | `/explore` | Understanding system before documenting |
+| `/clean-code` | Improve code clarity alongside documentation |

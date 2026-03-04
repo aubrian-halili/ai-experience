@@ -1,8 +1,8 @@
 ---
 name: feature
-description: Use when the user asks to "implement a feature", "add new functionality", "build this feature", "feature development", mentions "user story", "feature spec", or needs structured feature planning and incremental implementation guidance.
+description: Use when the user asks to "implement a feature", "add new functionality", "build this feature", "feature development", mentions "user story", or "feature spec".
 argument-hint: "[feature name or description]"
-allowed-tools: Read, Grep, Glob, Write
+allowed-tools: Read, Grep, Glob, Write, TaskCreate, TaskUpdate, TaskList
 ---
 
 Guide structured feature development from specification through incremental implementation with clear milestones and verification steps.
@@ -14,6 +14,21 @@ Guide structured feature development from specification through incremental impl
 - **User approval gates** — present plans for review before implementation; never proceed on assumptions
 - **Test-driven confidence** — write tests first to encode expectations, then implement to satisfy them
 - **Scope discipline** — build exactly what's needed; track out-of-scope items explicitly and defer them
+
+## Iron Laws
+
+> - NO implementation before Definition of Done is written
+> - NO milestone marked complete without verification evidence
+> - Tests-first or delete the code and start over
+
+## Rationalization Guard
+
+| Excuse | Reality |
+|--------|---------|
+| "Let me write the code first, tests after" | Tests-after is verification theater, not TDD |
+| "This milestone is too small to verify" | Small milestones are exactly where verification is cheapest |
+| "The plan is in my head" | Unwritten plans drift; observable truths prevent scope creep |
+| "I'll track tasks manually" | Manual tracking drops items; use TaskCreate for accountability |
 
 ## When to Use
 
@@ -74,29 +89,57 @@ Guide structured feature development from specification through incremental impl
 
 ### 3. Design & Present
 
+- **Define "Definition of Done"** — before planning milestones, define observable truths that must be TRUE when the feature is complete (see `@references/templates.md` for format)
+  - Each truth must be verifiable: a file exists, a test passes, an endpoint responds, a query returns expected data
+  - Organize by category: Artifacts, Behavior, Integration, Quality
 - Break down into incremental milestones with: goal, tasks, dependencies, and verification criteria
+- Each milestone should satisfy specific observable truths from the Definition of Done
 - Select a delivery pattern from `@references/templates.md` (Vertical Slice, Horizontal Layer, or Feature Flags)
 - **Present the complete plan to the user before proceeding to implementation**
-- Show: feature specification, milestone breakdown, files to create/modify
+- Show: feature specification, Definition of Done, milestone breakdown, files to create/modify
 - If changes requested, revise and present again
 
 ### 4. Implement
 
 **Only proceed after user approval of the plan.**
 
+After approval, convert the plan into tracked tasks:
+- Create a task for each milestone using `TaskCreate` with clear subject and description
+- Set task dependencies using `addBlockedBy` where phases depend on prior phases
+- Update each task to `in_progress` when starting and `completed` when verified
+
 For each milestone:
-1. Write tests first encoding the acceptance criteria (TDD)
-2. Implement minimum viable code to pass the tests
-3. Verify against the milestone's verification criteria
-4. Commit with clear message following project conventions
+1. Mark the milestone task as `in_progress` via `TaskUpdate`
+2. Write tests first encoding the acceptance criteria (TDD)
+3. Implement minimum viable code to pass the tests
+4. Verify against the milestone's verification criteria
+5. Mark the milestone task as `completed` via `TaskUpdate`
+6. Commit with clear message following project conventions
 
 ### 5. Verify
 
-- Confirm all acceptance criteria from the specification are met
+Perform three-level verification against the Definition of Done:
+
+**Level 1 — Existence:** Confirm all planned artifacts exist (files, exports, tests, configs, migrations).
+
+**Level 2 — Substance:** Verify implementations are real, not stubs. Scan for anti-patterns:
+- TODO/FIXME comments in new code
+- Stub returns (`return null`, `return {}`, `throw new Error('TODO')`)
+- Empty catch blocks or console-only error handling
+- Placeholder configuration values
+
+**Level 3 — Wiring:** Verify all artifacts are connected:
+- Exports are imported where needed
+- Routes/handlers are registered
+- Middleware is applied to correct paths
+- Tests are included in test runner scope
+
+**Final checks:**
+- Confirm all observable truths from the Definition of Done are satisfied
 - Verify all tests pass and cover key behaviors
 - Check that implementation follows existing codebase patterns identified in Pre-flight
 - Note any deferred items or out-of-scope work for follow-up
-- If feature warrants it, recommend `/review` for formal code review
+- If feature warrants it, recommend `/review` for formal code review or `/verify` for comprehensive completeness check
 
 ## Output Principles
 
@@ -136,5 +179,7 @@ Never silently skip milestones or acceptance criteria—surface gaps and blocker
 | `/architecture` | Need high-level design before feature planning |
 | `/patterns` | Feature requires specific design pattern |
 | `/review` | Feature implementation needs code review |
-| `/architecture --adr` | Feature involves significant technical decision |
 | `/explore` | Need to understand existing features first |
+| `/plan` | Need to decompose a large goal before feature implementation |
+| `/verify` | Need comprehensive post-implementation verification |
+| `/debug` | Need to fix a bug, not implement a feature |

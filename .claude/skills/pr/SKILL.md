@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Use when the user asks to "create a PR", "open a pull request", "submit for review", "push and create PR", mentions "PR", "pull request", or needs help creating and submitting changes for code review.
+description: Use when the user asks to "create a PR", "open a pull request", "submit for review", "push and create PR", mentions "PR", or "pull request".
 argument-hint: "[optional: --draft, target branch, or PR title]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob
 disable-model-invocation: true

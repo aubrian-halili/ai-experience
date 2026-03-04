@@ -1,6 +1,6 @@
 ---
 name: qred-repo
-description: Use when the user asks to "list repos", "show repo", "read file from repo", "search code", "find in org", "browse repo", "tree view", mentions "Qred repos", "GitHub org", "qred org", or needs layered repository exploration and code searching across the Qred GitHub organization.
+description: Use when the user asks to "list repos", "show repo", "read file from repo", "search code", "find in org", "browse repo", "tree view", mentions "Qred repos", "GitHub org", "qred org", or wants to explore repositories in the Qred GitHub organization.
 argument-hint: "[repo name, file path, search term, tree <repo>, or gh command]"
 allowed-tools: Bash(gh *)
 ---
@@ -189,3 +189,4 @@ Never present results without context—always state what was searched, where, a
 | `/backoffice-database` | Exploring PostgreSQL database schemas and data |
 | `/diagram` | Visualize repo architecture or relationships |
 | `/architecture` | Design or evaluate architecture after repo exploration |
+| `/plan` | Plan implementation after exploring a repo |
