@@ -1,0 +1,96 @@
+{
+  "workbench.colorTheme": "One Dark Pro",
+  "yaml.customTags": [
+    "!And",
+    "!And sequence",
+    "!If",
+    "!If sequence",
+    "!Not",
+    "!Not sequence",
+    "!Equals",
+    "!Equals sequence",
+    "!Or",
+    "!Or sequence",
+    "!FindInMap",
+    "!FindInMap sequence",
+    "!Base64",
+    "!Join",
+    "!Join sequence",
+    "!Cidr",
+    "!Ref",
+    "!Sub",
+    "!Sub sequence",
+    "!GetAtt",
+    "!GetAZs",
+    "!ImportValue",
+    "!ImportValue sequence",
+    "!Select",
+    "!Select sequence",
+    "!Split",
+    "!Split sequence"
+  ],
+  "redhat.telemetry.enabled": false,
+  // === Editor ===
+  "editor.tabSize": 2,
+  "editor.renderWhitespace": "all",
+  "editor.formatOnSave": true,
+  // === Files ===
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  // === Language-Specific ===
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "[dockercompose]": {
+    "editor.autoIndent": "advanced",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    },
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  // === Git ===
+  "git.allowForcePush": true,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.branchProtection": [
+    "main",
+    "master"
+  ],
+  // === Diff ===
+  "diffEditor.ignoreTrimWhitespace": false,
+  // === Search ===
+  "search.exclude": {
+    "**/node_modules": true,
+    ".git": true,
+    "**/dist": true,
+    "**/build": true
+  },
+  // === Terminal ===
+  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.smoothScrolling": true,
+  "terminal.integrated.fontSize": 12,
+  "terminal.integrated.lineHeight": 1.3,
+  "terminal.integrated.shellIntegration.decorationsEnabled": "both",
+  "terminal.integrated.cursorStyle": "block",
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "terminal.integrated.sendKeybindingsToShell": true,
+  "terminal.integrated.tabs.hideCondition": "never",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.enableVisualBell": true,
+  // === Claude Code ===
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.autosave": true,
+  "claudeCode.respectGitIgnore": true,
+  // === GitHub Copilot ===
+  "github.copilot.nextEditSuggestions.enabled": true,
+  // === GitLens ===
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  // === Misc ===
+  "makefile.configureOnOpen": true,
+  "aws.cloudformation.telemetry.enabled": true
+}
