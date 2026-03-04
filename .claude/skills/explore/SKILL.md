@@ -148,6 +148,5 @@ Never silently omit findings—surface limitations explicitly.
 | `/review` | Found issues that need formal review |
 | `/architecture` | Understanding suggests architectural improvements |
 | `/patterns` | Identified patterns need documentation or improvement |
-| `/architecture --adr` | Discovery warrants documenting a decision |
 | `/plan` | Need to plan implementation after understanding the codebase |
 | `/verify` | Need to verify implementation completeness |

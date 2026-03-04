@@ -148,4 +148,3 @@ Never silently omit findings—surface limitations explicitly.
 | `/review` | Need correctness, security, or performance review |
 | `/patterns` | Refactoring would benefit from design patterns |
 | `/architecture` | Structural issues suggest architectural problems |
-| `/architecture --adr` | Refactoring decision should be documented |

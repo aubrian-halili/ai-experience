@@ -189,3 +189,4 @@ Never present results without context—always state what was searched, where, a
 | `/backoffice-database` | Exploring PostgreSQL database schemas and data |
 | `/diagram` | Visualize repo architecture or relationships |
 | `/architecture` | Design or evaluate architecture after repo exploration |
+| `/plan` | Plan implementation after exploring a repo |

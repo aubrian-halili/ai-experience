@@ -153,5 +153,5 @@ Never write a document to disk without user approval or silently omit incomplete
 |-------|---------------------|
 | `/diagram` | Visual documentation only |
 | `/architecture` | Designing system before documenting |
-| `/architecture --adr` | Recording architecture decisions |
 | `/explore` | Understanding system before documenting |
+| `/clean-code` | Improve code clarity alongside documentation |

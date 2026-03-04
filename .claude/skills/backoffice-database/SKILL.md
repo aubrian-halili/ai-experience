@@ -135,3 +135,4 @@ Never execute a write operation or expose credentials — if a query appears to 
 | `/diagram` | To visualize database relationships as ERD |
 | `/architecture` | To design or evaluate database architecture decisions |
 | `/docs` | To document database schema or data models |
+| `/testing` | Write integration tests for database queries |

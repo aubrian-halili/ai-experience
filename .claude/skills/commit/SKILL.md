@@ -161,3 +161,4 @@ Never commit without user approval or stage files with `git add -A` — always s
 | `/pr` | Create pull request after committing |
 | `/explore` | Understand changes before deciding what to commit |
 | `/clean-code` | Clean up code before committing |
+| `/jira` | Look up or update Jira ticket details |

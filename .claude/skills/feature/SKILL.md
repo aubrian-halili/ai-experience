@@ -179,7 +179,6 @@ Never silently skip milestones or acceptance criteria—surface gaps and blocker
 | `/architecture` | Need high-level design before feature planning |
 | `/patterns` | Feature requires specific design pattern |
 | `/review` | Feature implementation needs code review |
-| `/architecture --adr` | Feature involves significant technical decision |
 | `/explore` | Need to understand existing features first |
 | `/plan` | Need to decompose a large goal before feature implementation |
 | `/verify` | Need comprehensive post-implementation verification |

@@ -164,4 +164,3 @@ Never create a ticket without user confirmation or skip duplicate checking — s
 | `/commit` | Commit with ticket reference (after branch created) |
 | `/pr` | Create pull request (after commits made) |
 | `/explore` | Understand codebase before filing a ticket |
-| `/review` | Review code changes before filing related tickets |

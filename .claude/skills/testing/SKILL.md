@@ -193,3 +193,5 @@ Never silently skip test levels or coverage gaps—surface what was tested, what
 | `/security` | Security-focused testing |
 | `/clean-code` | Refactor test code for maintainability |
 | `/explore` | Understand codebase context before testing unfamiliar code |
+| `/debug` | Investigate a failing test or unexpected behavior |
+| `/typescript` | Type-safe mocks, generics in test utilities |

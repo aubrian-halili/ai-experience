@@ -155,3 +155,4 @@ Never silently skip OWASP categories or trust boundaries — surface assessment 
 | `/patterns` | Implementing specific security patterns |
 | `/explore` | Understand codebase context before auditing unfamiliar code |
 | `/clean-code` | Code quality issues unrelated to security |
+| `/testing` | Write security-focused tests after audit |

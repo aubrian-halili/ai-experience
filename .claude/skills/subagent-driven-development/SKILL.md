@@ -179,3 +179,5 @@ Never dispatch tasks without proving independence first — the cost of parallel
 | `/feature` | Tasks have dependencies, use sequential milestones |
 | `/verify` | Post-integration verification of parallel results |
 | `/review` | Code quality review of individual subagent outputs |
+| `/explore` | Understand codebase before defining task boundaries |
+| `/architecture` | Ensure clear architectural boundaries for parallel work |

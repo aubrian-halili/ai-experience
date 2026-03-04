@@ -137,3 +137,5 @@ Never present false equivalence — if one option is clearly better, say so with
 | `/architecture` | Need formal architecture documentation or ADR |
 | `/feature` | Ready to implement, not explore |
 | `/explore` | Need to understand existing code before brainstorming |
+| `/diagram` | Visualize options or compare architectures |
+| `/subagent-driven-development` | Prototype multiple approaches in parallel |
