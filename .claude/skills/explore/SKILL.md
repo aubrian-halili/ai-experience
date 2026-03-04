@@ -43,6 +43,7 @@ Determine exploration workflow from `$ARGUMENTS`:
 | Directory (e.g., `src/auth/`) | Explore module | Steps 1-5; emphasis on structure and interactions |
 | Flow description (e.g., `user login flow`) | Trace execution path | Steps 1-5; emphasis on data and control flow |
 | Component name (e.g., `AuthService`) | Trace component usage | Steps 1-5; emphasis on callers and dependencies |
+| `"overview"` / `"map"` / `"codebase"` | Codebase overview | Full Codebase strategy; structured summary |
 | (none) | Ask user | Pre-flight stop |
 
 ## Exploration Strategies
@@ -51,6 +52,7 @@ Determine exploration workflow from `$ARGUMENTS`:
 **API Endpoint**: Route definition → middleware chain → handler → service logic → DB/external calls → response
 **Feature Flow**: UI trigger → API → service → data layer → async operations → event subscribers
 **Module**: Public API (exports) → internal structure → core abstractions → external consumer patterns
+**Full Codebase**: Project structure → tech stack → architecture layers → conventions → testing approach → key integrations → entry points
 
 ## Process
 
@@ -73,6 +75,13 @@ Determine exploration workflow from `$ARGUMENTS`:
 **Dependencies** — Trace imports outward; map internal modules and external services
 **Data Flow** — Follow data from input to output through all transformations, validations, and serialization boundaries
 **Control Flow** — Map execution path including branching, error handling, middleware, and async operations
+
+**For Full Codebase strategy**, discover:
+- Project root files (`package.json`, `tsconfig.json`, `Makefile`, `docker-compose.yml`, etc.) for tech stack
+- Directory structure at top two levels for architecture layers
+- Configuration files for conventions (linters, formatters, CI)
+- Test directories and test runner configuration for testing approach
+- External service references (API clients, database connections, message queues) for key integrations
 
 ### 3. Analyze
 
@@ -115,6 +124,7 @@ Determine exploration workflow from `$ARGUMENTS`:
 | Directory (e.g., `src/auth/`) | Explore the module structure and interactions |
 | Flow description (e.g., `user login flow`) | Trace the flow from trigger to completion |
 | Component name (e.g., `AuthService`) | Search for the component, trace its usage and dependencies |
+| `overview` / `map` / `codebase` | Produce structured codebase summary (tech stack, layers, conventions, integrations) |
 
 ## Error Handling
 
@@ -139,3 +149,5 @@ Never silently omit findings—surface limitations explicitly.
 | `/architecture` | Understanding suggests architectural improvements |
 | `/patterns` | Identified patterns need documentation or improvement |
 | `/architecture --adr` | Discovery warrants documenting a decision |
+| `/plan` | Need to plan implementation after understanding the codebase |
+| `/verify` | Need to verify implementation completeness |

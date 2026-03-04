@@ -74,10 +74,14 @@ Guide structured feature development from specification through incremental impl
 
 ### 3. Design & Present
 
+- **Define "Definition of Done"** — before planning milestones, define observable truths that must be TRUE when the feature is complete (see `@references/templates.md` for format)
+  - Each truth must be verifiable: a file exists, a test passes, an endpoint responds, a query returns expected data
+  - Organize by category: Artifacts, Behavior, Integration, Quality
 - Break down into incremental milestones with: goal, tasks, dependencies, and verification criteria
+- Each milestone should satisfy specific observable truths from the Definition of Done
 - Select a delivery pattern from `@references/templates.md` (Vertical Slice, Horizontal Layer, or Feature Flags)
 - **Present the complete plan to the user before proceeding to implementation**
-- Show: feature specification, milestone breakdown, files to create/modify
+- Show: feature specification, Definition of Done, milestone breakdown, files to create/modify
 - If changes requested, revise and present again
 
 ### 4. Implement
@@ -92,11 +96,28 @@ For each milestone:
 
 ### 5. Verify
 
-- Confirm all acceptance criteria from the specification are met
+Perform three-level verification against the Definition of Done:
+
+**Level 1 — Existence:** Confirm all planned artifacts exist (files, exports, tests, configs, migrations).
+
+**Level 2 — Substance:** Verify implementations are real, not stubs. Scan for anti-patterns:
+- TODO/FIXME comments in new code
+- Stub returns (`return null`, `return {}`, `throw new Error('TODO')`)
+- Empty catch blocks or console-only error handling
+- Placeholder configuration values
+
+**Level 3 — Wiring:** Verify all artifacts are connected:
+- Exports are imported where needed
+- Routes/handlers are registered
+- Middleware is applied to correct paths
+- Tests are included in test runner scope
+
+**Final checks:**
+- Confirm all observable truths from the Definition of Done are satisfied
 - Verify all tests pass and cover key behaviors
 - Check that implementation follows existing codebase patterns identified in Pre-flight
 - Note any deferred items or out-of-scope work for follow-up
-- If feature warrants it, recommend `/review` for formal code review
+- If feature warrants it, recommend `/review` for formal code review or `/verify` for comprehensive completeness check
 
 ## Output Principles
 
@@ -138,3 +159,6 @@ Never silently skip milestones or acceptance criteria—surface gaps and blocker
 | `/review` | Feature implementation needs code review |
 | `/architecture --adr` | Feature involves significant technical decision |
 | `/explore` | Need to understand existing features first |
+| `/plan` | Need to decompose a large goal before feature implementation |
+| `/verify` | Need comprehensive post-implementation verification |
+| `/debug` | Need to fix a bug, not implement a feature |
