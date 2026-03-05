@@ -2,7 +2,7 @@
 name: security
 description: Use when the user asks to "review security", "check for vulnerabilities", "security audit", "threat model", mentions "OWASP", "XSS", "SQL injection", or "authentication security".
 argument-hint: "[file, component, or feature to assess]"
-allowed-tools: Read, Grep, Glob
+allowed-tools: Read, Grep, Glob, Bash(npx semgrep *, npm audit *, pip-audit *, cargo audit *)
 ---
 
 Provide comprehensive security guidance, vulnerability assessment, and secure-by-design recommendations.
@@ -83,6 +83,26 @@ Check target against OWASP Top 10 (see `@references/frameworks.md`):
 2. For code audits: trace data flow from input to output, flag unsafe operations
 3. For design reviews: evaluate security patterns and missing controls
 4. Cross-reference with applicable checklists from `@references/checklists.md`
+
+### 4.5. Automated Scanning (When Available)
+
+Run available static analysis and dependency audit tools to complement manual review:
+
+**Static Analysis (if installed):**
+- Run Semgrep with relevant rulesets: `npx semgrep --config auto <target-path>`
+- Cross-reference Semgrep findings with manual findings; deduplicate
+
+**Dependency Audit (language-specific):**
+| Ecosystem | Command | Focus |
+|-----------|---------|-------|
+| Node.js | `npm audit` | Known CVEs in dependencies |
+| Python | `pip-audit` | Known CVEs in packages |
+| Rust | `cargo audit` | Known CVEs in crates |
+
+**Integration rules:**
+- Tool findings supplement but do not replace manual OWASP analysis
+- If tools are not installed, note their absence and recommend installation
+- Deduplicate: if a tool finding overlaps with a manual finding, merge them and note both sources
 
 ### 5. Score Risks
 

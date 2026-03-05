@@ -143,3 +143,4 @@ Never silently assume component architecture or state management approach—surf
 | `/clean-code` | General code quality and refactoring principles |
 | `/security` | XSS prevention, auth flows, input sanitization |
 | `/explore` | Understand existing component structure first |
+| `/frontend-design` | Visual design, accessibility, and responsive layout |

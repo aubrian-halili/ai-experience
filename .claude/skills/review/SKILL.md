@@ -2,7 +2,7 @@
 name: review
 description: Use when the user asks to "review this code", "check this PR", "audit this file", "look at my changes", "review this PR", "PR review", requests "code review", mentions "review" in context of code quality, or references "pull request", "PR #123".
 argument-hint: "[file, PR number, URL, or component to review]"
-allowed-tools: Bash(git *, gh *), Read, Grep, Glob
+allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent
 ---
 
 Perform a thorough multi-dimensional review of code, local changes, or pull requests.
@@ -90,6 +90,23 @@ This enables two-stage analysis:
 3. Cross-reference against CLAUDE.md conventions
 4. Apply confidence gate — only flag findings scored >= 80
 
+### 2.5. Specialized Review Passes (Optional Deep Dive)
+
+When the review scope is large (>10 files) or the user requests a thorough review, run targeted passes using subagents:
+
+| Pass | Focus | Key Questions |
+|------|-------|---------------|
+| **Type Safety** | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
+| **Error Handling** | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
+| **Test Coverage** | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
+| **Performance** | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
+| **Security** | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
+
+Each pass produces findings with:
+- **Confidence score** (0-100): Only surface findings >= 80
+- **Severity**: Using existing severity levels (Critical/High/Medium/Note)
+- **Pass tag**: e.g., `[Type Safety]` prefix so findings are traceable to the pass
+
 ### 3. Report Local Findings (Local only)
 
 Present findings using the Severity Levels defined above and the Local Changes template from `@references/templates.md`.
@@ -128,6 +145,23 @@ Present findings using the Severity Levels defined above and the Local Changes t
    | Lines Changed | <100 | 100-500 | 500+ |
    | Test Coverage | Added/Updated | Unchanged | Removed |
    | Breaking Changes | None | Internal only | External API |
+
+### 4.5. Specialized Review Passes (Optional Deep Dive)
+
+When the PR has >10 changed files or the user requests a thorough review, run targeted passes using subagents:
+
+| Pass | Focus | Key Questions |
+|------|-------|---------------|
+| **Type Safety** | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
+| **Error Handling** | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
+| **Test Coverage** | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
+| **Performance** | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
+| **Security** | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
+
+Each pass produces findings with:
+- **Confidence score** (0-100): Only surface findings >= 80
+- **Severity**: Using existing severity levels (Critical/High/Medium/Note)
+- **Pass tag**: e.g., `[Type Safety]` prefix so findings are traceable to the pass
 
 ### 5. Report PR Findings (PR only)
 
@@ -183,3 +217,4 @@ Never silently omit findings or skip review dimensions—surface limitations and
 | `/patterns` | Code could benefit from design patterns |
 | `/security` | Deep security audit needed |
 | `/explore` | Understand codebase context before reviewing unfamiliar code |
+| `/config-management` | Audit project configuration and CLAUDE.md consistency |

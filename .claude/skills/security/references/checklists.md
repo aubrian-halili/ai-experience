@@ -32,7 +32,14 @@
 - [ ] Access logs for sensitive data
 - [ ] Data classification documented
 
-## Dependency Security
+## Dependency Security Checklist
+
+- [ ] Run `npm audit` / `pip-audit` / `cargo audit` — no high/critical vulnerabilities
+- [ ] Lock file is committed and up to date
+- [ ] No pinned versions with known CVEs
+- [ ] No unnecessary dependencies (review `package.json` for unused packages)
+- [ ] Dependencies use trusted sources (no typosquatting risk)
+- [ ] Major version updates reviewed for breaking changes and security implications
 
 Check for known vulnerabilities:
 
