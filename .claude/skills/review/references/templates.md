@@ -32,6 +32,16 @@
 
 1. **[Improvement]** — `file:line` — [Brief suggestion]
 
+### Review Pass Summary
+
+| Pass | Findings | Top Severity |
+|------|----------|-------------|
+| Type Safety | 2 | Medium |
+| Error Handling | 1 | High |
+| Test Coverage | 0 | — |
+| Performance | 1 | Note |
+| Security | 0 | — |
+
 ### Positive Observations
 
 - [What was done well]
@@ -107,6 +117,16 @@
 | Docs Updated | ✅ / ❌ / N/A |
 
 **Verdict**: ✅ **Ready to Merge** | ⚠️ **Needs Changes** | ❌ **Not Ready**
+
+### Review Pass Summary
+
+| Pass | Findings | Top Severity |
+|------|----------|-------------|
+| Type Safety | 2 | Medium |
+| Error Handling | 1 | High |
+| Test Coverage | 0 | — |
+| Performance | 1 | Note |
+| Security | 0 | — |
 
 ### Recommended Actions
 

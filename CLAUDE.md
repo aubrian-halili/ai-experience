@@ -11,7 +11,7 @@
 
 ```text
 .claude/
-├── skills/          # 17 specialized workflow skills
+├── skills/          # 28 specialized workflow skills
 ├── rules/           # Modular instruction files
 └── settings.json    # Project-wide settings
 ```

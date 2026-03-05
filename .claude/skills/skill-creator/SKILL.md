@@ -200,3 +200,4 @@ Never create a skill without running validation — an unvalidated skill may fai
 | `/clean-code` | Refactor an existing skill for maintainability |
 | `/typescript` | TypeScript-specific guidance for skills that produce TypeScript code |
 | `/patterns` | Design patterns to implement within a skill's process |
+| `/hookify` | Creating Claude Code hooks, not skills |
