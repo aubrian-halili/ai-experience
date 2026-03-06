@@ -38,8 +38,7 @@
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   // === Language-Specific ===
-  "javascript.preferences.quoteStyle": "single",
-  "typescript.preferences.quoteStyle": "single",
+  "js/ts.preferences.quoteStyle": "single",
   "[dockercompose]": {
     "editor.autoIndent": "advanced",
     "editor.quickSuggestions": {
@@ -56,6 +55,9 @@
   "git.allowForcePush": true,
   "git.autofetch": true,
   "git.confirmSync": false,
+  "git.rebaseWhenSync": true,
+  "git.detectSubmodules": false,
+  "git.detectSubmodulesLimit": 0,
   "git.branchProtection": [
     "main",
     "master"
@@ -90,7 +92,12 @@
   // === GitLens ===
   "gitlens.ai.model": "vscode",
   "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "gitlens.advanced.repositorySearchDepth": 0,
   // === Misc ===
   "makefile.configureOnOpen": true,
-  "aws.cloudformation.telemetry.enabled": true
+  "aws.cloudformation.telemetry.enabled": true,
+  "inlineChat.defaultModel": "GPT-4.1 (copilot)",
+  "chat.planAgent.defaultModel": "GPT-4.1 (copilot)",
+  "gitlens.graph.minimap.enabled": false,
+  "gitlens.views.commitDetails.files.layout": "tree"
 }
