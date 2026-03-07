@@ -1,9 +1,11 @@
 ---
 name: commit
-description: Use when the user asks to "commit changes", "create a commit", "commit this", mentions "git commit", or "commit message".
+description: >-
+  TRIGGER when: user asks to "commit", "commit this", "create a commit", "commit my changes", mentions
+  "git commit" or "commit message".
+  DO NOT TRIGGER when: user asks to create a PR (use /pr) or push changes (use /pr).
 argument-hint: "[optional commit message or scope]"
 allowed-tools: Bash(git *), Read, Grep, Glob
-disable-model-invocation: true
 ---
 
 **Current branch:** !`git branch --show-current`

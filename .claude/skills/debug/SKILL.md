@@ -1,6 +1,11 @@
 ---
 name: debug
-description: Use when the user asks to "debug this", "fix this bug", "why is this failing", "trace this error", has a failing test, or encounters unexpected behavior.
+description: >-
+  TRIGGER when: user has a bug, error, or unexpected behavior and asks to "debug this", "fix this bug",
+  "why is this failing", "this doesn't work", "I'm getting an error", "trace this error", has a failing
+  test to diagnose, or encounters a stack trace. Something is broken and needs fixing.
+  DO NOT TRIGGER when: user wants to understand working code (use /explore), wants to refactor working code
+  (use /clean-code), wants to write new tests (use /testing), or wants to review code quality (use /review).
 argument-hint: "[bug description, error message, or failing test]"
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit
 ---

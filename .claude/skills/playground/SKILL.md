@@ -1,6 +1,12 @@
 ---
 name: playground
-description: Use when the user asks to "create a playground", "build a demo", "interactive prototype", "HTML sandbox", or "quick visual demo".
+description: >-
+  TRIGGER when: user asks to "create a quick demo", "build a prototype", "make a visual mockup", "try this
+  out visually", "show me what this looks like", "create an interactive demo", "quick HTML page", or wants
+  a fast throwaway single-file HTML prototype for visual exploration or stakeholder demos.
+  DO NOT TRIGGER when: user wants production UI components (use /react or /frontend-design), a Mermaid
+  diagram (use /diagram), or full application scaffolding (use /feature). This produces self-contained
+  HTML files, not production code.
 argument-hint: "[type of playground or concept to visualize]"
 allowed-tools: Read, Write, Edit, Bash(open *)
 ---

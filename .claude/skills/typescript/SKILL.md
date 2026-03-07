@@ -1,6 +1,11 @@
 ---
 name: typescript
-description: Use when the user asks about "TypeScript", "TS types", "type error", "generics", "type inference", mentions "tsconfig", "strict mode", or "type narrowing".
+description: >-
+  TRIGGER when: user asks about TypeScript types, generics, type errors, type narrowing, type inference,
+  tsconfig, strict mode, conditional types, utility types, or has a TS compiler error. The question is
+  specifically about TypeScript's type system or compiler.
+  DO NOT TRIGGER when: user is writing TypeScript code for a feature (use /feature), has a runtime bug in
+  TS code (use /debug), or asks about React with TypeScript (use /react).
 argument-hint: "[code, type, or TypeScript question]"
 allowed-tools: Read, Grep, Glob
 ---

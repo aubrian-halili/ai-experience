@@ -1,6 +1,12 @@
 ---
 name: react
-description: Use when the user asks about React, components, hooks, Redux Toolkit, RTK Query, state management, React Testing Library, mentions "custom hooks", "JSX", "TSX", or "frontend state management".
+description: >-
+  TRIGGER when: user asks about React components, hooks, JSX/TSX, Redux Toolkit, RTK Query, React state
+  management, React Testing Library, mentions "custom hook", "useEffect", "useState", or asks how to build
+  a UI component in React.
+  DO NOT TRIGGER when: user asks about general UI design principles without React (use /frontend-design),
+  general TypeScript without React context (use /typescript), or wants a quick HTML prototype
+  (use /playground).
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, WebSearch, WebFetch
 user-invocable: true
 argument-hint: "[component name, pattern question, or leave blank for guidance]"

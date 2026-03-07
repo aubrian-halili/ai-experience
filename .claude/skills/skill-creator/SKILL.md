@@ -1,6 +1,10 @@
 ---
 name: skill-creator
-description: Use when the user asks to "create a skill", "build a new skill", "make a Claude skill", or mentions "skill template".
+description: >-
+  TRIGGER when: user asks to "create a new skill", "build a skill", "scaffold a skill", "add a skill to
+  Claude", mentions "skill template" or "SKILL.md".
+  DO NOT TRIGGER when: user wants to update CLAUDE.md after creating a skill (use /config-management) or
+  wants general documentation (use /docs).
 argument-hint: "[skill name]"
 allowed-tools: Bash, Read, Grep, Glob, Write, Edit
 ---

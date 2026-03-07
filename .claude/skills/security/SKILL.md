@@ -1,6 +1,11 @@
 ---
 name: security
-description: Use when the user asks to "review security", "check for vulnerabilities", "security audit", "threat model", mentions "OWASP", "XSS", "SQL injection", or "authentication security".
+description: >-
+  TRIGGER when: user explicitly asks for "security review", "security audit", "vulnerability scan",
+  "threat model", mentions specific security concerns (OWASP, XSS, SQL injection, CSRF, SSRF,
+  authentication, authorization, secrets management, input validation), or asks "is this secure".
+  DO NOT TRIGGER when: user asks for general code review without security focus (use /review), wants code
+  quality refactoring (use /clean-code), or asks about IAM/cloud security configuration (use /aws).
 argument-hint: "[file, component, or feature to assess]"
 allowed-tools: Read, Grep, Glob, Bash(npx semgrep *, npm audit *, pip-audit *, cargo audit *)
 ---

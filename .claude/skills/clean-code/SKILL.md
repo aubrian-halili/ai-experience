@@ -1,6 +1,12 @@
 ---
 name: clean-code
-description: Use when the user asks to "clean up this code", "refactor this", "improve code quality", mentions "SOLID principles", "code smells", or "technical debt".
+description: >-
+  TRIGGER when: user asks to "refactor this", "clean up this code", "improve code quality", "reduce
+  complexity", mentions "SOLID", "code smells", "technical debt", "DRY violation", "extract method",
+  or wants structural improvement of existing code without changing behavior.
+  DO NOT TRIGGER when: user wants a general PR/code review (use /review), wants to fix a bug (use /debug),
+  wants security analysis (use /security), or wants architecture-level restructuring (use /architecture).
+  This skill refactors code structure, not behavior.
 argument-hint: "[file or component to review]"
 allowed-tools: Read, Grep, Glob, Edit
 ---
