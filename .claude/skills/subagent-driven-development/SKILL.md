@@ -1,6 +1,10 @@
 ---
 name: subagent-driven-development
-description: Use when the user asks to "parallelize this work", "use subagents", "multi-agent", "orchestrate agents", mentions "large refactor across modules", or references a plan with independent tasks.
+description: >-
+  TRIGGER when: user asks to "run tasks in parallel", "speed this up with multiple agents", "parallelize
+  this refactor", "use subagents", "fan out this work", or has a large implementation (3+ independent
+  modules) that could be done concurrently. Use after /plan when the plan reveals independent work streams.
+  DO NOT TRIGGER when: tasks have sequential dependencies (use /feature) or scope is a single file/module.
 argument-hint: "[plan file, task list, or multi-module feature description]"
 allowed-tools: Agent, Read, Grep, Glob, TaskCreate, TaskUpdate, TaskList
 ---

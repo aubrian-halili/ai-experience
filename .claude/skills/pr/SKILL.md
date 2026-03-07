@@ -1,9 +1,12 @@
 ---
 name: pr
-description: Use when the user asks to "create a PR", "open a pull request", "submit for review", "push and create PR", mentions "PR", or "pull request".
+description: >-
+  TRIGGER when: user asks to "create a PR", "open a pull request", "push and create PR", "submit for
+  review", "open a PR", mentions "pull request" or "PR" in context of creating one.
+  DO NOT TRIGGER when: user asks to review an existing PR (use /review) or to commit without pushing
+  (use /commit).
 argument-hint: "[optional: --draft, target branch, or PR title]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob
-disable-model-invocation: true
 ---
 
 Create pull requests with auto-generated titles and descriptions from commit history.

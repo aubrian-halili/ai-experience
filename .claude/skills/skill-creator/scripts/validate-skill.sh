@@ -155,8 +155,8 @@ validate_description_field() {
     fi
     pass "Required field 'description' present"
 
-    # Extract description (handle potential multiline, though not recommended)
-    local description=$(echo "$frontmatter" | sed -n '/^description:/,/^[a-z-]*:/p' | sed '$d' | sed 's/^description: *//' | tr '\n' ' ')
+    # Extract description (handle multiline with YAML block scalar indicators >- | etc.)
+    local description=$(echo "$frontmatter" | sed -n '/^description:/,/^[a-z-]*:/p' | sed '$d' | sed 's/^description: *//' | sed 's/^>-\{0,1\}$//' | sed 's/^|-\{0,1\}$//' | sed 's/^  //' | tr '\n' ' ' | sed 's/  */ /g' | sed 's/^ *//;s/ *$//')
     if [ -z "$description" ]; then
         description=$(echo "$frontmatter" | grep "^description:" | sed 's/^description: *//')
     fi

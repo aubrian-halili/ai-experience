@@ -1,6 +1,13 @@
 ---
 name: patterns
-description: Use when the user asks "which pattern should I use", "how to implement [pattern name]", mentions "factory", "strategy", "observer", "singleton", "decorator", or discusses code structure problems that patterns could solve.
+description: >-
+  TRIGGER when: user asks about a specific code-level design pattern by name ("factory", "strategy",
+  "observer", "singleton", "decorator", "repository pattern", "dependency injection"), asks "which pattern
+  fits this problem", or describes a code structure problem (e.g., "too many if-else", "need to swap
+  implementations", "decouple this").
+  DO NOT TRIGGER when: user needs system-level architecture (use /architecture), wants to clean up existing
+  code (use /clean-code), or is comparing broad approaches (use /brainstorming). This skill is for named
+  design patterns and their code-level application.
 argument-hint: "[problem or pattern name]"
 allowed-tools: Read, Grep, Glob
 ---

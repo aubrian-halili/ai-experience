@@ -1,6 +1,11 @@
 ---
 name: frontend-design
-description: Use when the user asks about "UI design", "design system", "visual quality", "responsive design", "accessibility", "frontend polish", or "production-grade UI".
+description: >-
+  TRIGGER when: user asks about "UI design", "design system", "responsive design", "accessibility", "WCAG",
+  "visual hierarchy", "spacing system", "color scheme", "typography", or wants guidance on making interfaces
+  look polished and professional. Framework-agnostic design principles.
+  DO NOT TRIGGER when: user wants to build React components (use /react), wants a quick throwaway prototype
+  (use /playground), or wants a Mermaid diagram (use /diagram).
 argument-hint: "[component, page, or design concern]"
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---

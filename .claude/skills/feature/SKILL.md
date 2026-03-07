@@ -1,6 +1,12 @@
 ---
 name: feature
-description: Use when the user asks to "implement a feature", "add new functionality", "build this feature", "feature development", mentions "user story", or "feature spec".
+description: >-
+  TRIGGER when: user asks to "implement this feature", "build this", "start coding", "add [specific
+  functionality]", "implement this ticket", mentions "feature spec", "user story", "acceptance criteria",
+  or is ready to write code for a defined feature. Use after /plan for complex features.
+  DO NOT TRIGGER when: user is still deciding on approach (use /brainstorming or /plan), wants to fix a bug
+  (use /debug), wants to write only tests (use /testing), or wants to review existing code (use /review).
+  This skill implements new functionality from spec to working code.
 argument-hint: "[feature name or description]"
 allowed-tools: Read, Grep, Glob, Write, TaskCreate, TaskUpdate, TaskList
 ---

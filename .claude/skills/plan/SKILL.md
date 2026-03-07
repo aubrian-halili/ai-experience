@@ -1,6 +1,11 @@
 ---
 name: plan
-description: Use when the user asks to "plan a project", "break down this epic", "decompose this ticket", "create a plan", or "what's the approach for".
+description: >-
+  TRIGGER when: user asks to "plan", "break down", "decompose", "create a roadmap", "what's the approach",
+  "scope this work", "break this into phases", "how do I tackle this", or references a Jira epic/ticket
+  needing decomposition into implementation steps. Use before /feature.
+  DO NOT TRIGGER when: user wants to explore options without committing (use /brainstorming), needs
+  architecture decisions (use /architecture), or wants to implement code directly (use /feature).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
 allowed-tools: Read, Grep, Glob, Write, Skill, TaskCreate, TaskUpdate, TaskList
 ---

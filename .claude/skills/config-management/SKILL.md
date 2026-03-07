@@ -1,6 +1,11 @@
 ---
 name: config-management
-description: Use when the user asks to "audit CLAUDE.md", "improve CLAUDE.md", "sync rules", "check project configuration", or mentions "CLAUDE.md maintenance".
+description: >-
+  TRIGGER when: user asks to "audit CLAUDE.md", "update CLAUDE.md", "sync project configuration", "check
+  if CLAUDE.md is up to date", "fix stale references in config", or notices CLAUDE.md is out of sync with
+  the actual project structure.
+  DO NOT TRIGGER when: user wants to create a new skill (use /skill-creator), write project documentation
+  (use /docs), or review code quality (use /review). This skill maintains Claude Code configuration files.
 argument-hint: "[audit, sync, or improve]"
 allowed-tools: Read, Grep, Glob
 ---
