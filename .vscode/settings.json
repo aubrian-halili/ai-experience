@@ -1,5 +1,5 @@
 {
-  "workbench.colorTheme": "One Dark Pro",
+  "workbench.colorTheme": "One Dark Pro Mix",
   "yaml.customTags": [
     "!And",
     "!And sequence",
@@ -34,6 +34,15 @@
   "editor.tabSize": 2,
   "editor.renderWhitespace": "all",
   "editor.formatOnSave": true,
+  "editor.linkedEditing": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.stickyScroll.enabled": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.suggest.insertMode": "replace",
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
   // === Files ===
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
@@ -51,6 +60,25 @@
   "[github-actions-workflow]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  // === TypeScript ===
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.suggest.autoImports": true,
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.inlayHints.parameterNames.enabled": "literals",
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
   // === Git ===
   "git.allowForcePush": true,
   "git.autofetch": true,
@@ -58,10 +86,20 @@
   "git.rebaseWhenSync": true,
   "git.detectSubmodules": false,
   "git.detectSubmodulesLimit": 0,
+  "git.pruneOnFetch": true,
   "git.branchProtection": [
     "main",
     "master"
   ],
+  "git.openRepositoryInParentFolders": "always",
+  "git.mergeEditor": true,
+  "git.inputValidation": true,
+  "git.inputValidationSubjectLength": 72,
+  // === Source Control UI ===
+  "scm.defaultViewMode": "tree",
+  "scm.diffDecorations": "gutter",
+  "scm.graph.badges": "all",
+  "scm.showHistoryGraph": true,
   // === Diff ===
   "diffEditor.ignoreTrimWhitespace": false,
   // === Search ===
@@ -72,7 +110,8 @@
     "**/build": true
   },
   // === Terminal ===
-  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.scrollback": 50000,
+  "terminal.integrated.stickyScroll.enabled": true,
   "terminal.integrated.smoothScrolling": true,
   "terminal.integrated.fontSize": 12,
   "terminal.integrated.lineHeight": 1.3,
@@ -83,21 +122,46 @@
   "terminal.integrated.tabs.hideCondition": "never",
   "terminal.integrated.defaultProfile.osx": "zsh",
   "terminal.integrated.enableVisualBell": true,
+  "terminal.integrated.wordSeparators": " ()[]{}',\"`\u2500\u2018\u2019|",
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.rightClickBehavior": "selectWord",
+  "terminal.integrated.profiles.osx": {
+    "claude": {
+      "path": "zsh",
+      "args": [
+        "-l"
+      ],
+      "icon": "terminal",
+      "env": {
+        "CLAUDE_CODE": "1"
+      }
+    }
+  },
   // === Claude Code ===
   "claudeCode.preferredLocation": "panel",
   "claudeCode.autosave": true,
   "claudeCode.respectGitIgnore": true,
   // === GitHub Copilot ===
   "github.copilot.nextEditSuggestions.enabled": true,
-  // === GitLens ===
-  "gitlens.ai.model": "vscode",
-  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
-  "gitlens.advanced.repositorySearchDepth": 0,
   // === Misc ===
   "makefile.configureOnOpen": true,
   "aws.cloudformation.telemetry.enabled": true,
   "inlineChat.defaultModel": "GPT-4.1 (copilot)",
   "chat.planAgent.defaultModel": "GPT-4.1 (copilot)",
-  "gitlens.graph.minimap.enabled": false,
-  "gitlens.views.commitDetails.files.layout": "tree"
+  // === GitLens (free tier only) ===
+  "gitlens.advanced.repositorySearchDepth": 0,
+  "gitlens.currentLine.enabled": true,
+  "gitlens.currentLine.format": "${author}, ${agoOrDate} \u00b7 ${message}",
+  "gitlens.statusBar.enabled": true,
+  "gitlens.statusBar.command": "gitlens.showQuickCommitDetails",
+  "gitlens.statusBar.format": "${author}, ${agoOrDate}",
+  "gitlens.blame.format": "${author|20} ${agoOrDate|14} ${message|50}",
+  "gitlens.blame.highlight.locations": [
+    "gutter",
+    "line",
+    "overview"
+  ],
+  "gitlens.hovers.enabled": true,
+  "gitlens.hovers.currentLine.over": "annotation",
+  "gitlens.hovers.detailsMarkdownFormat": "${author} ${agoAndDateBothSources}${message}${\n\n---\n\nfootnotes}\n\n${commands}"
 }
