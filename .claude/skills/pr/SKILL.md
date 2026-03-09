@@ -6,7 +6,7 @@ description: >-
   DO NOT TRIGGER when: user asks to review an existing PR (use /review) or to commit without pushing
   (use /commit).
 argument-hint: "[optional: --draft, target branch, or PR title]"
-allowed-tools: Bash(git *, gh *), Read, Grep, Glob
+allowed-tools: Bash(git *, gh *), Read, Grep, Glob, mcp__atlassian__getJiraIssue, mcp__atlassian__transitionJiraIssue
 ---
 
 Create pull requests with auto-generated titles and descriptions from commit history.
@@ -126,7 +126,7 @@ EOF
 
 Add `--draft` for work-in-progress, `--base <branch>` for non-main target, `--label <name>` to add labels.
 
-### 4. Verify
+### 4. Verify & Link
 
 After successful PR creation:
 ```bash
@@ -134,6 +134,8 @@ gh pr view --json number,url,title,state
 ```
 
 Show the user: PR number, URL, title, state, and next steps (e.g., request reviews, monitor CI).
+
+**Jira integration (optional):** If a Jira ticket ID was detected and the Atlassian MCP is available, offer to transition the ticket status (e.g., to "In Review") using `mcp__atlassian__transitionJiraIssue`. Always confirm with the user before changing ticket status.
 
 ## Output Principles
 

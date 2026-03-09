@@ -8,6 +8,8 @@ description: >-
   wants security analysis (use /security), or wants architecture-level restructuring (use /architecture).
   This skill refactors code structure, not behavior.
 argument-hint: "[file or component to review]"
+context: fork
+agent: Explore
 allowed-tools: Read, Grep, Glob, Edit
 ---
 

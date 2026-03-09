@@ -8,7 +8,7 @@ description: >-
   (use /debug), wants to write only tests (use /testing), or wants to review existing code (use /review).
   This skill implements new functionality from spec to working code.
 argument-hint: "[feature name or description]"
-allowed-tools: Read, Grep, Glob, Write, TaskCreate, TaskUpdate, TaskList
+allowed-tools: Read, Grep, Glob, Write, TaskCreate, TaskUpdate, TaskList, mcp__atlassian__getJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql
 ---
 
 Guide structured feature development from specification through incremental implementation with clear milestones and verification steps.
@@ -77,6 +77,7 @@ Guide structured feature development from specification through incremental impl
 ### 1. Pre-flight
 
 - Parse `$ARGUMENTS` and map to the appropriate intent (Feature Name, Feature + Scope, User Story, File Path, or Ask User) using the Input Classification table
+- **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `mcp__atlassian__getJiraIssue` to pull acceptance criteria, priority, and requirements directly from Jira. If the MCP tool is unavailable, proceed with user-provided context and note the limitation.
 - Determine the Feature Type (Greenfield, Enhancement, Integration, or Migration) from the Feature Types section above
 - Search for related existing features, patterns, and conventions in the codebase
 - Check for existing specs or documentation related to the feature
