@@ -7,7 +7,9 @@ description: >-
   DO NOT TRIGGER when: user asks for general code review without security focus (use /review), wants code
   quality refactoring (use /clean-code), or asks about IAM/cloud security configuration (use /aws).
 argument-hint: "[file, component, or feature to assess]"
-allowed-tools: Read, Grep, Glob, Bash(npx semgrep *, npm audit *, pip-audit *, cargo audit *)
+context: fork
+agent: Explore
+allowed-tools: Read, Grep, Glob, Agent, Bash(npx semgrep *, npm audit *, pip-audit *, cargo audit *)
 ---
 
 Provide comprehensive security guidance, vulnerability assessment, and secure-by-design recommendations.
@@ -82,7 +84,20 @@ Apply STRIDE threat model to the scoped target (see `@references/frameworks.md`)
 
 ### 4. Assess Vulnerabilities
 
-Check target against OWASP Top 10 (see `@references/frameworks.md`):
+Check target against OWASP Top 10 (see `@references/frameworks.md`).
+
+**For large codebases (>10 files in scope):** Dispatch parallel `security-scanner` agents (from `.claude/agents/security-scanner.md`) to cover threat categories concurrently. Launch these agents simultaneously using the Agent tool, passing each a specific threat category and file scope:
+
+| Agent | Threat Category | What to scan |
+|-------|----------------|-------------|
+| **security-scanner** (Injection & Input) | A01 Injection, A03 Injection | SQL/NoSQL injection, XSS, command injection, SSRF, input validation gaps |
+| **security-scanner** (Auth & Access) | A01 Broken Access Control, A07 Auth Failures | Authentication flows, authorization checks, session management, privilege escalation |
+| **security-scanner** (Data & Crypto) | A02 Cryptographic Failures, A04 Insecure Design | Secrets in code, weak hashing, plaintext storage, insecure data transmission |
+| **security-scanner** (Config & Dependencies) | A05 Security Misconfiguration, A06 Vulnerable Components | Dependency CVEs, debug modes, default credentials, overly permissive CORS/headers |
+
+Each `security-scanner` agent returns: findings with file:line locations, OWASP category, and severity estimate. Merge and deduplicate results before scoring.
+
+**For smaller scopes (<10 files):** Perform sequential analysis without subagents:
 
 1. Systematically evaluate each relevant OWASP category
 2. For code audits: trace data flow from input to output, flag unsafe operations
