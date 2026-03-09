@@ -7,6 +7,8 @@ description: >-
   DO NOT TRIGGER when: user wants to create a new skill (use /skill-creator), write project documentation
   (use /docs), or review code quality (use /review). This skill maintains Claude Code configuration files.
 argument-hint: "[audit, sync, or improve]"
+context: fork
+agent: Explore
 allowed-tools: Read, Grep, Glob
 ---
 

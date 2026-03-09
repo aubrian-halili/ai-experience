@@ -98,15 +98,15 @@ This enables two-stage analysis:
 
 ### 2.5. Specialized Review Passes (Optional Deep Dive)
 
-When the review scope is large (>10 files) or the user requests a thorough review, run targeted passes using subagents:
+When the review scope is large (>10 files) or the user requests a thorough review, run targeted passes using subagents. Use `code-quality-reviewer` agents (from `.claude/agents/code-quality-reviewer.md`) for quality dimensions and `security-scanner` (from `.claude/agents/security-scanner.md`) for the security pass:
 
-| Pass | Focus | Key Questions |
-|------|-------|---------------|
-| **Type Safety** | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
-| **Error Handling** | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
-| **Test Coverage** | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
-| **Performance** | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
-| **Security** | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
+| Pass | Agent | Focus | Key Questions |
+|------|-------|-------|---------------|
+| **Type Safety** | `code-quality-reviewer` | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
+| **Error Handling** | `code-quality-reviewer` | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
+| **Test Coverage** | `code-quality-reviewer` | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
+| **Performance** | `code-quality-reviewer` | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
+| **Security** | `security-scanner` | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
 
 Each pass produces findings with:
 - **Confidence score** (0-100): Only surface findings >= 80
@@ -154,15 +154,15 @@ Present findings using the Severity Levels defined above and the Local Changes t
 
 ### 4.5. Specialized Review Passes (Optional Deep Dive)
 
-When the PR has >10 changed files or the user requests a thorough review, run targeted passes using subagents:
+When the PR has >10 changed files or the user requests a thorough review, run targeted passes using subagents. Use `code-quality-reviewer` agents (from `.claude/agents/code-quality-reviewer.md`) for quality dimensions and `security-scanner` (from `.claude/agents/security-scanner.md`) for the security pass:
 
-| Pass | Focus | Key Questions |
-|------|-------|---------------|
-| **Type Safety** | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
-| **Error Handling** | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
-| **Test Coverage** | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
-| **Performance** | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
-| **Security** | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
+| Pass | Agent | Focus | Key Questions |
+|------|-------|-------|---------------|
+| **Type Safety** | `code-quality-reviewer` | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
+| **Error Handling** | `code-quality-reviewer` | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
+| **Test Coverage** | `code-quality-reviewer` | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
+| **Performance** | `code-quality-reviewer` | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
+| **Security** | `security-scanner` | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
 
 Each pass produces findings with:
 - **Confidence score** (0-100): Only surface findings >= 80

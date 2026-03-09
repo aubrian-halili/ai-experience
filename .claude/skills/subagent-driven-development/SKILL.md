@@ -6,6 +6,7 @@ description: >-
   modules) that could be done concurrently. Use after /plan when the plan reveals independent work streams.
   DO NOT TRIGGER when: tasks have sequential dependencies (use /feature) or scope is a single file/module.
 argument-hint: "[plan file, task list, or multi-module feature description]"
+agent: implementation-worker
 allowed-tools: Agent, Read, Grep, Glob, TaskCreate, TaskUpdate, TaskList
 ---
 
@@ -100,27 +101,22 @@ For each independent task:
 
 1. Create a tracked task via `TaskCreate` with goal, files, and acceptance criteria
 2. Mark as `in_progress` via `TaskUpdate`
-3. Launch a fresh subagent via the `Agent` tool with:
-   - Clear, self-contained prompt including all necessary context
-   - Specific files to read and modify
-   - Acceptance criteria to verify against
-   - Instruction to NOT modify files outside its scope
+3. Launch a fresh `implementation-worker` agent (from `.claude/agents/implementation-worker.md`) via the Agent tool with:
+   - Task goal, file scope, and acceptance criteria as context in the prompt
+   - Set `isolation: "worktree"` for each worker to prevent file conflicts between parallel agents
+   - The agent has Edit, Write, and scoped Bash access (test commands only)
 4. Dispatch independent tasks in parallel (multiple Agent calls in one message)
 
-**Subagent prompt template:**
+**Dispatch format** — pass the task contract to each `implementation-worker`:
 ```
-You are implementing a single task as part of a larger feature.
-
 Task: [goal]
 Files to modify: [list]
+Files to create: [list, if any]
 Acceptance criteria: [list]
-
-IMPORTANT:
-- Only modify the files listed above
-- Do not modify any other files
-- Verify your changes against the acceptance criteria
-- Report what you changed and verification results
+Context: [relevant background, patterns to follow, conventions]
 ```
+
+> Note: Each `implementation-worker` runs in an isolated git worktree. The orchestrator (this skill) is responsible for merging results and resolving any integration issues after all workers complete.
 
 ### 5. Review Results
 

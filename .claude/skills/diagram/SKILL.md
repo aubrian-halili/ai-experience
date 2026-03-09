@@ -8,6 +8,8 @@ description: >-
   architecture (use /architecture), or asks to "show the architecture" meaning explain it (use /explore).
   This skill produces Mermaid diagram code as output.
 argument-hint: "[system or flow to diagram]"
+context: fork
+agent: Explore
 allowed-tools: Read, Grep, Glob
 ---
 
