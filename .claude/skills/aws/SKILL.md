@@ -7,7 +7,6 @@ description: >-
   DO NOT TRIGGER when: user asks about general architecture without AWS specifics (use /architecture) or
   general TypeScript/code questions that happen to run on AWS (use /typescript or /feature).
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, WebSearch, WebFetch
-user-invocable: true
 argument-hint: "[service name, pattern question, or leave blank for guidance]"
 ---
 

@@ -16,6 +16,7 @@ NC='\033[0m' # No Color
 WITH_REFERENCES=false
 WITH_SCRIPTS=false
 FORCE_OVERWRITE=false
+PERSONAL=false
 
 usage() {
     echo "Usage: $0 [OPTIONS] <skill-name>"
@@ -23,6 +24,7 @@ usage() {
     echo "Creates a new skill directory with boilerplate SKILL.md"
     echo ""
     echo "Options:"
+    echo "  --personal           Create in ~/.claude/skills/ (personal, cross-project)"
     echo "  --with-references    Create references/ subdirectory"
     echo "  --with-scripts       Create scripts/ subdirectory"
     echo "  --force              Overwrite existing skill without prompt"
@@ -35,12 +37,17 @@ usage() {
     echo "  $0 code-review"
     echo "  $0 --with-references api-client"
     echo "  $0 --with-references --with-scripts api-client"
+    echo "  $0 --personal my-workflow"
     exit 1
 }
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --personal)
+            PERSONAL=true
+            shift
+            ;;
         --with-references)
             WITH_REFERENCES=true
             shift
@@ -95,7 +102,12 @@ if echo "$SKILL_NAME" | grep -qiE 'anthropic|claude'; then
     exit 1
 fi
 
-SKILL_DIR="$SKILLS_DIR/$SKILL_NAME"
+# Resolve target directory based on --personal flag
+if [ "$PERSONAL" = true ]; then
+    SKILL_DIR="$HOME/.claude/skills/$SKILL_NAME"
+else
+    SKILL_DIR="$SKILLS_DIR/$SKILL_NAME"
+fi
 
 # Check if skill already exists
 if [ -d "$SKILL_DIR" ]; then

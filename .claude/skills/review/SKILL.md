@@ -11,6 +11,9 @@ argument-hint: "[file, PR number, URL, or component to review]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent
 ---
 
+**Current branch:** !`git branch --show-current`
+**Diff stats:** !`git diff --stat origin/main..HEAD 2>/dev/null || git diff --stat HEAD~1..HEAD`
+
 Perform a thorough multi-dimensional review of code, local changes, or pull requests.
 
 ## Review Philosophy

@@ -6,6 +6,7 @@ description: >-
   DO NOT TRIGGER when: user asks to create a PR (use /pr) or push changes (use /pr).
 argument-hint: "[optional commit message or scope]"
 allowed-tools: Bash(git *), Read, Grep, Glob
+disable-model-invocation: true
 ---
 
 **Current branch:** !`git branch --show-current`
@@ -57,16 +58,9 @@ Determine commit workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight Checks
 
-Extract ticket ID (branch name is pre-loaded above):
-```bash
-BRANCH=$(git branch --show-current)
-TICKET_ID=$(echo "$BRANCH" | grep -oE '[A-Z]+-[0-9]+' | head -1)
-```
+Extract ticket ID from branch name (pre-loaded above) using `grep -oE '[A-Z]+-[0-9]+'`.
 
-**Stop conditions:**
-- On `main`/`master` → Ask for Jira ticket ID + feature description, create branch with `git checkout -b <JIRA-ID>-<description>`, then proceed
-- No ticket ID in branch → Ask user for ticket ID
-- No changes → Nothing to commit
+**Stop conditions:** Follow branch/ticket rules from git-conventions.md — on `main`/`master` create a branch first; no ticket ID → ask user; no changes → nothing to commit.
 
 ### 2. Analyze & Present for Review
 
@@ -78,9 +72,7 @@ Review current state:
 
 Use `$ARGUMENTS` if provided (user's custom message or scope), otherwise generate appropriate commit message.
 
-Format: `<TICKET-ID> <type>(<scope>): <subject>` (max 72 chars)
-
-**Types:** `feat` (new feature), `fix` (bug fix), `refactor` (restructure), `docs` (documentation), `test` (testing), `chore` (maintenance)
+Follow commit message format from git-conventions.md (already loaded). Subject line max 72 chars.
 
 **Present to user:**
 - Show **staged files** separately from **unstaged files**

@@ -70,6 +70,7 @@ Ask clarifying questions:
 - What outputs should it produce? (format, structure, degrees of freedom)
 - Which tools does it need? (Read-only guidance vs. file-writing action)
 - Should Claude auto-invoke it, or manual-only (`disable-model-invocation`)?
+- Should this be a personal skill (`~/.claude/skills/`, cross-project) or project skill (`.claude/skills/`, team-shared)?
 
 ### 3. Plan Structure
 
@@ -84,7 +85,7 @@ Determine:
 Run the init script to scaffold the boilerplate:
 
 ```bash
-./.claude/skills/skill-creator/scripts/init-skill.sh [skill-name]
+${CLAUDE_SKILL_DIR}/scripts/init-skill.sh [skill-name]
 ```
 
 This creates the skill directory and a SKILL.md from `@template.md` with the skill name substituted.
@@ -114,7 +115,7 @@ Cross-reference `@references/best-practices.md` for anti-patterns and quality ch
 Run validation to check structure:
 
 ```bash
-./.claude/skills/skill-creator/scripts/validate-skill.sh [skill-name]
+${CLAUDE_SKILL_DIR}/scripts/validate-skill.sh [skill-name]
 ```
 
 Verify against the quality checklist: Discoverable, Scoped, Efficient, Guided, Graceful, Connected, Tested (see `@references/best-practices.md`).
@@ -161,6 +162,7 @@ Test the skill with real invocations and refine based on:
 - `$ARGUMENTS` — all arguments passed when invoking the skill
 - `$ARGUMENTS[N]` or `$N` — specific argument by 0-based index
 - `${CLAUDE_SESSION_ID}` — unique session identifier; useful for per-session logging or temp file isolation
+- `${CLAUDE_SKILL_DIR}` — absolute path to the skill's directory; use in `` !`command` `` or Bash steps to reference bundled scripts/files portably
 - `` !`command` `` — dynamic context; shell command output replaces the placeholder before skill content is sent to Claude
 
 ## Output Principles

@@ -141,6 +141,7 @@ Use **gerund form** (verb + -ing) for skill names when possible:
 - `$ARGUMENTS` — all arguments passed when invoking
 - `$ARGUMENTS[N]` or `$N` — specific argument by index (0-based)
 - `${CLAUDE_SESSION_ID}` — unique session identifier, useful for per-session logging or temp file isolation
+- `${CLAUDE_SKILL_DIR}` — the skill's own directory path; use to reference bundled scripts portably instead of hardcoding `.claude/skills/<name>/`
 - `` !`command` `` — dynamic context injection; shell command output replaces placeholder before skill content is sent to Claude
 
 **Example use case**: Inject current git branch into skill instructions
@@ -223,7 +224,7 @@ Skills can generate visual output (HTML pages, diagrams, reports) by bundling sc
 Run the bundled visualization script:
 
 \`\`\`bash
-./.claude/skills/my-skill/scripts/generate-report.sh $ARGUMENTS
+${CLAUDE_SKILL_DIR}/scripts/generate-report.sh $ARGUMENTS
 \`\`\`
 
 The script generates an HTML file and opens it in the default browser.

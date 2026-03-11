@@ -11,6 +11,8 @@ argument-hint: "[feature name or description]"
 allowed-tools: Read, Grep, Glob, Write, TaskCreate, TaskUpdate, TaskList, mcp__atlassian__getJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql
 ---
 
+**Current branch:** !`git branch --show-current`
+
 Guide structured feature development from specification through incremental implementation with clear milestones and verification steps.
 
 ## Development Philosophy
