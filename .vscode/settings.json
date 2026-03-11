@@ -1,35 +1,9 @@
 {
-  "workbench.colorTheme": "One Dark Pro Mix",
-  "yaml.customTags": [
-    "!And",
-    "!And sequence",
-    "!If",
-    "!If sequence",
-    "!Not",
-    "!Not sequence",
-    "!Equals",
-    "!Equals sequence",
-    "!Or",
-    "!Or sequence",
-    "!FindInMap",
-    "!FindInMap sequence",
-    "!Base64",
-    "!Join",
-    "!Join sequence",
-    "!Cidr",
-    "!Ref",
-    "!Sub",
-    "!Sub sequence",
-    "!GetAtt",
-    "!GetAZs",
-    "!ImportValue",
-    "!ImportValue sequence",
-    "!Select",
-    "!Select sequence",
-    "!Split",
-    "!Split sequence"
-  ],
-  "redhat.telemetry.enabled": false,
+  "workbench.colorTheme": "GitHub Dark Dimmed",
+  "extensions.autoUpdate": true,
+  "extensions.autoCheckUpdates": true,
+  "extensions.ignoreRecommendations": true,
+  "aws.cloudformation.telemetry.enabled": false,
   // === Editor ===
   "editor.tabSize": 2,
   "editor.renderWhitespace": "all",
@@ -43,35 +17,8 @@
   "editor.quickSuggestions": {
     "strings": "on"
   },
-  // === Files ===
-  "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true,
   // === Language-Specific ===
   "js/ts.preferences.quoteStyle": "single",
-  "[dockercompose]": {
-    "editor.autoIndent": "advanced",
-    "editor.quickSuggestions": {
-      "other": true,
-      "comments": false,
-      "strings": true
-    },
-    "editor.defaultFormatter": "redhat.vscode-yaml"
-  },
-  "[github-actions-workflow]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit"
-    }
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit"
-    }
-  },
   // === TypeScript ===
   "typescript.updateImportsOnFileMove.enabled": "always",
   "typescript.suggest.autoImports": true,
@@ -163,5 +110,20 @@
   ],
   "gitlens.hovers.enabled": true,
   "gitlens.hovers.currentLine.over": "annotation",
-  "gitlens.hovers.detailsMarkdownFormat": "${author} ${agoAndDateBothSources}${message}${\n\n---\n\nfootnotes}\n\n${commands}"
+  "gitlens.hovers.detailsMarkdownFormat": "${author} ${agoAndDateBothSources}${message}${\n\n---\n\nfootnotes}\n\n${commands}",
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "gitlens.views.scm.grouped.views": {
+    "commits": true,
+    "branches": false,
+    "remotes": true,
+    "stashes": true,
+    "tags": true,
+    "worktrees": true,
+    "contributors": true,
+    "fileHistory": false,
+    "repositories": true,
+    "searchAndCompare": false,
+    "launchpad": true
+  }
 }
