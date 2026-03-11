@@ -101,8 +101,8 @@ validate_name_field() {
     local frontmatter="$3"
 
     if ! echo "$frontmatter" | grep -q "^name:"; then
-        error "Required field 'name' missing from frontmatter"
-        return 1
+        warn "Field 'name' missing from frontmatter (will use directory name)"
+        return 0
     fi
 
     local found_name=$(echo "$frontmatter" | grep "^name:" | sed 's/name: *//')

@@ -8,6 +8,7 @@ description: >-
   should use /plan or /feature).
 argument-hint: "[PROJECT] [bug|task|story] [title or description] [--assignee <user>]"
 allowed-tools: mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__createJiraIssue, mcp__atlassian__lookupJiraAccountId, mcp__atlassian__getJiraIssue
+disable-model-invocation: true
 ---
 
 Create Jira tickets from the current conversation context with structured templates. Returns a ticket ID for use in branch creation and downstream workflows.

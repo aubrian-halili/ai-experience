@@ -8,7 +8,6 @@ description: >-
   general TypeScript without React context (use /typescript), or wants a quick HTML prototype
   (use /playground).
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, WebSearch, WebFetch
-user-invocable: true
 argument-hint: "[component name, pattern question, or leave blank for guidance]"
 ---
 

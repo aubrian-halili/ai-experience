@@ -7,7 +7,11 @@ description: >-
   (use /commit).
 argument-hint: "[optional: --draft, target branch, or PR title]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob, mcp__atlassian__getJiraIssue, mcp__atlassian__transitionJiraIssue
+disable-model-invocation: true
 ---
+
+**Current branch:** !`git branch --show-current`
+**Recent commits:** !`git log --oneline -5`
 
 Create pull requests with auto-generated titles and descriptions from commit history.
 
@@ -107,19 +111,9 @@ Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr
 # Push branch if needed (check if remote exists first)
 git push -u origin $(git branch --show-current)
 
-# Create PR with HEREDOC for body
+# Create PR (use body as previewed in Step 2)
 gh pr create --title "<TICKET-ID> <type>(<scope>): <description>" --body "$(cat <<'EOF'
-## Jira
-<TICKET-ID>
-
-## Summary
-- Bullet points from commit messages
-
-## Breaking Changes
-- None / List breaking changes
-
-## Test Plan
-- Verification steps
+<body from Step 2>
 EOF
 )"
 ```
@@ -140,7 +134,7 @@ Show the user: PR number, URL, title, state, and next steps (e.g., request revie
 ## Output Principles
 
 - **PR preview before creation** — present the complete PR (title, body, flags) for user review before pushing or creating
-- **Convention-formatted title** — `<TICKET-ID> <type>(<scope>): <description>` with max 72 chars, per pr-conventions.md
+- **Convention-formatted title** — follows pr-conventions.md format (already loaded)
 - **Structured body** — every PR body includes Jira reference, Summary, Breaking Changes, and Test Plan sections
 - **Actionable result** — after creation, show PR number, URL, and next steps (request reviews, monitor CI)
 

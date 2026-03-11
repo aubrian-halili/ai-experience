@@ -8,6 +8,7 @@ description: >-
   skill is for Claude Code hooks, not React hooks or git hooks.
 argument-hint: "[hook type or behavior to enforce]"
 allowed-tools: Read, Write, Edit, Bash(chmod *), Glob
+disable-model-invocation: true
 ---
 
 Guide creation and management of Claude Code hooks for enforcing behaviors, protecting files, and automating workflows.
