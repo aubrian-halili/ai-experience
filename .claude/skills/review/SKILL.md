@@ -24,6 +24,29 @@ Perform a thorough multi-dimensional review of code, local changes, or pull requ
 - **Context-aware** — respect existing patterns and conventions; cross-reference CLAUDE.md before flagging style issues
 - **Constructive balance** — pair criticism with positive observations; reviews that only list problems discourage contributors
 
+### Confidence Scoring Rubric
+
+| Score | Meaning | Action |
+|-------|---------|--------|
+| **0** | False positive or pre-existing issue not introduced by this change | Do not report |
+| **25** | Possible issue but unverified — would need more context or domain knowledge | Do not report |
+| **50** | Real issue but minor impact — unlikely to cause problems in practice | Do not report |
+| **75** | Important and verified — real issue with meaningful impact | Do not report (below gate) |
+| **100** | Definite and self-evident — clearly wrong, clearly harmful | Report |
+
+The confidence gate remains **>= 80**. In practice, only findings you are highly confident about (75+ verified with strong supporting evidence pushing to 80+, or 100-level obvious issues) should be reported.
+
+### Do Not Flag
+
+These categories produce noise, not value — exclude them regardless of confidence:
+
+1. **Linter/formatter issues** — these are caught by automated tooling, not human review
+2. **Compiler/build errors** — the CI pipeline catches these; flagging them wastes review time
+3. **Pre-existing issues** — problems that existed before the current change (verify with `git blame`)
+4. **Pedantic style nitpicks** — minor formatting preferences not codified in project conventions
+5. **Out-of-scope missing features** — functionality the PR never intended to add
+6. **TODOs the author already flagged** — the author is aware; re-flagging is redundant
+
 ## When to Use
 
 ### This Skill Is For
@@ -62,6 +85,23 @@ Classify `$ARGUMENTS` to determine the review workflow:
 | **Medium** | Code smell, maintainability concern | Fix soon, can merge |
 | **Note** | Style, minor improvement, question | Optional |
 
+## Specialized Review Passes
+
+When the review scope is large (>10 files) or the user requests a thorough review, run targeted passes using subagents. Use `code-quality-reviewer` agents (from `.claude/agents/code-quality-reviewer.md`) for quality dimensions and `security-scanner` (from `.claude/agents/security-scanner.md`) for the security pass:
+
+| Pass | Agent | Focus | Key Questions |
+|------|-------|-------|---------------|
+| **Type Safety** | `code-quality-reviewer` | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
+| **Error Handling** | `code-quality-reviewer` | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
+| **Test Coverage** | `code-quality-reviewer` | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
+| **Performance** | `code-quality-reviewer` | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
+| **Security** | `security-scanner` | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
+
+Each pass produces findings with:
+- **Confidence score** (0-100): Only surface findings >= 80
+- **Severity**: Using existing severity levels (Critical/High/Medium/Note)
+- **Pass tag**: e.g., `[Type Safety]` prefix so findings are traceable to the pass
+
 ## Process
 
 **Branch point:** Local review → steps 1–3, 6. PR review → steps 1, 4–6.
@@ -72,12 +112,19 @@ Classify `$ARGUMENTS` to determine the review workflow:
 - Verify working directory is a git repo: `git rev-parse --is-inside-work-tree`
 - For local reviews: confirm changes exist via `git diff` and `git diff --cached`
 - For PR reviews: verify `gh` is authenticated: `gh auth status`
+- For PR reviews: screen PR eligibility before proceeding:
+  ```bash
+  gh pr view <number> --json state,isDraft,author,labels
+  ```
 - Check for CLAUDE.md conventions to cross-reference during review
 
 **Stop conditions:**
 - Not a git repository → report and stop
 - No local changes found (for local review) → report and suggest specifying a file or PR number
 - PR review requested but `gh` not authenticated → provide `gh auth login` instructions and stop
+- PR is closed or merged → report state and stop
+- PR is a draft → report draft status and stop (unless user explicitly requests draft review)
+- PR author is a bot (e.g., `dependabot`, `renovate`) → report and stop (unless user explicitly requests)
 - Ambiguous argument (could be file path or component name) → search codebase, prefer exact file match
 
 ### 1.5. Extract Intent
@@ -96,25 +143,13 @@ This enables two-stage analysis:
 
 1. Read target code (diff output for uncommitted changes, full file for single-file review)
 2. Analyze across dimensions: correctness, readability, maintainability, performance, security, testing, architecture alignment
-3. Cross-reference against CLAUDE.md conventions
-4. Apply confidence gate — only flag findings scored >= 80
+3. For any potential finding, run `git blame -L <start>,<end> <file>` to confirm the issue was introduced in the current change. Score pre-existing issues as 0.
+4. Cross-reference against CLAUDE.md conventions
+5. Apply confidence gate — only flag findings scored >= 80
 
 ### 2.5. Specialized Review Passes (Optional Deep Dive)
 
-When the review scope is large (>10 files) or the user requests a thorough review, run targeted passes using subagents. Use `code-quality-reviewer` agents (from `.claude/agents/code-quality-reviewer.md`) for quality dimensions and `security-scanner` (from `.claude/agents/security-scanner.md`) for the security pass:
-
-| Pass | Agent | Focus | Key Questions |
-|------|-------|-------|---------------|
-| **Type Safety** | `code-quality-reviewer` | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
-| **Error Handling** | `code-quality-reviewer` | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
-| **Test Coverage** | `code-quality-reviewer` | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
-| **Performance** | `code-quality-reviewer` | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
-| **Security** | `security-scanner` | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
-
-Each pass produces findings with:
-- **Confidence score** (0-100): Only surface findings >= 80
-- **Severity**: Using existing severity levels (Critical/High/Medium/Note)
-- **Pass tag**: e.g., `[Type Safety]` prefix so findings are traceable to the pass
+When scope is large (>10 files) or user requests thorough review, run the Specialized Review Passes defined above.
 
 ### 3. Report Local Findings (Local only)
 
@@ -147,7 +182,9 @@ Present findings using the Severity Levels defined above and the Local Changes t
    - **Downstream Impact**: Files that depend on changes
    - **Upstream Impact**: Changes to dependencies
 
-4. **Evaluate Risk**
+4. For any potential finding, run `git blame -L <start>,<end> <file>` to confirm the issue was introduced in the current change. Score pre-existing issues as 0.
+
+5. **Evaluate Risk**
    | Risk Factor | Low | Medium | High |
    |-------------|-----|--------|------|
    | Files Changed | 1-5 | 6-15 | 16+ |
@@ -157,22 +194,16 @@ Present findings using the Severity Levels defined above and the Local Changes t
 
 ### 4.5. Specialized Review Passes (Optional Deep Dive)
 
-When the PR has >10 changed files or the user requests a thorough review, run targeted passes using subagents. Use `code-quality-reviewer` agents (from `.claude/agents/code-quality-reviewer.md`) for quality dimensions and `security-scanner` (from `.claude/agents/security-scanner.md`) for the security pass:
-
-| Pass | Agent | Focus | Key Questions |
-|------|-------|-------|---------------|
-| **Type Safety** | `code-quality-reviewer` | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
-| **Error Handling** | `code-quality-reviewer` | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
-| **Test Coverage** | `code-quality-reviewer` | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
-| **Performance** | `code-quality-reviewer` | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
-| **Security** | `security-scanner` | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
-
-Each pass produces findings with:
-- **Confidence score** (0-100): Only surface findings >= 80
-- **Severity**: Using existing severity levels (Critical/High/Medium/Note)
-- **Pass tag**: e.g., `[Type Safety]` prefix so findings are traceable to the pass
+When PR has >10 changed files or user requests thorough review, run the Specialized Review Passes defined above.
 
 ### 5. Report PR Findings (PR only)
+
+Before reporting, re-check PR state to avoid posting stale reviews:
+```bash
+gh pr view <number> --json state,isDraft,updatedAt,commits
+```
+- If PR is now closed or merged → skip reporting, inform user
+- If new commits were pushed since analysis began → warn user that findings may be outdated and offer to re-run
 
 Present findings using the Pull Request Review template from `@references/templates.md`.
 
@@ -221,6 +252,7 @@ Never silently omit findings or skip review dimensions—surface limitations and
 
 | Skill | When to Use Instead |
 |-------|---------------------|
+| `/receiving-review` | Addressing feedback received on your PR |
 | `/clean-code` | Deep SOLID analysis needed |
 | `/architecture` | Structural concerns found |
 | `/patterns` | Code could benefit from design patterns |

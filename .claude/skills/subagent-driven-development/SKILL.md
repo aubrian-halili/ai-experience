@@ -25,6 +25,7 @@ Orchestrate parallel implementation across multiple Claude subagents for large-s
 > - NEVER dispatch parallel tasks without verifying independence first
 > - NEVER let a subagent modify files another subagent is also modifying
 > - If any subagent fails, halt remaining dispatches and assess before continuing
+> - When multiple failures appear after a single change, investigate whether they share a root cause before parallelizing — fixing one may fix others
 
 ## When to Use
 
@@ -62,6 +63,7 @@ Orchestrate parallel implementation across multiple Claude subagents for large-s
 
 **Stop conditions:**
 - No `$ARGUMENTS` provided → ask user what to parallelize
+- On main/master branch → warn user and stop; do not implement without explicit consent to work on main
 - Fewer than 3 tasks → recommend `/feature` instead (overhead not justified)
 - No clear plan exists → recommend `/plan` first
 
@@ -117,6 +119,14 @@ Context: [relevant background, patterns to follow, conventions]
 ```
 
 > Note: Each `implementation-worker` runs in an isolated git worktree. The orchestrator (this skill) is responsible for merging results and resolving any integration issues after all workers complete.
+
+### Dispatch Quality
+
+**Common mistakes:**
+- **Too broad:** "Fix all the auth issues" → agent gets lost. Be specific: "Fix token refresh in `src/auth/refresh.ts`"
+- **Missing context:** "Fix the race condition" → agent doesn't know where to look. Include error messages, test names, file paths
+- **No constraints:** Agent may refactor broadly. Always specify: "Only modify files listed above"
+- **Vague output expectation:** "Fix it" → you don't know what changed. Require: "Return summary of root cause and changes made"
 
 ### 5. Review Results
 
@@ -181,3 +191,4 @@ Never dispatch tasks without proving independence first — the cost of parallel
 | `/review` | Code quality review of individual subagent outputs |
 | `/explore` | Understand codebase before defining task boundaries |
 | `/architecture` | Ensure clear architectural boundaries for parallel work |
+| `/finish` | Clean up worktrees and complete branch after parallel work |

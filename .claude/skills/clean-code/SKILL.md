@@ -19,9 +19,19 @@ Provide code quality analysis, refactoring suggestions, and clean code guidance.
 
 - **Precision over completeness** — zero false positives matters more than exhaustive coverage; if uncertain about a finding, leave it out rather than risk noise
 - **Confidence gate** — internally score each finding 0-100; only report findings with confidence >= 80
+- **Behavior preservation** — never change what the code does, only how it's structured; if a refactoring risks altering behavior, flag it rather than apply it
 - **Readability over cleverness** — code is read far more than written; favor clarity
 - **Incremental improvement** — suggest practical refactoring steps, not rewrites; leave the code better than found
 - **Context-aware** — respect existing patterns and conventions in the codebase; don't impose alien style
+
+### Refactoring Balance
+
+Avoid over-refactoring that could:
+- Create unnecessary abstractions for one-time operations
+- Combine too many concerns into single functions
+- Prioritize "fewer lines" over readability (e.g., nested ternaries, dense one-liners)
+- Remove helpful intermediate variables that aid debugging
+- Extract methods that are only called once and obscure the flow
 
 ## When to Use
 

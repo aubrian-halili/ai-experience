@@ -27,6 +27,40 @@ Provide comprehensive testing guidance, test scaffolding, and coverage analysis 
 > - If you wrote code before the test, delete it and start over
 > - Never mock what you don't own
 
+The delete-and-restart rule is non-negotiable:
+
+**Bad** — "I'll keep what I wrote and add tests around it":
+```typescript
+// You already wrote this working function
+function calculateDiscount(price: number, tier: string): number {
+  if (tier === 'gold') return price * 0.2;
+  if (tier === 'silver') return price * 0.1;
+  return 0;
+}
+
+// Now you write a test that just confirms what you already know works
+it('should return 20% for gold', () => {
+  expect(calculateDiscount(100, 'gold')).toBe(20); // ← you already know this passes
+});
+// This test was shaped by the implementation, not by the requirement
+```
+
+**Good** — delete the code, start from the test:
+```typescript
+// Start with what the business requires, not what you already coded
+it('should apply no discount for unknown tiers', () => {
+  expect(calculateDiscount(100, 'bronze')).toBe(0);
+});
+
+it('should apply 10% discount for silver tier', () => {
+  expect(calculateDiscount(100, 'silver')).toBe(10);
+});
+
+// Run → RED. Now write the minimal code to pass. You'll discover
+// edge cases (negative prices? empty string tier?) that the
+// code-first approach would have missed.
+```
+
 ## Rationalization Guard
 
 | Excuse | Reality |
@@ -35,6 +69,21 @@ Provide comprehensive testing guidance, test scaffolding, and coverage analysis 
 | "Integration tests cover this" | Unit and integration tests answer different questions |
 | "I'll add tests later" | Tests-later means tests-never; coverage debt compounds |
 | "Mocking is too complex here" | Complex mocking signals wrong abstraction boundaries |
+| "Tests after achieve the same goals" | Tests-after answer "what does this do?"; tests-first answer "what should this do?" — fundamentally different design feedback |
+| "Need to explore the problem first" | Exploration is fine, but throw away the spike and start over with TDD. Spikes are for learning, not shipping. |
+| "I already manually tested it" | Ad-hoc testing leaves no record, can't be re-run, and misses edge cases. Manual ≠ systematic. |
+| "I'll keep the code as reference" | You'll adapt it instead of deleting it. "Keep as reference" is "keep as production" with extra steps. Delete means delete. |
+| "This is hard to test" | Listen to the test. Hard to test = hard to use. The difficulty is design feedback, not an excuse to skip. |
+
+## Red Flags — STOP and Start Over
+
+If any of these conditions are true, stop what you're doing. Delete the code and restart with a failing test:
+
+- **Code written before test** — you're already doing tests-after. The test will be shaped by the implementation, not the requirement.
+- **Test passes immediately on first run** — either the behavior already exists (find out why) or the test doesn't assert what you think it does.
+- **Can't explain why the test failed** — if the RED step produces an error you didn't expect, you don't understand the code well enough yet. Investigate before writing production code.
+- **Rationalizing "just this once"** — check the Rationalization Guard above. If you're making an excuse, that's the signal to be more disciplined, not less.
+- **Test requires more setup than production code** — the test is telling you the design is too coupled. Simplify the design first.
 
 ## When to Use
 
@@ -116,6 +165,50 @@ Follow the AAA pattern (Arrange, Act, Assert) for every test case.
 - Use descriptive test names: `should [expected behavior] when [condition]`
 - Group tests by behavior using `describe` blocks (happy path, edge cases, error handling)
 - See `@references/templates.md` for full scaffolding examples (unit, integration, E2E, test data, mocking)
+- See `@references/anti-patterns.md` for mocking pitfalls and gate functions
+
+#### Good vs Bad Test Examples
+
+**Good** — clear name, one behavior, tests real logic:
+```typescript
+it('should normalize email to lowercase when creating account', async () => {
+  const account = await createAccount({ email: 'User@Example.COM' });
+  expect(account.email).toBe('user@example.com');
+});
+```
+
+**Bad** — vague name, tests the mock, multiple concerns:
+```typescript
+it('should work correctly', async () => {
+  const mockDb = { save: jest.fn().mockResolvedValue({ id: 1 }) };
+  const account = await createAccount({ email: 'test@test.com' }, mockDb);
+  expect(mockDb.save).toHaveBeenCalled(); // tests the mock, not the behavior
+  expect(account.id).toBe(1); // proves the mock returns what you told it to
+  expect(account.email).toBeDefined(); // asserts nothing meaningful
+});
+```
+
+#### TDD: RED-GREEN-REFACTOR Verification
+
+When practicing TDD, treat each phase as a mandatory checkpoint:
+
+1. **RED — Write a failing test**
+   - Write the test for the next behavior
+   - Run: `npm test -- --testPathPattern=<test-file>`
+   - **Verify**: the new test fails with an expected assertion error (not a syntax or import error)
+   - If the test passes immediately → STOP. Either the behavior already exists or the test is wrong.
+
+2. **GREEN — Write minimal code to pass**
+   - Write only enough production code to make the failing test pass
+   - Run: `npm test -- --testPathPattern=<test-file>`
+   - **Verify**: the new test passes AND all existing tests still pass
+   - If any existing test broke → you changed too much. Revert and take a smaller step.
+
+3. **REFACTOR — Clean up without changing behavior**
+   - Improve code structure (extract, rename, simplify)
+   - Run: `npm test` (full suite)
+   - **Verify**: all tests still pass with no changes to test code
+   - If a test fails → the refactor changed behavior. Revert and try again.
 
 ### 4. Verify Test Quality
 

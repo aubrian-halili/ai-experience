@@ -8,7 +8,7 @@ description: >-
   (use /debug), wants to write only tests (use /testing), or wants to review existing code (use /review).
   This skill implements new functionality from spec to working code.
 argument-hint: "[feature name or description]"
-allowed-tools: Read, Grep, Glob, Write, TaskCreate, TaskUpdate, TaskList, mcp__atlassian__getJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql
+allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Bash, TaskCreate, TaskUpdate, TaskList, mcp__atlassian__getJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql
 ---
 
 **Current branch:** !`git branch --show-current`
@@ -59,10 +59,10 @@ Guide structured feature development from specification through incremental impl
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| Feature name (e.g., `user authentication`) | Develop feature | Determine Feature Type, full Steps 1-5 |
-| Feature + scope (e.g., `add OAuth to login`) | Scoped enhancement | Steps 1-5; emphasis on impact analysis (step 2) |
-| User story (e.g., `as a user I want...`) | Story-driven development | Extract requirements from story, determine Feature Type, Steps 1-5 |
-| File path / directory (e.g., `src/auth/`) | Module-scoped feature | Steps 1-5; analyze existing module first (step 2) |
+| Feature name (e.g., `user authentication`) | Develop feature | Determine Feature Type, full Steps 1-7 |
+| Feature + scope (e.g., `add OAuth to login`) | Scoped enhancement | Steps 1-7; emphasis on impact analysis (step 2) |
+| User story (e.g., `as a user I want...`) | Story-driven development | Extract requirements from story, determine Feature Type, Steps 1-7 |
+| File path / directory (e.g., `src/auth/`) | Module-scoped feature | Steps 1-7; analyze existing module first (step 2) |
 | (none) | Ask user | Pre-flight stop |
 
 ## Feature Types
@@ -86,17 +86,39 @@ Guide structured feature development from specification through incremental impl
 
 **Stop conditions:**
 - No `$ARGUMENTS` provided → ask user what feature to develop
+- On main/master branch → warn user and stop; do not implement without explicit consent to work on main
 - Feature already exists → report existing implementation and ask whether to enhance or replace
 - Requirements unclear or contradictory → ask clarifying questions before proceeding
 - Scope too vague to classify (e.g., "make it better") → ask user to narrow scope
 
-### 2. Specify
+### 2. Explore
+
+- Launch 1-2 Explore agents in parallel to understand the relevant codebase:
+  - Agent 1: "Find features similar to [feature] and trace their implementation patterns"
+  - Agent 2: "Map the architecture and abstractions relevant to [feature area]"
+- Read all key files identified by agents to build deep context
+- Present a summary of: existing patterns to follow, code to reuse, integration points, conventions
+
+**Skip when:** Feature scope is narrow and target files are already known from Pre-flight.
+
+### 3. Clarify
+
+**CRITICAL — DO NOT SKIP this step.**
+
+- Review codebase findings and the feature request
+- Identify underspecified aspects: edge cases, error handling, integration points, backward compatibility, performance needs
+- Present all questions to the user in a clear, organized list
+- **Wait for answers before proceeding to design**
+
+If the user says "whatever you think is best", provide your recommendation and get explicit confirmation.
+
+### 4. Specify
 
 - Gather requirements: problem statement, user stories, acceptance criteria, out-of-scope items, and dependencies
 - Identify non-functional requirements (performance, security, scalability)
 - Analyze the codebase for existing patterns to follow, code to modify vs. create, integration points, and test coverage requirements
 
-### 3. Design & Present
+### 5. Design & Present
 
 - **Define "Definition of Done"** — before planning milestones, define observable truths that must be TRUE when the feature is complete (see `@references/templates.md` for format)
   - Each truth must be verifiable: a file exists, a test passes, an endpoint responds, a query returns expected data
@@ -108,7 +130,7 @@ Guide structured feature development from specification through incremental impl
 - Show: feature specification, Definition of Done, milestone breakdown, files to create/modify
 - If changes requested, revise and present again
 
-### 4. Implement
+### 6. Implement
 
 **Only proceed after user approval of the plan.**
 
@@ -119,13 +141,15 @@ After approval, convert the plan into tracked tasks:
 
 For each milestone:
 1. Mark the milestone task as `in_progress` via `TaskUpdate`
-2. Write tests first encoding the acceptance criteria (TDD)
-3. Implement minimum viable code to pass the tests
-4. Verify against the milestone's verification criteria
-5. Mark the milestone task as `completed` via `TaskUpdate`
-6. Commit with clear message following project conventions
+2. Write test encoding the acceptance criterion
+3. Run the test — confirm it FAILS (if it passes, investigate: test may be wrong or feature may already exist)
+4. Implement minimum viable code to pass the test
+5. Run the test — confirm it PASSES (and no other tests broke)
+6. Refactor if needed (tests must remain green)
+7. Mark the milestone task as `completed` via `TaskUpdate`
+8. Commit with clear message following project conventions
 
-### 5. Verify
+### 7. Verify
 
 Perform three-level verification against the Definition of Done:
 
@@ -149,6 +173,7 @@ Perform three-level verification against the Definition of Done:
 - Check that implementation follows existing codebase patterns identified in Pre-flight
 - Note any deferred items or out-of-scope work for follow-up
 - If feature warrants it, recommend `/review` for formal code review or `/verify` for comprehensive completeness check
+- Apply verification discipline (`@.claude/skills/verify/references/verification-discipline.md`) — no completion claim without fresh evidence
 
 ## Output Principles
 

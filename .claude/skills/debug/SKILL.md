@@ -81,8 +81,14 @@ Systematically diagnose and fix bugs using a structured reproduce-isolate-hypoth
 
 - Narrow the scope from "something is broken" to "this specific code path is wrong"
 - Read the error message / stack trace carefully — start from the immediate failure site
-- Trace backward through the call chain to find where correct behavior diverges from actual
+- Trace backward through the call chain to find where correct behavior diverges from actual (see `references/root-cause-tracing.md`)
 - Identify the **boundary**: the last point where data/state is correct and the first point where it's wrong
+
+**Multi-component systems** (API → service → database, CI → build → deploy):
+1. Add diagnostic logging at each component boundary
+2. Log what enters and exits each component
+3. Run once to gather evidence showing WHERE in the chain it breaks
+4. Then investigate the specific failing component — don't guess across boundaries
 
 **Analysis paralysis guard:** If you've read 5+ files without a hypothesis:
 1. Stop reading new files
@@ -110,6 +116,12 @@ Systematically diagnose and fix bugs using a structured reproduce-isolate-hypoth
 - If a workaround is necessary (e.g., third-party bug), document it with a comment explaining why
 - If the fix is in a hot path, consider performance implications
 - If the fix changes behavior, check for dependent code that relies on the old (buggy) behavior
+- After fixing, consider whether defense-in-depth validation is needed (see `references/defense-in-depth.md`)
+
+**3+ fixes failed — stop and question the architecture:**
+- Pattern indicators: each fix reveals new shared state or coupling, fixes require massive refactoring, each fix creates symptoms elsewhere
+- These signal an architectural problem, not an implementation bug
+- Action: stop attempting fixes, discuss with user whether the pattern is fundamentally sound before proceeding
 
 ### 5. Verify
 
@@ -167,6 +179,13 @@ Systematically diagnose and fix bugs using a structured reproduce-isolate-hypoth
 | Fix requires large refactor | Report the scope, ask user whether to proceed or apply a targeted workaround |
 
 Never silently abandon a debugging path — if switching approaches, explain why the previous path was unproductive.
+
+## Supporting Techniques
+
+| Reference | Purpose |
+|-----------|---------|
+| `references/root-cause-tracing.md` | 5-step backward trace through the call stack to find root cause |
+| `references/defense-in-depth.md` | Add validation at multiple layers after finding root cause |
 
 ## Related Skills
 

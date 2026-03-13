@@ -11,8 +11,8 @@
 
 ```text
 .claude/
-├── agents/          # 3 reusable subagent definitions
-├── skills/          # 28 specialized workflow skills
+├── agents/          # 5 reusable subagent definitions
+├── skills/          # 29 specialized workflow skills
 ├── rules/           # Modular instruction files
 └── settings.json    # Project-wide settings
 ```

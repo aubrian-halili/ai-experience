@@ -23,6 +23,8 @@ Verify that an implementation fully achieves its intended goals using three-leve
 - **Confidence markers** — distinguish between verified facts and assumptions; surface uncertainty explicitly
 - **Goal-backward** — verify against the intended outcome (observable truths), not just the code that was written
 
+See `@references/verification-discipline.md` for the behavioral rules that apply during any workflow, not just when `/verify` is invoked.
+
 ## Rationalization Guard
 
 | Excuse | Reality |
