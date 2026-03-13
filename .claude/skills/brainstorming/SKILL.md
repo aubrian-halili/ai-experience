@@ -59,6 +59,7 @@ Explore the solution space for a problem by comparing approaches, surfacing trad
 ### 1. Frame the Problem
 
 - Parse `$ARGUMENTS` and identify the core design question
+- Explore project context first: check relevant files, docs, and recent commits before asking questions
 - Search the codebase for relevant context: existing patterns, constraints, dependencies
 - Ask clarifying questions ONE AT A TIME until the problem is well-defined
 - Identify explicit constraints (must-haves) vs. implicit assumptions (might-haves)
@@ -67,6 +68,7 @@ Explore the solution space for a problem by comparing approaches, surfacing trad
 - No `$ARGUMENTS` provided → ask user what to brainstorm
 - Problem is already well-defined with a clear solution → suggest `/plan` instead
 - Problem is a bug, not a design question → suggest `/debug` instead
+- Problem spans multiple independent subsystems → suggest decomposing into sub-problems first, brainstorm each separately
 
 ### 2. Generate Options
 
@@ -101,10 +103,12 @@ Add dimensions relevant to the specific problem. Remove irrelevant ones.
 - Explain what you'd give up by choosing this option
 - Note any assumptions that should be validated before committing
 - If no clear winner exists, say so — present the deciding factors and let the user choose
+- For complex problems, present the recommendation in sections — get confirmation on each before continuing
 
 ### 5. Converge
 
 - After user selects a direction, summarize the decision and rationale
+- If the brainstorming involved significant architectural decisions, offer to write a brief design note to `.planning/design-<topic>.md` summarizing: chosen direction, rejected alternatives with rationale, key constraints. This is optional — skip for straightforward decisions.
 - Recommend next step: `/plan` to formalize into implementation phases
 - Do NOT begin implementation — brainstorming ends at convergence
 

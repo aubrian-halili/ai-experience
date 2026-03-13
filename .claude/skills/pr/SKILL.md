@@ -168,4 +168,5 @@ Never force push or create a PR from the default branch — always verify branch
 | `/feature` | Plan feature before implementing |
 | `/commit` | Commit changes before creating PR |
 | `/review` | Review a PR (yours or others) |
+| `/receiving-review` | Address review feedback on your PR |
 | `/explore` | Understand changes before creating PR |

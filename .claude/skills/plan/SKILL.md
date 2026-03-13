@@ -84,6 +84,15 @@ This is the critical step that prevents "building the wrong thing correctly."
 
 ### 3. Decompose into Phases
 
+**Scope check:** If the work spans multiple independent subsystems, split into separate plans — each plan should produce independently testable software. A plan that requires coordinating 4+ unrelated modules is a sign it needs splitting.
+
+**File Structure Guidance:**
+- Each new file should have a single clear responsibility
+- Prefer smaller focused files over monolithic ones
+- Group files that change together by responsibility, not by technical layer
+- When modifying existing code, follow the established codebase patterns
+- If a planned file would hold multiple unrelated concerns, split it
+
 - Work backward from the observable truths to identify required phases
 - Each phase must have:
   - **Goal**: what this phase achieves (one sentence)
@@ -94,6 +103,25 @@ This is the critical step that prevents "building the wrong thing correctly."
 
 - Order phases by dependency graph, not intuition
 - Each phase should leave the system in a working state
+
+**Task Granularity:**
+- Tasks should decompose into the smallest independently-verifiable steps (2-5 minutes each)
+- Each step should specify: exact file path, what to write/modify, verification command with expected output
+- A fresh agent should be able to complete any single step with only the step description as context
+- If a task requires reading more than 5 files to understand the scope, it's too broad — split it
+- Map out the file structure before listing implementation steps: every file to create or modify with its purpose
+
+### 3.5 Plan Review (Self-Check)
+
+Before presenting the plan, validate it against the checklist in `@references/plan-reviewer-prompt.md`:
+- No TODO markers or placeholder text in any task
+- No steps that say "similar to X" without spelling out the actual content
+- Every task has specific file paths, not vague references
+- Every phase has a verification section with runnable commands
+- No file is planned to hold multiple unrelated responsibilities
+- Plan is under 1000 lines (split into phases/documents if larger)
+
+If any check fails, revise the plan before proceeding. For large plans (5+ phases), consider dispatching this as a subagent review for more rigorous validation.
 
 ### 4. Present Plan
 
