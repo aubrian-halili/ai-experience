@@ -34,24 +34,7 @@ Systematically diagnose and fix bugs using a structured reproduce-isolate-hypoth
 | "I'll just change a few things and see" | Shotgun debugging wastes time and hides causation |
 | "The stack trace tells me everything" | Stack traces show symptoms, not root causes |
 
-## When to Use
-
-### This Skill Is For
-
-- Diagnosing why code is producing unexpected behavior
-- Fixing failing tests
-- Tracing error messages to their root cause
-- Investigating runtime exceptions or crashes
-- Fixing regressions after a change
-
-### Use a Different Approach When
-
-- Understanding how working code operates → use `/explore`
-- Reviewing code quality (not fixing a bug) → use `/review`
-- Implementing new functionality → use `/feature`
-- Verifying completeness (not a bug) → use `/verify`
-
-## Input Classification
+## Input Handling
 
 | Input | Intent | Approach |
 |-------|--------|----------|
@@ -72,7 +55,6 @@ Systematically diagnose and fix bugs using a structured reproduce-isolate-hypoth
 - Record the **expected behavior** vs. **actual behavior**
 
 **Stop conditions:**
-- No `$ARGUMENTS` provided → ask user to describe the bug
 - Cannot reproduce → ask user for more context (environment, steps, data)
 - Bug is intermittent → note flakiness, increase reproduction attempts, check for race conditions
 
@@ -154,17 +136,6 @@ Systematically diagnose and fix bugs using a structured reproduce-isolate-hypoth
 - **Evidence-based** — every claim references `file:line`; never say "the problem is probably..."
 - **Minimal diff** — show only the changed code, not the entire file
 - **Prevention note** — briefly note how this class of bug could be prevented (better types, tests, validation)
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user to describe the bug, error, or failing test |
-| Error message | Parse error, locate throw site, begin isolation |
-| Failing test | Run the test, capture output, trace to root cause |
-| Bug description | Identify reproduction steps, begin systematic diagnosis |
-| Stack trace | Parse frames, read each relevant file, trace to root cause |
-| `regression` + context | Use git history to narrow the introducing change |
 
 ## Error Handling
 

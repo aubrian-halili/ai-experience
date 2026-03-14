@@ -19,22 +19,7 @@ Explore PostgreSQL database schemas and run read-only queries using the qred-pos
 - **Explicit scope** — State the target database and schema before every operation
 - **Progressive exploration** — Start with high-level overview (databases → schemas → tables) before diving into detailed queries; guide users toward discovering structure naturally
 
-## When to Use
-
-### This Skill Is For
-
-- Discovering available databases, schemas, and tables in PostgreSQL
-- Inspecting table structures (columns, types, constraints)
-- Running read-only SQL queries to explore data
-- Understanding database schema without leaving the conversation
-
-### Use a Different Approach When
-
-- Investigating application code → use `/explore`
-- Visualizing database relationships as ERD → use `/diagram`
-- Making database changes → this skill is read-only, use appropriate database tools
-
-## Input Classification
+## Input Handling
 
 Parse `$ARGUMENTS` to understand what the user wants:
 
@@ -55,12 +40,11 @@ Parse `$ARGUMENTS` to understand what the user wants:
 - Call `mcp__qred-postgres__list_databases` to verify the MCP server is reachable
 - Set default database: `qred_se_db`
 - Set default schema: `public`
-- Parse `$ARGUMENTS` and map to the appropriate workflow (Overview, Table Schema, Query Data, Schema Tables, or Database Schemas) using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate workflow (Overview, Table Schema, Query Data, Schema Tables, or Database Schemas) using the Input Handling table
 
 **Stop condition:**
 - MCP server unreachable → "The qred-postgres MCP server is not configured. Install and configure it to use this skill."
 
-**Default routing:** No arguments provided → proceed with Overview workflow (list databases, schemas, and tables)
 
 ### 2. Execute
 
@@ -103,18 +87,6 @@ Based on intent, use the appropriate MCP tool:
 - **Structured presentation** — Use markdown tables for schemas (Column Name | Data Type | Nullable | Constraints) and query results (proper headers); use bullet lists for databases, schemas, and table names; always include row counts and indicate if results are truncated
 - **Bounded results** — For large result sets, show first 50 rows with clear truncation notice (e.g., "Showing 50 of 1,247 rows")
 - **Next steps** — Suggest related queries or tables to explore based on results; if exploring schema that maps to application models, reference relevant code files
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | List all databases, show schemas and tables in `qred_se_db` |
-| `users` | Show schema for `public.users` table |
-| `public.orders` | Show schema for `public.orders` table |
-| `SELECT * FROM users LIMIT 10` | Query first 10 users |
-| `accounting` | List tables in `accounting` schema |
-| `other_db` | List schemas in `other_db` database |
-
 
 ## Error Handling
 

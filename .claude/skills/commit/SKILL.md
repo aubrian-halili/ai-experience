@@ -29,20 +29,7 @@ Generate semantic commit messages following project conventions (see CLAUDE.md).
 > - NEVER commit without user approval
 > - ONE logical change per commit — split if mixed
 
-## When to Use
-
-### This Skill Is For
-
-- Creating semantic commit messages
-- Staging and committing changes
-
-### Use a Different Approach When
-
-- Creating a pull request → use `/pr`
-- Advanced multi-commit workflows → see `@references/advanced-workflows.md`
-- Generating changelog entries → see `@references/changelog.md`
-
-## Input Classification
+## Input Handling
 
 Determine commit workflow from `$ARGUMENTS`:
 
@@ -121,15 +108,6 @@ Show the result to the user to confirm the commit was created successfully.
 - **Sensitive file warnings** — flag `.env`, credentials, and key files prominently before they can be committed
 - **Message preview** — show the complete commit message (subject + body) formatted exactly as it will appear in git log
 - **Confirmation gate** — explicitly ask the user to approve before executing any git commands that modify state
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Analyze changes and generate commit message |
-| `"fix login timeout"` | Use as basis for commit message, apply formatting |
-| `auth` | Use as scope hint, analyze auth-related changes |
-| `--amend` | Amend last commit with warning about pushed commits |
 
 ## Error Handling
 

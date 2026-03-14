@@ -19,22 +19,7 @@ Create Jira tickets from the current conversation context with structured templa
 - **Graceful degradation** — if MCP is unavailable, generate copy-ready content for manual entry rather than failing
 - **Duplicate awareness** — search for existing tickets before creating new ones; avoid cluttering the backlog
 
-## When to Use
-
-### This Skill Is For
-
-- Creating bug reports from issues discovered during a session
-- Creating task tickets from work identified in conversation
-- Creating story tickets from user-facing feature requests
-- Filing issues with context from the current discussion (problem, investigation, solution)
-
-### Use a Different Approach When
-
-- Planning a feature first → use `/feature`
-- Creating a PR after implementation → use `/pr`
-- Committing changes with ticket reference → use `/commit`
-
-## Input Classification
+## Input Handling
 
 Determine ticket creation intent from `$ARGUMENTS`:
 
@@ -50,7 +35,7 @@ Determine ticket creation intent from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent (Type Keyword, Type + Title, Project + Type, Project + Type + Title, or Infer from Conversation) using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate intent (Type Keyword, Type + Title, Project + Type, Project + Type + Title, or Infer from Conversation) using the Input Handling table
 - Resolve project: user-provided project code from arguments, or default to `UN`
 - Resolve ticket type (priority order):
   1. User-provided type (`bug`, `task`, or `story` in arguments)
@@ -131,18 +116,6 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 - **Actionable results** — include ticket ID, URL, suggested branch name, and workflow next steps after creation
 - **Template compliance** — all tickets follow structured templates with required fields filled; incomplete sections noted explicitly
 - **Workflow continuity** — connect the ticket to downstream workflows: create branch → implement → `/commit` → `/pr`
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Use `UN` project, infer type from conversation |
-| Type keyword (`bug`, `task`, `story`) | Use `UN` project with specified type |
-| Type + title (`bug fix login timeout`) | Use `UN` project with specified type and title |
-| Project + type (`PROJ bug`) | Use specified project with type |
-| Project + type + title (`PROJ bug fix login`) | Use specified project with type and title |
-
-**Modifiers:** `--assignee <user>` can appear anywhere in arguments to assign the ticket. A leading all-caps token before `bug`/`task`/`story` (matching `[A-Z]+`) is treated as a project override.
 
 ## Error Handling
 

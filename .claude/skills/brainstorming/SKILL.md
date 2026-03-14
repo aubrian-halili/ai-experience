@@ -24,24 +24,7 @@ Explore the solution space for a problem by comparing approaches, surfacing trad
 > - NO convergence without presenting at least 2 viable options
 > - If the user jumps to implementation, redirect to `/plan` or `/feature`
 
-## When to Use
-
-### This Skill Is For
-
-- Exploring multiple solutions before picking one
-- Comparing architectural approaches for a new feature
-- Evaluating technology or library choices
-- Challenging assumptions about a design direction
-- Pre-plan ideation when the path forward is unclear
-
-### Use a Different Approach When
-
-- Solution is already chosen, need implementation plan → use `/plan`
-- Need to understand existing code → use `/explore`
-- Need architecture documentation → use `/architecture`
-- Ready to build → use `/feature`
-
-## Input Classification
+## Input Handling
 
 | Input | Intent | Approach |
 |-------|--------|----------|
@@ -61,7 +44,6 @@ Explore the solution space for a problem by comparing approaches, surfacing trad
 - Identify explicit constraints (must-haves) vs. implicit assumptions (might-haves)
 
 **Stop conditions:**
-- No `$ARGUMENTS` provided → ask user what to brainstorm
 - Problem is already well-defined with a clear solution → suggest `/plan` instead
 - Problem is a bug, not a design question → suggest `/debug` instead
 - Problem spans multiple independent subsystems → suggest decomposing into sub-problems first, brainstorm each separately
@@ -114,15 +96,6 @@ Add dimensions relevant to the specific problem. Remove irrelevant ones.
 - **Honest trade-offs** — never present a "clear winner" unless the trade-offs genuinely favor one option
 - **Codebase grounding** — reference actual files and patterns, not theoretical best practices
 - **Decision, not code** — output is a direction with rationale, never implementation
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user what problem to brainstorm |
-| Problem statement | Full brainstorming workflow |
-| Technology comparison | Skip framing, go directly to option generation |
-| Vague direction | Emphasize problem framing with clarifying questions |
 
 ## Error Handling
 

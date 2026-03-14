@@ -32,21 +32,7 @@ Avoid over-refactoring that could:
 - Remove helpful intermediate variables that aid debugging
 - Extract methods that are only called once and obscure the flow
 
-## When to Use
-
-### This Skill Is For
-
-- Code quality analysis and refactoring suggestions
-- SOLID principle violation detection
-- Code smell identification with refactoring strategies
-
-### Use a Different Approach When
-
-- Reviewing for correctness, security, or performance → use `/review`
-- Implementing specific design patterns → use `/patterns`
-- Addressing structural/architectural issues → use `/architecture`
-
-## Input Classification
+## Input Handling
 
 Determine analysis scope from `$ARGUMENTS`:
 
@@ -62,11 +48,10 @@ Determine analysis scope from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate scope (Single File, Directory, Component Search, Line Range, or Ask User) using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate scope (Single File, Directory, Component Search, Line Range, or Ask User) using the Input Handling table
 - Validate target exists and is readable
 
 **Stop conditions:**
-- No arguments provided → ask user to specify a file or component
 - Target file or component not found → report and stop
 - Target is unreadable or binary → report and stop
 - Scope is overly broad (e.g., entire repo root) → ask user to narrow scope
@@ -133,16 +118,6 @@ Group findings by priority (High first, then Medium, then Low).
 - **Concrete fixes** — every finding includes a specific refactoring with diff example, not just a complaint
 - **Principle attribution** — link each finding to the SOLID principle or code smell it violates
 - **Explicit completeness** — state which analysis dimensions were covered and which could not be evaluated
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user to specify a file or component |
-| `src/auth/login.ts` | Analyze the specified file |
-| `src/auth/` | Analyze files in the directory, prioritize by complexity |
-| `LoginService` | Search for the component by name, analyze matching files |
-| `src/auth/login.ts:50-100` | Focus analysis on the specified line range |
 
 ## Error Handling
 

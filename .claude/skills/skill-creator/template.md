@@ -21,20 +21,7 @@ allowed-tools: [tools this skill needs, e.g., Read, Grep, Glob]
 - **[Principle 2]** — [explanation]
 - **[Principle 3]** — [explanation]
 
-## When to Use
-
-### This Skill Is For
-
-- [Primary use case 1]
-- [Primary use case 2]
-- [Primary use case 3]
-
-### Use a Different Approach When
-
-- [Exclusion case 1] → use `/[other-skill]`
-- [Exclusion case 2] → use `/[other-skill]`
-
-## Input Classification
+## Input Handling
 
 Use `$ARGUMENTS` if provided ([argument description]).
 
@@ -49,7 +36,7 @@ First, classify the request type:
 
 ### 1. Pre-flight
 
-- Classify request using the Input Classification table
+- Classify request using the Input Handling table
 - [Pre-flight check 1]
 - [Pre-flight check 2]
 
@@ -71,13 +58,6 @@ First, classify the request type:
 
 - **[Principle 1]** — [explanation]
 - **[Principle 2]** — [explanation]
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | [What to do when no argument is provided] |
-| [Argument type] | [Behavior] |
 
 ## Error Handling
 

@@ -38,24 +38,7 @@ Process, evaluate, and implement code review feedback with technical rigor.
 | "Adding this won't hurt" | Unnecessary additions are maintenance burden; check YAGNI first |
 | "I should be agreeable to move the PR forward" | Incorrect implementations waste more time than a clarifying question |
 
-## When to Use
-
-### This Skill Is For
-
-- Processing code review comments on a PR
-- Evaluating whether reviewer suggestions are technically sound
-- Implementing confirmed feedback changes
-- Pushing back on suggestions that don't fit the codebase
-- Replying to review threads on GitHub
-
-### Use a Different Approach When
-
-- Giving a code review → use `/review`
-- Creating a PR → use `/pr`
-- Committing changes → use `/commit`
-- Debugging a failing CI check → use `/debug`
-
-## Input Classification
+## Input Handling
 
 | Input | Intent | Approach |
 |-------|--------|----------|
@@ -195,16 +178,6 @@ Report to the user: changes made, replies posted, remaining items (if any), and 
 - **Evidence-based pushback** — every disagreement includes file paths, grep results, or test output
 - **Batch presentation** — show all planned changes and draft replies together for single approval
 - **No performative language** — in PR comments, communicate through actions and technical reasoning only
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Detect PR from current branch, address all pending feedback |
-| PR number (e.g., `123`, `#123`) | Address feedback on the specified PR |
-| PR URL | Extract PR number and address feedback |
-| `latest` | Same as (none) — use current branch's PR |
-| Quoted comment text | Address that specific piece of feedback only |
 
 ## Error Handling
 

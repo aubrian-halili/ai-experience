@@ -21,22 +21,7 @@ Systematically explore and explain how existing functionality works in the codeb
 - **Surface patterns** — identify design patterns, architectural decisions, and implicit assumptions; understanding the "why" matters as much as the "what"
 - **Explicit gaps** — flag incomplete traces, dead ends, and areas not explored; what you didn't find is as important as what you did
 
-## When to Use
-
-### This Skill Is For
-
-- Understanding how existing features and flows work end-to-end
-- Tracing execution paths through the codebase
-- Mapping component interactions and dependencies
-- Investigating module structure and design patterns
-
-### Use a Different Approach When
-
-- Visualizing architecture → use `/diagram`
-- Reviewing code quality → use `/review` or `/clean-code`
-- Designing new architecture → use `/architecture`
-
-## Input Classification
+## Input Handling
 
 Determine exploration workflow from `$ARGUMENTS`:
 
@@ -64,11 +49,10 @@ Determine exploration workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent (Feature Name, File Path, Directory, Flow Description, Component Name, or Ask User) using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate intent (Feature Name, File Path, Directory, Flow Description, Component Name, or Ask User) using the Input Handling table
 - Select exploration strategy from the Exploration Strategies section above and determine depth: Surface (quick orientation) | Standard (full flow) | Deep (internals + edge cases)
 
 **Stop conditions:**
-- No `$ARGUMENTS` provided → ask user what to investigate
 - Target not found in codebase → report and stop
 - Target is ambiguous (multiple matches) → ask user to clarify
 - Scope is overly broad (e.g., "how does everything work") → ask user to narrow focus
@@ -117,18 +101,6 @@ Determine exploration workflow from `$ARGUMENTS`:
 - **Structured presentation** — use tables for entry points, components, and dependencies; use bullet lists for findings and observations
 - **Completeness markers** — tag explored paths as `[High Confidence]` or `[Needs Verification]`; tag unexplored areas as `[Incomplete]`
 - **Actionable next steps** — conclude with recommended follow-up skills (`/diagram`, `/review`, `/architecture`) when findings warrant deeper analysis
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user what to investigate |
-| Feature name (e.g., `authentication`) | Search for related files and trace the feature end-to-end |
-| File path (e.g., `src/auth/login.ts`) | Start exploration from the specified file |
-| Directory (e.g., `src/auth/`) | Explore the module structure and interactions |
-| Flow description (e.g., `user login flow`) | Trace the flow from trigger to completion |
-| Component name (e.g., `AuthService`) | Search for the component, trace its usage and dependencies |
-| `overview` / `map` / `codebase` | Produce structured codebase summary (tech stack, layers, conventions, integrations) |
 
 ## Error Handling
 

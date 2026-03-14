@@ -21,21 +21,7 @@ Create pull requests with auto-generated titles and descriptions from commit his
 - **Safety-first** — never force push, never push to main, never skip divergence checks; ask before destructive actions
 - **Commit-driven content** — PR title and description are generated from commit history, not invented; quality commits produce quality PRs
 
-## When to Use
-
-### This Skill Is For
-
-- Creating pull requests from feature branches
-- Generating PR titles and descriptions from commits
-- Pushing branches and opening PRs in one step
-
-### Use a Different Approach When
-
-- Committing changes first → use `/commit`
-- Reviewing an existing PR → use `/review`
-- Draft PR workflows → see `@references/draft-workflow.md`
-
-## Input Classification
+## Input Handling
 
 Determine PR workflow from `$ARGUMENTS`:
 
@@ -136,16 +122,6 @@ Show the user: PR number, URL, title, state, and next steps (e.g., request revie
 - **Convention-formatted title** — follows pr-conventions.md format (already loaded)
 - **Structured body** — every PR body includes Jira reference, Summary, Breaking Changes, and Test Plan sections
 - **Actionable result** — after creation, show PR number, URL, and next steps (request reviews, monitor CI)
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Auto-generate title and description |
-| `--draft` | Create as draft PR |
-| PR title text | Use as PR title (ticket ID auto-prefixed) |
-| Branch name | Use as target base branch with `--base` |
-| `--label <name>` | Add label(s) to the PR |
 
 ## Error Handling
 

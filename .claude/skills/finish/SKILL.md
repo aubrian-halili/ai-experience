@@ -81,16 +81,6 @@ If `$ARGUMENTS` specifies an option, skip to execution. Otherwise present all fo
 - Check for orphaned worktrees (`git worktree list`) and offer to prune them
 - Report final state: current branch, any remaining stashed work
 
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Run full workflow with option selection |
-| `pr` | Skip to Create PR (still runs pre-flight) |
-| `merge` | Skip to Merge locally (still runs pre-flight) |
-| `park` | Skip to Park branch (still runs pre-flight) |
-| `discard` | Skip to Discard (still runs pre-flight + confirmation) |
-
 ## Error Handling
 
 | Scenario | Response |

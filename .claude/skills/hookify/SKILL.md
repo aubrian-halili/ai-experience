@@ -19,22 +19,7 @@ Guide creation and management of Claude Code hooks for enforcing behaviors, prot
 - **Fail-safe defaults** — if a hook errors, it should block the action (fail closed) rather than silently allow it
 - **Composable** — each hook does one thing well; combine multiple hooks for layered enforcement
 
-## When to Use
-
-### This Skill Is For
-
-- Creating new hooks for Claude Code events (PreToolUse, PostToolUse, Notification, etc.)
-- Scaffolding hook scripts with proper structure and error handling
-- Validating existing hooks work correctly
-- Common patterns: prevent force-push, enforce lint, block sensitive file edits, notification hooks
-
-### Use a Different Approach When
-
-- Git hooks (pre-commit, pre-push) → standard git hook setup
-- CI/CD pipeline hooks → use `/aws` or CI configuration
-- General automation scripts → write directly
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the hook workflow:
 
@@ -49,7 +34,7 @@ Classify `$ARGUMENTS` to determine the hook workflow:
 
 ### 1. Pre-flight
 
-- Classify hook intent from `$ARGUMENTS` using the Input Classification table
+- Classify hook intent from `$ARGUMENTS` using the Input Handling table
 - Check for existing hooks in `.claude/settings.json` and `.claude/settings.local.json`
 - Identify the target settings file (project-level vs user-level)
 
@@ -154,16 +139,6 @@ See `@references/hook-patterns.md` for detailed pattern implementations.
 - **Security-conscious** — hooks that protect sensitive operations should fail closed
 - **Well-documented** — each hook includes inline comments explaining the logic
 - **Minimal dependencies** — prefer bash + jq; avoid requiring additional tools
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Show available hook events and common patterns, ask what to create |
-| Hook event (e.g., `PreToolUse`) | Scaffold a hook for that event type |
-| Behavior description (e.g., `block editing .env files`) | Design and implement hook for the described behavior |
-| `list` | Inventory all configured hooks across settings files |
-| `validate` | Test all configured hooks for correct permissions and basic functionality |
 
 ## Error Handling
 

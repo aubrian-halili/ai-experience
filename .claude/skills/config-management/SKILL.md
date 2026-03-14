@@ -20,23 +20,7 @@ Audit, sync, and improve CLAUDE.md and related configuration files for consisten
 - **Minimal maintenance burden** — surface actionable discrepancies, not cosmetic suggestions; focus on what breaks workflows
 - **Convention over configuration** — document patterns that are actually followed, not aspirational standards
 
-## When to Use
-
-### This Skill Is For
-
-- Auditing CLAUDE.md for stale skill counts, missing cross-references, or outdated file paths
-- Syncing CLAUDE.md content with actual directory structure
-- Improving CLAUDE.md based on undocumented codebase patterns
-- Verifying rules/ files are properly referenced
-- Post-skill-creation housekeeping
-
-### Use a Different Approach When
-
-- Creating new skills → use `/skill-creator`
-- Reviewing code quality → use `/review`
-- Writing documentation for external consumers → use `/docs`
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the management mode:
 
@@ -51,7 +35,7 @@ Classify `$ARGUMENTS` to determine the management mode:
 
 ### 1. Pre-flight
 
-- Classify mode from `$ARGUMENTS` using the Input Classification table
+- Classify mode from `$ARGUMENTS` using the Input Handling table
 - Verify CLAUDE.md exists at project root
 - Check for CLAUDE.local.md (note its presence but do not modify — it's user-private)
 
@@ -112,15 +96,6 @@ Present findings organized by severity:
 - **Severity-ordered** — errors first, then warnings, then info
 - **Non-destructive** — never suggest removing content that might be intentionally aspirational; flag it as a question instead
 - **Scoped to config** — only touch CLAUDE.md, rules/, and skill cross-references; do not modify skill logic
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Run full audit across all modes |
-| `audit` | Read-only analysis; report discrepancies without suggesting edits |
-| `sync` | Audit + propose specific edits to align CLAUDE.md with reality |
-| `improve` | Audit + sync + suggest additions based on undocumented patterns |
 
 ## Error Handling
 

@@ -206,11 +206,9 @@ validate_recommended_sections() {
     # Check for all canonical body sections (all warnings, not errors)
     local sections=(
         "Philosophy"
-        "When to Use"
-        "Input Classification"
+        "Input Handling"
         "Process"
         "Output Principles"
-        "Argument Handling"
         "Error Handling"
         "Related Skills"
     )

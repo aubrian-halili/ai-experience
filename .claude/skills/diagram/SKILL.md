@@ -21,21 +21,7 @@ Generate architecture diagrams using Mermaid syntax based on the user's descript
 - **Start at highest abstraction** — begin with the most useful abstraction level; zoom in only when asked
 - **Include legends** — when using custom notation or color coding, always provide a legend
 
-## When to Use
-
-### This Skill Is For
-
-- Visualizing system architecture and component interactions
-- Creating flowcharts for process workflows
-- Generating data models (ERD) and class diagrams
-
-### Use a Different Approach When
-
-- Understanding system first → use `/explore`
-- Designing architecture → use `/architecture`
-- Need implementation details beyond visualization → use `/patterns`
-
-## Input Classification
+## Input Handling
 
 Determine diagram workflow from `$ARGUMENTS`:
 
@@ -64,13 +50,12 @@ Determine diagram workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent (Topic/Concept, File Path, Directory, Component Name, or Ask User) using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate intent (Topic/Concept, File Path, Directory, Component Name, or Ask User) using the Input Handling table
 - If analyzing existing code, verify target files are accessible via Glob/Read
 - If from a description, check if enough detail is provided to proceed
 - Classify the request using the Diagram Selection table above
 
 **Stop conditions:**
-- No arguments provided → ask user what to visualize
 - Target file or directory not found → report and stop
 - Description too vague to select a diagram type → ask user to clarify
 - Scope is ambiguous (e.g., "diagram everything") → ask user to narrow focus
@@ -112,16 +97,6 @@ Determine diagram workflow from `$ARGUMENTS`:
 - **Explain key relationships** — after the diagram, call out important connections and components the user should focus on
 - **Surface gaps visually** — use dashed lines, `???` labels, and colored styling for incomplete or unverified sections (not prose disclaimers)
 - **Offer extension paths** — suggest zoom-in options or complementary diagrams for areas that deserve more detail
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user what to visualize |
-| Topic or concept (e.g., `auth flow`) | Generate diagram based on the description |
-| File path (e.g., `src/auth/login.ts`) | Read the file and diagram its structure |
-| Directory (e.g., `src/auth/`) | Read files in the directory and diagram the module |
-| Component name (e.g., `LoginService`) | Search for the component, diagram its interactions |
 
 ## Error Handling
 

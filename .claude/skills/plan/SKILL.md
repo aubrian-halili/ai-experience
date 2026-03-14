@@ -19,24 +19,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases wi
 - **Explicit dependencies** — surface what blocks what; never assume implicit ordering
 - **Plan is a living document** — plans evolve; track state in `.planning/STATE.md` for session continuity
 
-## When to Use
-
-### This Skill Is For
-
-- Breaking down a Jira ticket or epic into implementation phases
-- Planning a feature before using `/feature` to implement it
-- Decomposing ambiguous goals into concrete deliverables
-- Creating a roadmap for multi-session work
-- Resuming work from a previous session using `.planning/STATE.md`
-
-### Use a Different Approach When
-
-- Ready to implement a well-defined feature → use `/feature`
-- Need to understand existing code first → use `/explore`
-- Need high-level architecture decisions → use `/architecture`
-- Debugging an issue → use `/debug`
-
-## Input Classification
+## Input Handling
 
 | Input | Intent | Approach |
 |-------|--------|----------|
@@ -51,13 +34,12 @@ Decompose goals, epics, or Jira tickets into structured implementation phases wi
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
 - **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `mcp__atlassian__getJiraIssue` to ground the plan in actual requirements, acceptance criteria, and priority from Jira. If the MCP tool is unavailable, proceed with user-provided context and note the limitation.
 - Search the codebase for related existing code, patterns, and conventions
 - Check for existing `.planning/STATE.md` — if found, ask whether to resume or start fresh
 
 **Stop conditions:**
-- No `$ARGUMENTS` provided → ask user what to plan
 - Goal is too vague to decompose (e.g., "make it better") → ask user to narrow scope
 - Existing plan found → ask whether to resume, revise, or replace
 
@@ -147,16 +129,6 @@ After user approves the plan, convert phases into tracked tasks:
 - **Verifiable phases** — every phase includes specific verification steps, not just "check that it works"
 - **Dependency clarity** — explicitly state what blocks what; use a dependency list or diagram
 - **Session continuity** — always write `.planning/STATE.md` so work can resume across sessions
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user what to plan |
-| Goal description | Full planning workflow from goal decomposition |
-| Jira ticket ID | Fetch ticket details, then plan |
-| Epic description | Multi-feature roadmap with phase dependencies |
-| `resume` / `continue` | Read `.planning/STATE.md` and resume from current phase |
 
 ## Error Handling
 

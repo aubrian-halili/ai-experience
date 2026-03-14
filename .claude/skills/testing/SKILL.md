@@ -83,24 +83,7 @@ If any of these conditions are true, stop what you're doing. Delete the code and
 - **Rationalizing "just this once"** — check the Rationalization Guard above. If you're making an excuse, that's the signal to be more disciplined, not less.
 - **Test requires more setup than production code** — the test is telling you the design is too coupled. Simplify the design first.
 
-## When to Use
-
-### This Skill Is For
-
-- Writing unit, integration, and E2E tests
-- Creating test strategies for features
-- Analyzing and improving test coverage
-- Test-driven development (TDD) guidance
-- Setting up testing infrastructure
-- Debugging failing tests
-
-### Use a Different Approach When
-
-- Reviewing existing tests for quality → use `/review`
-- Security testing specifically → use `/security`
-- Performance testing → consult performance testing tools
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the testing scope:
 
@@ -117,7 +100,7 @@ Classify `$ARGUMENTS` to determine the testing scope:
 
 ### 1. Pre-flight
 
-- Classify testing scope from `$ARGUMENTS` using the Input Classification table
+- Classify testing scope from `$ARGUMENTS` using the Input Handling table
 - Verify target files/components exist via Glob and Read
 - Detect test framework and runner: search for `jest.config`, `vitest.config`, `mocha`, `.mocharc`, `playwright.config`, or `cypress.config`
 - Check for existing tests: search `tests/`, `__tests__/`, `*.test.ts`, `*.spec.ts` near the target
@@ -254,17 +237,6 @@ Target thresholds:
 - **Descriptive naming** — every test name follows `should [behavior] when [condition]` format; test names are the documentation
 - **Concrete examples** — show complete, runnable test code with realistic test data; never show pseudo-code placeholders
 - **Coverage context** — when reporting coverage, always show before/after comparison and highlight the specific gaps addressed
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user what to test; suggest scanning recently changed files |
-| File path (e.g., `src/auth/login.ts`) | Analyze the file and generate tests for its exported functions |
-| Directory path (e.g., `src/auth/`) | Analyze all files in the directory, prioritize by complexity and coverage gaps |
-| Component name (e.g., `AuthService`) | Locate component files via Grep, generate tests for matching files |
-| Feature description (e.g., `payment flow`) | Trace the feature across the codebase, generate tests at all pyramid levels |
-| Coverage request (e.g., `improve coverage`) | Run coverage analysis only (step 5), report gaps without generating tests |
 
 ## Error Handling
 

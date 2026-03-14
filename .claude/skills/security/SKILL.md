@@ -21,24 +21,7 @@ Provide comprehensive security guidance, vulnerability assessment, and secure-by
 - **Scope before depth** — define assessment boundaries first; thorough analysis of a focused area beats shallow coverage of everything
 - **Practical remediation** — every finding must include a concrete fix; identifying vulnerabilities without actionable guidance wastes effort
 
-## When to Use
-
-### This Skill Is For
-
-- Security audits of code or architecture
-- Vulnerability identification and remediation
-- Threat modeling for features or systems
-- Secure coding guidance and best practices
-- Security review checklists
-- Authentication/authorization design review
-
-### Use a Different Approach When
-
-- General code quality review without security focus → use `/review`
-- Architecture design without specific security concerns → use `/architecture`
-- Compliance documentation → consult compliance specialists
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the assessment scope:
 
@@ -55,7 +38,7 @@ Classify `$ARGUMENTS` to determine the assessment scope:
 
 ### 1. Pre-flight
 
-- Classify assessment scope from `$ARGUMENTS` using the Input Classification table
+- Classify assessment scope from `$ARGUMENTS` using the Input Handling table
 - Verify target files/components exist and are readable
 - For file-based audits: confirm files exist via Glob, read target code
 - For component/feature assessments: locate relevant files via Grep
@@ -158,17 +141,6 @@ For each finding, provide:
 - **Attack narrative** — describe each finding as an attack scenario: who, how, what impact
 - **Actionable remediation** — provide concrete code fixes with diff examples for High and Critical findings
 - **Defense in depth** — for every finding, suggest at least one additional layer of protection beyond the primary fix
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user to specify scope; suggest scanning recently changed files |
-| File path (e.g., `src/auth/login.ts`) | Code audit of the specific file |
-| Directory path (e.g., `src/auth/`) | Code audit of all files in directory |
-| Component name (e.g., `AuthService`) | Locate component files via Grep, audit matching files |
-| Feature description (e.g., `payment flow`) | Trace feature across codebase, assess end-to-end security |
-| Checklist request (e.g., `API checklist`) | Run specific checklist from `@references/checklists.md` |
 
 ## Error Handling
 

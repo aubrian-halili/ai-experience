@@ -17,28 +17,7 @@ argument-hint: "[service name, pattern question, or leave blank for guidance]"
 - **Cost awareness** — Serverless costs scale with usage. Optimize cold starts, right-size memory, use reserved capacity for predictable workloads, and monitor with CloudWatch.
 - **Infrastructure as code** — Every resource lives in SAM/CloudFormation templates. No manual console changes. Templates are the source of truth.
 
-## When to Use
-
-### This Skill Is For
-
-- Writing Lambda function handlers (Node.js/TypeScript)
-- Configuring API Gateway endpoints and integrations
-- Designing DynamoDB table schemas and access patterns
-- Writing SAM/CloudFormation templates
-- Configuring IAM roles and policies
-- Setting up S3 buckets with lifecycle policies
-- Debugging Lambda invocation errors and timeouts
-- Designing event-driven architectures (SQS, SNS, EventBridge)
-
-### Use a Different Approach When
-
-- Frontend React code → use `/react`
-- Pure TypeScript design → use `/typescript`
-- General testing strategy → use `/testing`
-- Architecture decision records → use `/architecture`
-- Non-AWS security patterns → use `/security`
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the serverless workflow scope:
 
@@ -55,7 +34,7 @@ Classify `$ARGUMENTS` to determine the serverless workflow scope:
 
 ### 1. Pre-flight
 
-- Classify serverless workflow scope from `$ARGUMENTS` using the Input Classification table
+- Classify serverless workflow scope from `$ARGUMENTS` using the Input Handling table
 - Find existing SAM/CloudFormation templates (`template.yaml`, `template.yml`, `*.template.*`)
 - Check `samconfig.toml` for deployment configuration
 - Scan for existing Lambda handlers and their runtime
@@ -63,7 +42,6 @@ Classify `$ARGUMENTS` to determine the serverless workflow scope:
 - Check for existing IAM policies and roles
 
 **Stop conditions:**
-- No `$ARGUMENTS` provided → ask user to specify a service, resource, or question
 - Referenced file or template not found → report missing path, ask user to verify
 - Request is outside AWS serverless scope (e.g., EC2 instances, container orchestration) → note limitation, suggest appropriate tools
 - No SAM/CloudFormation templates and no handler code found → offer to scaffold a new project structure
@@ -124,17 +102,6 @@ The user controls all deployment actions (`sam deploy`, `aws` CLI commands).
 - **Least privilege** — Every IAM policy is scoped to specific actions and resources.
 - **Production-ready handlers** — Lambda handlers use TypeScript with AWS SDK v3 types, structured error handling, and CloudWatch-compatible logging.
 - **Cost conscious** — Recommendations include cost implications when relevant.
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| _(empty)_ | Ask user to specify a service, resource, or question |
-| `Lambda for processing uploads` | Design S3-triggered Lambda with handler and template |
-| `template.yaml` | Read and analyze the SAM template |
-| `deploy user-api` | Apply deployment workflow for the specified service |
-| `debug Lambda timeout` | Diagnose timeout with CloudWatch and optimization steps |
-| `single-table design` | Explain DynamoDB single-table design pattern from references |
 
 ## Error Handling
 
