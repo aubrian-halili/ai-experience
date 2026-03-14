@@ -4,7 +4,7 @@ description: >-
   User asks to "create a PR", "open a pull request", "push and create PR",
   or mentions "pull request" in context of creating one.
   Not for: reviewing an existing PR (use /review), committing without pushing (use /commit).
-argument-hint: "[optional: --draft, target branch, or PR title]"
+argument-hint: "[optional: --ready, target branch, or PR title]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob, mcp__atlassian__getJiraIssue, mcp__atlassian__transitionJiraIssue
 disable-model-invocation: true
 ---
@@ -27,8 +27,8 @@ Determine PR workflow from `$ARGUMENTS`:
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| (none) | Full PR workflow | Steps 1-4; auto-generate title and description |
-| `--draft` | Draft PR | Steps 1-4; add `--draft` flag |
+| (none) | Full PR workflow | Steps 1-4; auto-generate title and description (draft by default) |
+| `--ready` | Non-draft PR | Steps 1-4; skip `--draft` flag |
 | PR title text | Custom title | Steps 1-4; use provided title (auto-prefix ticket ID) |
 | Branch name | Target base branch | Steps 1-4; use as `--base` argument |
 | `--label <name>` | Labeled PR | Steps 1-4; add label to PR |
@@ -37,7 +37,7 @@ Determine PR workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight Checks
 
-Parse `$ARGUMENTS` for flags (`--draft`, `--base`, `--label`) and gather branch state:
+Parse `$ARGUMENTS` for flags (`--ready`, `--base`, `--label`) and gather branch state:
 
 ```bash
 BRANCH=$(git branch --show-current)
@@ -56,7 +56,7 @@ EXISTING_PR=$(gh pr list --head "$BRANCH" --json number,url --jq '.[0].url // em
 
 ### 2. Prepare & Present for Review
 
-Use `$ARGUMENTS` if provided (handles `--draft`, custom title, or target branch).
+Use `$ARGUMENTS` if provided (handles `--ready`, custom title, or target branch). PRs are created as drafts by default.
 
 **Title generation** (priority order):
 1. User-provided title (auto-prefix ticket ID if missing)
@@ -82,7 +82,7 @@ Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr
 ```
 
 **Present to user:**
-- Show the full PR details: ticket ID, title, body, flags (`--draft`, `--base <branch>`)
+- Show the full PR details: ticket ID, title, body, flags (draft by default, `--ready` to override, `--base <branch>`)
 - Ask the user to review and confirm before proceeding
 - If changes requested, regenerate and present again
 
@@ -96,14 +96,15 @@ Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr
 # Push branch if needed (check if remote exists first)
 git push -u origin $(git branch --show-current)
 
-# Create PR (use body as previewed in Step 2)
-gh pr create --title "<TICKET-ID> <type>(<scope>): <description>" --body "$(cat <<'EOF'
+# Create PR as draft by default (use body as previewed in Step 2)
+# Omit --draft only if user passed --ready flag
+gh pr create --draft --title "<TICKET-ID> <type>(<scope>): <description>" --body "$(cat <<'EOF'
 <body from Step 2>
 EOF
 )"
 ```
 
-Add `--draft` for work-in-progress, `--base <branch>` for non-main target, `--label <name>` to add labels.
+PRs are created as drafts by default. Add `--ready` to skip draft mode, `--base <branch>` for non-main target, `--label <name>` to add labels.
 
 ### 4. Verify & Link
 
