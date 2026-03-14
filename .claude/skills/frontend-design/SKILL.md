@@ -19,26 +19,7 @@ Guide creation of distinctive, production-grade interfaces with strong visual hi
 - **Responsive by default** — design for the smallest screen first, then enhance; breakpoints should feel natural, not forced
 - **Restraint over decoration** — fewer visual elements with more purpose; whitespace is a design tool, not wasted space
 
-## When to Use
-
-### This Skill Is For
-
-- Creating or refining design systems (spacing, typography, color scales)
-- Improving visual quality of existing components
-- Accessibility audits and WCAG compliance
-- Responsive layout strategies and breakpoint design
-- Component composition and visual hierarchy decisions
-- CSS architecture and naming conventions
-- Animation and micro-interaction guidance
-
-### Use a Different Approach When
-
-- React component logic and state → use `/react`
-- Building quick prototypes → use `/playground`
-- General code quality → use `/review` or `/clean-code`
-- Architecture decisions → use `/architecture`
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the design scope:
 
@@ -55,7 +36,7 @@ Classify `$ARGUMENTS` to determine the design scope:
 
 ### 1. Pre-flight
 
-- Classify design scope from `$ARGUMENTS` using the Input Classification table
+- Classify design scope from `$ARGUMENTS` using the Input Handling table
 - Check for existing design tokens, theme files, or CSS variables in the project
 - Identify the CSS approach: CSS modules, styled-components, Tailwind, vanilla CSS
 - Look for existing component library usage (MUI, Radix, shadcn, etc.)
@@ -108,17 +89,6 @@ When writing or modifying CSS/components:
 - **Measurable standards** — cite specific WCAG criteria, contrast ratios, and spacing values
 - **Progressive enhancement** — suggestions should improve without breaking existing functionality
 - **Framework-aware** — adapt recommendations to the project's CSS approach
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask for component, page, or design concern to focus on |
-| Component name | Design/audit the component with full design checklist |
-| Page/feature name | Layout design with visual hierarchy and responsive strategy |
-| Design token (e.g., `spacing`, `typography`) | Provide scale and usage guidelines |
-| File path | Read and audit the file's design quality |
-| `accessibility` or `a11y` | Run accessibility-focused audit |
 
 ## Error Handling
 

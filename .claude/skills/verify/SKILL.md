@@ -32,24 +32,7 @@ See `@references/verification-discipline.md` for the behavioral rules that apply
 | "Tests pass so it's complete" | Passing tests verify behavior, not wiring or substance |
 | "It's just a config change, no verification needed" | Config errors are silent failures; verify the runtime loads the value |
 
-## When to Use
-
-### This Skill Is For
-
-- Verifying a feature implementation is complete (not just "code exists")
-- Checking implementation against a plan's observable truths
-- Scanning for stubs, placeholders, and incomplete wiring
-- Post-implementation quality gate before PR creation
-- Validating that acceptance criteria from a Jira ticket are met
-
-### Use a Different Approach When
-
-- Reviewing code quality or style → use `/review`
-- Understanding how code works → use `/explore`
-- Planning what to build → use `/plan`
-- Debugging a failing implementation → use `/debug`
-
-## Input Classification
+## Input Handling
 
 | Input | Intent | Approach |
 |-------|--------|----------|
@@ -115,7 +98,7 @@ Actively scan for these patterns that indicate incomplete implementation:
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
 - If verifying against a plan, read `.planning/STATE.md` or the specified plan file
 - Extract observable truths or acceptance criteria to verify against
 - Identify the scope of files and modules to check
@@ -174,17 +157,6 @@ Include:
 - **Evidence always** — every PASS or FAIL cites `file:line`; never claim status without proof
 - **Severity-ranked findings** — Critical > High > Medium > Low; address Critical items first
 - **Actionable recommendations** — for every FAIL or PARTIAL, suggest the specific fix needed
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Check for `.planning/STATE.md`; if not found, ask user |
-| Plan file path | Extract observable truths from plan, run full verification |
-| Feature name | Discover feature scope in codebase, run full verification |
-| Acceptance criteria | Parse criteria, map to code artifacts, run full verification |
-| Directory path | Anti-pattern scan + wiring check on the specified module |
-| `stubs` / `todos` | Focused anti-pattern scan across entire codebase |
 
 ## Error Handling
 

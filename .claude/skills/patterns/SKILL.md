@@ -18,23 +18,7 @@ Provide guidance on selecting and implementing design patterns for specific prob
 - **Codebase alignment** — patterns must fit the project's language idioms, existing conventions, and team familiarity
 - **Proven need** — patterns solve recurring, demonstrated problems, not hypothetical future ones
 
-## When to Use
-
-### This Skill Is For
-
-- Recommending design patterns for specific problems
-- Explaining and implementing specific patterns
-- Comparing pattern alternatives with trade-offs
-- Refactoring code smells using patterns
-- Validating pattern usage
-
-### Use a Different Approach When
-
-- Reviewing code quality → use `/clean-code` or `/review`
-- Making architectural decisions → use `/architecture`
-- Understanding existing code → use `/explore`
-
-## Input Classification
+## Input Handling
 
 Determine pattern workflow from `$ARGUMENTS`:
 
@@ -50,13 +34,12 @@ Determine pattern workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent (Recommend Pattern, Explain Pattern, Compare Patterns, Analyze Existing Code, or Determine Intent) using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate intent (Recommend Pattern, Explain Pattern, Compare Patterns, Analyze Existing Code, or Determine Intent) using the Input Handling table
 - Search codebase for existing pattern usage
 - Check for architecture docs or ADRs that constrain pattern choices
 
 **Stop conditions:**
 
-- No `$ARGUMENTS` provided → ask user what problem to solve or pattern to investigate
 - Problem description too vague to classify → ask user to describe the specific behavior or structure problem
 - Request is actually an architecture decision → redirect to `/architecture`
 
@@ -100,16 +83,6 @@ Determine pattern workflow from `$ARGUMENTS`:
 - **Implementation in context** — show pattern code in the project's language and style, not textbook examples; reuse existing abstractions
 - **Trade-off transparency** — explicitly state what the pattern costs (complexity, indirection, learning curve) alongside what it solves
 - **Confidence signaling** — mark recommendations as `[High Confidence]` or `[Needs Verification]` so the user knows how certain the advice is
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user what problem to solve or pattern to investigate |
-| Problem description (`handling multiple payment methods`) | Analyze problem and recommend suitable patterns |
-| Pattern name (`Strategy pattern`) | Explain pattern and show implementation in project context |
-| Comparison (`Factory vs Builder`) | Compare patterns side-by-side with trade-off analysis |
-| File path (`src/payments/processor.ts`) | Read the file, identify pattern opportunities or validate existing patterns |
 
 ## Error Handling
 

@@ -17,28 +17,7 @@ argument-hint: "[component name, pattern question, or leave blank for guidance]"
 - **Server state is not client state** — Use RTK Query for server-cached data. Use Redux slices only for truly client-owned state (UI preferences, form drafts, auth tokens).
 - **Render predictability** — Components are pure functions of props and state. Side effects belong in hooks, thunks, or RTK Query lifecycle callbacks — never in render.
 
-## When to Use
-
-### This Skill Is For
-
-- Creating new React components (functional only)
-- Designing custom hooks
-- Setting up Redux Toolkit slices and store
-- Configuring RTK Query APIs with cache invalidation
-- Writing tests with React Testing Library and Jest
-- Debugging React rendering, state, or performance issues
-- Refactoring class components to functional components
-- Optimizing re-renders with memoization
-
-### Use a Different Approach When
-
-- Pure TypeScript types/utilities → use `/typescript`
-- Backend API implementation → use `/aws`
-- General testing strategy → use `/testing`
-- Architecture decisions (ADRs) → use `/architecture`
-- Security concerns (XSS, auth) → use `/security`
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the React development scope:
 
@@ -55,14 +34,13 @@ Classify `$ARGUMENTS` to determine the React development scope:
 
 ### 1. Pre-flight
 
-- Classify React scope from `$ARGUMENTS` using the Input Classification table
+- Classify React scope from `$ARGUMENTS` using the Input Handling table
 - Detect project setup: check for `package.json` dependencies (`react`, `@reduxjs/toolkit`, `react-router`, etc.)
 - Find existing patterns: scan for component conventions, file structure, naming
 - Identify testing setup: look for Jest config, RTL utilities, MSW handlers
 - Check for existing store configuration and API definitions
 
 **Stop conditions:**
-- No `$ARGUMENTS` and no React file context provided → ask user to specify component, hook, or file
 - Target file or component not found → report and ask user to verify the path
 - No React detected in `package.json` → warn, offer to proceed or scaffold setup
 - Request is not React-specific (general TypeScript, backend) → redirect to appropriate skill
@@ -112,17 +90,6 @@ Apply testing patterns from @references/testing.md:
 - **Testable by design** — Every component and hook is designed for easy testing.
 - **Minimal API surface** — Props interfaces expose only what consumers need.
 - **Pragmatic conventions** — Follow naming conventions (`useXxx`, `XxxSlice`, `xxxApi`); extract shared patterns only after three instances.
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| _(empty)_ | Show available workflows and ask for context |
-| Name or description (e.g., `UserProfile`, `useAuth hook`) | Scaffold component/hook with types and test file |
-| File path (e.g., `src/components/Header.tsx`) | Read file, analyze patterns and issues |
-| Action + target (e.g., `test LoginForm`, `create cart slice`) | Execute targeted workflow (test, scaffold, optimize) |
-| Bug/error description (e.g., `LoginForm re-renders on every keystroke`) | Diagnose root cause, recommend fix |
-| Concept/pattern question (e.g., `RTK Query cache invalidation`) | Explain pattern with examples from references |
 
 ## Error Handling
 

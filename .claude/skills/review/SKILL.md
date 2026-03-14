@@ -45,24 +45,7 @@ These categories produce noise, not value — exclude them regardless of confide
 5. **Out-of-scope missing features** — functionality the PR never intended to add
 6. **TODOs the author already flagged** — the author is aware; re-flagging is redundant
 
-## When to Use
-
-### This Skill Is For
-
-- Reviewing local uncommitted changes
-- Reviewing specific files or components
-- Analyzing pull requests with multi-file changes
-- Providing structured code review feedback
-- Assessing merge readiness
-
-### Use a Different Approach When
-
-- Deep SOLID analysis needed → use `/clean-code`
-- Architectural concerns found → use `/architecture`
-- Design pattern improvements → use `/patterns`
-- Security audit needed → use `/security`
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the review workflow:
 
@@ -106,7 +89,7 @@ Each pass produces findings with:
 
 ### 1. Pre-flight
 
-- Classify review context from `$ARGUMENTS` using the Input Classification table
+- Classify review context from `$ARGUMENTS` using the Input Handling table
 - Verify working directory is a git repo: `git rev-parse --is-inside-work-tree`
 - For local reviews: confirm changes exist via `git diff` and `git diff --cached`
 - For PR reviews: verify `gh` is authenticated: `gh auth status`
@@ -220,16 +203,6 @@ Apply confidence gate — only flag findings scored >= 80.
 - **Location precision** — every finding references `file:line`; for PR reviews include diff hunk context
 - **Actionable fixes** — provide concrete fix suggestions with diff examples for Critical and High findings
 - **Balanced perspective** — include positive observations; a review that only lists problems discourages contributors
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Review local uncommitted changes (`git diff` + `git diff --cached`) |
-| File path (e.g., `src/auth/login.ts`) | Review the specific file |
-| Component name (e.g., `AuthService`) | Locate component files, review matching files |
-| Branch name (e.g., `feature/auth`) | Review branch diff against base branch |
-| PR number/URL (e.g., `123`, `#123`, or PR URL) | Full pull request review via `gh` |
 
 ## Error Handling
 

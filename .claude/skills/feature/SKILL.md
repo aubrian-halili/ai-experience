@@ -36,24 +36,7 @@ Guide structured feature development from specification through incremental impl
 | "The plan is in my head" | Unwritten plans drift; observable truths prevent scope creep |
 | "I'll track tasks manually" | Manual tracking drops items; use TaskCreate for accountability |
 
-## When to Use
-
-### This Skill Is For
-
-- Planning and implementing new features
-- Breaking down features into incremental deliverables
-- Creating feature specifications and acceptance criteria
-- Guiding test-driven development for features
-- Managing feature scope and dependencies
-
-### Use a Different Approach When
-
-- Fixing a bug → address directly or use `/review` to understand the issue
-- Refactoring without new functionality → use `/clean-code`
-- High-level architecture decisions → use `/architecture`
-- Understanding existing features → use `/explore`
-
-## Input Classification
+## Input Handling
 
 | Input | Intent | Approach |
 |-------|--------|----------|
@@ -76,14 +59,13 @@ Guide structured feature development from specification through incremental impl
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent (Feature Name, Feature + Scope, User Story, File Path, or Ask User) using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate intent (Feature Name, Feature + Scope, User Story, File Path, or Ask User) using the Input Handling table
 - **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `mcp__atlassian__getJiraIssue` to pull acceptance criteria, priority, and requirements directly from Jira. If the MCP tool is unavailable, proceed with user-provided context and note the limitation.
 - Determine the Feature Type (Greenfield, Enhancement, Integration, or Migration) from the Feature Types section above
 - Search for related existing features, patterns, and conventions in the codebase
 - Check for existing specs or documentation related to the feature
 
 **Stop conditions:**
-- No `$ARGUMENTS` provided → ask user what feature to develop
 - On main/master branch → warn user and stop; do not implement without explicit consent to work on main
 - Feature already exists → report existing implementation and ask whether to enhance or replace
 - Requirements unclear or contradictory → ask clarifying questions before proceeding
@@ -179,16 +161,6 @@ Perform three-level verification against the Definition of Done:
 - **Milestone-driven progress** — each milestone produces a working, verifiable increment; never deliver untestable intermediate states
 - **Explicit scope boundaries** — clearly state what is in-scope, out-of-scope, and deferred; surface any scope creep immediately
 - **Test-first verification** — every acceptance criterion maps to a test; untested criteria are not verified
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user what feature to develop |
-| Feature name (e.g., `user authentication`) | Full feature workflow for the named feature |
-| Feature + scope (e.g., `add OAuth to login`) | Enhancement workflow focused on the specified scope |
-| User story (e.g., `as a user I want...`) | Extract requirements from the story, proceed with specification |
-| File path (e.g., `src/auth/`) | Scope the feature to the specified module, analyze existing code first |
 
 ## Error Handling
 

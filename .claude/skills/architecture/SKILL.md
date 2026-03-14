@@ -22,23 +22,7 @@ Provide expert guidance on system architecture decisions, design approaches, and
 - **Pragmatic Balance** — Balance architectural purity with delivery pragmatism. Acknowledge YAGNI when appropriate
 - **ADR-Driven** — Structure significant decisions as Architecture Decision Records
 
-## When to Use
-
-### This Skill Is For
-
-- Designing new systems or major features
-- Evaluating architectural alternatives with trade-offs
-- Creating Architecture Decision Records (ADRs)
-- Scaling and performance optimization strategies
-
-### Use a Different Approach When
-
-- Implementing specific design patterns → use `/patterns`
-- Reviewing existing code quality → use `/review`
-- Understanding current system first → use `/explore`
-- Creating visual diagrams only → use `/diagram`
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the appropriate workflow:
 
@@ -57,7 +41,7 @@ Classify `$ARGUMENTS` to determine the appropriate workflow:
 
 ### 1. Pre-flight
 
-- Determine workflow from `$ARGUMENTS` and Input Classification
+- Determine workflow from `$ARGUMENTS` and Input Handling
 - Check for existing architecture docs (`docs/architecture/`, `ARCHITECTURE.md`, `docs/adr/`)
 - Review existing ADRs (pre-loaded above); if none found, numbering starts at `adr-001`
 - If no arguments provided, ask the user what to design or analyze
@@ -128,15 +112,6 @@ ultrathink
 - **Diagram-first** — include mermaid diagrams showing component relationships and data flow; visual clarity precedes detailed text
 - **Actionable blueprints** — map every recommendation to concrete files, build sequence, and verification steps; designs should be immediately implementable
 - **Confidence signaling** — explicitly mark recommendations as `[High Confidence]` or `[Needs Verification]`; surface assumptions and knowledge gaps
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask what to design or analyze |
-| `[topic]` | Architecture design for the given topic |
-| `--adr [title]` | Generate ADR with the given decision title |
-| `--adr` (no title) | Ask for decision title, then generate ADR |
 
 ## Error Handling
 

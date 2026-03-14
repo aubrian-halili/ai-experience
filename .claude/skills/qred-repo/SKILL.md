@@ -20,25 +20,7 @@ Layered repository exploration and code searching across the Qred GitHub organiz
 - **Documentation first** — always prefer README and docs over source code for understanding intent
 - **Bound every operation** — limit search results, truncate large files, and cap directory depth
 
-## When to Use
-
-### This Skill Is For
-
-- Listing repositories in the Qred GitHub organization
-- Exploring repo structure through a layered orient → navigate → search → read workflow
-- Browsing files and directories in a Qred repo (without cloning)
-- Reading file contents from a Qred repo
-- Searching code across repos in the Qred org
-- Viewing pull requests and issues in Qred repos
-
-### Use a Different Approach When
-
-- Working with locally cloned files → use Glob, Read, Grep directly
-- Deep end-to-end feature investigation → use `/explore`
-- Reviewing code quality or PR changes → use `/review`
-- Querying PostgreSQL databases → use `/backoffice-database`
-
-## Input Classification
+## Input Handling
 
 Parse `$ARGUMENTS` to determine operation type — direct operations execute immediately, while exploration operations enter the layered workflow at the appropriate layer:
 
@@ -68,7 +50,7 @@ Parse `$ARGUMENTS` and validate GitHub CLI access:
 
 ### 2. Route Request
 
-Route `$ARGUMENTS` using the Input Classification tables:
+Route `$ARGUMENTS` using the Input Handling tables:
 - **Direct operations** → proceed to step 3
 - **Exploration operations** → proceed to step 4 at the specified entry layer
 
@@ -153,22 +135,6 @@ For all direct operations, use `--json` to get structured data:
 - **Structured presentation** — Use tables for listings, code blocks for file contents, tree format for directories (see `@references/formatting.md`)
 - **Bounded output** — Truncate large results with clear indicators of what was omitted
 - **Follow-up suggestions** — After each layer, suggest the natural next action (see `@references/formatting.md`)
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) or `repos` | List repositories in the Qred org |
-| `prs <repo>` or `pr <repo> #<n>` | List or view PRs in the specified repo |
-| `issues <repo>` or `issue <repo> #<n>` | List or view issues in the specified repo |
-| Starts with `gh` | Execute as pass-through gh command |
-| Repo name (e.g., `qred-mcp-proxy`) | Orient: view repo details, README, and summary |
-| `tree <repo>` or `<repo>/<path>/` | Navigate: tree view or directory listing |
-| Search term (no path separators) | Search: find term across all Qred repos |
-| `<term> in <repo>` | Search: find term in a specific repo |
-| `<repo>/<file-path>` | Read: file contents with 300-line guardrail |
-
-See `@references/examples-and-errors.md` for full invocation examples and detailed error responses.
 
 ## Error Handling
 

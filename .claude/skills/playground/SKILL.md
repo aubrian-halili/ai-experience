@@ -19,25 +19,7 @@ Generate self-contained HTML playgrounds for rapid prototyping, visual explorati
 - **Interactive by default** — static mockups belong in design tools; playgrounds should respond to user interaction
 - **Disposable** — playgrounds are experiments, not production code; optimize for learning and demonstration speed
 
-## When to Use
-
-### This Skill Is For
-
-- Rapid visual prototyping of UI concepts
-- Interactive data exploration (tables, filters, charts)
-- Concept maps and relationship visualization
-- Component showcases for design discussions
-- Quick demos for stakeholder feedback
-- Visual debugging of CSS layouts or animations
-
-### Use a Different Approach When
-
-- Building production UI components → use `/react`
-- Creating polished design systems → use `/frontend-design`
-- Writing documentation with diagrams → use `/diagram`
-- Full application scaffolding → use `/feature`
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the playground type:
 
@@ -52,7 +34,7 @@ Classify `$ARGUMENTS` to determine the playground type:
 
 ### 1. Pre-flight
 
-- Classify playground type from `$ARGUMENTS` using the Input Classification table
+- Classify playground type from `$ARGUMENTS` using the Input Handling table
 - If a data file is referenced, verify it exists and read its structure
 - Determine output path: default to `playground-<name>.html` in current directory
 
@@ -106,16 +88,6 @@ If the user requests changes:
 - **Responsive** — works on any screen size without scrollbar issues
 - **Themed** — CSS variables at the top for easy color/spacing customization
 - **Commented** — key sections have brief comments for easy modification by the user
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Show available playground templates and ask what to build |
-| Concept description (e.g., `kanban board`) | Design and build a custom playground |
-| Template name (e.g., `data explorer`) | Scaffold from template with sample data |
-| Data file path (e.g., `data.json`) | Build an explorer around the provided data |
-| `list` | Show all available templates with descriptions |
 
 ## Error Handling
 

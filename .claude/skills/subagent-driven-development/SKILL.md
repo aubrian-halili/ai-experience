@@ -27,23 +27,7 @@ Orchestrate parallel implementation across multiple Claude subagents for large-s
 > - If any subagent fails, halt remaining dispatches and assess before continuing
 > - When multiple failures appear after a single change, investigate whether they share a root cause before parallelizing — fixing one may fix others
 
-## When to Use
-
-### This Skill Is For
-
-- Large refactors touching many independent modules
-- Multi-feature plans where tasks share no files
-- Parallel test generation across isolated components
-- Batch operations across independent packages in a monorepo
-
-### Use a Different Approach When
-
-- Tasks have sequential dependencies → use `/feature` with milestones
-- Work is in a single file or module → use `/feature` directly
-- Need to plan before parallelizing → use `/plan` first
-- Fewer than 3 independent tasks → overhead isn't worth it, use `/feature`
-
-## Input Classification
+## Input Handling
 
 | Input | Intent | Approach |
 |-------|--------|----------|
@@ -62,7 +46,6 @@ Orchestrate parallel implementation across multiple Claude subagents for large-s
 - Use `TaskList` to check for existing tracked tasks
 
 **Stop conditions:**
-- No `$ARGUMENTS` provided → ask user what to parallelize
 - On main/master branch → warn user and stop; do not implement without explicit consent to work on main
 - Fewer than 3 tasks → recommend `/feature` instead (overhead not justified)
 - No clear plan exists → recommend `/plan` first
@@ -158,15 +141,6 @@ Mark tasks as `completed` via `TaskUpdate` only after both stages pass.
 - **Tracked progress** — every task visible via TaskList at all times
 - **Two-stage quality** — spec compliance before code quality, always
 - **Integration verification** — parallel results must be verified together, not just individually
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user what to parallelize |
-| Plan file | Extract independent phases, run full workflow |
-| Task list | Validate independence, dispatch |
-| Feature description | Decompose first, then parallelize what's independent |
 
 ## Error Handling
 

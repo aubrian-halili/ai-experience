@@ -19,25 +19,7 @@ Provide TypeScript-specific guidance including type definitions, generics, type 
 - **Narrow over assert** — prefer type guards and control flow narrowing over type assertions (`as`) and non-null assertions (`!`); assertions silence the compiler without proving correctness
 - **Incremental adoption** — when migrating from JavaScript, prioritize strict null checks and explicit `any` elimination over perfect types; good types today beat perfect types never
 
-## When to Use
-
-### This Skill Is For
-
-- Writing type definitions and interfaces
-- Fixing TypeScript compiler errors
-- Designing generic types and utilities
-- Configuring tsconfig.json
-- Type narrowing and guards
-- Advanced typing patterns
-- Migration from JavaScript to TypeScript
-
-### Use a Different Approach When
-
-- General code review → use `/review`
-- Architecture decisions → use `/architecture`
-- Testing TypeScript code → use `/testing`
-
-## Input Classification
+## Input Handling
 
 Classify `$ARGUMENTS` to determine the TypeScript guidance scope:
 
@@ -54,14 +36,13 @@ Classify `$ARGUMENTS` to determine the TypeScript guidance scope:
 
 ### 1. Pre-flight
 
-- Classify TypeScript scope from `$ARGUMENTS` using the Input Classification table
+- Classify TypeScript scope from `$ARGUMENTS` using the Input Handling table
 - If `$ARGUMENTS` contains a file path, read the file via Read
 - If `$ARGUMENTS` contains an error message, extract the error code (e.g., `TS2345`) and isolate the conflicting types
 - If `$ARGUMENTS` contains a code snippet, identify the TypeScript version and strictness context
 - Search codebase for `tsconfig.json` to determine project strictness level and module system
 
 **Stop conditions:**
-- No `$ARGUMENTS` and no code context provided → ask user for a specific TypeScript question, error, or file
 - Target file not found → report and ask user to verify the path
 - Request is not TypeScript-specific (general code quality, architecture) → redirect to appropriate skill
 
@@ -112,17 +93,6 @@ Classify `$ARGUMENTS` to determine the TypeScript guidance scope:
 - **Explain inference** — when the compiler infers a type, show what it infers and why; users need to understand the inference chain, not just the final result
 - **Concrete before abstract** — demonstrate patterns with concrete domain types first, then generalize; a `UserRepository<User>` example teaches better than `Repository<T>`
 - **Strictness-aware** — frame recommendations for the project's actual strictness level; do not recommend patterns that require `strictNullChecks` if the project has it disabled without noting the dependency
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user for a specific TypeScript question, error message, or file path |
-| Code snippet (e.g., `function foo<T>(x: T)`) | Analyze the snippet in isolation; ask for tsconfig context if strictness matters |
-| Error message (e.g., `Type 'string' is not assignable to type 'number'`) | Decompose the error, trace the type conflict, recommend fix |
-| File path (e.g., `src/models/user.ts`) | Read the file, analyze type definitions and usage patterns |
-| tsconfig question (e.g., `strictNullChecks`) | Explain the option, its impact, and recommended setting |
-| Pattern request (e.g., `branded types`, `discriminated union`) | Look up in `@references/patterns.md`, explain with project-contextual example |
 
 ## Error Handling
 

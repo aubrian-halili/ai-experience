@@ -19,22 +19,7 @@ Create new Claude Code skills following established patterns and best practices.
 - **Fail-safe design** — handle missing inputs with clear guidance and stop conditions; a skill that silently proceeds with wrong assumptions is worse than one that asks
 - **Consistent naming** — use gerund form (verb + -ing) for skill names when possible; avoid vague, generic, or reserved words (see `@references/best-practices.md` for conventions)
 
-## When to Use
-
-### This Skill Is For
-
-- Repetitive workflows with consistent structure (e.g., PR reviews, code generation)
-- Domain-specific tasks requiring specialized context (e.g., company coding standards)
-- Multi-step processes that benefit from guided execution
-- Tasks where output format consistency matters
-
-### Use a Different Approach When
-
-- One-off tasks that won't repeat
-- Simple queries that don't need structured output
-- Tasks already well-handled by existing skills → check `/explore` to find them
-
-## Input Classification
+## Input Handling
 
 Use `$ARGUMENTS` if provided (skill name or description).
 
@@ -52,13 +37,12 @@ First, classify the request type:
 
 ### 1. Pre-flight
 
-- Classify request using the Input Classification table
+- Classify request using the Input Handling table
 - If `$ARGUMENTS` contains a skill name, validate it is kebab-case (`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`)
 - Check if a skill with that name already exists in `.claude/skills/`
 - Review existing skills via Glob to avoid overlap with the proposed skill's scope
 
 **Stop conditions:**
-- No `$ARGUMENTS` and no skill description provided → ask user for a skill name or description of the workflow they want to automate
 - Proposed skill duplicates an existing skill's scope → suggest updating the existing skill instead
 - Request is not about skill creation or management → redirect to the appropriate skill
 
@@ -100,13 +84,11 @@ Edit the generated SKILL.md following the optimized skill pattern:
 
 2. **Opening paragraph**: One-line purpose statement (no H1 heading)
 3. **Philosophy**: 3–5 bold-dash principles that guide the skill's decisions
-4. **When to Use**: Clear inclusion/exclusion criteria with skill cross-references
-5. **Input Classification**: Table mapping request types to indicators and process step emphasis
-6. **Process**: Numbered steps with Pre-flight (including stop conditions), bullet-list sub-steps, and branching for different input types
-7. **Output Principles**: 3–4 bold-dash bullets describing what good output looks like
-8. **Argument Handling**: Table mapping argument types to behaviors
-9. **Error Handling**: 6–8 scenarios in a table + closing "Never..." principle
-10. **Related Skills**: 4–5 entries with "When to Use Instead" descriptions
+4. **Input Handling**: Table mapping input types to intent and approach (includes `(none)` case)
+5. **Process**: Numbered steps with Pre-flight (including stop conditions), bullet-list sub-steps, and branching for different input types
+6. **Output Principles**: 3–4 bold-dash bullets describing what good output looks like
+7. **Error Handling**: 6–8 scenarios in a table + closing "Never..." principle
+8. **Related Skills**: 4–5 entries with "When to Use Instead" descriptions
 
 Cross-reference `@references/best-practices.md` for anti-patterns and quality checklist.
 
@@ -135,13 +117,12 @@ Test the skill with real invocations and refine based on:
 | Frontmatter | Metadata for skill discovery and invocation | Yes |
 | Introduction | Quick orientation (no H1 heading) | Yes |
 | [Domain] Philosophy | 3-5 guiding principles | Yes |
-| When to Use | Inclusion/exclusion criteria | Yes |
-| Input Classification | Maps request types to workflow variations | Yes |
+| Input Handling | Maps input types to intent, approach, and `(none)` case | Yes |
 | Process | Step-by-step with Pre-flight and stop conditions | Yes |
 | Output Principles | Bold-dash bullets on what good output looks like | Yes |
-| Argument Handling | Table mapping argument types to behaviors | Yes |
 | Error Handling | Scenario table + closing "Never..." principle | Yes |
 | Related Skills | Cross-references with "When to Use Instead" | Recommended |
+| Iron Laws / Rationalization Guard | Skill-specific guardrails (optional) | No |
 
 ## Frontmatter Reference
 
@@ -168,19 +149,9 @@ Test the skill with real invocations and refine based on:
 ## Output Principles
 
 - **Scaffold, don't over-specify** — generate the structural skeleton with clear placeholders; let the skill author fill in domain-specific content rather than guessing it
-- **Optimized pattern by default** — every generated skill should include the standard sections (Philosophy, Input Classification, Process with Pre-flight, Output Principles, Argument Handling, Error Handling, Related Skills)
+- **Optimized pattern by default** — every generated skill should include the standard sections (Philosophy, Input Handling, Process with Pre-flight, Output Principles, Error Handling, Related Skills)
 - **Inline references** — wire up `@references/` links within process steps, not as a standalone References section; this teaches skills to load context only when needed
 - **Validate before done** — always run the validation script and quality checklist before presenting the skill as complete
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask user for a skill name or description of the workflow to automate |
-| Skill name (e.g., `deploy`) | Start full creation workflow with that name |
-| Skill name + description (e.g., `deploy production deployment workflow`) | Start creation with name and use description to pre-fill requirements |
-| `validate [skill-name]` | Run validation script only |
-| `optimize [skill-name]` | Audit existing skill against optimized pattern, recommend structural improvements |
 
 ## Error Handling
 

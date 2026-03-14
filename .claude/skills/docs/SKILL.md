@@ -19,27 +19,7 @@ Create and improve technical documentation, presentations, and stakeholder commu
 - **Show, don't tell** — use code examples liberally; one working example teaches more than three paragraphs
 - **Define acronyms** — spell out on first use; readers should never have to guess terminology
 
-## When to Use
-
-### This Skill Is For
-
-- Writing README files and project documentation
-- Creating API documentation
-- Drafting RFCs and design documents
-- Technical specification writing
-- Architecture review presentations
-- Technical proposal decks
-- Project status updates
-- Executive summaries
-- Documentation review and improvement
-
-### Use a Different Approach When
-
-- Creating architecture diagrams only → use `/diagram`
-- Recording architecture decisions → use `/architecture --adr`
-- Code-level comments → handle inline during development
-
-## Input Classification
+## Input Handling
 
 Determine documentation workflow from `$ARGUMENTS`:
 
@@ -67,7 +47,7 @@ Determine documentation workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent (Topic, Type Flag, Slides, Existing Doc Path, or Ask User) using the Input Classification table
+- Parse `$ARGUMENTS` and map to the appropriate intent (Topic, Type Flag, Slides, Existing Doc Path, or Ask User) using the Input Handling table
 - Determine specific document type using the Document Types table
 - Check for existing documentation in the project (README, docs/, etc.)
 - If updating existing docs, read the current content first
@@ -121,19 +101,6 @@ Determine documentation workflow from `$ARGUMENTS`:
 - **Audience-calibrated depth** — match technical depth to the target audience identified in the Document Types table; an executive summary is not an RFC
 - **Reviewable drafts** — always present the full document for user review before writing to disk; documentation is collaborative
 - **Actionable completeness** — mark unfinished sections with `[TBD]` rather than omitting them; visible gaps are better than invisible ones
-
-## Argument Handling
-
-| Argument | Behavior |
-|----------|----------|
-| (none) | Ask what to document |
-| Topic (e.g., `auth system`) | Create documentation for the topic, ask document type if unclear |
-| `--readme` | Generate project README |
-| `--api` | Generate API documentation |
-| `--rfc [title]` | Generate RFC document |
-| `--design [title]` | Generate design document |
-| `--runbook [topic]` | Generate operational runbook |
-| `--slides [topic]` | Generate presentation outline |
 
 ## Error Handling
 
