@@ -260,7 +260,7 @@ Never silently skip test levels or coverage gaps—surface what was tested, what
 | `/review` | Review existing test quality |
 | `/feature` | Test planning as part of feature development |
 | `/security` | Security-focused testing |
-| `/clean-code` | Refactor test code for maintainability |
+| `/review --refactor` | Refactor test code for maintainability |
 | `/explore` | Understand codebase context before testing unfamiliar code |
 | `/debug` | Investigate a failing test or unexpected behavior |
 | `/typescript` | Type-safe mocks, generics in test utilities |

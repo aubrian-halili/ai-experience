@@ -3,7 +3,7 @@ name: explore
 description: >-
   User asks "how does this work", "explain this module", "trace the call chain",
   "what does this code do", or wants to understand existing code by reading it.
-  Not for: fixing bugs (use /debug), visual diagrams (use /diagram),
+  Not for: fixing bugs (use /debug),
   designing something new (use /architecture).
 argument-hint: "[feature, module, or flow to investigate]"
 context: fork
@@ -85,7 +85,7 @@ Determine exploration workflow from `$ARGUMENTS`:
 - Present findings with clear structure, file locations (`file:line`), and actionable observations
 - List essential files to understand the feature
 - Use tables for structured information (entry points, components, dependencies)
-- Include diagrams (suggest `/diagram` for complex flows) where helpful
+- Include diagrams (suggest `/architecture` for complex flows) where helpful
 - Connect findings back to the user's original question
 
 ### 5. Verify
@@ -93,14 +93,14 @@ Determine exploration workflow from `$ARGUMENTS`:
 - Confirm the original question has been answered
 - Check that all traced paths have been documented or marked `[Incomplete]`
 - Note any areas intentionally not explored and why
-- If findings suggest deeper analysis, recommend related skills (`/architecture`, `/diagram`, `/review`)
+- If findings suggest deeper analysis, recommend related skills (`/architecture`, `/review`)
 
 ## Output Principles
 
 - **Evidence over assertion** — every finding references a specific `file:line`; never claim behavior without pointing to the code that implements it
 - **Structured presentation** — use tables for entry points, components, and dependencies; use bullet lists for findings and observations
 - **Completeness markers** — tag explored paths as `[High Confidence]` or `[Needs Verification]`; tag unexplored areas as `[Incomplete]`
-- **Actionable next steps** — conclude with recommended follow-up skills (`/diagram`, `/review`, `/architecture`) when findings warrant deeper analysis
+- **Actionable next steps** — conclude with recommended follow-up skills (`/review`, `/architecture`) when findings warrant deeper analysis
 
 ## Error Handling
 
@@ -120,9 +120,7 @@ Never silently omit findings—surface limitations explicitly.
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/diagram` | Visual representation would clarify the flow |
 | `/review` | Found issues that need formal review |
 | `/architecture` | Understanding suggests architectural improvements |
-| `/patterns` | Identified patterns need documentation or improvement |
 | `/plan` | Need to plan implementation after understanding the codebase |
 | `/verify` | Need to verify implementation completeness |
