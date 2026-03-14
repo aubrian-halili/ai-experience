@@ -1,12 +1,12 @@
 ---
 name: qred-repo
 description: >-
-  TRIGGER when: user asks to "browse a repo", "find code in the org", "list Qred repos", "search across
-  repos", "read a file from another repo", "explore a GitHub repo", or wants to navigate the Qred GitHub
-  organization's repositories.
-  DO NOT TRIGGER when: user wants to explore code in the current local working directory (use /explore) or
-  wants to query the database (use /backoffice-database).
+  User asks to "browse a repo", "search across repos", "list Qred repos",
+  or wants to navigate the Qred GitHub organization's repositories.
+  Not for: exploring the current local codebase (use /explore),
+  querying the database (use /backoffice-database).
 argument-hint: "[repo name, file path, search term, tree <repo>, or gh command]"
+disable-model-invocation: true
 allowed-tools: Bash(gh *)
 ---
 

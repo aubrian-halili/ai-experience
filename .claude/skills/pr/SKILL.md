@@ -1,10 +1,9 @@
 ---
 name: pr
 description: >-
-  TRIGGER when: user asks to "create a PR", "open a pull request", "push and create PR", "submit for
-  review", "open a PR", mentions "pull request" or "PR" in context of creating one.
-  DO NOT TRIGGER when: user asks to review an existing PR (use /review) or to commit without pushing
-  (use /commit).
+  User asks to "create a PR", "open a pull request", "push and create PR",
+  or mentions "pull request" in context of creating one.
+  Not for: reviewing an existing PR (use /review), committing without pushing (use /commit).
 argument-hint: "[optional: --draft, target branch, or PR title]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob, mcp__atlassian__getJiraIssue, mcp__atlassian__transitionJiraIssue
 disable-model-invocation: true

@@ -136,40 +136,6 @@ export const useForm = <T extends Record<string, unknown>>(initialValues: T) => 
 };
 ```
 
-### Debounce Hook
-
-```tsx
-export const useDebounce = <T>(value: T, delay: number): T => {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-
-  return debouncedValue;
-};
-```
-
-### Media Query Hook
-
-```tsx
-export const useMediaQuery = (query: string): boolean => {
-  const [matches, setMatches] = useState(
-    () => window.matchMedia(query).matches,
-  );
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(query);
-    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, [query]);
-
-  return matches;
-};
-```
-
 ### Dependency Array Rules
 
 | Situation | Rule |
@@ -240,24 +206,11 @@ export const cartSlice = createSlice({
         (item) => item.productId !== action.payload,
       );
     },
-    updateQuantity: (
-      state,
-      action: PayloadAction<{ productId: string; quantity: number }>,
-    ) => {
-      const item = state.items.find(
-        (i) => i.productId === action.payload.productId,
-      );
-      if (item) item.quantity = action.payload.quantity;
-    },
-    applyPromo: (state, action: PayloadAction<string>) => {
-      state.promoCode = action.payload;
-    },
     clearCart: () => initialState,
   },
 });
 
-export const { addItem, removeItem, updateQuantity, applyPromo, clearCart } =
-  cartSlice.actions;
+export const { addItem, removeItem, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;
 ```
 
@@ -268,7 +221,6 @@ import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '../store';
 
 const selectCartItems = (state: RootState) => state.cart.items;
-const selectPromoCode = (state: RootState) => state.cart.promoCode;
 
 export const selectCartTotal = createSelector([selectCartItems], (items) =>
   items.reduce((total, item) => total + item.price * item.quantity, 0),
@@ -276,15 +228,6 @@ export const selectCartTotal = createSelector([selectCartItems], (items) =>
 
 export const selectCartItemCount = createSelector([selectCartItems], (items) =>
   items.reduce((count, item) => count + item.quantity, 0),
-);
-
-export const selectCartSummary = createSelector(
-  [selectCartItems, selectCartTotal, selectPromoCode],
-  (items, total, promoCode) => ({
-    itemCount: items.length,
-    total,
-    hasPromo: promoCode !== null,
-  }),
 );
 ```
 
@@ -339,17 +282,6 @@ export const usersApi = createApi({
       query: (body) => ({ url: '/users', method: 'POST', body }),
       invalidatesTags: [{ type: 'User', id: 'LIST' }],
     }),
-    updateUser: builder.mutation<User, Partial<User> & Pick<User, 'id'>>({
-      query: ({ id, ...body }) => ({ url: `/users/${id}`, method: 'PATCH', body }),
-      invalidatesTags: (_result, _error, { id }) => [{ type: 'User', id }],
-    }),
-    deleteUser: builder.mutation<void, string>({
-      query: (id) => ({ url: `/users/${id}`, method: 'DELETE' }),
-      invalidatesTags: (_result, _error, id) => [
-        { type: 'User', id },
-        { type: 'User', id: 'LIST' },
-      ],
-    }),
   }),
 });
 
@@ -357,30 +289,7 @@ export const {
   useGetUsersQuery,
   useGetUserQuery,
   useCreateUserMutation,
-  useUpdateUserMutation,
-  useDeleteUserMutation,
 } = usersApi;
-```
-
-### Optimistic Update
-
-```tsx
-updateUser: builder.mutation<User, Partial<User> & Pick<User, 'id'>>({
-  query: ({ id, ...body }) => ({ url: `/users/${id}`, method: 'PATCH', body }),
-  async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-    const patchResult = dispatch(
-      usersApi.util.updateQueryData('getUser', id, (draft) => {
-        Object.assign(draft, patch);
-      }),
-    );
-    try {
-      await queryFulfilled;
-    } catch {
-      patchResult.undo();
-    }
-  },
-  invalidatesTags: (_result, _error, { id }) => [{ type: 'User', id }],
-}),
 ```
 
 ### Store Configuration with RTK Query

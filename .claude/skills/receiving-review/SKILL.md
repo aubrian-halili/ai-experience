@@ -1,13 +1,11 @@
 ---
 name: receiving-review
 description: >-
-  TRIGGER when: user asks to "address review comments", "fix the PR feedback", "implement reviewer
-  suggestions", "handle review feedback on PR #123", "address the feedback", "fix what the reviewer said",
-  "go through the review comments", or wants to process and implement code review feedback on a pull request.
-  DO NOT TRIGGER when: user wants to give a code review (use /review), wants to create a PR (use /pr),
-  or wants to commit changes (use /commit). This skill processes incoming review feedback — it does NOT
-  generate reviews.
+  User asks to "address review comments", "fix the PR feedback",
+  "implement reviewer suggestions", or wants to process review feedback on a PR.
+  Not for: giving a code review (use /review), creating a PR (use /pr).
 argument-hint: "[PR number, URL, or 'latest']"
+disable-model-invocation: true
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Write, Edit, Agent
 ---
 

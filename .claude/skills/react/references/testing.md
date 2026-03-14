@@ -39,14 +39,6 @@ describe('UserAvatar', () => {
 
     expect(container.firstChild).toHaveClass('avatar--lg');
   });
-
-  it('defaults to medium size', () => {
-    const { container } = render(
-      <UserAvatar name="Jane Doe" imageUrl="/jane.jpg" />,
-    );
-
-    expect(container.firstChild).toHaveClass('avatar--md');
-  });
 });
 ```
 
@@ -84,17 +76,6 @@ describe('UserProfile', () => {
     expect(screen.getByRole('heading', { name: 'Jane Doe' })).toBeInTheDocument();
     expect(screen.getByText('jane@example.com')).toBeInTheDocument();
   });
-
-  it('shows error message on failure', () => {
-    (useGetUserQuery as jest.Mock).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      error: { status: 500, data: 'Server error' },
-    });
-
-    render(<UserProfile userId="1" />);
-    expect(screen.getByRole('alert')).toHaveTextContent(/failed to load/i);
-  });
 });
 ```
 
@@ -124,31 +105,6 @@ describe('LoginForm', () => {
       email: 'jane@example.com',
       password: 'secret123',
     });
-  });
-
-  it('shows validation error for empty email', async () => {
-    const user = userEvent.setup();
-    render(<LoginForm onSubmit={mockOnSubmit} />);
-
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
-
-    expect(screen.getByText(/email is required/i)).toBeInTheDocument();
-    expect(mockOnSubmit).not.toHaveBeenCalled();
-  });
-
-  it('disables submit button while submitting', async () => {
-    const user = userEvent.setup();
-    mockOnSubmit.mockImplementation(
-      () => new Promise((resolve) => setTimeout(resolve, 100)),
-    );
-
-    render(<LoginForm onSubmit={mockOnSubmit} />);
-
-    await user.type(screen.getByLabelText(/email/i), 'jane@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'secret123');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
-
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeDisabled();
   });
 });
 ```
@@ -180,22 +136,6 @@ describe('useForm', () => {
     });
 
     expect(result.current.values.name).toBe('Jane');
-  });
-
-  it('resets to initial values', () => {
-    const { result } = renderHook(() => useForm(initialValues));
-
-    act(() => {
-      result.current.handleChange('name')({
-        target: { value: 'Jane' },
-      } as React.ChangeEvent<HTMLInputElement>);
-    });
-
-    act(() => {
-      result.current.reset();
-    });
-
-    expect(result.current.values).toEqual(initialValues);
   });
 });
 ```
@@ -231,49 +171,6 @@ describe('cartSlice', () => {
 
     expect(state.items).toHaveLength(1);
     expect(state.items[0].quantity).toBe(2);
-  });
-
-  it('removes an item by productId', () => {
-    const item = { productId: '1', name: 'Widget', price: 9.99 };
-    let state = cartReducer(initialState, addItem(item));
-    state = cartReducer(state, removeItem('1'));
-
-    expect(state.items).toHaveLength(0);
-  });
-
-  it('resets to initial state on clearCart', () => {
-    const item = { productId: '1', name: 'Widget', price: 9.99 };
-    let state = cartReducer(initialState, addItem(item));
-    state = cartReducer(state, clearCart());
-
-    expect(state).toEqual(initialState);
-  });
-});
-```
-
-### Selector Tests
-
-```tsx
-import { selectCartTotal, selectCartItemCount } from './cartSelectors';
-import type { RootState } from '../store';
-
-describe('cart selectors', () => {
-  const mockState = {
-    cart: {
-      items: [
-        { productId: '1', name: 'Widget', quantity: 2, price: 10 },
-        { productId: '2', name: 'Gadget', quantity: 1, price: 25 },
-      ],
-      promoCode: null,
-    },
-  } as RootState;
-
-  it('calculates the cart total', () => {
-    expect(selectCartTotal(mockState)).toBe(45);
-  });
-
-  it('counts total items', () => {
-    expect(selectCartItemCount(mockState)).toBe(3);
   });
 });
 ```
@@ -346,61 +243,6 @@ describe('UserList', () => {
       expect(screen.getByText('John Smith')).toBeInTheDocument();
     });
   });
-
-  it('handles API error', async () => {
-    server.use(
-      rest.get('/api/users', (_req, res, ctx) => {
-        return res(ctx.status(500));
-      }),
-    );
-
-    renderWithStore(<UserList />);
-
-    await waitFor(() => {
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-    });
-  });
-
-  it('deletes a user and refreshes list', async () => {
-    const user = userEvent.setup();
-    renderWithStore(<UserList />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Jane Doe')).toBeInTheDocument();
-    });
-
-    await user.click(
-      screen.getAllByRole('button', { name: /delete/i })[0],
-    );
-
-    await waitFor(() => {
-      expect(screen.queryByText('Jane Doe')).not.toBeInTheDocument();
-    });
-  });
-});
-```
-
-### Mutation Test
-
-```tsx
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { renderWithStore } from '../../test-utils';
-import { CreateUserForm } from './CreateUserForm';
-
-describe('CreateUserForm', () => {
-  it('creates a user and clears the form', async () => {
-    const user = userEvent.setup();
-    renderWithStore(<CreateUserForm />);
-
-    await user.type(screen.getByLabelText(/name/i), 'New User');
-    await user.type(screen.getByLabelText(/email/i), 'new@example.com');
-    await user.click(screen.getByRole('button', { name: /create/i }));
-
-    await waitFor(() => {
-      expect(screen.getByLabelText(/name/i)).toHaveValue('');
-    });
-  });
 });
 ```
 
@@ -432,29 +274,6 @@ export const renderWithStore = (
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(usersApi.middleware),
-    preloadedState,
-  });
-
-  const Wrapper = ({ children }: { children: React.ReactNode }) => (
-    <Provider store={store}>{children}</Provider>
-  );
-
-  return {
-    store,
-    ...render(ui, { wrapper: Wrapper, ...renderOptions }),
-  };
-};
-```
-
-### renderWithRedux (without RTK Query)
-
-```tsx
-export const renderWithRedux = (
-  ui: React.ReactElement,
-  { preloadedState, ...renderOptions }: ExtendedRenderOptions = {},
-) => {
-  const store = configureStore({
-    reducer: { cart: cartReducer },
     preloadedState,
   });
 

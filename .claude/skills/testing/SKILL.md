@@ -1,12 +1,10 @@
 ---
 name: testing
 description: >-
-  TRIGGER when: user asks to "write tests", "add test coverage", "test this", "create test cases",
-  "what should I test", "test strategy", mentions "unit test", "integration test", "E2E test", "mocking",
-  "test doubles", "TDD", or wants to generate test code.
-  DO NOT TRIGGER when: user wants code review that mentions testing gaps (use /review), wants to verify
-  feature completeness (use /verify), or wants to debug a failing test (use /debug). This skill writes
-  and designs tests.
+  User asks to "write tests", "add test coverage", "test strategy", mentions
+  "unit test", "integration test", "TDD", or wants to generate test code.
+  Not for: code review mentioning test gaps (use /review), verifying completeness
+  (use /verify), debugging a failing test (use /debug).
 argument-hint: "[file, feature, or component to test]"
 allowed-tools: Read, Grep, Glob, Write
 ---

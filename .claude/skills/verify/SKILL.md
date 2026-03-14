@@ -1,12 +1,10 @@
 ---
 name: verify
 description: >-
-  TRIGGER when: user asks "did I finish everything", "check if my implementation is complete", "verify this
-  is done", "did I miss anything", "check for stubs or TODOs", "am I done", "validate against the plan",
-  or references acceptance criteria or a plan file to verify against. Use after /feature, before /pr.
-  DO NOT TRIGGER when: user wants a code quality review (use /review), wants to write tests (use /testing),
-  or wants to understand how code works (use /explore). This skill checks implementation completeness
-  against a spec — not code quality.
+  User asks "did I finish everything", "verify this is done", "am I done",
+  "check for stubs or TODOs", or references a plan to verify against. Use after /feature.
+  Not for: code quality review (use /review), writing tests (use /testing),
+  understanding code (use /explore).
 argument-hint: "[plan file, feature name, or acceptance criteria]"
 context: fork
 agent: Explore

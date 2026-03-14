@@ -1,12 +1,10 @@
 ---
 name: feature
 description: >-
-  TRIGGER when: user asks to "implement this feature", "build this", "start coding", "add [specific
-  functionality]", "implement this ticket", mentions "feature spec", "user story", "acceptance criteria",
-  or is ready to write code for a defined feature. Use after /plan for complex features.
-  DO NOT TRIGGER when: user is still deciding on approach (use /brainstorming or /plan), wants to fix a bug
-  (use /debug), wants to write only tests (use /testing), or wants to review existing code (use /review).
-  This skill implements new functionality from spec to working code.
+  User asks to "implement this feature", "build this", "start coding",
+  "implement this ticket", or is ready to write code. Use after /plan for complex features.
+  Not for: still deciding on approach (use /brainstorming or /plan),
+  fixing bugs (use /debug), writing only tests (use /testing).
 argument-hint: "[feature name or description]"
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Bash, TaskCreate, TaskUpdate, TaskList, mcp__atlassian__getJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql
 ---

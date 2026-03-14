@@ -1,12 +1,10 @@
 ---
 name: diagram
 description: >-
-  TRIGGER when: user asks to "draw a diagram", "create a flowchart", "visualize this", "show me a diagram",
-  "generate an ERD", "sequence diagram", "state machine diagram", "class diagram", or wants a Mermaid-syntax
-  visual representation of systems, flows, or data models.
-  DO NOT TRIGGER when: user wants to understand code by reading it (use /explore), wants to design
-  architecture (use /architecture), or asks to "show the architecture" meaning explain it (use /explore).
-  This skill produces Mermaid diagram code as output.
+  User asks to "draw a diagram", "create a flowchart", "visualize this",
+  "sequence diagram", "ERD", or wants a Mermaid-syntax visual representation.
+  Not for: understanding code by reading it (use /explore), designing architecture
+  (use /architecture).
 argument-hint: "[system or flow to diagram]"
 context: fork
 agent: Explore

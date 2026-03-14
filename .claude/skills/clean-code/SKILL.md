@@ -1,12 +1,11 @@
 ---
 name: clean-code
 description: >-
-  TRIGGER when: user asks to "refactor this", "clean up this code", "improve code quality", "reduce
-  complexity", mentions "SOLID", "code smells", "technical debt", "DRY violation", "extract method",
-  or wants structural improvement of existing code without changing behavior.
-  DO NOT TRIGGER when: user wants a general PR/code review (use /review), wants to fix a bug (use /debug),
-  wants security analysis (use /security), or wants architecture-level restructuring (use /architecture).
-  This skill refactors code structure, not behavior.
+  User asks to "refactor this", "clean up this code", "reduce complexity",
+  mentions "SOLID", "code smells", "technical debt", or wants structural improvement
+  without changing behavior.
+  Not for: PR/code review (use /review), fixing bugs (use /debug),
+  security analysis (use /security).
 argument-hint: "[file or component to review]"
 context: fork
 agent: Explore
