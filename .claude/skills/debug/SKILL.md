@@ -3,7 +3,7 @@ name: debug
 description: >-
   User has a bug, error, or failing test — asks to "debug this", "fix this bug",
   "why is this failing", "I'm getting an error", or encounters a stack trace.
-  Not for: understanding working code (use /explore), refactoring (use /clean-code),
+  Not for: understanding working code (use /explore), refactoring (use /review --refactor),
   writing new tests (use /testing).
 argument-hint: "[bug description, error message, or failing test]"
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit

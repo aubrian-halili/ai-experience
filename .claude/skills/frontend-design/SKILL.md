@@ -109,6 +109,5 @@ Never sacrifice accessibility for aesthetics — if a design choice creates an a
 |-------|---------------------|
 | `/react` | Component logic, state management, hooks |
 | `/playground` | Quick interactive prototypes |
-| `/patterns` | Design patterns for code structure |
-| `/clean-code` | Code quality beyond visual design |
+| `/review` | Code quality beyond visual design |
 | `/review` | General code review including but not focused on design |

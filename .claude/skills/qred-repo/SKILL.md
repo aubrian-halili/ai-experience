@@ -158,6 +158,5 @@ Never present results without context—always state what was searched, where, a
 | `/explore` | Deep end-to-end investigation of locally cloned code |
 | `/review` | Code quality review or PR audit |
 | `/backoffice-database` | Exploring PostgreSQL database schemas and data |
-| `/diagram` | Visualize repo architecture or relationships |
 | `/architecture` | Design or evaluate architecture after repo exploration |
 | `/plan` | Plan implementation after exploring a repo |

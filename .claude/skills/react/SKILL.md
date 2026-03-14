@@ -109,8 +109,7 @@ Never silently assume component architecture or state management approach—surf
 |-------|-------------------|
 | `/typescript` | Pure type design, utility types, generics |
 | `/testing` | General testing strategy beyond React |
-| `/patterns` | Design patterns not specific to React |
-| `/clean-code` | General code quality and refactoring principles |
+| `/review` | General code quality and refactoring principles |
 | `/security` | XSS prevention, auth flows, input sanitization |
 | `/explore` | Understand existing component structure first |
 | `/frontend-design` | Visual design, accessibility, and responsive layout |

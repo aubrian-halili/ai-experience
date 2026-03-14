@@ -114,7 +114,6 @@ Never silently assume strictness level or TypeScript version—surface assumptio
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/review` | Code review including TypeScript quality |
-| `/clean-code` | Refactoring TypeScript code for maintainability |
-| `/patterns` | Design patterns implemented in TypeScript |
+| `/review --refactor` | Refactoring TypeScript code for maintainability |
 | `/explore` | Understand existing TypeScript codebase before asking type questions |
 | `/testing` | Writing tests for TypeScript code |

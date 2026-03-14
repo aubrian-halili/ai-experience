@@ -3,7 +3,7 @@ name: skill-creator
 description: >-
   User asks to "create a new skill", "scaffold a skill", "add a skill to Claude",
   or mentions "skill template" or "SKILL.md".
-  Not for: updating CLAUDE.md (use /config-management), general documentation (use /docs).
+  Not for: updating CLAUDE.md manually.
 argument-hint: "[skill name]"
 disable-model-invocation: true
 allowed-tools: Bash, Read, Grep, Glob, Write, Edit
@@ -174,7 +174,7 @@ Never create a skill without running validation — an unvalidated skill may fai
 |-------|---------------------|
 | `/explore` | Understand existing skill implementations before creating similar ones |
 | `/review` | Review a skill's quality before finalizing |
-| `/clean-code` | Refactor an existing skill for maintainability |
+| `/review --refactor` | Refactor an existing skill for maintainability |
 | `/typescript` | TypeScript-specific guidance for skills that produce TypeScript code |
-| `/patterns` | Design patterns to implement within a skill's process |
+
 | `/hookify` | Creating Claude Code hooks, not skills |

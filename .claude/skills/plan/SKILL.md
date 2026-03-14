@@ -2,9 +2,10 @@
 name: plan
 description: >-
   User asks to "plan", "break down", "decompose", "scope this work",
+  "compare approaches", "trade-offs", "pros and cons", "brainstorm",
   or references a Jira epic needing implementation steps. Use before /feature.
-  Not for: exploring options (use /brainstorming), architecture decisions
-  (use /architecture), implementing directly (use /feature).
+  Not for: architecture decisions (use /architecture),
+  implementing directly (use /feature).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
 allowed-tools: Read, Grep, Glob, Write, Skill, TaskCreate, TaskUpdate, TaskList, mcp__atlassian__getJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql
 ---
@@ -28,6 +29,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases wi
 | Epic description (e.g., `payment processing system`) | Multi-feature roadmap | Steps 1-5; emphasis on phase dependencies |
 | `"overview"` / `"map"` / `"codebase"` | Codebase context for planning | Gather context via `/explore`, then Steps 1-5 |
 | `"resume"` / `"continue"` | Resume from state file | Read `.planning/STATE.md`, pick up from current phase |
+| Direction unclear (e.g., `how should we handle auth?`) | Explore options first | Diverge-then-converge: generate 2-3 options with trade-offs, then plan the chosen direction |
 | (none) | Ask user | Pre-flight stop |
 
 ## Process

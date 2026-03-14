@@ -124,6 +124,5 @@ Never silently skip security checks or assume IAM permissions are correct—surf
 | `/security` | Application-level security beyond AWS IAM |
 | `/architecture` | System design decisions and ADRs |
 | `/testing` | Testing strategies for Lambda and integrations |
-| `/diagram` | Visualizing AWS architecture with diagrams |
+| `/architecture` | Visualizing AWS architecture with diagrams |
 | `/explore` | Understand existing infrastructure code first |
-| `/docs` | Write runbooks or deployment documentation |

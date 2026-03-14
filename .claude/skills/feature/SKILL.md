@@ -3,7 +3,7 @@ name: feature
 description: >-
   User asks to "implement this feature", "build this", "start coding",
   "implement this ticket", or is ready to write code. Use after /plan for complex features.
-  Not for: still deciding on approach (use /brainstorming or /plan),
+  Not for: still deciding on approach (use /plan),
   fixing bugs (use /debug), writing only tests (use /testing).
 argument-hint: "[feature name or description]"
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Bash, TaskCreate, TaskUpdate, TaskList, mcp__atlassian__getJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql
@@ -181,7 +181,6 @@ Never silently skip milestones or acceptance criteria—surface gaps and blocker
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/architecture` | Need high-level design before feature planning |
-| `/patterns` | Feature requires specific design pattern |
 | `/review` | Feature implementation needs code review |
 | `/explore` | Need to understand existing features first |
 | `/plan` | Need to decompose a large goal before feature implementation |

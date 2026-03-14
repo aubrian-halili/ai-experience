@@ -3,8 +3,8 @@ name: architecture
 description: >-
   User asks to "design a system", "how should I architect", "how do I scale this",
   "create an ADR", or discusses infrastructure-level design.
-  Not for: comparing options (use /brainstorming), code-level patterns (use /patterns),
-  visual diagrams only (use /diagram).
+  Not for: implementing directly (use /feature),
+  code review (use /review).
 argument-hint: "[topic to design] or [--adr decision title]"
 allowed-tools: Read, Grep, Glob, Write, Edit
 ---
@@ -132,8 +132,6 @@ Never silently skip sections—surface gaps and limitations explicitly.
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/patterns` | Need specific pattern implementation |
-| `/diagram` | Visual representation would clarify |
 | `/review` | Existing code needs evaluation |
 | `/explore` | Need to understand existing system first |
-| `/docs` | Need detailed documentation beyond ADR |
+| `/plan` | Need implementation phases, not architecture design |

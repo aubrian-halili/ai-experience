@@ -3,8 +3,7 @@ name: playground
 description: >-
   User asks to "create a quick demo", "build a prototype", "show me what this looks like",
   or wants a throwaway single-file HTML prototype for visual exploration.
-  Not for: production UI components (use /react or /frontend-design),
-  Mermaid diagrams (use /diagram).
+  Not for: production UI components (use /react or /frontend-design).
 argument-hint: "[type of playground or concept to visualize]"
 disable-model-invocation: true
 allowed-tools: Read, Write, Edit, Bash(open *)
@@ -108,5 +107,3 @@ Never include external CDN links or npm packages — the playground must work co
 |-------|---------------------|
 | `/react` | Building production React components |
 | `/frontend-design` | Design system and visual polish guidance |
-| `/diagram` | Mermaid diagrams for documentation |
-| `/docs` | Written documentation rather than interactive demos |

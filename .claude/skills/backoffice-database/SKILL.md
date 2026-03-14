@@ -107,7 +107,5 @@ Never execute a write operation or expose credentials — if a query appears to 
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/explore` | To investigate application code, not database |
-| `/diagram` | To visualize database relationships as ERD |
-| `/architecture` | To design or evaluate database architecture decisions |
-| `/docs` | To document database schema or data models |
+| `/architecture` | To design, evaluate, or visualize database architecture |
 | `/testing` | Write integration tests for database queries |

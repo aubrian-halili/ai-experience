@@ -2,11 +2,12 @@
 name: review
 description: >-
   User asks for "code review", "review this PR", "review my changes",
-  "review PR #123", or "is this ready to merge".
-  Not for: deep refactoring (use /clean-code), security audit (use /security),
+  "review PR #123", "is this ready to merge", "refactor this", "clean up this code",
+  "reduce complexity", mentions "SOLID", "code smells", or "technical debt".
+  Not for: security audit (use /security),
   verifying completeness against a plan (use /verify).
-argument-hint: "[file, PR number, URL, or component to review]"
-allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent
+argument-hint: "[file, PR number, URL, or component to review] [--refactor]"
+allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent, Edit
 ---
 
 **Current branch:** !`git branch --show-current`
@@ -56,6 +57,7 @@ Classify `$ARGUMENTS` to determine the review workflow:
 | Component name (e.g., `AuthService`) | Review matching files | Locate component, review matches |
 | Branch name (e.g., `feature/auth`) | Review branch changes | Branch diff against base |
 | PR number/URL (e.g., `123`, `#123`, URL) | Review pull request | Full PR analysis via `gh` |
+| `--refactor` flag (e.g., `src/auth/ --refactor`) | Clean code & SOLID analysis | Refactoring-focused review with Edit suggestions |
 
 ## Severity Levels
 
@@ -77,6 +79,7 @@ When the review scope is large (>10 files) or the user requests a thorough revie
 | **Test Coverage** | `code-quality-reviewer` | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
 | **Performance** | `code-quality-reviewer` | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
 | **Security** | `security-scanner` | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
+| **Clean Code** | `code-quality-reviewer` | SOLID violations, code smells, naming, dead code | Apply refactoring fixes with `--refactor` flag |
 
 Each pass produces findings with:
 - **Confidence score** (0-100): Only surface findings >= 80
@@ -197,6 +200,29 @@ Apply confidence gate — only flag findings scored >= 80.
 - Sanity-check severity distribution — if all findings are Critical or all are Note, re-evaluate consistency
 - Suggest next steps: recommend related skills for deeper analysis, or state merge readiness for PR reviews
 
+## SOLID Checks (Clean Code Pass)
+
+| Principle | Violation Signal | Fix |
+|-----------|-----------------|-----|
+| **SRP** | Class has multiple reasons to change | Extract classes by responsibility |
+| **OCP** | Modifying existing code for new types | Use polymorphism or strategy |
+| **LSP** | Subclass breaks parent's contract | Redesign hierarchy |
+| **ISP** | Client depends on methods it doesn't use | Split into focused interfaces |
+| **DIP** | High-level module depends on concrete class | Inject abstractions |
+
+## Code Smells to Detect (Clean Code Pass)
+
+| Smell | Refactoring |
+|-------|-------------|
+| Long Method (> 20 lines) | Extract Method |
+| Large Class | Extract Class |
+| Feature Envy | Move Method |
+| Data Clumps | Extract Class / Parameter Object |
+| Primitive Obsession | Value Objects |
+| Switch Statements | Polymorphism |
+| Speculative Generality | Remove unused abstraction |
+| Duplicate Code | Extract Method/Class |
+
 ## Output Principles
 
 - **Severity-first ordering** — group findings by severity (Critical first), not by file or dimension
@@ -224,9 +250,6 @@ Never silently omit findings or skip review dimensions—surface limitations and
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/receiving-review` | Addressing feedback received on your PR |
-| `/clean-code` | Deep SOLID analysis needed |
 | `/architecture` | Structural concerns found |
-| `/patterns` | Code could benefit from design patterns |
 | `/security` | Deep security audit needed |
 | `/explore` | Understand codebase context before reviewing unfamiliar code |
-| `/config-management` | Audit project configuration and CLAUDE.md consistency |

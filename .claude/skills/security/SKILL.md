@@ -4,7 +4,7 @@ description: >-
   User asks for "security review", "security audit", "threat model",
   mentions OWASP, XSS, SQL injection, or asks "is this secure".
   Not for: general code review (use /review), code quality refactoring
-  (use /clean-code), IAM/cloud security (use /aws).
+  (use /review --refactor), IAM/cloud security (use /aws).
 argument-hint: "[file, component, or feature to assess]"
 context: fork
 agent: Explore
@@ -163,7 +163,6 @@ Never silently skip OWASP categories or trust boundaries — surface assessment 
 |-------|---------------------|
 | `/review` | General code review with security as one dimension |
 | `/architecture` | Security architecture design from scratch |
-| `/patterns` | Implementing specific security patterns |
 | `/explore` | Understand codebase context before auditing unfamiliar code |
-| `/clean-code` | Code quality issues unrelated to security |
+| `/review` | Code quality issues unrelated to security |
 | `/testing` | Write security-focused tests after audit |
