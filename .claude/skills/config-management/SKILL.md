@@ -1,12 +1,11 @@
 ---
 name: config-management
 description: >-
-  TRIGGER when: user asks to "audit CLAUDE.md", "update CLAUDE.md", "sync project configuration", "check
-  if CLAUDE.md is up to date", "fix stale references in config", or notices CLAUDE.md is out of sync with
-  the actual project structure.
-  DO NOT TRIGGER when: user wants to create a new skill (use /skill-creator), write project documentation
-  (use /docs), or review code quality (use /review). This skill maintains Claude Code configuration files.
+  User asks to "audit CLAUDE.md", "update CLAUDE.md", "sync project configuration",
+  or notices CLAUDE.md is out of sync with the project structure.
+  Not for: creating skills (use /skill-creator), project documentation (use /docs).
 argument-hint: "[audit, sync, or improve]"
+disable-model-invocation: true
 context: fork
 agent: Explore
 allowed-tools: Read, Grep, Glob

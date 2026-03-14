@@ -1,11 +1,11 @@
 ---
 name: skill-creator
 description: >-
-  TRIGGER when: user asks to "create a new skill", "build a skill", "scaffold a skill", "add a skill to
-  Claude", mentions "skill template" or "SKILL.md".
-  DO NOT TRIGGER when: user wants to update CLAUDE.md after creating a skill (use /config-management) or
-  wants general documentation (use /docs).
+  User asks to "create a new skill", "scaffold a skill", "add a skill to Claude",
+  or mentions "skill template" or "SKILL.md".
+  Not for: updating CLAUDE.md (use /config-management), general documentation (use /docs).
 argument-hint: "[skill name]"
+disable-model-invocation: true
 allowed-tools: Bash, Read, Grep, Glob, Write, Edit
 ---
 

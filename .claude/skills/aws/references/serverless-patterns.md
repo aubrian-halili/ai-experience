@@ -107,57 +107,6 @@ export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
 };
 ```
 
-### DynamoDB Streams Handler
-
-```typescript
-import { DynamoDBStreamEvent } from 'aws-lambda';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
-import { AttributeValue } from '@aws-sdk/client-dynamodb';
-
-export const handler = async (event: DynamoDBStreamEvent): Promise<void> => {
-  for (const record of event.Records) {
-    const eventName = record.eventName; // INSERT | MODIFY | REMOVE
-
-    if (eventName === 'INSERT' || eventName === 'MODIFY') {
-      const newImage = unmarshall(
-        record.dynamodb?.NewImage as Record<string, AttributeValue>,
-      );
-      await handleChange(eventName, newImage);
-    }
-
-    if (eventName === 'REMOVE') {
-      const oldImage = unmarshall(
-        record.dynamodb?.OldImage as Record<string, AttributeValue>,
-      );
-      await handleDeletion(oldImage);
-    }
-  }
-};
-```
-
-### S3 Event Handler
-
-```typescript
-import { S3Event } from 'aws-lambda';
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
-
-const s3 = new S3Client({});
-
-export const handler = async (event: S3Event): Promise<void> => {
-  for (const record of event.Records) {
-    const bucket = record.s3.bucket.name;
-    const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, ' '));
-
-    const { Body } = await s3.send(
-      new GetObjectCommand({ Bucket: bucket, Key: key }),
-    );
-
-    const content = await Body?.transformToString();
-    await processUpload(bucket, key, content);
-  }
-};
-```
-
 ## Cold Start Optimization
 
 | Technique | Impact | When to Use |
@@ -209,55 +158,9 @@ export class NotFoundError extends AppError {
     super(`${resource} with id ${id} not found`, 404, 'NOT_FOUND');
   }
 }
-
-export class ConflictError extends AppError {
-  constructor(message: string) {
-    super(message, 409, 'CONFLICT');
-  }
-}
-```
-
-### Error Response Builder
-
-```typescript
-export const errorResponse = (error: unknown): APIGatewayProxyResult => {
-  if (error instanceof AppError) {
-    return {
-      statusCode: error.statusCode,
-      body: JSON.stringify({ code: error.code, message: error.message }),
-    };
-  }
-
-  return {
-    statusCode: 500,
-    body: JSON.stringify({ code: 'INTERNAL_ERROR', message: 'Internal server error' }),
-  };
-};
 ```
 
 ## API Gateway Patterns
-
-### Request Validation (SAM template)
-
-```yaml
-MyApi:
-  Type: AWS::Serverless::Api
-  Properties:
-    StageName: prod
-    Models:
-      CreateUserModel:
-        type: object
-        required:
-          - name
-          - email
-        properties:
-          name:
-            type: string
-            minLength: 1
-          email:
-            type: string
-            format: email
-```
 
 ### CORS Configuration
 
@@ -427,23 +330,4 @@ export const generateDownloadUrl = async (key: string): Promise<string> => {
   });
   return getSignedUrl(s3, command, { expiresIn: 3600 });
 };
-```
-
-### Lifecycle Policy (SAM)
-
-```yaml
-UploadBucket:
-  Type: AWS::S3::Bucket
-  Properties:
-    LifecycleConfiguration:
-      Rules:
-        - Id: TransitionToIA
-          Status: Enabled
-          Transitions:
-            - StorageClass: STANDARD_IA
-              TransitionInDays: 30
-        - Id: DeleteTempUploads
-          Status: Enabled
-          Prefix: tmp/
-          ExpirationInDays: 7
 ```

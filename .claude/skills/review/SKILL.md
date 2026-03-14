@@ -1,12 +1,10 @@
 ---
 name: review
 description: >-
-  TRIGGER when: user asks for "code review", "review this PR", "review my changes", "check this PR",
-  "look at my diff", "review PR #123", "is this ready to merge", or wants a holistic multi-dimensional
-  assessment of code changes (correctness, style, performance, security surface-level).
-  DO NOT TRIGGER when: user wants deep refactoring suggestions (use /clean-code), a dedicated security
-  audit (use /security), to write tests (use /testing), or to verify feature completeness against a plan
-  (use /verify).
+  User asks for "code review", "review this PR", "review my changes",
+  "review PR #123", or "is this ready to merge".
+  Not for: deep refactoring (use /clean-code), security audit (use /security),
+  verifying completeness against a plan (use /verify).
 argument-hint: "[file, PR number, URL, or component to review]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent
 ---

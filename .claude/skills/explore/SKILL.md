@@ -1,12 +1,10 @@
 ---
 name: explore
 description: >-
-  TRIGGER when: user asks "how does this work", "explain this module", "walk me through this flow",
-  "what does this code do", "trace the call chain for X", "map out this codebase", or wants to understand
-  existing working code by reading the codebase.
-  DO NOT TRIGGER when: user wants to fix a bug (use /debug), wants a visual diagram output (use /diagram),
-  wants to design something new (use /architecture), or wants to review code quality (use /review). This
-  skill explains existing code — it does NOT fix, modify, or visualize it.
+  User asks "how does this work", "explain this module", "trace the call chain",
+  "what does this code do", or wants to understand existing code by reading it.
+  Not for: fixing bugs (use /debug), visual diagrams (use /diagram),
+  designing something new (use /architecture).
 argument-hint: "[feature, module, or flow to investigate]"
 context: fork
 agent: Explore

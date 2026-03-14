@@ -1,11 +1,10 @@
 ---
 name: aws
 description: >-
-  TRIGGER when: user asks about AWS services (Lambda, API Gateway, DynamoDB, S3, SQS, SNS, CloudWatch),
-  SAM/CloudFormation templates, IAM policies, mentions "serverless", "infrastructure as code", "cloud
-  deployment", or "AWS".
-  DO NOT TRIGGER when: user asks about general architecture without AWS specifics (use /architecture) or
-  general TypeScript/code questions that happen to run on AWS (use /typescript or /feature).
+  User asks about AWS services (Lambda, DynamoDB, S3, SQS), SAM/CloudFormation,
+  IAM policies, or mentions "serverless" or "AWS".
+  Not for: general architecture (use /architecture), TypeScript without AWS context
+  (use /typescript).
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, WebSearch, WebFetch
 argument-hint: "[service name, pattern question, or leave blank for guidance]"
 ---

@@ -106,30 +106,6 @@ GetUserFunction:
       Sourcemap: true
       EntryPoints:
         - src/handlers/getUser.ts
-
-CreateUserFunction:
-  Type: AWS::Serverless::Function
-  Properties:
-    Handler: src/handlers/createUser.handler
-    CodeUri: .
-    Description: Create a new user
-    Events:
-      CreateUser:
-        Type: Api
-        Properties:
-          Path: /users
-          Method: post
-    Policies:
-      - DynamoDBCrudPolicy:
-          TableName: !Ref DynamoDBTable
-  Metadata:
-    BuildMethod: esbuild
-    BuildProperties:
-      Minify: true
-      Target: es2022
-      Sourcemap: true
-      EntryPoints:
-        - src/handlers/createUser.ts
 ```
 
 ### DynamoDB Table
@@ -290,14 +266,6 @@ confirm_changeset = true
 resolve_s3 = true
 region = "us-east-1"
 parameter_overrides = "Environment=dev LogLevel=DEBUG"
-
-[staging.deploy.parameters]
-stack_name = "my-service-staging"
-capabilities = "CAPABILITY_IAM"
-confirm_changeset = true
-resolve_s3 = true
-region = "us-east-1"
-parameter_overrides = "Environment=staging LogLevel=INFO"
 
 [prod.deploy.parameters]
 stack_name = "my-service-prod"

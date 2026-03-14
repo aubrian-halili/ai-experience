@@ -1,13 +1,9 @@
 ---
 name: brainstorming
 description: >-
-  TRIGGER when: user wants to explore multiple options before deciding, asks "what are my options",
-  "compare approaches", "trade-offs", "pros and cons", "brainstorm", "which way should I go",
-  "help me think through", "I'm not sure which approach", or is stuck choosing between alternatives.
-  Use before /plan when direction is unclear.
-  DO NOT TRIGGER when: user already chose an approach and needs a plan (use /plan), needs system-level
-  design (use /architecture), or wants a specific design pattern (use /patterns). This skill explores —
-  it does NOT produce code or plans.
+  User asks to "compare approaches", "trade-offs", "pros and cons", "brainstorm",
+  or is stuck choosing between alternatives. Use before /plan when direction is unclear.
+  Not for: already chose an approach (use /plan), system-level design (use /architecture).
 argument-hint: "[problem, goal, or design question]"
 allowed-tools: Read, Grep, Glob, Skill
 ---

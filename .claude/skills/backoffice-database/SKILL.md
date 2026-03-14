@@ -1,11 +1,11 @@
 ---
 name: backoffice-database
 description: >-
-  TRIGGER when: user asks to "query the database", "explore the database", "show tables", "describe this
-  table", "what's in the database", "run a SQL query", "database schema", mentions "backoffice",
-  "PostgreSQL", or "postgres".
-  DO NOT TRIGGER when: user asks about database architecture or schema design (use /architecture).
+  User asks to "query the database", "show tables", "run a SQL query",
+  "database schema", or mentions "backoffice" or "postgres".
+  Not for: database architecture or schema design (use /architecture).
 argument-hint: "[database or table name, or SQL query]"
+disable-model-invocation: true
 allowed-tools: mcp__qred-postgres__list_databases, mcp__qred-postgres__list_schemas, mcp__qred-postgres__list_tables_in_schema, mcp__qred-postgres__read_schema_of_table, mcp__qred-postgres__query
 ---
 

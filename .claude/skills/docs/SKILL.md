@@ -1,11 +1,10 @@
 ---
 name: docs
 description: >-
-  TRIGGER when: user asks to "write documentation", "create a README", "document this API", "write an RFC",
-  "create a design doc", "make slides", "build a presentation", "create a deck", mentions "technical
-  writing", "API docs", or "PowerPoint".
-  DO NOT TRIGGER when: user asks to create an ADR (use /architecture), document a Jira ticket (use /jira),
-  or generate diagram-only output (use /diagram). This skill produces written documents and presentations.
+  User asks to "write documentation", "create a README", "document this API",
+  "write an RFC", "make slides", or mentions "API docs".
+  Not for: ADRs (use /architecture), Jira tickets (use /jira),
+  diagram-only output (use /diagram).
 argument-hint: "[topic, document type, or presentation purpose]"
 allowed-tools: Read, Grep, Glob, Write
 ---

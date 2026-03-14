@@ -1,11 +1,9 @@
 ---
 name: jira
 description: >-
-  TRIGGER when: user asks to "create a Jira ticket", "file a ticket", "create a bug ticket", "create a
-  story", "make a Jira issue", "add a task in Jira", mentions "Jira" in context of creating or searching
-  tickets.
-  DO NOT TRIGGER when: user mentions a Jira ticket ID as context for other work (e.g., "implement UN-1234"
-  should use /plan or /feature).
+  User asks to "create a Jira ticket", "file a ticket", "create a story",
+  or mentions "Jira" in context of creating or searching tickets.
+  Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature).
 argument-hint: "[PROJECT] [bug|task|story] [title or description] [--assignee <user>]"
 allowed-tools: mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__createJiraIssue, mcp__atlassian__lookupJiraAccountId, mcp__atlassian__getJiraIssue
 disable-model-invocation: true

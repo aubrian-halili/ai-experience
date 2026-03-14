@@ -1,11 +1,10 @@
 ---
 name: hookify
 description: >-
-  TRIGGER when: user asks to "create a Claude Code hook", "add a hook to Claude", "enforce a rule
-  automatically", "block certain commands", "prevent accidental changes", "add a guardrail", "automate a
-  check before/after tool use", or mentions "PreToolUse", "PostToolUse".
-  DO NOT TRIGGER when: user asks about React hooks (use /react) or git hooks (standard git setup). This
-  skill is for Claude Code hooks, not React hooks or git hooks.
+  User asks to "create a Claude Code hook", "add a guardrail", "block certain commands",
+  or mentions "PreToolUse", "PostToolUse". This is for Claude Code hooks, not React
+  hooks or git hooks.
+  Not for: React hooks (use /react).
 argument-hint: "[hook type or behavior to enforce]"
 allowed-tools: Read, Write, Edit, Bash(chmod *), Glob
 disable-model-invocation: true

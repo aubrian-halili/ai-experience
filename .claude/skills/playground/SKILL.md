@@ -1,13 +1,12 @@
 ---
 name: playground
 description: >-
-  TRIGGER when: user asks to "create a quick demo", "build a prototype", "make a visual mockup", "try this
-  out visually", "show me what this looks like", "create an interactive demo", "quick HTML page", or wants
-  a fast throwaway single-file HTML prototype for visual exploration or stakeholder demos.
-  DO NOT TRIGGER when: user wants production UI components (use /react or /frontend-design), a Mermaid
-  diagram (use /diagram), or full application scaffolding (use /feature). This produces self-contained
-  HTML files, not production code.
+  User asks to "create a quick demo", "build a prototype", "show me what this looks like",
+  or wants a throwaway single-file HTML prototype for visual exploration.
+  Not for: production UI components (use /react or /frontend-design),
+  Mermaid diagrams (use /diagram).
 argument-hint: "[type of playground or concept to visualize]"
+disable-model-invocation: true
 allowed-tools: Read, Write, Edit, Bash(open *)
 ---
 

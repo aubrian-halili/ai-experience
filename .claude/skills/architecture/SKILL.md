@@ -1,13 +1,10 @@
 ---
 name: architecture
 description: >-
-  TRIGGER when: user asks to design a system, evaluate architecture trade-offs, asks "how should I architect",
-  "what's the best architecture for", "how do I scale this", "microservices vs monolith", "create an ADR",
-  "document this architecture decision", or discusses infrastructure-level design (databases, messaging,
-  caching, service boundaries).
-  DO NOT TRIGGER when: user is comparing options without system-level scope (use /brainstorming), asking
-  about code-level design patterns (use /patterns), wants a visual diagram only (use /diagram), or needs
-  to understand existing code (use /explore).
+  User asks to "design a system", "how should I architect", "how do I scale this",
+  "create an ADR", or discusses infrastructure-level design.
+  Not for: comparing options (use /brainstorming), code-level patterns (use /patterns),
+  visual diagrams only (use /diagram).
 argument-hint: "[topic to design] or [--adr decision title]"
 allowed-tools: Read, Grep, Glob, Write, Edit
 ---

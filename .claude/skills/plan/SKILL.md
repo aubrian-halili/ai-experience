@@ -1,11 +1,10 @@
 ---
 name: plan
 description: >-
-  TRIGGER when: user asks to "plan", "break down", "decompose", "create a roadmap", "what's the approach",
-  "scope this work", "break this into phases", "how do I tackle this", or references a Jira epic/ticket
-  needing decomposition into implementation steps. Use before /feature.
-  DO NOT TRIGGER when: user wants to explore options without committing (use /brainstorming), needs
-  architecture decisions (use /architecture), or wants to implement code directly (use /feature).
+  User asks to "plan", "break down", "decompose", "scope this work",
+  or references a Jira epic needing implementation steps. Use before /feature.
+  Not for: exploring options (use /brainstorming), architecture decisions
+  (use /architecture), implementing directly (use /feature).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
 allowed-tools: Read, Grep, Glob, Write, Skill, TaskCreate, TaskUpdate, TaskList, mcp__atlassian__getJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql
 ---

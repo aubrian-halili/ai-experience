@@ -79,27 +79,6 @@ Resource: !Sub 'arn:aws:s3:::${UploadBucket}/uploads/${!userId}/*'
 | S3 bucket policy enforcement | Add `aws:SecureTransport` condition |
 | DynamoDB | HTTPS via SDK (default) |
 
-### S3 Enforce HTTPS
-
-```yaml
-BucketPolicy:
-  Type: AWS::S3::BucketPolicy
-  Properties:
-    Bucket: !Ref UploadBucket
-    PolicyDocument:
-      Statement:
-        - Sid: DenyInsecureTransport
-          Effect: Deny
-          Principal: '*'
-          Action: 's3:*'
-          Resource:
-            - !GetAtt UploadBucket.Arn
-            - !Sub '${UploadBucket.Arn}/*'
-          Condition:
-            Bool:
-              'aws:SecureTransport': 'false'
-```
-
 ## API Authentication Patterns
 
 | Pattern | Use When | Complexity |
@@ -135,33 +114,6 @@ UserPool:
         RequireLowercase: true
         RequireNumbers: true
         RequireSymbols: true
-```
-
-### Lambda Authorizer (SAM)
-
-```yaml
-MyApi:
-  Type: AWS::Serverless::Api
-  Properties:
-    StageName: prod
-    Auth:
-      DefaultAuthorizer: TokenAuthorizer
-      Authorizers:
-        TokenAuthorizer:
-          FunctionArn: !GetAtt AuthorizerFunction.Arn
-          Identity:
-            Header: Authorization
-            ReauthorizeEvery: 300
-
-AuthorizerFunction:
-  Type: AWS::Serverless::Function
-  Properties:
-    Handler: src/handlers/authorizer.handler
-    CodeUri: .
-    Timeout: 5
-    Policies:
-      - SSMParameterReadPolicy:
-          ParameterName: !Sub '${AWS::StackName}/jwt-secret'
 ```
 
 ## Secrets Management

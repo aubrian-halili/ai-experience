@@ -1,9 +1,9 @@
 ---
 name: finish
 description: >-
-  TRIGGER when: user says "I'm done", "finish this branch", "wrap up", "what should I do with this branch",
-  "clean up", or has completed implementation and needs to decide next steps.
-  DO NOT TRIGGER when: user wants to commit (use /commit) or specifically create a PR (use /pr).
+  User says "I'm done", "finish this branch", "wrap up", or has completed
+  implementation and needs to decide next steps.
+  Not for: committing (use /commit) or creating a PR (use /pr).
 argument-hint: "[optional: merge, pr, park, discard]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob
 ---

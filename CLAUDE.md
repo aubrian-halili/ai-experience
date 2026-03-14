@@ -12,7 +12,7 @@
 ```text
 .claude/
 ├── agents/          # 5 reusable subagent definitions
-├── skills/          # 29 specialized workflow skills
+├── skills/          # 30 specialized workflow skills
 ├── rules/           # Modular instruction files
 └── settings.json    # Project-wide settings
 ```
@@ -41,6 +41,6 @@
 
 Detailed conventions are maintained in modular rule files:
 
-- @.claude/rules/git-conventions.md - Branch naming, commit format, Jira integration
-- @.claude/rules/code-style.md - TypeScript, formatting, diagrams
-- @.claude/rules/pr-conventions.md - PR titles, descriptions, review process
+- `.claude/rules/git-conventions.md` - Branch naming, commit format, Jira integration
+- `.claude/rules/code-style.md` - TypeScript, formatting, diagrams
+- `.claude/rules/pr-conventions.md` - PR titles, descriptions, review process
