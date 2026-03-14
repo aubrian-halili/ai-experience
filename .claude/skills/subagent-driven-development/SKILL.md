@@ -5,7 +5,6 @@ description: >-
   or has 3+ independent modules to implement concurrently. Use after /plan.
   Not for: tasks with sequential dependencies (use /feature) or single-file scope.
 argument-hint: "[plan file, task list, or multi-module feature description]"
-disable-model-invocation: true
 agent: implementation-worker
 allowed-tools: Agent, Read, Grep, Glob, TaskCreate, TaskUpdate, TaskList
 ---
