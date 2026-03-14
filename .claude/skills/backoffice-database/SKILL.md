@@ -5,7 +5,6 @@ description: >-
   "database schema", or mentions "backoffice" or "postgres".
   Not for: database architecture or schema design (use /architecture).
 argument-hint: "[database or table name, or SQL query]"
-disable-model-invocation: true
 allowed-tools: mcp__qred-postgres__list_databases, mcp__qred-postgres__list_schemas, mcp__qred-postgres__list_tables_in_schema, mcp__qred-postgres__read_schema_of_table, mcp__qred-postgres__query
 ---
 
