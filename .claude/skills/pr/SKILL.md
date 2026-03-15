@@ -115,7 +115,7 @@ gh pr view --json number,url,title,state
 
 Show the user: PR number, URL, title, state, and next steps (e.g., request reviews, monitor CI).
 
-**Jira integration (optional):** If a Jira ticket ID was detected and acli is available, offer to transition the ticket status (e.g., to "In Review") using `acli jira workitem transition <ISSUE_KEY> --status "In Review"`. Always confirm with the user before changing ticket status.
+**Jira integration (optional):** If a Jira ticket ID was detected and acli is available, offer to transition the ticket status (e.g., to "In Review") using `acli jira workitem transition --key <ISSUE_KEY> --status "In Review"`. Always confirm with the user before changing ticket status.
 
 ## Output Principles
 
