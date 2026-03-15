@@ -12,6 +12,7 @@ Thumbs.db
 # Claude Code local files
 CLAUDE.local.md
 .claude/settings.local.json
+.claude/skills/backoffice-database/references/database-overview.md
 
 # Node
 node_modules/

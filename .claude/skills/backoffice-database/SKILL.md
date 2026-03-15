@@ -61,6 +61,9 @@ Parse `$ARGUMENTS` to understand what the user wants:
 ### 2. Execute
 
 **Overview (no arguments)**
+
+If `@references/database-overview.md` exists, present its cached data directly instead of re-querying. If the user asks to refresh, re-run the queries below and update the reference file.
+
 1. Using the psql pattern with the resolved `dbname`, run the following command to show all available databases:
   ```sql
    SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname;
