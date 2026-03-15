@@ -4,8 +4,8 @@ description: >-
   User asks to "create a Jira ticket", "file a ticket", "create a story",
   or mentions "Jira" in context of creating or searching tickets.
   Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature).
-argument-hint: "[PROJECT] [bug|task|story] [title or description] [--assignee <user>]"
-allowed-tools: mcp__atlassian__searchJiraIssuesUsingJql, mcp__atlassian__createJiraIssue, mcp__atlassian__lookupJiraAccountId, mcp__atlassian__getJiraIssue
+argument-hint: "[PROJECT] [bug|task|story] [title or description]"
+allowed-tools: Bash(acli *)
 disable-model-invocation: true
 ---
 
@@ -16,7 +16,7 @@ Create Jira tickets from the current conversation context with structured templa
 - **Context from conversation** — extract ticket content from the current session discussion, not from git history or guesswork
 - **User confirmation** — always present ticket details for review before creating; never file a ticket without explicit approval
 - **Template-driven content** — use structured templates for consistent, actionable tickets; every field should be filled or explicitly marked as unknown
-- **Graceful degradation** — if MCP is unavailable, generate copy-ready content for manual entry rather than failing
+- **Graceful degradation** — if acli is unavailable, generate copy-ready content for manual entry rather than failing
 - **Duplicate awareness** — search for existing tickets before creating new ones; avoid cluttering the backlog
 
 ## Input Handling
@@ -43,7 +43,7 @@ Determine ticket creation intent from `$ARGUMENTS`:
   3. Conversation keywords: `user story, as a user, user wants, feature request` → Story
   4. Conversation keywords: `implement, refactor, update, configure, task, add, create` → Task
   5. Cannot determine → Ask user
-- Check MCP availability: MCP available → create directly via Atlassian MCP; MCP unavailable → generate content for manual entry
+- Check acli availability: run `acli --version`; acli available → create directly via acli; acli unavailable → generate content for manual entry
 
 **Stop conditions:**
 - Unclear ticket type and cannot infer from conversation → ask user to clarify (bug, task, or story)
@@ -53,7 +53,7 @@ Determine ticket creation intent from `$ARGUMENTS`:
 
 Before gathering content, search for existing tickets with a similar summary in the same project:
 
-- Use `mcp__atlassian__searchJiraIssuesUsingJql` with a JQL query targeting the project and keywords from the title
+- Use `acli jira workitem search --jql` with a JQL query targeting the project and keywords from the title
   - Example: `project = UN AND summary ~ "login timeout" ORDER BY created DESC`
 - If similar tickets found → Present them to the user and ask whether to proceed with creation or link to an existing ticket
 - If no matches → Proceed to content gathering
@@ -86,27 +86,24 @@ Present a summary of the ticket details:
 - **Type**: Bug, Task, or Story
 - **Title**: The ticket summary
 - **Priority**: Suggested priority with justification
-- **Assignee**: If `--assignee` provided
 - **Description**: Preview of the content (first few lines or key sections)
 
 Ask the user to confirm before creating the ticket. This prevents incorrect tickets from being filed.
 
 ### 5. Create Ticket
 
-- **MCP available**: Call `mcp__atlassian__createJiraIssue` with project key, issue type, summary, and formatted description
-  - If `--assignee` provided, use `mcp__atlassian__lookupJiraAccountId` to resolve the user, then include the assignee in the creation call
-- **MCP unavailable**: Generate copy-ready formatted content for manual entry
+- **acli available**: Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"` with project key, issue type, summary, and formatted description
+- **acli unavailable**: Generate copy-ready formatted content for manual entry
 
 ### 6. Verify and Present Result
 
-**Verification** (MCP only):
-- Fetch the created ticket back using `mcp__atlassian__getJiraIssue` to confirm it exists
+**Verification** (acli only):
+- Fetch the created ticket back using `acli jira workitem view <ISSUE_KEY>` to confirm it exists
 - If fetch fails, warn the user and suggest checking Jira manually
 
 **Show the user:**
-- **Ticket ID** and canonical URL (if MCP)
+- **Ticket ID** and canonical URL (if acli)
 - **Type**, **priority**, and **summary**
-- **Assignee** (if set)
 - **Suggested branch name**: `<TICKET-ID>-<short-description>` (e.g., `UN-1234-fix-login-timeout`)
 - **Workflow reminder**: Create branch → implement → `/commit` → `/pr`
 
@@ -121,13 +118,12 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 
 | Scenario | Response |
 |----------|----------|
-| MCP not available | Fall back to content generation |
-| Authentication error | "Configure Atlassian MCP credentials" |
+| acli not available | Fall back to content generation |
+| Authentication error | "Run `acli jira auth login` to authenticate" |
 | Unknown project | Prompt for project key |
 | API error | Provide content for manual entry |
 | No conversation context | Prompt user to describe the issue or task |
 | Duplicate ticket found | Present existing tickets, ask user to confirm or cancel |
-| Assignee not found | Warn user, create ticket without assignee |
 | Verification fetch fails | Warn user, provide ticket ID and suggest checking Jira |
 
 Never create a ticket without user confirmation or skip duplicate checking — surface existing tickets before filing new ones.

@@ -6,7 +6,7 @@ description: >-
   Not for: still deciding on approach (use /plan),
   fixing bugs (use /debug), writing only tests (use /testing).
 argument-hint: "[feature name or description]"
-allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Bash, TaskCreate, TaskUpdate, TaskList, mcp__atlassian__getJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql
+allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Bash, TaskCreate, TaskUpdate, TaskList
 ---
 
 **Current branch:** !`git branch --show-current`
@@ -60,7 +60,7 @@ Guide structured feature development from specification through incremental impl
 ### 1. Pre-flight
 
 - Parse `$ARGUMENTS` and map to the appropriate intent (Feature Name, Feature + Scope, User Story, File Path, or Ask User) using the Input Handling table
-- **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `mcp__atlassian__getJiraIssue` to pull acceptance criteria, priority, and requirements directly from Jira. If the MCP tool is unavailable, proceed with user-provided context and note the limitation.
+- **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `acli jira workitem view <TICKET_ID>` to pull acceptance criteria, priority, and requirements directly from Jira. If acli is unavailable, proceed with user-provided context and note the limitation.
 - Determine the Feature Type (Greenfield, Enhancement, Integration, or Migration) from the Feature Types section above
 - Search for related existing features, patterns, and conventions in the codebase
 - Check for existing specs or documentation related to the feature
