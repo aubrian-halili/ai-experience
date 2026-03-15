@@ -7,7 +7,7 @@ description: >-
   Not for: architecture decisions (use /architecture),
   implementing directly (use /feature).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
-allowed-tools: Read, Grep, Glob, Write, Skill, TaskCreate, TaskUpdate, TaskList, mcp__atlassian__getJiraIssue, mcp__atlassian__searchJiraIssuesUsingJql
+allowed-tools: Read, Grep, Glob, Write, Skill, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
 ---
 
 Decompose goals, epics, or Jira tickets into structured implementation phases with clear deliverables, using goal-backward verification to ensure every phase contributes to observable outcomes.
@@ -37,7 +37,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases wi
 ### 1. Pre-flight
 
 - Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
-- **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `mcp__atlassian__getJiraIssue` to ground the plan in actual requirements, acceptance criteria, and priority from Jira. If the MCP tool is unavailable, proceed with user-provided context and note the limitation.
+- **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `acli jira workitem view <TICKET_ID>` to ground the plan in actual requirements, acceptance criteria, and priority from Jira. If acli is unavailable, proceed with user-provided context and note the limitation.
 - Search the codebase for related existing code, patterns, and conventions
 - Check for existing `.planning/STATE.md` — if found, ask whether to resume or start fresh
 
