@@ -5,7 +5,7 @@ description: >-
   or mentions "Jira" in context of creating or searching tickets.
   Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature).
 argument-hint: "[PROJECT] [bug|task|story] [title or description]"
-allowed-tools: Bash(acli *)
+allowed-tools: Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version)
 disable-model-invocation: true
 ---
 
@@ -18,6 +18,25 @@ Create Jira tickets from the current conversation context with structured templa
 - **Template-driven content** — use structured templates for consistent, actionable tickets; every field should be filled or explicitly marked as unknown
 - **Graceful degradation** — if acli is unavailable, generate copy-ready content for manual entry rather than failing
 - **Duplicate awareness** — search for existing tickets before creating new ones; avoid cluttering the backlog
+
+## Guardrails
+
+This skill is scoped to **read and modify** operations — never destructive or administrative commands. The following rules apply to all acli usage:
+
+**Allowed actions**: `search`, `view`, `create`, `update`, `edit`, `transition`
+
+**Forbidden actions**: `delete` and any other destructive or administrative commands. If a user requests ticket deletion, refuse and explain that deletion is outside this skill's scope — they should delete tickets directly in Jira.
+
+**Multi-ticket confirmation**: When an `update`, `edit`, or `transition` would affect multiple tickets, list all affected ticket IDs and ask the user to explicitly confirm before proceeding.
+
+**Sensitive data exclusion**: Before creating or updating a ticket, scan the drafted content for secrets, credentials, API keys, tokens, connection strings, and PII. Strip or redact any sensitive values — ticket content is visible to all project members.
+
+## Iron Laws
+
+> - NEVER execute `delete` or any destructive/administrative acli command
+> - NEVER create or modify a ticket without user confirmation
+> - NEVER include secrets, credentials, API keys, or connection strings in ticket content
+> - ALWAYS search for duplicates before creating a new ticket
 
 ## Input Handling
 
@@ -125,6 +144,7 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 | No conversation context | Prompt user to describe the issue or task |
 | Duplicate ticket found | Present existing tickets, ask user to confirm or cancel |
 | Verification fetch fails | Warn user, provide ticket ID and suggest checking Jira |
+| Forbidden operation requested | Refuse: "Deletion and admin commands are outside this skill's scope — manage these directly in Jira" |
 
 Never create a ticket without user confirmation or skip duplicate checking — surface existing tickets before filing new ones.
 
