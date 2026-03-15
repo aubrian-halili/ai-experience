@@ -5,18 +5,30 @@ description: >-
   "database schema", or mentions "backoffice" or "postgres".
   Not for: database architecture or schema design (use /architecture).
 argument-hint: "[database or table name, or SQL query]"
-allowed-tools: mcp__qred-postgres__list_databases, mcp__qred-postgres__list_schemas, mcp__qred-postgres__list_tables_in_schema, mcp__qred-postgres__read_schema_of_table, mcp__qred-postgres__query
+allowed-tools: Bash
+disable-model-invocation: true
 ---
 
-Explore PostgreSQL database schemas and run read-only queries using the qred-postgres MCP server. All operations are strictly read-only.
+Explore PostgreSQL database schemas and run read-only queries against the backoffice Aurora cluster. All operations are strictly read-only.
 
 ## Database Philosophy
 
-- **Read-only only** — Never execute INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE, CREATE, or any DDL/DML. Only SELECT, WITH, SHOW, EXPLAIN, and DESCRIBE are permitted
+- **Read-only only** — Never execute INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE, CREATE, or any DDL/DML. Only SELECT, WITH, SHOW, EXPLAIN, and DESCRIBE are permitted. Enforced server-side via `default_transaction_read_only=on`
 - **No credential exposure** — Never include connection strings, passwords, or auth tokens in output
 - **Bounded results** — Always LIMIT queries; cap at 50 rows unless the user explicitly requests more
 - **Explicit scope** — State the target database and schema before every operation
 - **Progressive exploration** — Start with high-level overview (databases → schemas → tables) before diving into detailed queries; guide users toward discovering structure naturally
+
+## Connection
+
+Use psql with an explicit `dbname` for all queries:
+
+```bash
+PGPASSWORD=$(${AURORA_LOGIN_SCRIPT} auth DB_USER=${AURORA_DB_USER} ENV=test MARKET=allmarkets ENGINE=pgadmin) \
+  psql "host=${AURORA_HOST} port=5432 dbname=${AURORA_DB_NAME} user=${AURORA_DB_USER} \
+  sslmode=verify-ca sslrootcert=${AURORA_SSL_CERT} connect_timeout=10" \
+  --no-psqlrc --set=default_transaction_read_only=on -c "<query>"
+```
 
 ## Input Handling
 
@@ -36,47 +48,67 @@ Parse `$ARGUMENTS` to understand what the user wants:
 
 ### 1. Pre-flight
 
-- Call `mcp__qred-postgres__list_databases` to verify the MCP server is reachable
+- Run the psql pattern with the resolved `dbname` and query `SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname;` to verify connectivity and list databases
 - Set default database: `qred_se_db`
 - Set default schema: `public`
 - Parse `$ARGUMENTS` and map to the appropriate workflow (Overview, Table Schema, Query Data, Schema Tables, or Database Schemas) using the Input Handling table
 
 **Stop condition:**
-- MCP server unreachable → "The qred-postgres MCP server is not configured. Install and configure it to use this skill."
+- Auth command fails → "Aurora login failed. Check aurora-login configuration and credentials."
+- psql not found → "psql not found. Ensure PostgreSQL client tools are installed."
 
 
 ### 2. Execute
 
-Based on intent, use the appropriate MCP tool:
-
 **Overview (no arguments)**
-1. Call `mcp__qred-postgres__list_databases` to show all available databases
-2. Call `mcp__qred-postgres__list_schemas` with `qred_se_db` to show schemas in the default database
-3. Call `mcp__qred-postgres__list_tables_in_schema` with `qred_se_db` and `public` to show tables
+1. Using the psql pattern with the resolved `dbname`, run the following command to show all available databases:
+  ```sql
+   SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname;
+   ```
+2. Using the psql pattern with the resolved `dbname`, run the following command to show schemas in the default database:
+   ```sql
+   SELECT schema_name FROM information_schema.schemata ORDER BY schema_name;
+   ```
+3. Using the psql pattern with the resolved `dbname`, run the following command to show tables:
+   ```sql
+   SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name;
+   ```
 
 **Table Schema**
 1. Parse table name (extract schema and table from `schema.table` or assume `public` schema)
-2. Call `mcp__qred-postgres__read_schema_of_table` with URI format: `schema_name.table_name`
+2. Using the psql pattern with the resolved `dbname`, run:
+   ```sql
+   SELECT column_name, data_type, is_nullable, column_default
+   FROM information_schema.columns
+   WHERE table_schema = '<schema>' AND table_name = '<table>'
+   ORDER BY ordinal_position;
+   ```
 3. Present columns, types, constraints, and indexes
 
 **SQL Query**
 1. Validate query is read-only (must start with SELECT, WITH, SHOW, EXPLAIN, or DESCRIBE)
-2. Call `mcp__qred-postgres__query` with the SQL and default database
+2. Using the psql pattern with the resolved `dbname`, run the validated SQL
 3. Present results in a clear table format
 4. If query fails, show error and suggest corrections
 
 **Schema Tables**
-1. Call `mcp__qred-postgres__list_tables_in_schema` with database and schema name
+1. Using the psql pattern with the resolved `dbname`, run:
+   ```sql
+   SELECT table_name FROM information_schema.tables WHERE table_schema = '<schema>' ORDER BY table_name;
+   ```
 2. Present list of tables
 
 **Database Schemas**
-1. Call `mcp__qred-postgres__list_schemas` with the specified database name
+1. Using the psql pattern with `dbname=<database>`, run:
+   ```sql
+   SELECT schema_name FROM information_schema.schemata ORDER BY schema_name;
+   ```
 2. Present list of schemas
 
 ### 3. Verify Results
 
-- Confirm the MCP call returned data successfully
-- If empty result set → Note "Query returned 0 rows" explicitly
+- Confirm the command returned data successfully
+- If empty result set → Note "Query returned 0 rows" explicitly; if querying `information_schema`, check that the correct `dbname` was used
 - If entity not found (database, schema, or table) → Fall through to Error Handling
 - Present results following Output Principles
 
@@ -91,13 +123,15 @@ Based on intent, use the appropriate MCP tool:
 
 | Scenario | Response |
 |----------|----------|
-| MCP tools unavailable | "The qred-postgres MCP server is not configured. Install and configure it to use this skill." |
-| Database not found | List available databases and ask user to specify |
+| Auth command fails | "Aurora login failed. Check aurora-login configuration and credentials." |
+| psql not found | "psql not found. Ensure PostgreSQL client tools are installed." |
+| 0 rows from information_schema | "Got 0 rows — this query must target a specific app database. Retrying with psql against the resolved `dbname`." |
+| Database not found | List known databases from catalog and ask user to specify |
 | Schema not found | List available schemas in the database |
 | Table not found | List available tables in the schema |
 | Query syntax error | Show the error message and suggest corrections |
 | Write operation attempted | "Only read-only queries are allowed. Use SELECT, WITH, SHOW, or EXPLAIN." |
-| Authentication error | "PostgreSQL connection failed. Check MCP server configuration and credentials." |
+| Authentication error | "PostgreSQL connection failed. Check aurora-login configuration and credentials." |
 | Connection timeout | "Database connection timeout. Check server availability and network." |
 
 Never execute a write operation or expose credentials — if a query appears to modify data, refuse it and explain why.
