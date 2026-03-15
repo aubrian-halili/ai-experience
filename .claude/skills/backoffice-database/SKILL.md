@@ -62,7 +62,7 @@ Parse `$ARGUMENTS` to understand what the user wants:
 
 **Overview (no arguments)**
 
-If `@references/database-overview.md` exists, present its cached data directly instead of re-querying. If the user asks to refresh, re-run the queries below and update the reference file.
+If `@references/database-overview.md` exists, present its cached data directly instead of re-querying. The cached file contains databases, schemas, and table names only — no column-level detail. If the user wants column detail for a specific table, proceed to the **Table Schema** workflow. If the user asks to refresh, re-run the queries below and update the reference file.
 
 1. Using the psql pattern with the resolved `dbname`, run the following command to show all available databases:
   ```sql
