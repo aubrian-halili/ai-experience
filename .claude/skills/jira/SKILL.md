@@ -31,7 +31,7 @@ This skill is scoped to **read and modify** operations — never destructive or 
 
 **Sensitive data exclusion**: Before creating or updating a ticket, scan the drafted content for secrets, credentials, API keys, tokens, connection strings, and PII. Strip or redact any sensitive values — ticket content is visible to all project members.
 
-**Description formatting**: All ticket descriptions must use Jira wiki markup, not Markdown. Jira does not render Markdown — use `h2.` / `h3.` for headings, `#` for numbered lists, `*` for bullet lists, and `{code}...{code}` for code blocks. The templates in `@references/templates.md` already use the correct format.
+**Description formatting**: All ticket descriptions must use Markdown formatting. Use `##` / `###` for headings, `1.` for numbered lists, `-` for bullet lists, and fenced code blocks. The templates in `@references/templates.md` use the correct format.
 
 ## Iron Laws
 
@@ -39,7 +39,7 @@ This skill is scoped to **read and modify** operations — never destructive or 
 > - NEVER create or modify a ticket without user confirmation
 > - NEVER include secrets, credentials, API keys, or connection strings in ticket content
 > - ALWAYS search for duplicates before creating a new ticket
-> - ALWAYS use Jira wiki markup (not Markdown) in ticket descriptions
+> - ALWAYS use Markdown formatting in ticket descriptions
 
 ## Input Handling
 
@@ -117,7 +117,7 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 - **acli available**: Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
   - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
   - Priority is already embedded in the description via the template's "Suggested Priority" field
-  - Descriptions must use Jira wiki markup format (h2., h3., #, *, {code}) — not Markdown
+  - Descriptions must use Markdown format (##, ###, 1., -, fenced code blocks)
 - **acli unavailable**: Generate copy-ready formatted content for manual entry
 
 ### 6. Verify and Present Result
