@@ -569,6 +569,9 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# Strip trailing slash and extract just the skill name
+SKILL_NAME="$(basename "$SKILL_NAME")"
+
 # Main execution
 if [ "$VALIDATE_ALL" = true ]; then
     validate_all_skills
