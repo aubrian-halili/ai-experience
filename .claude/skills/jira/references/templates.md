@@ -1,91 +1,91 @@
 # Jira Ticket Templates
 
-Templates for Bug and Task ticket types with structured fields for clarity and completeness.
+Templates for Bug and Task ticket types with structured fields for clarity and completeness. Templates use Jira wiki markup format so descriptions render correctly in Jira's web interface.
 
 ## Bug Template
 
-```markdown
-## Description
+```jira
+h2. Description
 
 [Brief description of the bug]
 
-## Steps to Reproduce
+h2. Steps to Reproduce
 
-1. [First step]
-2. [Second step]
-3. [Third step]
+# [First step]
+# [Second step]
+# [Third step]
 
-## Expected Behavior
+h2. Expected Behavior
 
 [What should happen]
 
-## Actual Behavior
+h2. Actual Behavior
 
 [What actually happens]
 
-## Environment
+h2. Environment
 
 [OS, browser/runtime, app version, relevant config]
 
-## Error Messages
+h2. Error Messages
 
-```
+{code}
 [Error messages, stack traces, or logs]
-```
+{code}
 
-## Suggested Priority
+h2. Suggested Priority
 
 [Critical/High/Medium/Low] - [Brief justification]
 ```
 
 ## Task Template
 
-```markdown
-## Summary
+```jira
+h2. Summary
 
 [Brief description of what needs to be implemented]
 
-## Background
+h2. Background
 
 [Context and motivation]
 
-## Requirements
+h2. Requirements
 
-### Functional Requirements
+h3. Functional Requirements
 
-- [ ] [Requirement 1]
-- [ ] [Requirement 2]
+* [Requirement 1]
+* [Requirement 2]
 
-### Non-Functional Requirements
+h3. Non-Functional Requirements
 
-- [ ] [Performance/security/other NFR]
+* [Performance/security/other NFR]
 
-## Acceptance Criteria
+h2. Acceptance Criteria
 
-- [ ] [Criterion 1 - specific, measurable]
-- [ ] [Criterion 2 - specific, measurable]
+* [Criterion 1 - specific, measurable]
+* [Criterion 2 - specific, measurable]
 
-## Technical Details
+h2. Technical Details
 
-### Approach
+h3. Approach
 
 [High-level technical approach]
 
-### Files to Modify
+h3. Files to Modify
 
 [List key files and changes]
 
-### Dependencies
+h3. Dependencies
 
 [Internal or external dependencies]
 
-## Testing Requirements
+h2. Testing Requirements
 
-- [ ] Unit tests
-- [ ] Integration tests
-- [ ] E2E tests (if needed)
+* Unit tests
+* Integration tests
+* E2E tests (if needed)
 
-## Suggested Priority
+h2. Suggested Priority
 
 [Critical/High/Medium/Low] - [Brief justification]
 ```

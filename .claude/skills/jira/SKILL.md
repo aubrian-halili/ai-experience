@@ -31,12 +31,15 @@ This skill is scoped to **read and modify** operations — never destructive or 
 
 **Sensitive data exclusion**: Before creating or updating a ticket, scan the drafted content for secrets, credentials, API keys, tokens, connection strings, and PII. Strip or redact any sensitive values — ticket content is visible to all project members.
 
+**Description formatting**: All ticket descriptions must use Jira wiki markup, not Markdown. Jira does not render Markdown — use `h2.` / `h3.` for headings, `#` for numbered lists, `*` for bullet lists, and `{code}...{code}` for code blocks. The templates in `@references/templates.md` already use the correct format.
+
 ## Iron Laws
 
 > - NEVER execute `delete` or any destructive/administrative acli command
 > - NEVER create or modify a ticket without user confirmation
 > - NEVER include secrets, credentials, API keys, or connection strings in ticket content
 > - ALWAYS search for duplicates before creating a new ticket
+> - ALWAYS use Jira wiki markup (not Markdown) in ticket descriptions
 
 ## Input Handling
 
@@ -87,7 +90,7 @@ Summarize from the current session — do NOT use git history for content:
 
 Apply the appropriate template from `@references/templates.md`. Story tickets use the Task template.
 
-**Priority mapping** — use conversation signals to suggest a priority level:
+**Priority mapping** — use conversation signals to suggest a priority level (for the ticket description's "Suggested Priority" field, NOT for a CLI flag):
 
 | Conversation Signal | Suggested Priority |
 |---|---|
@@ -111,7 +114,10 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 
 ### 5. Create Ticket
 
-- **acli available**: Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"` with project key, issue type, summary, and formatted description
+- **acli available**: Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
+  - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
+  - Priority is already embedded in the description via the template's "Suggested Priority" field
+  - Descriptions must use Jira wiki markup format (h2., h3., #, *, {code}) — not Markdown
 - **acli unavailable**: Generate copy-ready formatted content for manual entry
 
 ### 6. Verify and Present Result
