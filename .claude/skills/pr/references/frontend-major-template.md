@@ -1,7 +1,5 @@
 # Frontend Major PR Body Template
 
-## When to Use
-
 ## Template
 
 ```

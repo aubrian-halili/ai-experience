@@ -1,7 +1,5 @@
 # Frontend Minor PR Body Template
 
-## When to Use
-
 ## Template
 
 ```
@@ -29,7 +27,8 @@
 - [ ] Change verified in **test environment**
 - [ ] Code reviewed by at least **one other developer**
 - [ ] No breaking change
-- [ ] Breaking change but there is mitigation plan for affected teams/services documented in PR. - [ ] Unit and/or integration tests updated as needed
+- [ ] Breaking change but there is mitigation plan for affected teams/services documented in PR.
+- [ ] Unit and/or integration tests updated as needed
 - [ ] Adheres to Qosmos front-end coding and design guidelines
 - [ ] Linked to relevant internal task/ticket
 ```

@@ -1,7 +1,5 @@
 # Minor PR Body Template
 
-## When to Use
-
 ## Template
 
 ```
@@ -34,8 +32,8 @@
 - [ ] Linked to relevant internal task/ticket
 - [ ] Rollback strategy prepared and documented if there is external customer impact <!-- can be feature flagging or purely rollback instructions -->
 - [ ] Monitoring/alerting updated as needed
-- [ ] I have extracted relevent tests from internal task/ticket/discovery in Ticket ID section
-- [ ] Code is meeting Advance level of Test & Quality + Monitoring & Observability in QEMM
+- [ ] I have extracted relevant tests from internal task/ticket/discovery in Ticket ID section
+- [ ] Code is meeting Advanced level of Test & Quality + Monitoring & Observability in QEMM
 - [ ] I looked and acted at the sonarqube quality gate feedback
 - I used agentic / vibe -coding for (only choose one)
   - [ ]  for mainly building this feature
@@ -45,8 +43,8 @@
 ## Checklist for reviewers
 - [ ] Change verified in **test environment**
 - [ ] Verified rollback documentation or strategy
-- [ ] Code is meeting Advance level of Test & Quality + Monitoring & Observability in QEMM
-- [ ] I have come up with relevent sceanarios to test and stated them in a comment of this PR
+- [ ] Code is meeting Advanced level of Test & Quality + Monitoring & Observability in QEMM
+- [ ] I have come up with relevant scenarios to test and stated them in a comment of this PR
 - [ ] I have reviewed the Qred score card results and acted on them
-- [ ] I have reviewed for any relevent security exposures or changes
+- [ ] I have reviewed for any relevant security exposures or changes
 ```

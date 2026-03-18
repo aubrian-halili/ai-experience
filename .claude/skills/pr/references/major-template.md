@@ -1,7 +1,5 @@
 # Major PR Body Template
 
-## When to Use
-
 ## Template
 
 ```
@@ -31,9 +29,9 @@
 - [ ] Tested by the **product manager or stakeholder(s)** as of defined highlevel tests in NPAP OR Discovery document
 - [ ] Rollback strategy prepared and documented <!-- can be feature flagging or purely rollback instructions -->
 - [ ] Monitoring/alerting updated as needed
-- [ ] Database or infrastructure migrations tested <!--only if relavent -->
+- [ ] Database or infrastructure migrations tested <!--only if relevant -->
 - [ ] Linked to relevant internal task/ticket
-- [ ] I have extracted relavent tests from internal task/ticket/discovery in Ticket ID section
+- [ ] I have extracted relevant tests from internal task/ticket/discovery in Ticket ID section
 - [ ] Code is meeting Advanced level of Test & Quality + Monitoring & Observability in QEMM
 - [ ] I looked and acted at the sonarqube quality gate feedback
 - [ ] I used agentic / vibe -coding for (only choose one)
@@ -44,7 +42,7 @@
 ## Checklist for reviewers
 - [ ] Change verified in **test environment**
 - [ ] Verified rollback documentation or strategy
-- [ ] Code is meeting Advance level of Test & Quality + Monitoring & Observability in QEMM
+- [ ] Code is meeting Advanced level of Test & Quality + Monitoring & Observability in QEMM
 - [ ] I have come up with a few new scenarios to test and stated them in a comment of this PR
 - [ ] I have reviewed the Qred score card results and acted on them
 - [ ] I have reviewed for any relevant security exposures or changes
