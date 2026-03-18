@@ -4,7 +4,7 @@ description: >-
   User asks to "create a PR", "open a pull request", "push and create PR",
   or mentions "pull request" in context of creating one.
   Not for: reviewing an existing PR (use /review), committing without pushing (use /commit).
-argument-hint: "[optional: --ready, target branch, or PR title]"
+argument-hint: "[optional: --major, --fe, --ready, target branch, or PR title]"
 allowed-tools: Bash(git *, gh *, acli *), Read, Grep, Glob
 disable-model-invocation: true
 ---
@@ -37,7 +37,7 @@ Determine PR workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight Checks
 
-Parse `$ARGUMENTS` for flags (`--ready`, `--base`, `--label`) and gather branch state:
+Parse `$ARGUMENTS` for flags (`--major`, `--fe`, `--ready`, `--base`, `--label`) and gather branch state:
 
 ```bash
 BRANCH=$(git branch --show-current)
@@ -56,7 +56,7 @@ EXISTING_PR=$(gh pr list --head "$BRANCH" --json number,url --jq '.[0].url // em
 
 ### 2. Prepare & Present for Review
 
-Use `$ARGUMENTS` if provided (handles `--ready`, custom title, or target branch). PRs are created as drafts by default.
+Use `$ARGUMENTS` if provided (handles `--ready`, custom title, or target branch). PRs are created as drafts by default. See @references/draft-workflow.md for details on working with draft PRs, marking ready for review, and converting between states.
 
 **Title generation** (priority order):
 1. User-provided title (auto-prefix ticket ID if missing)
@@ -66,49 +66,11 @@ Use `$ARGUMENTS` if provided (handles `--ready`, custom title, or target branch)
 
 Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr-conventions.md)
 
-**Body generation:**
-```
-## Jira
-<TICKET-ID>
-
-## Summary
-- Bullet points from commit messages
-
-## Breaking Changes
-- None / List breaking changes
-
-## Test Plan
-- Verification steps
-
-## Type of Change
-- [ ] Non-functional / internal
-- [ ] Minor change in our product (no or very low risk change)
-- [ ] Documentation or comments
-- [ ] Dev tooling / config
-- [ ] Logging improvement
-- [ ] Dependency update (non-breaking)
-- [ ] Improving QEMM level(s)
-
-## Checklist for pull request author
-- [ ] No impact on runtime logic or API behavior
-- [ ] Code builds successfully
-- [ ] All tests pass locally
-- [ ] No environment changes required
-- [ ] I have reviewed the Qred score card results and acted on them
-- [ ] Linked to relevant internal task/ticket (if applicable)
-- I used agentic / vibe -coding for (only choose one)
-  - [ ]  for mainly building this feature
-  - [ ]  for partly building this feature
-  - [ ]  for documentation / testing this feature
-
-## Checklist for reviewers
-- [ ] Change verified in **test environment**
-- [ ] I have reviewed the Qred score card results and acted or feedbacked on them
-- [ ] This change does not seem to have any potential risks to expose data
-```
+**Body generation** — select template based on `--major` and `--fe`flag:
 
 **Present to user:**
 - Show the full PR details: ticket ID, title, body, flags (draft by default, `--ready` to override, `--base <branch>`)
+- Indicate which template was used (minor/major, and `(frontend)` when `--fe` is active) so the user can override with `--major` or `--fe` if needed
 - Ask the user to review and confirm before proceeding
 - If changes requested, regenerate and present again
 
@@ -147,7 +109,7 @@ Show the user: PR number, URL, title, state, and next steps (e.g., request revie
 
 - **PR preview before creation** — present the complete PR (title, body, flags) for user review before pushing or creating
 - **Convention-formatted title** — follows pr-conventions.md format (already loaded)
-- **Structured body** — every PR body includes Jira reference, Summary, Breaking Changes, Test Plan, Type of Change, and checklists for author/reviewers
+- **Structured body** — every PR body includes Jira reference, Summary, Breaking Changes, and Test Plan sections
 - **Actionable result** — after creation, show PR number, URL, and next steps (request reviews, monitor CI)
 
 ## Error Handling

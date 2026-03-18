@@ -12,47 +12,9 @@ Reference for working with draft pull requests.
 ## Creating Draft PRs
 
 ```bash
-# Create draft PR
-gh pr create --draft --title "UN-1234 WIP: Add authentication" --body "$(cat <<'EOF'
-## Jira
-UN-1234
-
-## Summary
-- Initial implementation of auth flow
-- Still need to add tests
-
-## Status
-🚧 Work in progress - not ready for review
-
-## Test plan
-- [ ] Unit tests
-- [ ] Integration tests
-
-## Type of Change
-- [ ] Non-functional / internal
-- [ ] Minor change in our product (no or very low risk change)
-- [ ] Documentation or comments
-- [ ] Dev tooling / config
-- [ ] Logging improvement
-- [ ] Dependency update (non-breaking)
-- [ ] Improving QEMM level(s)
-
-## Checklist for pull request author
-- [ ] No impact on runtime logic or API behavior
-- [ ] Code builds successfully
-- [ ] All tests pass locally
-- [ ] No environment changes required
-- [ ] I have reviewed the Qred score card results and acted on them
-- [ ] Linked to relevant internal task/ticket (if applicable)
-- I used agentic / vibe -coding for (only choose one)
-  - [ ]  for mainly building this feature
-  - [ ]  for partly building this feature
-  - [ ]  for documentation / testing this feature
-
-## Checklist for reviewers
-- [ ] Change verified in **test environment**
-- [ ] I have reviewed the Qred score card results and acted or feedbacked on them
-- [ ] This change does not seem to have any potential risks to expose data
+# Create a draft PR — populate --body from the appropriate template file
+gh pr create --draft --title "<TICKET-ID> <type>(<scope>): <description>" --body "$(cat <<'EOF'
+<body from minor-template.md or major-template.md or frontend-minor-template.md or frontend-major-template.md>
 EOF
 )"
 ```
@@ -71,9 +33,7 @@ gh pr ready 123
 
 ## Draft PR Conventions
 
-**Title prefix:**
-- Use `WIP:` or `Draft:` prefix for clarity
-- Example: `UN-1234 WIP: Add user authentication`
+**Title format:** Follow the standard convention — `<TICKET-ID> <type>(<scope>): <description>`. Draft status is communicated via the GitHub draft flag, not a title prefix. Use `--ready` (or `gh pr ready`) to promote to ready for review.
 
 **Description:**
 - Include a status section indicating what's done/remaining
