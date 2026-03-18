@@ -21,6 +21,12 @@ Create pull requests with auto-generated titles and descriptions from commit his
 - **Safety-first** — never force push, never push to main, never skip divergence checks; ask before destructive actions
 - **Commit-driven content** — PR title and description are generated from commit history, not invented; quality commits produce quality PRs
 
+> **Iron Laws — never violate these:**
+> 1. Never push or create a PR without explicit user approval
+> 2. Never force push to any branch
+> 3. Never create a PR from the default branch (`main`/`master`)
+> 4. Always use the selected template verbatim for the PR body — never improvise sections
+
 ## Input Handling
 
 Determine PR workflow from `$ARGUMENTS`:
@@ -60,7 +66,7 @@ EXISTING_PR=$(gh pr list --head "$BRANCH" --json number,url --jq '.[0].url // em
 
 ### 2. Prepare & Present for Review
 
-Use `$ARGUMENTS` if provided (handles `--ready`, custom title, or target branch). PRs are created as drafts by default. See @references/draft-workflow.md for details on working with draft PRs, marking ready for review, and converting between states.
+Use `$ARGUMENTS` if provided (handles `--ready`, custom title, or target branch). PRs are created as drafts by default (use `--ready` to skip draft mode).
 
 **Title generation** (priority order):
 1. User-provided title (auto-prefix ticket ID if missing)
@@ -79,11 +85,17 @@ Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr
 | `--fe`         | @references/frontend-minor-template.md   |
 | `--fe --major` | @references/frontend-major-template.md   |
 
-Fill in Summary, Jira, Breaking Changes, and Test Plan from commit history. Leave the following sections exactly as they appear in the template for the user to update manually:
-- **Type of Change**
-- **Impact Assessment** (frontend-major only)
-- **Checklist**
-- **Checklist for reviewers** (minor/major only)
+**CRITICAL: The PR body MUST be constructed from the selected template file — never improvise or substitute your own sections.** Read the template file, copy its entire structure, then fill in only the dynamic sections below from commit history:
+- **Summary** — bullet points derived from commit messages
+- **Jira** — ticket ID from branch name
+- **Breaking Changes** — "None" or list from commits
+- **Test Plan** — verification steps relevant to the changes
+
+**Copy the following sections verbatim from the template — do not modify, omit, rename, or replace them:**
+- **Type of Change** — checkboxes vary per template; use them exactly as written
+- **Impact Assessment** (frontend-major template only)
+- **Checklist** — includes QEMM, sonarqube, agentic coding items specific to each template
+- **Checklist for reviewers** (backend minor and major templates only — frontend templates are intentionally lighter)
 
 **Present to user:**
 - Show the full PR details: ticket ID, title, body, flags (draft by default, `--ready` to override, `--base <branch>`)
@@ -118,7 +130,11 @@ After successful PR creation:
 gh pr view --json number,url,title,state
 ```
 
-Show the user: PR number, URL, title, state, and next steps (e.g., request reviews, monitor CI).
+Show the user: PR number, URL, title, state, and next steps:
+- Request reviews
+- Monitor CI (draft PRs still trigger CI workflows)
+- Mark ready for review: `gh pr ready`
+- Convert back to draft: `gh pr ready --undo`
 
 **Jira integration (optional):** If a Jira ticket ID was detected and acli is available, offer to transition the ticket status (e.g., to "In Review") using `acli jira workitem transition --key <ISSUE_KEY> --status "In Review"`. Always confirm with the user before changing ticket status.
 
@@ -126,7 +142,7 @@ Show the user: PR number, URL, title, state, and next steps (e.g., request revie
 
 - **PR preview before creation** — present the complete PR (title, body, flags) for user review before pushing or creating
 - **Convention-formatted title** — follows pr-conventions.md format (already loaded)
-- **Structured body** — every PR body includes Jira reference, Summary, Breaking Changes, and Test Plan sections
+- **Template-driven body** — PR body is always constructed from the selected template file (never improvised); dynamic sections are filled from commits, static sections are copied verbatim
 - **Actionable result** — after creation, show PR number, URL, and next steps (request reviews, monitor CI)
 
 ## Error Handling

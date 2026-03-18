@@ -35,10 +35,10 @@
 - [ ] I have extracted relevant tests from internal task/ticket/discovery in Ticket ID section
 - [ ] Code is meeting Advanced level of Test & Quality + Monitoring & Observability in QEMM
 - [ ] I looked and acted at the sonarqube quality gate feedback
-- I used agentic / vibe -coding for (only choose one)
-  - [ ]  for mainly building this feature
-  - [ ]  for partly building this feature
-  - [ ]  for documentation / testing this feature
+- I used agentic / vibe-coding for (only choose one):
+  - [ ] for mainly building this feature
+  - [ ] for partly building this feature
+  - [ ] for documentation / testing this feature
 
 ## Checklist for reviewers
 - [ ] Change verified in **test environment**
