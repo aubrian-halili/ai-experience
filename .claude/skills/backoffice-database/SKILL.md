@@ -5,7 +5,7 @@ description: >-
   "database schema", or mentions "backoffice" or "postgres".
   Not for: writing application code or migrations.
 argument-hint: "[database or table name, or SQL query]"
-allowed-tools: Bash(psql *, env *)
+allowed-tools: Bash(psql *)
 disable-model-invocation: true
 ---
 

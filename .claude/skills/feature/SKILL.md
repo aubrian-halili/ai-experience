@@ -5,7 +5,7 @@ description: >-
   "implement this ticket", or is ready to write code. Use after /plan for complex features.
   Not for: still deciding on approach (use /plan).
 argument-hint: "[feature name or description]"
-allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Bash, TaskCreate, TaskUpdate, TaskList
+allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Bash(npm *, npx *, node *, git *, make *), TaskCreate, TaskUpdate, TaskList
 disable-model-invocation: true
 ---
 
@@ -66,7 +66,7 @@ Guide structured feature development from specification through incremental impl
 - Check for existing specs or documentation related to the feature
 
 **Stop conditions:**
-- On main/master branch → warn user and stop; do not implement without explicit consent to work on main
+- On main/master branch → ask user for Jira ticket ID and feature description; create branch following `<JIRA-ID>-<feature-description>` naming from git-conventions.md, then continue
 - Feature already exists → report existing implementation and ask whether to enhance or replace
 - Requirements unclear or contradictory → ask clarifying questions before proceeding
 - Scope too vague to classify (e.g., "make it better") → ask user to narrow scope
@@ -79,7 +79,7 @@ Guide structured feature development from specification through incremental impl
 - Read all key files identified by agents to build deep context
 - Present a summary of: existing patterns to follow, code to reuse, integration points, conventions
 
-**Skip when:** Feature scope is narrow and target files are already known from Pre-flight.
+**Skip when:** Pre-flight identified <= 3 target files and no new integration points.
 
 ### 3. Clarify
 

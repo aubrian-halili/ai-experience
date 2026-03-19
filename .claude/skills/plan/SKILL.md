@@ -44,6 +44,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases wi
 **Stop conditions:**
 - Goal is too vague to decompose (e.g., "make it better") → ask user to narrow scope
 - Existing plan found → ask whether to resume, revise, or replace
+- On main/master branch → note that implementation will require a feature branch; suggest creating one now (following `<JIRA-ID>-<feature-description>` naming from git-conventions.md) or before invoking `/feature`
 
 ### 2. Define Done (Goal-Backward Verification)
 

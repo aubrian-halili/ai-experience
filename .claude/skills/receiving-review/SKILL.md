@@ -49,6 +49,18 @@ Process, evaluate, and implement code review feedback with technical rigor.
 
 ## Process
 
+### 0. Pre-flight
+
+- Resolve PR number from `$ARGUMENTS` or detect from current branch via `gh pr view --json number`
+- Verify PR exists and is open: `gh pr view --json state --jq '.state'`
+- Verify `gh` is authenticated: `gh auth status`
+
+**Stop conditions:**
+- No PR found for current branch → report; suggest creating PR with `/pr` first
+- PR is closed or merged → report state and stop
+- `gh` not authenticated → provide `gh auth login` instructions and stop
+- No review comments found → report "no pending review comments"
+
 ### 1. Gather Feedback
 
 Fetch all review comments and organize them:

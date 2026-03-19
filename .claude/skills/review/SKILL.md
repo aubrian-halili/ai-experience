@@ -30,9 +30,10 @@ Perform a thorough multi-dimensional review of code, local changes, or pull requ
 | **25** | Possible issue but unverified — would need more context or domain knowledge | Do not report |
 | **50** | Real issue but minor impact — unlikely to cause problems in practice | Do not report |
 | **75** | Important and verified — real issue with meaningful impact | Do not report (below gate) |
+| **80** | Verified with strong supporting evidence — real issue, confirmed impact | Report |
 | **100** | Definite and self-evident — clearly wrong, clearly harmful | Report |
 
-The confidence gate remains **>= 80**. In practice, only findings you are highly confident about (75+ verified with strong supporting evidence pushing to 80+, or 100-level obvious issues) should be reported.
+The confidence gate remains **>= 80**. Report at 80 only when you have strong supporting evidence (file references, grep results, test output). Report 100 for self-evident issues.
 
 ### Do Not Flag
 

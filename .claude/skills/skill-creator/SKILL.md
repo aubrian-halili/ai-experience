@@ -64,6 +64,17 @@ Determine:
 - Whether templates or examples better serve the use case (see `@references/best-practices.md`, Output Pattern Selection)
 - Constraint level: high freedom (creative), medium (structured), or low (mechanical)
 
+### 3.5. Present Structure for Approval
+
+**Before running the init script**, present the planned skill structure to the user and wait for explicit approval:
+
+- **Skill name**: the kebab-case directory and command name
+- **Directory layout**: which subdirectories will be created (e.g., `references/`, `scripts/`)
+- **Frontmatter fields**: proposed `allowed-tools`, `disable-model-invocation`, `argument-hint`
+- **Sections**: which SKILL.md sections are planned
+
+**Do not proceed to Step 4 until the user confirms the structure.**
+
 ### 4. Initialize
 
 Run the init script to scaffold the boilerplate:
