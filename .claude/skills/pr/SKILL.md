@@ -87,7 +87,7 @@ Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr
 
 **CRITICAL: The PR body MUST be constructed from the selected template file** Read the template file, copy its entire structure, then fill in the dynamic sections below from commit history:
 - **Summary** — bullet points derived from commit messages
-- **Jira** — ticket ID from branch name
+- **Jira** — ticket ID from branch name, linked to `https://qredab.atlassian.net/browse/<TICKET-ID>`
 - **Breaking Changes** — "None" or list from commits
 - **Test Plan** — verification steps relevant to the changes
 

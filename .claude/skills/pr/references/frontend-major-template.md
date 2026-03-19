@@ -7,7 +7,7 @@
 - Bullet points from commit messages
 
 ## Jira
-<TICKET-ID>
+[<TICKET-ID>](https://qredab.atlassian.net/browse/<TICKET-ID>)
 
 ## Breaking Changes
 - None / List breaking changes
