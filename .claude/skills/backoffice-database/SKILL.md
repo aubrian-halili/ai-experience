@@ -3,9 +3,9 @@ name: backoffice-database
 description: >-
   User asks to "query the database", "show tables", "run a SQL query",
   "database schema", or mentions "backoffice" or "postgres".
-  Not for: database architecture or schema design (use /architecture).
+  Not for: writing application code or migrations.
 argument-hint: "[database or table name, or SQL query]"
-allowed-tools: Bash
+allowed-tools: Bash(psql *, env *)
 disable-model-invocation: true
 ---
 
@@ -143,6 +143,4 @@ Never execute a write operation or expose credentials — if a query appears to 
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/explore` | To investigate application code, not database |
-| `/architecture` | To design, evaluate, or visualize database architecture |
-| `/testing` | Write integration tests for database queries |
+| `/review` | Code quality review of query logic or application code |

@@ -4,8 +4,7 @@ description: >-
   User asks for "code review", "review this PR", "review my changes",
   "review PR #123", "is this ready to merge", "refactor this", "clean up this code",
   "reduce complexity", mentions "SOLID", "code smells", or "technical debt".
-  Not for: security audit (use /security),
-  verifying completeness against a plan (use /verify).
+  Not for: verifying completeness against a plan (use /verify).
 argument-hint: "[file, PR number, URL, or component to review] [--refactor]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent, Edit
 ---
@@ -78,7 +77,7 @@ When the review scope is large (>10 files) or the user requests a thorough revie
 | **Error Handling** | `code-quality-reviewer` | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
 | **Test Coverage** | `code-quality-reviewer` | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
 | **Performance** | `code-quality-reviewer` | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
-| **Security** | `security-scanner` | Input validation, auth checks, data exposure | Defer deep findings to `/security` |
+| **Security** | `security-scanner` | Input validation, auth checks, data exposure | Use `security-scanner` agent for deep findings |
 | **Clean Code** | `code-quality-reviewer` | SOLID violations, code smells, naming, dead code | Apply refactoring fixes with `--refactor` flag |
 
 Each pass produces findings with:
@@ -250,6 +249,3 @@ Never silently omit findings or skip review dimensions—surface limitations and
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/receiving-review` | Addressing feedback received on your PR |
-| `/architecture` | Structural concerns found |
-| `/security` | Deep security audit needed |
-| `/explore` | Understand codebase context before reviewing unfamiliar code |

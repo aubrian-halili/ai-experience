@@ -4,7 +4,7 @@ description: >-
   User asks to "create a Claude Code hook", "add a guardrail", "block certain commands",
   or mentions "PreToolUse", "PostToolUse". This is for Claude Code hooks, not React
   hooks or git hooks.
-  Not for: React hooks (use /react).
+  Not for: git hooks (handle those manually).
 argument-hint: "[hook type or behavior to enforce]"
 allowed-tools: Read, Write, Edit, Bash(chmod *), Glob
 disable-model-invocation: true
@@ -158,6 +158,3 @@ Never create hooks that silently swallow errors — always surface blocking reas
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/skill-creator` | Creating skills, not hooks |
-| `/security` | Security audit rather than enforcement hooks |
-| `/claude-md-management` | Managing CLAUDE.md rather than hooks |
-| `/explore` | Understanding existing hook implementations |

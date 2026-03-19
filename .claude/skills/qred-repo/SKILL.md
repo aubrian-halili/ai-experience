@@ -3,8 +3,7 @@ name: qred-repo
 description: >-
   User asks to "browse a repo", "search across repos", "list Qred repos",
   or wants to navigate the Qred GitHub organization's repositories.
-  Not for: exploring the current local codebase (use /explore),
-  querying the database (use /backoffice-database).
+  Not for: querying the database (use /backoffice-database).
 argument-hint: "[repo name, file path, search term, tree <repo>, or gh command]"
 disable-model-invocation: true
 allowed-tools: Bash(gh *)
@@ -155,8 +154,6 @@ Never present results without context—always state what was searched, where, a
 
 | Skill | When to Use Instead |
 |---|---|
-| `/explore` | Deep end-to-end investigation of locally cloned code |
 | `/review` | Code quality review or PR audit |
 | `/backoffice-database` | Exploring PostgreSQL database schemas and data |
-| `/architecture` | Design or evaluate architecture after repo exploration |
 | `/plan` | Plan implementation after exploring a repo |

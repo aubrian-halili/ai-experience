@@ -3,8 +3,7 @@ name: verify
 description: >-
   User asks "did I finish everything", "verify this is done", "am I done",
   "check for stubs or TODOs", or references a plan to verify against. Use after /feature.
-  Not for: code quality review (use /review), writing tests (use /testing),
-  understanding code (use /explore).
+  Not for: code quality review (use /review).
 argument-hint: "[plan file, feature name, or acceptance criteria]"
 context: fork
 agent: Explore
@@ -179,5 +178,3 @@ Never silently skip verification steps — surface limitations and skipped items
 | `/review` | Need code quality review, not completeness verification |
 | `/plan` | Need to create a plan before verification |
 | `/feature` | Need to implement features, not verify them |
-| `/debug` | Implementation has bugs, not just incompleteness |
-| `/explore` | Need to understand code before verifying it |

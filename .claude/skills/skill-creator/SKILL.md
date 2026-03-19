@@ -172,9 +172,6 @@ Never create a skill without running validation — an unvalidated skill may fai
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/explore` | Understand existing skill implementations before creating similar ones |
 | `/review` | Review a skill's quality before finalizing |
 | `/review --refactor` | Refactor an existing skill for maintainability |
-| `/typescript` | TypeScript-specific guidance for skills that produce TypeScript code |
-
 | `/hookify` | Creating Claude Code hooks, not skills |
