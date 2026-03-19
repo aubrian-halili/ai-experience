@@ -46,7 +46,7 @@ Determine commit workflow from `$ARGUMENTS`:
 
 Extract ticket ID from branch name (pre-loaded above) using `grep -oE '[A-Z]+-[0-9]+'`.
 
-**Stop conditions:** Follow branch/ticket rules from git-conventions.md — on `main`/`master` create a branch first; no ticket ID → ask user; no changes → nothing to commit.
+**Stop conditions:** Follow branch/ticket rules from git-conventions.md — on `main`/`master` → stop and redirect to `/feature` to create a branch first; no ticket ID → ask user; no changes → nothing to commit.
 
 ### 2. Analyze & Present for Review
 
@@ -117,7 +117,7 @@ Show the result to the user to confirm the commit was created successfully.
 | Mixed change types | Recommend splitting into multiple commits |
 | Unclear scope | Ask for clarification or suggest based on files |
 | No ticket ID in branch | Ask user for ticket ID |
-| On main/master branch | Ask for ticket ID + description to create branch |
+| On main/master branch | Stop; redirect to `/feature` which handles branch creation |
 | Pre-commit hook fails | Fix the issue, re-stage files, create a NEW commit (never amend) |
 | Sensitive files detected | Warn user, ask if they should be added to `.gitignore` |
 | User requests `--no-verify` | Confirm intent, warn about skipping hooks |

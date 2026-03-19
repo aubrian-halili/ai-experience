@@ -61,6 +61,17 @@ Based on the desired behavior:
 | `Stop` | When Claude stops | Cleanup, summary generation |
 | `SubagentStop` | When a subagent finishes | Aggregate results, quality checks |
 
+### 2.5. Present Plan for Approval
+
+**Before writing any files**, present the planned hook to the user and wait for explicit approval:
+
+- **Event**: which hook event will be used
+- **Matcher**: which tool or condition triggers it
+- **Script logic**: what the hook will do (block, log, notify) and the exit code behavior
+- **Target settings file**: project-level (`.claude/settings.json`) or user-level (`.claude/settings.local.json`)
+
+**Do not proceed to Step 3 until the user confirms the plan.**
+
 ### 3. Implement Hook
 
 Create the hook script and configuration:
@@ -158,3 +169,5 @@ Never create hooks that silently swallow errors — always surface blocking reas
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/skill-creator` | Creating skills, not hooks |
+| `/review` | Review hook script quality and logic |
+| `/commit` | Committing hook changes; hooks may affect commit workflows |

@@ -81,6 +81,13 @@ If `$ARGUMENTS` specifies an option, skip to execution. Otherwise present all fo
 - Check for orphaned worktrees (`git worktree list`) and offer to prune them
 - Report final state: current branch, any remaining stashed work
 
+## Output Principles
+
+- **Options table first** — always present the four options in the table format from Step 3; never as prose
+- **Summary stats** — show commits ahead, files changed, and lines +/- before presenting options
+- **Final state report** — after execution, report: current branch, action taken, and any remaining items
+- **Clean exit** — end with the final git status, not a summary of what was done
+
 ## Error Handling
 
 | Scenario | Response |
