@@ -85,17 +85,11 @@ Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr
 | `--fe`         | @references/frontend-minor-template.md   |
 | `--fe --major` | @references/frontend-major-template.md   |
 
-**CRITICAL: The PR body MUST be constructed from the selected template file — never improvise or substitute your own sections.** Read the template file, copy its entire structure, then fill in only the dynamic sections below from commit history:
+**CRITICAL: The PR body MUST be constructed from the selected template file** Read the template file, copy its entire structure, then fill in the dynamic sections below from commit history:
 - **Summary** — bullet points derived from commit messages
 - **Jira** — ticket ID from branch name
 - **Breaking Changes** — "None" or list from commits
 - **Test Plan** — verification steps relevant to the changes
-
-**Copy the following sections verbatim from the template — do not modify, omit, rename, or replace them:**
-- **Type of Change** — checkboxes vary per template; use them exactly as written
-- **Impact Assessment** (frontend-major template only)
-- **Checklist** — includes QEMM, sonarqube, agentic coding items specific to each template
-- **Checklist for reviewers** (backend minor and major templates only — frontend templates are intentionally lighter)
 
 **Present to user:**
 - Show the full PR details: ticket ID, title, body, flags (draft by default, `--ready` to override, `--base <branch>`)
