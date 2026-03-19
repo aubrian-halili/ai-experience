@@ -144,3 +144,4 @@ Never execute a write operation or expose credentials — if a query appears to 
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/review` | Code quality review of query logic or application code |
+| `/qred-repo` | Browse repository code related to database schemas |

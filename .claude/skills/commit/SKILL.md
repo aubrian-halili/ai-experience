@@ -132,3 +132,4 @@ Never commit without user approval or stage files with `git add -A` — always s
 | `/pr` | Create pull request after committing |
 | `/review --refactor` | Clean up code before committing |
 | `/jira` | Look up or update Jira ticket details |
+| `/finish` | Wrap up branch after all changes are committed |

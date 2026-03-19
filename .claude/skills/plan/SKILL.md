@@ -152,3 +152,4 @@ Never silently skip requirements or assume priorities — surface gaps and trade
 | `/feature` | Plan is approved and ready for implementation |
 | `/verify` | Plan is implemented and needs verification |
 | `/jira` | Need to fetch or update Jira ticket details |
+| `/subagent-driven-development` | Parallelize implementation when plan has 3+ independent tasks |

@@ -183,3 +183,5 @@ Never silently skip milestones or acceptance criteria—surface gaps and blocker
 | `/review` | Feature implementation needs code review |
 | `/plan` | Need to decompose a large goal before feature implementation |
 | `/verify` | Need comprehensive post-implementation verification |
+| `/commit` | Commit changes after implementation |
+| `/finish` | Wrap up branch after implementation is complete |

@@ -201,3 +201,4 @@ Never silently skip feedback items or post replies without user approval.
 | `/pr` | Creating a pull request |
 | `/commit` | Committing changes after addressing feedback |
 | `/review --refactor` | Reviewer suggests deep refactoring beyond PR scope |
+| `/finish` | Wrap up branch after all review feedback is addressed |
