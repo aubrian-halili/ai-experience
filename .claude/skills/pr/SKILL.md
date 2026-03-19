@@ -5,7 +5,7 @@ description: >-
   or mentions "pull request" in context of creating one.
   Not for: reviewing an existing PR (use /review), committing without pushing (use /commit).
 argument-hint: "[optional: --major, --fe, --ready, target branch, or PR title]"
-allowed-tools: Bash(git *, gh *, acli *), Read, Grep, Glob
+allowed-tools: Bash(git branch *, git log *, git status *, git rev-list *, git push *, gh repo *, gh pr *, acli *), Read, Grep, Glob
 disable-model-invocation: true
 ---
 
