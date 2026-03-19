@@ -156,8 +156,8 @@ Never force push or create a PR from the default branch — always verify branch
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/jira` | Create Jira ticket before starting work |
-| `/feature` | Plan feature before implementing |
+| `/feature` | Implement features before creating PR |
 | `/commit` | Commit changes before creating PR |
 | `/review` | Review a PR (yours or others) |
 | `/receiving-review` | Address review feedback on your PR |
-| `/explore` | Understand changes before creating PR |
+| `/finish` | Decide what to do with the branch (PR, merge, park, or discard) |

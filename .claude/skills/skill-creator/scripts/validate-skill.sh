@@ -163,12 +163,14 @@ validate_description_field() {
 
     info "Description: ${description:0:80}..."
 
-    # Check description length (max 1024 chars)
+    # Check description length (recommended: 500 chars, hard limit: 1024 chars)
     local desc_length=${#description}
     if [ $desc_length -gt 1024 ]; then
         error "Description exceeds 1024 characters (current: $desc_length). Shorten by $((desc_length - 1024)) characters"
+    elif [ $desc_length -gt 500 ]; then
+        warn "Description exceeds recommended 500-character budget (current: $desc_length). Long descriptions consume context for auto-invocable skills"
     else
-        pass "Description length OK ($desc_length/1024 chars)"
+        pass "Description length OK ($desc_length/500 chars)"
     fi
 
     # Check for XML tags

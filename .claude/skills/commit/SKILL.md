@@ -87,7 +87,7 @@ git commit -m "$(cat <<'EOF'
 
 <body if needed>
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 EOF
 )"
 ```
@@ -130,6 +130,6 @@ Never commit without user approval or stage files with `git add -A` — always s
 |-------|---------------------|
 | `/review` | Review changes before committing |
 | `/pr` | Create pull request after committing |
-| `/explore` | Understand changes before deciding what to commit |
 | `/review --refactor` | Clean up code before committing |
 | `/jira` | Look up or update Jira ticket details |
+| `/finish` | Wrap up branch after all changes are committed |

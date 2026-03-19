@@ -4,10 +4,10 @@ description: >-
   User asks to "plan", "break down", "decompose", "scope this work",
   "compare approaches", "trade-offs", "pros and cons", "brainstorm",
   or references a Jira epic needing implementation steps. Use before /feature.
-  Not for: architecture decisions (use /architecture),
-  implementing directly (use /feature).
+  Not for: implementing directly (use /feature).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
-allowed-tools: Read, Grep, Glob, Write, Skill, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
+allowed-tools: Read, Grep, Glob, Write, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
+disable-model-invocation: true
 ---
 
 Decompose goals, epics, or Jira tickets into structured implementation phases with clear deliverables, using goal-backward verification to ensure every phase contributes to observable outcomes.
@@ -27,7 +27,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases wi
 | Goal description (e.g., `add user authentication`) | Decompose goal | Full Steps 1-5 |
 | Jira ticket ID (e.g., `UN-1234`) | Plan from ticket | Fetch ticket via `/jira`, then Steps 1-5 |
 | Epic description (e.g., `payment processing system`) | Multi-feature roadmap | Steps 1-5; emphasis on phase dependencies |
-| `"overview"` / `"map"` / `"codebase"` | Codebase context for planning | Gather context via `/explore`, then Steps 1-5 |
+| `"overview"` / `"map"` / `"codebase"` | Codebase context for planning | Gather codebase context, then Steps 1-5 |
 | `"resume"` / `"continue"` | Resume from state file | Read `.planning/STATE.md`, pick up from current phase |
 | Direction unclear (e.g., `how should we handle auth?`) | Explore options first | Diverge-then-converge: generate 2-3 options with trade-offs, then plan the chosen direction |
 | (none) | Ask user | Pre-flight stop |
@@ -138,7 +138,7 @@ After user approves the plan, convert phases into tracked tasks:
 |----------|----------|
 | Goal too vague | Ask clarifying questions to narrow scope |
 | Conflicting requirements | Surface trade-offs, request decision |
-| Missing codebase context | Use `/explore` to gather context before planning |
+| Missing codebase context | Search the codebase to gather context before planning |
 | Existing plan conflicts | Present differences, ask user to choose |
 | Dependencies circular | Flag the cycle, suggest restructuring |
 | Scope too large | Recommend breaking into multiple plans or epics |
@@ -150,8 +150,6 @@ Never silently skip requirements or assume priorities — surface gaps and trade
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/feature` | Plan is approved and ready for implementation |
-| `/explore` | Need to understand existing code before planning |
-| `/architecture` | Need high-level design decisions first |
 | `/verify` | Plan is implemented and needs verification |
 | `/jira` | Need to fetch or update Jira ticket details |
-| `/debug` | Investigating an issue, not planning new work |
+| `/subagent-driven-development` | Parallelize implementation when plan has 3+ independent tasks |

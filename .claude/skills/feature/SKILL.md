@@ -3,10 +3,10 @@ name: feature
 description: >-
   User asks to "implement this feature", "build this", "start coding",
   "implement this ticket", or is ready to write code. Use after /plan for complex features.
-  Not for: still deciding on approach (use /plan),
-  fixing bugs (use /debug), writing only tests (use /testing).
+  Not for: still deciding on approach (use /plan).
 argument-hint: "[feature name or description]"
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Bash, TaskCreate, TaskUpdate, TaskList
+disable-model-invocation: true
 ---
 
 **Current branch:** !`git branch --show-current`
@@ -153,7 +153,7 @@ Perform three-level verification against the Definition of Done:
 - Check that implementation follows existing codebase patterns identified in Pre-flight
 - Note any deferred items or out-of-scope work for follow-up
 - If feature warrants it, recommend `/review` for formal code review or `/verify` for comprehensive completeness check
-- Apply verification discipline (`@.claude/skills/verify/references/verification-discipline.md`) — no completion claim without fresh evidence
+- Apply verification discipline: no completion claim without fresh evidence — all observable truths must be re-checked, not assumed
 
 ## Output Principles
 
@@ -180,9 +180,8 @@ Never silently skip milestones or acceptance criteria—surface gaps and blocker
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/architecture` | Need high-level design before feature planning |
 | `/review` | Feature implementation needs code review |
-| `/explore` | Need to understand existing features first |
 | `/plan` | Need to decompose a large goal before feature implementation |
 | `/verify` | Need comprehensive post-implementation verification |
-| `/debug` | Need to fix a bug, not implement a feature |
+| `/commit` | Commit changes after implementation |
+| `/finish` | Wrap up branch after implementation is complete |

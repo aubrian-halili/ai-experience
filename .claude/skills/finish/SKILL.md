@@ -29,7 +29,7 @@ Unified branch completion workflow — verify, decide, and clean up when impleme
 ### 1. Pre-flight Verification
 
 - Run the test suite (if one exists) and confirm all tests pass
-  - If tests fail, STOP — report failures and recommend `/debug`
+  - If tests fail, STOP — report failures with specific test names and error messages
 - Check for uncommitted changes — if found, ask whether to commit or stash
 - Check for TODO/FIXME comments in files changed on this branch (`git diff main --name-only`)
 

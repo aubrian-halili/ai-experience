@@ -158,7 +158,6 @@ Never create a ticket without user confirmation or skip duplicate checking — s
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/feature` | Plan feature before creating ticket |
+| `/feature` | Implement feature after ticket is created |
 | `/commit` | Commit with ticket reference (after branch created) |
 | `/pr` | Create pull request (after commits made) |
-| `/explore` | Understand codebase before filing a ticket |

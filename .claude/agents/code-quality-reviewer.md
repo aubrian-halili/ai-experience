@@ -49,7 +49,7 @@ You will be assigned one of these dimensions per invocation:
 - Is user input validated before use?
 - Are auth checks present on protected endpoints?
 - Is sensitive data exposed in logs, error messages, or API responses?
-- Defer deep findings to the `security-scanner` agent or `/security` skill
+- Defer deep findings to the `security-scanner` agent
 
 ## Analysis Process
 
