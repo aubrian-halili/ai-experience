@@ -18,7 +18,7 @@ VERBOSE=false
 VALIDATE_ALL=false
 
 # Known tools list for validation
-KNOWN_TOOLS="Bash Read Grep Glob Write Edit WebFetch WebSearch Skill Task AskUserQuestion EnterPlanMode ExitPlanMode TaskCreate TaskUpdate TaskList TaskGet TaskOutput TaskStop NotebookEdit ToolSearch ListMcpResourcesTool ReadMcpResourceTool Agent EnterWorktree"
+KNOWN_TOOLS="Bash Read Grep Glob Write Edit WebFetch WebSearch Skill Task AskUserQuestion EnterPlanMode ExitPlanMode TaskCreate TaskUpdate TaskList TaskGet TaskOutput TaskStop NotebookEdit ToolSearch ListMcpResourcesTool ReadMcpResourceTool Agent EnterWorktree CronCreate CronDelete CronList"
 
 usage() {
     echo "Usage: $0 [OPTIONS] <skill-name>"

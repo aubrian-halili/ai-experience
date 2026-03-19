@@ -6,7 +6,7 @@ description: >-
   Not for: updating CLAUDE.md manually.
 argument-hint: "[skill name]"
 disable-model-invocation: true
-allowed-tools: Bash, Read, Grep, Glob, Write, Edit
+allowed-tools: Bash(*/init-skill.sh *, */validate-skill.sh *), Read, Grep, Glob, Write, Edit
 ---
 
 Create new Claude Code skills following established patterns and best practices. References `@template.md` for scaffolding and `@references/best-practices.md` for design principles.

@@ -31,6 +31,7 @@ First, classify the request type:
 |------|-----------|----------|
 | **[Type 1]** | [trigger phrases] | Steps 1–N; emphasis on [step] |
 | **[Type 2]** | [trigger phrases] | Steps 1–N; emphasis on [step] |
+| **(none)** | No arguments provided | [How to handle missing input — ask, use defaults, or stop] |
 
 ## Process
 
