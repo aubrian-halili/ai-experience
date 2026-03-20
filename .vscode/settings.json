@@ -29,6 +29,7 @@
   // === Git ===
   "git.allowForcePush": true,
   "git.autofetch": true,
+  "git.fetchOnPull": true,
   "git.confirmSync": false,
   "git.rebaseWhenSync": true,
   "git.detectSubmodules": false,
@@ -46,7 +47,6 @@
   "scm.defaultViewMode": "tree",
   "scm.diffDecorations": "gutter",
   "scm.graph.badges": "all",
-  "scm.showHistoryGraph": true,
   // === Diff ===
   "diffEditor.ignoreTrimWhitespace": false,
   // === Search ===
@@ -125,5 +125,11 @@
     "repositories": true,
     "searchAndCompare": false,
     "launchpad": true
+  },
+  "extensions.allowed": {
+    "amazonwebservices.aws-toolkit-vscode": true,
+    "github.github-vscode-theme": true,
+    "eamodio.gitlens": true,
+    "anthropic.claude-code": true
   }
 }
