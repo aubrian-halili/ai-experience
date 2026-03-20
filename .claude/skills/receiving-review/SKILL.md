@@ -10,7 +10,7 @@ allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Write, Edit, Agent
 ---
 
 **Current branch:** !`git branch --show-current`
-**Open PR:** !`gh pr view --json number,url,title --jq '"#\(.number) \(.title) — \(.url)"' 2>/dev/null || echo "No open PR on this branch"`
+**Open PR:** !`gh pr view --json number,url,title --template '#{{.number}} {{.title}} — {{.url}}' 2>/dev/null || echo "No open PR on this branch"`
 
 Process, evaluate, and implement code review feedback with technical rigor.
 
@@ -42,8 +42,8 @@ Process, evaluate, and implement code review feedback with technical rigor.
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| PR number (e.g., `123`, `#123`) | Address feedback on specific PR | Fetch PR comments, full process |
-| PR URL | Address feedback on specific PR | Extract PR number, full process |
+| PR number (e.g., `123`, `#123`) | Address feedback on specific PR | Fetch PR comments, full process. Will verify current branch matches PR head branch and offer to checkout if needed |
+| PR URL | Address feedback on specific PR | Extract PR number, full process. Will verify current branch matches PR head branch and offer to checkout if needed |
 | `latest` or (none) | Address feedback on current branch's PR | Detect PR from branch, full process |
 | Specific comment quote | Address single piece of feedback | Targeted single-comment workflow |
 
@@ -51,15 +51,25 @@ Process, evaluate, and implement code review feedback with technical rigor.
 
 ### 0. Pre-flight
 
-- Resolve PR number from `$ARGUMENTS` or detect from current branch via `gh pr view --json number`
-- Verify PR exists and is open: `gh pr view --json state --jq '.state'`
 - Verify `gh` is authenticated: `gh auth status`
+- Resolve PR number, state, and head branch in a single call: `gh pr view --json number,state,headRefName`
+  - Use `$ARGUMENTS` to target a specific PR number/URL if provided, otherwise detect from current branch
+- Verify PR is open: check `state` from the call above
+- **Branch verification** (when PR number/URL was provided via arguments):
+  1. Get current branch: `git branch --show-current`
+  2. Compare against `headRefName` from the pre-flight call above
+  3. If they match → proceed
+  4. If mismatch:
+     - Check for dirty working tree: `git status --porcelain`
+     - If dirty → **stop**: "Working tree has uncommitted changes. Stash or commit before switching branches."
+     - If clean → ask user for confirmation, then switch: `gh pr checkout $PR_NUMBER`
 
 **Stop conditions:**
 - No PR found for current branch → report; suggest creating PR with `/pr` first
 - PR is closed or merged → report state and stop
 - `gh` not authenticated → provide `gh auth login` instructions and stop
 - No review comments found → report "no pending review comments"
+- Current branch doesn't match PR head branch with dirty working tree → report mismatch, stop
 
 ### 1. Gather Feedback
 
@@ -69,10 +79,15 @@ Fetch all review comments and organize them:
 # Get PR number from branch if not provided
 PR_NUMBER=$(gh pr view --json number --jq '.number')
 
-# Fetch all review comments
+# Fetch inline review comments with diff context (file path, diff position, in_reply_to_id)
+# These details are not exposed by `gh pr view`
 gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments --paginate
+
+# Fetch top-level review bodies and general PR comments (not available via the comments API above)
 gh pr view $PR_NUMBER --json reviews,comments
 ```
+
+Note which review threads are already resolved. Focus on **unresolved threads** first. Mention resolved threads to the user only if they appear to contain unaddressed items.
 
 Categorize each comment:
 - **Actionable request** — clear change requested (fix, rename, refactor, add test)
@@ -169,16 +184,15 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 
 **Always present all draft replies to the user before posting.** Never post to GitHub without explicit approval.
 
-### 7. Push and Verify
+### 7. Commit, Push, and Verify
 
-After all changes are implemented:
+After all changes are implemented and replies posted:
 
+1. Stage and commit changes — invoke `/commit` (follows git conventions from `.claude/rules/git-conventions.md`)
+2. **Ask user for confirmation before pushing** — pushing affects shared state
+3. Push changes: `git push`
+4. Verify PR state:
 ```bash
-# Verify tests still pass (if applicable)
-# Push changes
-git push
-
-# Verify PR state
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup
 ```
 
@@ -202,6 +216,8 @@ Report to the user: changes made, replies posted, remaining items (if any), and 
 | Reviewer comment references deleted code | Note the staleness, ask user how to proceed |
 | Conflicting reviewer feedback | Surface the contradiction, ask user to decide |
 | Too many comments (>20) | Prioritize by blocking/required, batch quick wins, defer complex items |
+| Current branch doesn't match PR head branch (clean tree) | Report mismatch, offer to `gh pr checkout` the PR branch |
+| Current branch doesn't match PR head branch (dirty tree) | Report mismatch, stop — ask user to stash or commit first |
 
 Never silently skip feedback items or post replies without user approval.
 
