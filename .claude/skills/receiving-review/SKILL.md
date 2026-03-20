@@ -6,11 +6,11 @@ description: >-
   Not for: giving a code review (use /review), creating a PR (use /pr).
 argument-hint: "[PR number, URL, or 'latest']"
 disable-model-invocation: true
-allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Write, Edit, Agent
+allowed-tools: Bash(git *, gh *, gh pr view*), Read, Grep, Glob, Write, Edit, Agent
 ---
 
 **Current branch:** !`git branch --show-current`
-**Open PR:** !`gh pr view --json number,url,title --template '#{{.number}} {{.title}} — {{.url}}' 2>/dev/null || echo "No open PR on this branch"`
+**Open PR:** !`gh pr view --json number,url,title --template '#{{.number}} {{.title}} — {{.url}}'`
 
 Process, evaluate, and implement code review feedback with technical rigor.
 
