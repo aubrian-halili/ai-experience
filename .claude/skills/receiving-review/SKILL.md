@@ -51,12 +51,13 @@ Process, evaluate, and implement code review feedback with technical rigor.
 
 ### 0. Pre-flight
 
-- Resolve PR number from `$ARGUMENTS` or detect from current branch via `gh pr view --json number`
-- Verify PR exists and is open: `gh pr view --json state --jq '.state'`
 - Verify `gh` is authenticated: `gh auth status`
+- Resolve PR number, state, and head branch in a single call: `gh pr view --json number,state,headRefName`
+  - Use `$ARGUMENTS` to target a specific PR number/URL if provided, otherwise detect from current branch
+- Verify PR is open: check `state` from the call above
 - **Branch verification** (when PR number/URL was provided via arguments):
   1. Get current branch: `git branch --show-current`
-  2. Get PR head branch: `gh pr view $PR_NUMBER --json headRefName --jq '.headRefName'`
+  2. Compare against `headRefName` from the pre-flight call above
   3. If they match → proceed
   4. If mismatch:
      - Check for dirty working tree: `git status --porcelain`
@@ -78,10 +79,15 @@ Fetch all review comments and organize them:
 # Get PR number from branch if not provided
 PR_NUMBER=$(gh pr view --json number --jq '.number')
 
-# Fetch all review comments
+# Fetch inline review comments with diff context (file path, diff position, in_reply_to_id)
+# These details are not exposed by `gh pr view`
 gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments --paginate
+
+# Fetch top-level review bodies and general PR comments (not available via the comments API above)
 gh pr view $PR_NUMBER --json reviews,comments
 ```
+
+Note which review threads are already resolved. Focus on **unresolved threads** first. Mention resolved threads to the user only if they appear to contain unaddressed items.
 
 Categorize each comment:
 - **Actionable request** — clear change requested (fix, rename, refactor, add test)
@@ -178,16 +184,15 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 
 **Always present all draft replies to the user before posting.** Never post to GitHub without explicit approval.
 
-### 7. Push and Verify
+### 7. Commit, Push, and Verify
 
-After all changes are implemented:
+After all changes are implemented and replies posted:
 
+1. Stage and commit changes — invoke `/commit` (follows git conventions from `.claude/rules/git-conventions.md`)
+2. **Ask user for confirmation before pushing** — pushing affects shared state
+3. Push changes: `git push`
+4. Verify PR state:
 ```bash
-# Verify tests still pass (if applicable)
-# Push changes
-git push
-
-# Verify PR state
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup
 ```
 
