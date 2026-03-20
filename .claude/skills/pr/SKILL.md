@@ -85,11 +85,13 @@ Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr
 | `--fe`         | @references/frontend-minor-template.md   |
 | `--fe --major` | @references/frontend-major-template.md   |
 
-**CRITICAL: The PR body MUST be constructed from the selected template file** Read the template file, copy its entire structure, then fill in the dynamic sections below from commit history:
+**CRITICAL: The PR body MUST be constructed from the selected template file.** Read the template file and include **every section, checkbox, and line** — do not omit or summarize any part of the template. Then fill in only these dynamic sections from commit history:
 - **Summary** — bullet points derived from commit messages
 - **Jira** — ticket ID from branch name, linked to `https://qredab.atlassian.net/browse/<TICKET-ID>`
 - **Breaking Changes** — "None" or list from commits
 - **Test Plan** — verification steps relevant to the changes
+
+All other sections (Type of Change, Checklist, Checklist for reviewers, etc.) must be copied verbatim from the template with checkboxes intact. Check off only the items that apply.
 
 **Present to user:**
 - Show the full PR details: ticket ID, title, body, flags (draft by default, `--ready` to override, `--base <branch>`)
