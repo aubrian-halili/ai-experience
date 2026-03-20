@@ -127,7 +127,7 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 - If fetch fails, warn the user and suggest checking Jira manually
 
 **Show the user:**
-- **Ticket ID** and canonical URL (if acli)
+- **Ticket ID** and URL: `https://qredab.atlassian.net/browse/<TICKET-ID>`
 - **Type**, **priority**, and **summary**
 - **Suggested branch name**: `<TICKET-ID>-<short-description>` (e.g., `UN-1234-fix-login-timeout`)
 - **Workflow reminder**: Create branch → implement → `/commit` → `/pr`
