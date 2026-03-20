@@ -10,7 +10,7 @@ allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Write, Edit, Agent
 ---
 
 **Current branch:** !`git branch --show-current`
-**Open PR:** !`gh pr view --json number,url,title --jq '"#\(.number) \(.title) — \(.url)"' 2>/dev/null || echo "No open PR on this branch"`
+**Open PR:** !`gh pr view --json number,url,title --template '#{{.number}} {{.title}} — {{.url}}' 2>/dev/null || echo "No open PR on this branch"`
 
 Process, evaluate, and implement code review feedback with technical rigor.
 
@@ -42,8 +42,8 @@ Process, evaluate, and implement code review feedback with technical rigor.
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| PR number (e.g., `123`, `#123`) | Address feedback on specific PR | Fetch PR comments, full process |
-| PR URL | Address feedback on specific PR | Extract PR number, full process |
+| PR number (e.g., `123`, `#123`) | Address feedback on specific PR | Fetch PR comments, full process. Will verify current branch matches PR head branch and offer to checkout if needed |
+| PR URL | Address feedback on specific PR | Extract PR number, full process. Will verify current branch matches PR head branch and offer to checkout if needed |
 | `latest` or (none) | Address feedback on current branch's PR | Detect PR from branch, full process |
 | Specific comment quote | Address single piece of feedback | Targeted single-comment workflow |
 
@@ -54,12 +54,21 @@ Process, evaluate, and implement code review feedback with technical rigor.
 - Resolve PR number from `$ARGUMENTS` or detect from current branch via `gh pr view --json number`
 - Verify PR exists and is open: `gh pr view --json state --jq '.state'`
 - Verify `gh` is authenticated: `gh auth status`
+- **Branch verification** (when PR number/URL was provided via arguments):
+  1. Get current branch: `git branch --show-current`
+  2. Get PR head branch: `gh pr view $PR_NUMBER --json headRefName --jq '.headRefName'`
+  3. If they match → proceed
+  4. If mismatch:
+     - Check for dirty working tree: `git status --porcelain`
+     - If dirty → **stop**: "Working tree has uncommitted changes. Stash or commit before switching branches."
+     - If clean → ask user for confirmation, then switch: `gh pr checkout $PR_NUMBER`
 
 **Stop conditions:**
 - No PR found for current branch → report; suggest creating PR with `/pr` first
 - PR is closed or merged → report state and stop
 - `gh` not authenticated → provide `gh auth login` instructions and stop
 - No review comments found → report "no pending review comments"
+- Current branch doesn't match PR head branch with dirty working tree → report mismatch, stop
 
 ### 1. Gather Feedback
 
@@ -202,6 +211,8 @@ Report to the user: changes made, replies posted, remaining items (if any), and 
 | Reviewer comment references deleted code | Note the staleness, ask user how to proceed |
 | Conflicting reviewer feedback | Surface the contradiction, ask user to decide |
 | Too many comments (>20) | Prioritize by blocking/required, batch quick wins, defer complex items |
+| Current branch doesn't match PR head branch (clean tree) | Report mismatch, offer to `gh pr checkout` the PR branch |
+| Current branch doesn't match PR head branch (dirty tree) | Report mismatch, stop — ask user to stash or commit first |
 
 Never silently skip feedback items or post replies without user approval.
 
