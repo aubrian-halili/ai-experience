@@ -35,14 +35,13 @@
 - [ ] All tests pass locally
 - [ ] No environment changes required
 - [ ] I have reviewed the Qred score card results and acted on them
-- [ ] Linked to relevant internal task/ticket (if applicable)
+- [ ] Linked to relevant internal task/ticket
 - [ ] Change verified in **test environment**
 - [ ] Tested by the **product manager** as of defined highlevel tests in Discovery document
 - [ ] No breaking change
 - [ ] Breaking change but there is mitigation plan for affected teams/services documented in PR.
 - [ ] Unit and/or integration tests updated as needed
 - [ ] Logging and error handling verified
-- [ ] Linked to relevant internal task/ticket
 - [ ] Rollback strategy prepared and documented if there is external customer impact <!-- can be feature flagging or purely rollback instructions -->
 - [ ] Monitoring/alerting updated as needed
 - [ ] I have extracted relevant tests from internal task/ticket/discovery in Ticket ID section
