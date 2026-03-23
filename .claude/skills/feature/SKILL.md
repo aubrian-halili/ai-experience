@@ -185,3 +185,4 @@ Never silently skip milestones or acceptance criteria—surface gaps and blocker
 | `/verify` | Need comprehensive post-implementation verification |
 | `/commit` | Commit changes after implementation |
 | `/finish` | Wrap up branch after implementation is complete |
+| `/confluence` | Reference Confluence specs or publish feature documentation |

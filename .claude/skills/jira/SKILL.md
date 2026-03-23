@@ -161,3 +161,4 @@ Never create a ticket without user confirmation or skip duplicate checking — s
 | `/feature` | Implement feature after ticket is created |
 | `/commit` | Commit with ticket reference (after branch created) |
 | `/pr` | Create pull request (after commits made) |
+| `/confluence` | Create or view Confluence pages (not Jira tickets) |
