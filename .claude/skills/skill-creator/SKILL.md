@@ -154,8 +154,8 @@ Test the skill with real invocations and refine based on:
 - `$ARGUMENTS` — all arguments passed when invoking the skill
 - `$ARGUMENTS[N]` or `$N` — specific argument by 0-based index
 - `${CLAUDE_SESSION_ID}` — unique session identifier; useful for per-session logging or temp file isolation
-- `${CLAUDE_SKILL_DIR}` — absolute path to the skill's directory; use in `` !`command` `` or Bash steps to reference bundled scripts/files portably
-- `` !`command` `` — dynamic context; shell command output replaces the placeholder before skill content is sent to Claude
+- `${CLAUDE_SKILL_DIR}` — absolute path to the skill's directory; use in `!<command>` or Bash steps to reference bundled scripts/files portably
+- `!<command>` — dynamic context; shell command output replaces the placeholder before skill content is sent to Claude
 
 ## Output Principles
 
