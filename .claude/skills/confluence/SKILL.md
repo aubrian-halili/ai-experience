@@ -17,7 +17,6 @@ View Confluence pages, browse spaces and blog posts, and generate ready-to-paste
 - **Read-first orientation** — viewing and searching existing content is the primary use case; page creation and update are assisted via Markdown generation
 - **Graceful degradation** — when acli lacks a command (page create/update), generate copy-ready Markdown content for manual entry rather than failing
 - **Instance-scoped** — all operations target `qredab.atlassian.net`; never assume a different instance
-- **Sensitive data exclusion** — scan content before generating; Confluence pages are visible to all space members
 - **User-owned publishing** — never publish autonomously; the user always controls what lands in Confluence
 
 ## Guardrails
@@ -43,11 +42,13 @@ Determine operation intent from `$ARGUMENTS`:
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| `view <page-id>` | View a specific page | Step 2 (View Page) |
+| `view <page-id>` | View a specific page by ID | Step 2 (View Page) |
+| `view <confluence-url>` | View a specific page by URL | Step 2 (View Page) — extract ID from URL |
 | `update <page-id>` / `edit <page-id>` | Update a page (no acli support) | Step 3 (Update Fallback) |
 | `search <query>` / `find <query>` | Search for content | Step 4 (Search) |
 | `blogs <space-id>` / `list blogs` | Browse blog posts | Step 5 (List/View Blogs) |
 | `spaces` / `list spaces` | List available spaces | Step 6 (List Spaces) |
+| `space <space-id>` / `view space <space-id>` | View a specific space | Step 6 (List Spaces) |
 | `page <title or description>` | Create a page (no acli support) | Step 7 (Create Fallback) |
 | `(none)` | Unclear intent | Pre-flight stop — ask user |
 
@@ -67,8 +68,9 @@ Determine operation intent from `$ARGUMENTS`:
 
 ### 2. View Page
 
-Fetch and display a Confluence page by ID:
+Fetch and display a Confluence page by ID or URL:
 
+- If a full Confluence URL is provided, extract the page ID (the number after `/pages/` in the URL path) before running the command
 - Run `acli confluence page view --id <PAGE_ID> --body-format storage --json`
 - Key flags: `--body-format` (storage|atlas_doc_format|view), `--include-labels`, `--include-versions`, `--version <N>`, `--get-draft`, `--status` (current|draft|archived)
 - Present: page title, content summary, labels, last modified, and direct URL: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/<PAGE_ID>`
@@ -92,6 +94,7 @@ Since there is no dedicated `acli confluence search` command:
 
 - For blog content: `acli confluence blog list --space-id <SPACE_ID> --title "<query>" --json`
 - For page content: note the acli limitation and suggest Confluence web search: `https://qredab.atlassian.net/wiki/search?text=<query>`
+  - If `acli` adds search support in the future, the query language is CQL: `type=page AND text ~ "<query>"`
 - If space ID is not known, first run Step 6 (List Spaces) and ask user to pick one
 
 ### 5. List / View Blogs
@@ -144,8 +147,6 @@ Since `acli confluence page create` does not exist, generate copy-ready content 
 | No conversation context for page creation | Ask user to describe the page topic, purpose, and key sections |
 | API error (non-auth) | Present content generation fallback and include Confluence web URL for manual action |
 | Administrative operation requested | Refuse: "Administrative space commands are outside this skill's scope — manage these directly in Confluence" |
-
-Never proceed to content generation without checking for sensitive data — scan for secrets, API keys, and PII before drafting any page or blog content.
 
 ## Related Skills
 
