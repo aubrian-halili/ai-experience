@@ -163,3 +163,4 @@ Never force push or create a PR from the default branch — always verify branch
 | `/review` | Review a PR (yours or others) |
 | `/receiving-review` | Address review feedback on your PR |
 | `/finish` | Decide what to do with the branch (PR, merge, park, or discard) |
+| `/confluence` | Link to or create Confluence documentation pages for the PR |

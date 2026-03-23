@@ -142,12 +142,12 @@ Use **gerund form** (verb + -ing) for skill names when possible:
 - `$ARGUMENTS[N]` or `$N` — specific argument by index (0-based)
 - `${CLAUDE_SESSION_ID}` — unique session identifier, useful for per-session logging or temp file isolation
 - `${CLAUDE_SKILL_DIR}` — the skill's own directory path; use to reference bundled scripts portably instead of hardcoding `.claude/skills/<name>/`
-- `` !`command` `` — dynamic context injection; shell command output replaces placeholder before skill content is sent to Claude
+- `!<command>` — dynamic context injection; shell command output replaces placeholder before skill content is sent to Claude
 
 **Example use case**: Inject current git branch into skill instructions
 
 ```markdown
-Current branch: !`git rev-parse --abbrev-ref HEAD`
+Current branch: !<git rev-parse --abbrev-ref HEAD>
 ```
 
 Claude sees: "Current branch: feature/auth-flow" (output replaced at runtime).
