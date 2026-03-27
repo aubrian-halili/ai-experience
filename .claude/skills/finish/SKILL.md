@@ -5,7 +5,7 @@ description: >-
   implementation and needs to decide next steps.
   Not for: committing (use /commit) or creating a PR (use /pr).
 argument-hint: "[optional: merge, pr, park, discard]"
-allowed-tools: Bash(git *, gh *), Read, Grep, Glob
+allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Skill
 ---
 
 **Current branch:** !`git branch --show-current`

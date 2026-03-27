@@ -55,11 +55,22 @@ Based on the desired behavior:
 
 | Event | Timing | Use Cases |
 |-------|--------|-----------|
-| `PreToolUse` | Before a tool executes | Block dangerous commands, validate inputs |
-| `PostToolUse` | After a tool executes | Log actions, trigger follow-ups |
+| **Tool lifecycle** | | |
+| `PreToolUse` | Before a tool executes | Block dangerous commands, validate inputs, auto-approve safe ops |
+| `PostToolUse` | After a tool executes | Log actions, trigger follow-ups, auto-format |
+| **Session lifecycle** | | |
+| `SessionStart` | Session begins | Set up env, check prerequisites, load context |
+| `SessionEnd` | Session ends | Cleanup, save summaries |
+| `Stop` | Claude stops responding | Cleanup, summary generation, notifications |
+| `StopFailure` | Claude fails to stop cleanly | Error recovery, alerting |
+| `SubagentStart` | Subagent spawns | Logging, pre-checks |
+| `SubagentStop` | Subagent finishes | Aggregate results, quality checks |
+| **User interaction** | | |
+| `UserPromptSubmit` | User sends a message | Input validation, preprocessing |
 | `Notification` | On notifications | Custom alerts, integrations |
-| `Stop` | When Claude stops | Cleanup, summary generation |
-| `SubagentStop` | When a subagent finishes | Aggregate results, quality checks |
+| **Context management** | | |
+| `PreCompact` | Before context compaction | Save important state |
+| `PostCompact` | After context compaction | Re-inject critical context |
 
 ### 2.5. Present Plan for Approval
 
@@ -80,8 +91,19 @@ Create the hook script and configuration:
    - Use bash for simple hooks, or the appropriate language for complex logic
    - Include proper error handling and exit codes
    - Exit 0 to allow, exit 2 to block (with stderr message shown to user)
-2. **Make executable**: `chmod +x .claude/hooks/<script-name>`
+2. **Make executable**: `chmod +x $CLAUDE_PROJECT_DIR/.claude/hooks/<script-name>`
 3. **Register in settings**: Add hook configuration to the appropriate settings file
+
+**Hook Types:**
+
+| Type | Key Fields | Use Case |
+|------|-----------|----------|
+| `command` | `command`, `timeout` | Run a shell script |
+| `http` | `url`, `headers` | Call a webhook/API endpoint |
+| `prompt` | `prompt`, `model` | LLM-based judgment — no script needed |
+| `agent` | `prompt`, `model` | Multi-step LLM reasoning with tool access |
+
+Common optional fields (all types): `timeout` (seconds), `async` (bool, fire-and-forget), `statusMessage` (shown in UI while hook runs).
 
 **Hook Configuration Schema:**
 
@@ -94,12 +116,22 @@ Create the hook script and configuration:
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/<script-name>"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/<script-name>"
           }
         ]
       }
     ]
   }
+}
+```
+
+For LLM-based decisions without a shell script, use a `prompt` hook:
+
+```json
+{
+  "type": "prompt",
+  "prompt": "Check if the file being edited contains secrets or credentials. If so, respond with permissionDecision: deny and explain why.",
+  "model": "claude-haiku-4-5-20251001"
 }
 ```
 
@@ -123,6 +155,27 @@ TOOL_INPUT=$(echo "$INPUT" | jq -r '.tool_input // empty')
 
 exit 0
 ```
+
+**Structured Output (JSON on stdout):**
+
+For richer control than exit codes alone, hooks can write JSON to stdout:
+
+```bash
+# PreToolUse — control the permission decision
+echo '{"hookSpecificOutput":{"permissionDecision":"allow"}}'   # auto-approve, skip prompt
+echo '{"hookSpecificOutput":{"permissionDecision":"deny"}}'    # block (equivalent to exit 2)
+echo '{"hookSpecificOutput":{"permissionDecision":"ask"}}'     # defer to normal permission flow
+
+# PostToolUse / Stop — block the action
+echo '{"decision":"block","reason":"Reason shown to user"}'
+
+# Any event — inject context or modify output
+echo '{"additionalContext":"Text injected into Claude'\''s next turn"}'
+echo '{"suppressOutput":true}'                                 # hide hook output from user
+echo '{"systemMessage":"Warning shown to Claude"}'
+```
+
+Exit codes still apply: `0` = allow (parse stdout for JSON decisions), `2` = block (write reason to stderr).
 
 ### 4. Validate
 
@@ -161,6 +214,7 @@ See `@references/hook-patterns.md` for detailed pattern implementations.
 | Hook script has syntax errors | Test with `bash -n` before registering |
 | jq not available | Suggest installation or provide jq-free alternative using grep/sed |
 | Hook blocks unintentionally | Guide debugging with test input and stderr output |
+| Stop hook causes infinite loop | Check `stop_hook_active` field in stdin JSON; skip logic if `true` |
 
 Never create hooks that silently swallow errors — always surface blocking reasons to the user via stderr.
 

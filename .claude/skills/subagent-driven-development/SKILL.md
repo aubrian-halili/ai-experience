@@ -5,7 +5,7 @@ description: >-
   or has 3+ independent modules to implement concurrently. Use after /plan.
   Not for: tasks with sequential dependencies (use /feature) or single-file scope.
 argument-hint: "[plan file, task list, or multi-module feature description]"
-allowed-tools: Agent, Read, Grep, Glob, TaskCreate, TaskUpdate, TaskList
+allowed-tools: Agent, SendMessage, Read, Grep, Glob, TaskCreate, TaskUpdate, TaskList
 ---
 
 Orchestrate parallel implementation across multiple Claude subagents for large-scale features or refactors with clearly independent work streams.
@@ -86,7 +86,7 @@ For each independent task:
 2. Mark as `in_progress` via `TaskUpdate`
 3. Launch a fresh `implementation-worker` agent (from `.claude/agents/implementation-worker.md`) via the Agent tool with:
    - Task goal, file scope, and acceptance criteria as context in the prompt
-   - Set `isolation: "worktree"` for each worker to prevent file conflicts between parallel agents
+   - Workers run in isolated git worktrees (configured in the agent definition) to prevent file conflicts
    - The agent has Edit, Write, and scoped Bash access (test commands only)
 4. Dispatch independent tasks in parallel (multiple Agent calls in one message)
 
@@ -145,7 +145,8 @@ Mark tasks as `completed` via `TaskUpdate` only after both stages pass.
 | Scenario | Response |
 |----------|----------|
 | Tasks not independent | Fall back to sequential `/feature` milestones |
-| Subagent fails | Mark task as blocked, assess whether to retry or restructure |
+| Subagent fails (minor) | Resume the worker via `SendMessage` with the agent ID and corrective instructions — preserves context from the failed attempt |
+| Subagent fails (structural) | Mark task as blocked, spawn a fresh worker with revised scope, or fall back to sequential `/feature` |
 | Merge conflicts | Resolve manually, re-run integration tests |
 | Fewer than 3 tasks | Recommend `/feature` instead |
 | One subagent modifies unexpected files | Revert its changes, re-dispatch with stricter scope |

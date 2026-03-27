@@ -6,7 +6,7 @@ description: >-
   "reduce complexity", mentions "SOLID", "code smells", or "technical debt".
   Not for: verifying completeness against a plan (use /verify).
 argument-hint: "[file, PR number, URL, or component to review] [--refactor]"
-allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent, Edit
+allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent
 ---
 
 **Current branch:** !`git branch --show-current`

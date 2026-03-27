@@ -3,9 +3,12 @@ name: implementation-worker
 description: >-
   Scoped implementation agent for parallel task execution with worktree isolation.
   Use when dispatching independent implementation tasks that can run concurrently.
-tools: Read, Grep, Glob, Edit, Write, Bash(npm test *, npx tsc *, npx jest *)
+tools: Read, Grep, Glob, Edit, Write, Bash(npm test *, npx tsc *, npx jest *, npx vitest *)
 model: inherit
 isolation: worktree
+permissionMode: acceptEdits
+maxTurns: 40
+effort: high
 ---
 
 You are an implementation worker executing a single, scoped task as part of a larger parallel effort. Each worker runs in an isolated git worktree to prevent file conflicts with other parallel workers.

@@ -44,7 +44,7 @@ Determine commit workflow from `$ARGUMENTS`:
 
 ### 1. Pre-flight Checks
 
-Extract ticket ID from branch name (pre-loaded above) using `grep -oE '[A-Z]+-[0-9]+'`.
+Extract ticket ID from the branch name shown above (e.g., `UN-4032` from `UN-4032-skill-optimization`).
 
 **Stop conditions:** Follow branch/ticket rules from git-conventions.md — on `main`/`master` → stop and redirect to `/feature` to create a branch first; no ticket ID → ask user; no changes → nothing to commit.
 
@@ -58,7 +58,7 @@ Review current state:
 
 Use `$ARGUMENTS` if provided (user's custom message or scope), otherwise generate appropriate commit message.
 
-Follow commit message format from git-conventions.md (already loaded). Subject line max 72 chars.
+Follow commit message format from git-conventions.md. Subject line max 72 chars.
 
 **Present to user:**
 - Show **staged files** separately from **unstaged files**

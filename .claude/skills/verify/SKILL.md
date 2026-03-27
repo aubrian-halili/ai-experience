@@ -5,10 +5,11 @@ description: >-
   "check for stubs or TODOs", or references a plan to verify against. Use after /feature.
   Not for: code quality review (use /review).
 argument-hint: "[plan file, feature name, or acceptance criteria]"
-context: fork
-agent: Explore
-allowed-tools: Read, Grep, Glob
+allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Glob
 ---
+
+**Current branch:** !`git branch --show-current`
+**Changed files:** !`git diff --name-only origin/main..HEAD 2>/dev/null || git diff --name-only HEAD~1..HEAD`
 
 Verify that an implementation fully achieves its intended goals using three-level artifact checks and anti-pattern scanning.
 

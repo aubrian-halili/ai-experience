@@ -39,7 +39,7 @@ done
 exit 0
 ```
 
-**Event:** `PreToolUse` | **Matcher:** `Edit,Write`
+**Event:** `PreToolUse` | **Matcher:** `Edit|Write`
 
 ### Enforce Lint Before Commit
 
@@ -78,7 +78,7 @@ echo "$TIMESTAMP | $TOOL_NAME | $FILE_PATH" >> .claude/hooks/modification-log.tx
 exit 0
 ```
 
-**Event:** `PostToolUse` | **Matcher:** `Edit,Write`
+**Event:** `PostToolUse` | **Matcher:** `Edit|Write`
 
 ## Notification Patterns
 
@@ -98,6 +98,48 @@ exit 0
 
 **Event:** `Stop`
 
+## Prompt-Based Patterns
+
+### Security Review Without a Script
+
+Uses LLM judgment to block edits that introduce secrets — no bash script required:
+
+**Event:** `PreToolUse` | **Matcher:** `Write|Edit`
+
+Configuration (directly in `settings.json`, no script file needed):
+
+```json
+{
+  "type": "prompt",
+  "prompt": "Check if the file being written or edited would contain secrets, API keys, tokens, or credentials. If so, respond with permissionDecision: deny and explain what was found.",
+  "model": "claude-haiku-4-5-20251001"
+}
+```
+
+## Structured Output Patterns
+
+### Auto-Approve Safe Read Operations
+
+Demonstrates `permissionDecision: "allow"` to skip the permission prompt for known-safe operations:
+
+```bash
+#!/bin/bash
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+
+# Block reads of sensitive files
+if echo "$FILE_PATH" | grep -qiE '\.env|\.pem$|\.key$|secrets|credentials'; then
+  echo '{"hookSpecificOutput":{"permissionDecision":"deny"}}'
+  exit 0
+fi
+
+# Auto-approve all other reads (skip permission prompt)
+echo '{"hookSpecificOutput":{"permissionDecision":"allow"}}'
+exit 0
+```
+
+**Event:** `PreToolUse` | **Matcher:** `Read`
+
 ## Configuration Examples
 
 ### Project-level settings.json
@@ -111,7 +153,7 @@ exit 0
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/block-force-push.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/block-force-push.sh"
           }
         ]
       },
@@ -120,7 +162,7 @@ exit 0
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/block-sensitive-files.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/block-sensitive-files.sh"
           }
         ]
       }
@@ -131,7 +173,7 @@ exit 0
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/log-modifications.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/log-modifications.sh"
           }
         ]
       }
