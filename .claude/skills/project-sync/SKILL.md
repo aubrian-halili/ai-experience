@@ -146,5 +146,5 @@ Never silently skip a check — surface what was checked, what was skipped, and 
 | `/skill-creator` | Creating or scaffolding a new skill, not auditing docs |
 | `/review` | Reviewing code quality, not documentation accuracy |
 | `/verify` | Verifying implementation completeness against a plan |
-| `/finish` | Wrapping up a branch; consider running `/project-syncing` first |
-| `/plan` | Planning new work; `/project-syncing` captures what already happened |
+| `/finish` | Wrapping up a branch; consider running `/project-sync` first |
+| `/plan` | Planning new work; `/project-sync` captures what already happened |
