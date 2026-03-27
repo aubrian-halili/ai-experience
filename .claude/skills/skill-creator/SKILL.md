@@ -149,6 +149,9 @@ Test the skill with real invocations and refine based on:
 | `context` | string | Set to `fork` to run in isolated subagent context (no conversation history) | No | Advanced |
 | `agent` | string | Subagent type when `context: fork` (e.g., `Explore`, `Plan`, `general-purpose`, or custom from `.claude/agents/`) | No | Advanced |
 | `hooks` | object | Skill-scoped hooks configuration (see Hooks documentation) | No | Advanced |
+| `effort` | string | Reasoning effort level: `low`, `medium`, `high`, `max` (Opus 4.6 only). Overrides session effort. | No | Advanced |
+| `paths` | string/list | Glob patterns limiting when skill auto-activates based on files being worked on (e.g., `"**/*.ts"`) | No | Advanced |
+| `shell` | string | Shell for `` !`command` `` blocks: `bash` (default) or `powershell` | No | Advanced |
 
 **String substitution variables** available in skill content:
 - `$ARGUMENTS` — all arguments passed when invoking the skill

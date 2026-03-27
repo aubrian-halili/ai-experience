@@ -170,6 +170,23 @@ agent: Explore
 
 **Tradeoff**: Subagent has no conversation context but focused instructions.
 
+## Path-Based Activation
+
+Use the `paths` frontmatter field to limit when a skill auto-activates based on the files being worked on:
+
+```yaml
+paths: ["**/*.ts", "**/*.tsx"]
+```
+
+**When to use**:
+- Monorepo skills scoped to specific packages (e.g., `paths: ["packages/frontend/**"]`)
+- Language-specific conventions that should only apply for certain file types
+- Skills that would be noise or wrong in other parts of the codebase
+
+**Tradeoff**: Skills without `paths` are always candidates for auto-invocation. Narrowing with `paths` reduces false positives but means the skill won't trigger when editing unmatched files even if the task is relevant.
+
+**Manual invocation is unaffected**: `paths` only controls *auto*-activation. The skill is always available via `/skill-name` regardless.
+
 ## Testing Strategy
 
 **Test with multiple models**: Skills work differently across Haiku (fast/economical), Sonnet (balanced), and Opus (powerful reasoning).
