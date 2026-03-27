@@ -1,5 +1,10 @@
 #!/bin/bash
 # Auto-validate skill files after Write/Edit operations on .claude/skills/
+# Event: PostToolUse
+# Matcher: Write|Edit
+
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 
 # Check if the changed file is a skill file
 if ! echo "$FILE_PATH" | grep -qE '\.claude/skills/.*/SKILL\.md$'; then

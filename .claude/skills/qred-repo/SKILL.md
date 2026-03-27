@@ -137,16 +137,7 @@ For all direct operations, use `--json` to get structured data:
 
 ## Error Handling
 
-| Scenario | Response |
-|---|---|
-| `gh` not installed | "Install with `brew install gh`, then `gh auth login`." |
-| Not authenticated | "Run `gh auth login` to authenticate." |
-| No Qred org access | "Ensure your GitHub account has access to the Qred organization." |
-| Repo not found | List repos with `/qred-repo` to find the correct name |
-| File/path not found | List parent directory contents to help navigate |
-| File too large (>300 lines) | Show first 100 lines and ask before showing more |
-| No search results | Suggest alternative terms, broader scope, or different repo |
-| API rate limit | "GitHub API rate limit exceeded. Wait a few minutes and retry." |
+See `@references/examples-and-errors.md` for error scenarios and responses.
 
 Never present results without context—always state what was searched, where, and what was omitted.
 

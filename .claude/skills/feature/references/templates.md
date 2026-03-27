@@ -167,7 +167,7 @@ if (featureFlags.isEnabled('new-feature')) {
 
 ## Definition of Done Template
 
-Use this template during Step 3 (Design & Present) to define observable truths before implementation begins.
+Use this template during Step 5 (Design & Present) to define observable truths before implementation begins.
 
 ```markdown
 ### Definition of Done
@@ -195,7 +195,7 @@ Observable truths that must be TRUE when this feature is complete:
 
 ## Verification Checklist Template
 
-Use this template during Step 5 (Verify) for three-level verification.
+Use this template during Step 7 (Verify) for three-level verification.
 
 ```markdown
 ### Verification Results

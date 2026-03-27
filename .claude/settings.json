@@ -7,6 +7,17 @@
   "defaultMode": "plan",
   "allowedMcpServers": [],
   "hooks": {
+    "PostCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Context was compacted. If a .planning/STATE.md file exists, re-read it. Run TaskList to recover in-progress task context."
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",

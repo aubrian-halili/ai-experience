@@ -9,6 +9,9 @@ allowed-tools: [tools this skill needs, e.g., Read, Grep, Glob]
 # context: fork                    # Uncomment to run in isolated subagent context
 # agent: Explore                   # Required when context: fork (Explore, Plan, general-purpose)
 # hooks:                           # Uncomment for skill-scoped hooks configuration
+# effort: medium                   # Uncomment to set reasoning effort: low, medium, high, max (Opus 4.6)
+# paths: ["**/*.ts"]               # Uncomment to limit auto-activation by file glob patterns
+# shell: bash                      # Uncomment to set shell for !<command>: bash, powershell
 ---
 
 <!-- String substitution variables: $ARGUMENTS (all args), $ARGUMENTS[N] or $N (by index), ${CLAUDE_SESSION_ID} (session ID), ${CLAUDE_SKILL_DIR} (skill directory path), (shell output) -->

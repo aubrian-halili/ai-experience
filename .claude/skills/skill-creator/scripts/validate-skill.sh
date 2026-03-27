@@ -18,7 +18,7 @@ VERBOSE=false
 VALIDATE_ALL=false
 
 # Known tools list for validation
-KNOWN_TOOLS="Bash Read Grep Glob Write Edit WebFetch WebSearch Skill Task AskUserQuestion EnterPlanMode ExitPlanMode TaskCreate TaskUpdate TaskList TaskGet TaskOutput TaskStop NotebookEdit ToolSearch ListMcpResourcesTool ReadMcpResourceTool Agent EnterWorktree CronCreate CronDelete CronList"
+KNOWN_TOOLS="Bash Read Grep Glob Write Edit WebFetch WebSearch Skill AskUserQuestion EnterPlanMode ExitPlanMode TaskCreate TaskUpdate TaskList TaskGet TaskOutput TaskStop NotebookEdit ToolSearch ListMcpResourcesTool ReadMcpResourceTool Agent EnterWorktree ExitWorktree RemoteTrigger CronCreate CronDelete CronList"
 
 usage() {
     echo "Usage: $0 [OPTIONS] <skill-name>"
@@ -274,6 +274,60 @@ validate_model_field() {
     return 0
 }
 
+validate_effort_field() {
+    local frontmatter="$1"
+
+    if ! echo "$frontmatter" | grep -q "^effort:"; then
+        pass "No effort field (optional)"
+        return 0
+    fi
+
+    local effort=$(echo "$frontmatter" | grep "^effort:" | sed 's/effort: *//')
+    if ! echo "$effort" | grep -qE '^(low|medium|high|max)$'; then
+        error "Invalid effort '$effort' (expected: low, medium, high, max)"
+    else
+        pass "Effort field valid: $effort"
+    fi
+
+    return 0
+}
+
+validate_shell_field() {
+    local frontmatter="$1"
+
+    if ! echo "$frontmatter" | grep -q "^shell:"; then
+        pass "No shell field (optional)"
+        return 0
+    fi
+
+    local shell=$(echo "$frontmatter" | grep "^shell:" | sed 's/shell: *//')
+    if ! echo "$shell" | grep -qE '^(bash|powershell)$'; then
+        error "Invalid shell '$shell' (expected: bash, powershell)"
+    else
+        pass "Shell field valid: $shell"
+    fi
+
+    return 0
+}
+
+validate_paths_field() {
+    local frontmatter="$1"
+
+    if ! echo "$frontmatter" | grep -q "^paths:"; then
+        pass "No paths field (optional)"
+        return 0
+    fi
+
+    local paths=$(echo "$frontmatter" | grep "^paths:" | sed 's/paths: *//')
+    if [ -z "$paths" ]; then
+        warn "paths field is present but empty"
+    else
+        pass "Paths field present: $paths"
+    fi
+
+    return 0
+}
+
 validate_user_invocable_field() {
     local frontmatter="$1"
 
@@ -464,6 +518,9 @@ validate_skill() {
     validate_allowed_tools "$frontmatter"
     validate_context_agent_coupling "$frontmatter"
     validate_model_field "$frontmatter"
+    validate_effort_field "$frontmatter"
+    validate_shell_field "$frontmatter"
+    validate_paths_field "$frontmatter"
     validate_user_invocable_field "$frontmatter"
     validate_action_skill_safety "$frontmatter" "$skill_file"
     validate_placeholders "$skill_file"

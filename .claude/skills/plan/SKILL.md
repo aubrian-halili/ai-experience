@@ -10,6 +10,10 @@ allowed-tools: Read, Grep, Glob, Write, TaskCreate, TaskUpdate, TaskList, Bash(a
 disable-model-invocation: true
 ---
 
+**Current branch:** !`git branch --show-current`
+
+ultrathink
+
 Decompose goals, epics, or Jira tickets into structured implementation phases with clear deliverables, using goal-backward verification to ensure every phase contributes to observable outcomes.
 
 ## Planning Philosophy

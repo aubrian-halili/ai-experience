@@ -9,6 +9,8 @@ allowed-tools: Bash(acli jira workitem search *, acli jira workitem view *, acli
 disable-model-invocation: true
 ---
 
+**Current branch:** !`git branch --show-current`
+
 Create Jira tickets from the current conversation context with structured templates. Returns a ticket ID for use in branch creation and downstream workflows.
 
 ## Ticket Philosophy
@@ -19,27 +21,14 @@ Create Jira tickets from the current conversation context with structured templa
 - **Graceful degradation** — if acli is unavailable, generate copy-ready content for manual entry rather than failing
 - **Duplicate awareness** — search for existing tickets before creating new ones; avoid cluttering the backlog
 
-## Guardrails
-
-This skill is scoped to **read and modify** operations — never destructive or administrative commands. The following rules apply to all acli usage:
-
-**Allowed actions**: `search`, `view`, `create`, `update`, `edit`, `transition`
-
-**Forbidden actions**: `delete` and any other destructive or administrative commands. If a user requests ticket deletion, refuse and explain that deletion is outside this skill's scope — they should delete tickets directly in Jira.
-
-**Multi-ticket confirmation**: When an `update`, `edit`, or `transition` would affect multiple tickets, list all affected ticket IDs and ask the user to explicitly confirm before proceeding.
-
-**Sensitive data exclusion**: Before creating or updating a ticket, scan the drafted content for secrets, credentials, API keys, tokens, connection strings, and PII. Strip or redact any sensitive values — ticket content is visible to all project members.
-
-**Description formatting**: All ticket descriptions must use Markdown formatting. Use `##` / `###` for headings, `1.` for numbered lists, `-` for bullet lists, and fenced code blocks. The templates in `@references/templates.md` use the correct format.
-
 ## Iron Laws
 
-> - NEVER execute `delete` or any destructive/administrative acli command
+> - NEVER execute `delete` or any destructive/administrative acli command — if requested, refuse and direct the user to manage these directly in Jira
 > - NEVER create or modify a ticket without user confirmation
 > - NEVER include secrets, credentials, API keys, or connection strings in ticket content
+> - NEVER apply bulk `update`, `edit`, or `transition` operations without first listing all affected ticket IDs and getting explicit user confirmation
 > - ALWAYS search for duplicates before creating a new ticket
-> - ALWAYS use Markdown formatting in ticket descriptions
+> - ALWAYS use Markdown formatting in ticket descriptions (`##`/`###` headings, `1.` numbered lists, `-` bullets, fenced code blocks)
 
 ## Input Handling
 
@@ -103,6 +92,8 @@ If no clear signal, default to Medium.
 
 ### 4. Confirm with User
 
+Before presenting the summary, scan the drafted content for secrets, credentials, API keys, tokens, connection strings, and PII — strip or redact any found, as ticket content is visible to all project members.
+
 Present a summary of the ticket details:
 - **Project**: The project key (e.g., UN)
 - **Type**: Bug, Task, or Story
@@ -127,7 +118,7 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 - If fetch fails, warn the user and suggest checking Jira manually
 
 **Show the user:**
-- **Ticket ID** and URL: `https://qredab.atlassian.net/browse/<TICKET-ID>`
+- **Ticket ID** and URL: derive the Atlassian base URL from `acli` config if possible, otherwise use `https://qredab.atlassian.net/browse/<TICKET-ID>`
 - **Type**, **priority**, and **summary**
 - **Suggested branch name**: `<TICKET-ID>-<short-description>` (e.g., `UN-1234-fix-login-timeout`)
 - **Workflow reminder**: Create branch → implement → `/commit` → `/pr`

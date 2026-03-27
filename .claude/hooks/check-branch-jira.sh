@@ -1,20 +1,25 @@
 #!/bin/bash
 # Enforce Jira ticket ID prefix in branch names when creating new branches
+# Event: PreToolUse
+# Matcher: Bash
+
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 
 # Only check branch creation commands
-if ! echo "$TOOL_INPUT" | grep -qE 'git (checkout -b|branch|switch -c)'; then
+if ! echo "$COMMAND" | grep -qE 'git (checkout -b|branch|switch -c)'; then
   exit 0
 fi
 
 # Extract the branch name from the command
 BRANCH_NAME=""
 
-if echo "$TOOL_INPUT" | grep -qE 'git checkout -b'; then
-  BRANCH_NAME=$(echo "$TOOL_INPUT" | grep -oE 'checkout -b\s+\S+' | awk '{print $NF}')
-elif echo "$TOOL_INPUT" | grep -qE 'git switch -c'; then
-  BRANCH_NAME=$(echo "$TOOL_INPUT" | grep -oE 'switch -c\s+\S+' | awk '{print $NF}')
-elif echo "$TOOL_INPUT" | grep -qE 'git branch\s+[^-]'; then
-  BRANCH_NAME=$(echo "$TOOL_INPUT" | grep -oE 'git branch\s+\S+' | awk '{print $NF}')
+if echo "$COMMAND" | grep -qE 'git checkout -b'; then
+  BRANCH_NAME=$(echo "$COMMAND" | grep -oE 'checkout -b\s+\S+' | awk '{print $NF}')
+elif echo "$COMMAND" | grep -qE 'git switch -c'; then
+  BRANCH_NAME=$(echo "$COMMAND" | grep -oE 'switch -c\s+\S+' | awk '{print $NF}')
+elif echo "$COMMAND" | grep -qE 'git branch\s+[^-]'; then
+  BRANCH_NAME=$(echo "$COMMAND" | grep -oE 'git branch\s+\S+' | awk '{print $NF}')
 fi
 
 # Skip if we couldn't extract a branch name (e.g., git branch -d, git branch --list)

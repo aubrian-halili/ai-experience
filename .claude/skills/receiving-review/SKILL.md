@@ -6,7 +6,7 @@ description: >-
   Not for: giving a code review (use /review), creating a PR (use /pr).
 argument-hint: "[PR number, URL, or 'latest']"
 disable-model-invocation: true
-allowed-tools: Bash(git *, gh *, gh pr view*), Read, Grep, Glob, Write, Edit, Agent
+allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Write, Edit, Agent, Skill
 ---
 
 **Current branch:** !`git branch --show-current`
