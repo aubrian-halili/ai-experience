@@ -23,7 +23,7 @@
 - [ ] Major feature or architectural refactor
 - [ ] New feature
 
-## Checklist
+## Checklist for pull request author
 - [ ] Code reviewed by **tech lead (or architect)**
 - [ ] Change verified in **test environment**
 - [ ] Tested by the **product manager or stakeholder(s)** as of defined highlevel tests in NPAP OR Discovery document
@@ -34,7 +34,7 @@
 - [ ] I have extracted relevant tests from internal task/ticket/discovery in Ticket ID section
 - [ ] Code is meeting Advanced level of Test & Quality + Monitoring & Observability in QEMM
 - [ ] I looked and acted at the sonarqube quality gate feedback
-- I used agentic / vibe-coding for (only choose one):
+- [ ] I used agentic / vibe-coding for (only choose one)
   - [ ] for mainly building this feature
   - [ ] for partly building this feature
   - [ ] for documentation / testing this feature
