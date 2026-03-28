@@ -24,11 +24,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-commit-jira.sh"
+            "command": "bash ~/.claude/hooks/check-commit-jira.sh"
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-branch-jira.sh"
+            "command": "bash ~/.claude/hooks/check-branch-jira.sh"
           }
         ]
       }
@@ -39,11 +39,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/auto-format.sh"
+            "command": "bash ~/.claude/hooks/auto-format.sh"
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/validate-skill.sh"
+            "command": "bash ~/.claude/hooks/validate-skill.sh"
           }
         ]
       }

@@ -94,6 +94,23 @@ graph LR
 - [ ] [Question that needs resolution before or during implementation]
 ```
 
+## Architecture Comparison Template
+
+Use this during Step 5 (Architecture Design) when presenting approaches to the user.
+
+```markdown
+### Architecture Options
+
+| Dimension | Minimal Changes | Clean Architecture | Pragmatic Balance |
+|-----------|----------------|-------------------|-------------------|
+| Files changed | [count] | [count] | [count] |
+| New abstractions | [list or "none"] | [list] | [list] |
+| Risk | [assessment] | [assessment] | [assessment] |
+| Best when | [conditions] | [conditions] | [conditions] |
+
+**Recommendation**: [Approach] — [one sentence rationale]
+```
+
 ## Session State Template (.planning/STATE.md)
 
 ```markdown
@@ -130,7 +147,8 @@ graph LR
 
 | Decision | Rationale | Date |
 |----------|-----------|------|
-| [What was decided] | [Why] | [When] |
+| Architecture: [Minimal Changes / Clean Architecture / Pragmatic Balance] | [Why this approach was chosen] | [When] |
+| [Other decision] | [Why] | [When] |
 
 ### Completed Phases
 

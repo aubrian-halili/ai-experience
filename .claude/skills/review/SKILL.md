@@ -75,11 +75,13 @@ When the review scope is large (>10 files) or the user requests a thorough revie
 | Pass | Agent | Focus | Key Questions |
 |------|-------|-------|---------------|
 | **Type Safety** | `code-quality-reviewer` | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
+| **Type Design** | `code-quality-reviewer` | Type expressiveness, invariant encoding, encapsulation | Do types prevent illegal states? Are constraints encoded in the type system? |
 | **Error Handling** | `code-quality-reviewer` | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
 | **Test Coverage** | `code-quality-reviewer` | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
 | **Performance** | `code-quality-reviewer` | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
 | **Security** | `security-scanner` | Input validation, auth checks, data exposure | Use `security-scanner` agent for deep findings |
 | **Clean Code** | `code-quality-reviewer` | SOLID violations, code smells, naming, dead code | Apply refactoring fixes with `--refactor` flag |
+| **Documentation** | `code-quality-reviewer` | Comment accuracy, comment rot, misleading docs | Do comments match actual code behavior? Any stale/lying comments? |
 
 Each pass produces findings with:
 - **Confidence score** (0-100): Only surface findings >= 80
@@ -222,6 +224,18 @@ Apply confidence gate — only flag findings scored >= 80.
 | Switch Statements | Polymorphism |
 | Speculative Generality | Remove unused abstraction |
 | Duplicate Code | Extract Method/Class |
+| Nested Ternaries | `if`/`else` chains or `switch` statements |
+| Dense One-liners | Break into named steps for readability |
+
+### Refactoring Guardrails
+
+When applying `--refactor`, avoid over-simplification that introduces new problems:
+
+- **Clarity over brevity** — explicit code is better than compact code that requires mental unpacking
+- **Don't combine too many concerns** — merging functions to reduce count can violate SRP
+- **Don't remove helpful abstractions** — an abstraction that improves organization earns its existence
+- **Don't create overly clever solutions** — if the simplified version is harder to debug or extend, it's not simpler
+- **Don't prioritize fewer lines over readability** — line count is not a quality metric
 
 ## Output Principles
 
