@@ -5,7 +5,7 @@ description: >-
   "implement this ticket", or is ready to write code. Requires /plan first.
   Not for: still deciding on approach (use /plan).
 argument-hint: "[feature name or description]"
-allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Bash(npm *, npx *, node *, git *, make *), TaskCreate, TaskUpdate, TaskList
+allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *), TaskCreate, TaskUpdate, TaskList
 disable-model-invocation: true
 ---
 
@@ -105,11 +105,11 @@ For each milestone:
 5. Run the test — confirm it PASSES (and no other tests broke)
 6. Refactor if needed (tests must remain green)
 7. Mark the milestone task as `completed` via `TaskUpdate`
-8. Commit with clear message following project conventions
+8. Use the Skill tool to load: `commit` — then commit with a message following project conventions
 
 ### 5. Verify
 
-Perform three-level verification against the Definition of Done from the plan:
+Use the Skill tool to load: `verify` — then perform three-level verification against the Definition of Done from the plan:
 
 **Level 1 — Existence:** Confirm all planned artifacts exist (files, exports, tests, configs, migrations).
 

@@ -6,7 +6,7 @@ description: >-
   or references a Jira epic needing implementation steps. Use before /feature.
   Not for: implementing directly (use /feature).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
-allowed-tools: Read, Grep, Glob, Write, Agent, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
+allowed-tools: Read, Grep, Glob, Write, Agent, Skill, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
 disable-model-invocation: true
 ---
 
@@ -41,7 +41,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases wi
 ### 1. Pre-flight
 
 - Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
-- **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `acli jira workitem view <TICKET_ID>` to ground the plan in actual requirements, acceptance criteria, and priority from Jira. If acli is unavailable, proceed with user-provided context and note the limitation.
+- **If a Jira ticket ID is referenced** (e.g., `UN-1234`), use the Skill tool to load: `jira` — then fetch ticket details using `acli jira workitem view <TICKET_ID>` to ground the plan in actual requirements, acceptance criteria, and priority from Jira. If acli is unavailable, proceed with user-provided context and note the limitation.
 - Search the codebase for related existing code, patterns, and conventions
 - Check for existing `.planning/STATE.md` — if found, ask whether to resume or start fresh
 
