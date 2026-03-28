@@ -1,54 +1,44 @@
 # Feature Development Templates
 
-## Feature Development Plan Template
+## Milestone Plan Template
+
+Use this template during Step 3 (Design & Present) to structure the implementation plan.
 
 ```markdown
-## Feature Development Plan
+## Implementation Plan
 
 **Feature**: [Name]
 **Complexity**: [Low | Medium | High]
-**Estimated Scope**: [S | M | L | XL]
+**Architecture**: [Minimal Changes | Clean Architecture | Pragmatic Balance] (from plan)
+**Delivery Pattern**: [Vertical Slice | Horizontal Layer | Feature Flags]
 
 ---
 
-### Specification
+### Definition of Done (from plan)
 
-#### Problem Statement
-[What problem this solves]
+Observable truths that must be TRUE when this feature is complete:
 
-#### User Stories
-1. As a [user], I want [capability] so that [benefit]
+#### Artifacts
+- [ ] [Specific file/code that must exist]
 
-#### Acceptance Criteria
-- [ ] [Criterion with measurable outcome]
+#### Behavior
+- [ ] [Specific runtime behavior that must be verifiable]
 
-#### Non-Functional Requirements
-- Performance: [Requirement]
-- Security: [Requirement]
-- Scalability: [Requirement]
+#### Integration
+- [ ] [Specific wiring/connection that must be in place]
+
+#### Quality
+- [ ] [Specific test/pattern requirement]
 
 ---
 
-### Technical Design
-
-#### Existing Patterns
-[Analysis of similar features in codebase]
-
-#### Component Design
-
-```mermaid
-graph TD
-    A[Entry Point] --> B[Core Logic]
-    B --> C[Data Layer]
-```
-
-#### Files to Create
+### Files to Create
 
 | File | Purpose | Tests |
 |------|---------|-------|
 | `path/to/file` | [Purpose] | `path/to/test` |
 
-#### Files to Modify
+### Files to Modify
 
 | File | Change | Reason |
 |------|--------|--------|
@@ -56,9 +46,7 @@ graph TD
 
 ---
 
-### Implementation Plan
-
-#### Milestone 1: Foundation
+### Milestone 1: Foundation
 **Goal**: [What this milestone establishes]
 
 **Tasks**:
@@ -71,7 +59,7 @@ graph TD
 
 ---
 
-#### Milestone 2: Core Implementation
+### Milestone 2: Core Implementation
 **Goal**: [What this milestone delivers]
 
 **Tasks**:
@@ -84,7 +72,7 @@ graph TD
 
 ---
 
-#### Milestone 3: Integration
+### Milestone 3: Integration
 **Goal**: [What this milestone connects]
 
 **Tasks**:
@@ -97,18 +85,6 @@ graph TD
 
 ---
 
-#### Milestone 4: Polish & Documentation
-**Goal**: Production readiness
-
-**Tasks**:
-- [ ] Update documentation
-- [ ] Final review
-- [ ] Clean up TODOs
-
-**Commit**: `docs: add [feature] documentation`
-
----
-
 ### Risk Assessment
 
 | Risk | Likelihood | Impact | Mitigation |
@@ -118,11 +94,6 @@ graph TD
 ### Open Questions
 
 - [ ] [Question that needs resolution]
-
-### Next Steps
-
-1. [Immediate next action]
-2. [Following action]
 ```
 
 ## Incremental Delivery Patterns
@@ -165,37 +136,9 @@ if (featureFlags.isEnabled('new-feature')) {
 
 **Best for**: Risk mitigation, A/B testing, gradual rollout to users, easy rollback.
 
-## Definition of Done Template
-
-Use this template during Step 5 (Design & Present) to define observable truths before implementation begins.
-
-```markdown
-### Definition of Done
-
-Observable truths that must be TRUE when this feature is complete:
-
-#### Artifacts
-- [ ] [File/export that must exist — e.g., `src/auth/middleware.ts` exports `authMiddleware`]
-
-#### Behavior
-- [ ] [Runtime behavior that must be verifiable — e.g., POST /api/login returns 200 with valid credentials]
-
-#### Integration
-- [ ] [Wiring that must be in place — e.g., auth middleware applied to /api/protected/* routes]
-
-#### Quality
-- [ ] [Test/pattern requirement — e.g., all auth endpoints have integration tests]
-```
-
-**Guidelines for writing observable truths:**
-- Each truth must be independently verifiable (can check it without context)
-- Use specific file paths, endpoint URLs, or command outputs
-- Avoid subjective truths ("code is clean", "good performance") — make them measurable
-- Every milestone should satisfy at least one observable truth
-
 ## Verification Checklist Template
 
-Use this template during Step 7 (Verify) for three-level verification.
+Use this template during Step 5 (Verify) for three-level verification.
 
 ```markdown
 ### Verification Results

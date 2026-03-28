@@ -6,7 +6,7 @@ description: >-
   or references a Jira epic needing implementation steps. Use before /feature.
   Not for: implementing directly (use /feature).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
-allowed-tools: Read, Grep, Glob, Write, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
+allowed-tools: Read, Grep, Glob, Write, Agent, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
 disable-model-invocation: true
 ---
 
@@ -28,10 +28,10 @@ Decompose goals, epics, or Jira tickets into structured implementation phases wi
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| Goal description (e.g., `add user authentication`) | Decompose goal | Full Steps 1-5 |
-| Jira ticket ID (e.g., `UN-1234`) | Plan from ticket | Fetch ticket via `/jira`, then Steps 1-5 |
-| Epic description (e.g., `payment processing system`) | Multi-feature roadmap | Steps 1-5; emphasis on phase dependencies |
-| `"overview"` / `"map"` / `"codebase"` | Codebase context for planning | Gather codebase context, then Steps 1-5 |
+| Goal description (e.g., `add user authentication`) | Decompose goal | Full Steps 1-8 |
+| Jira ticket ID (e.g., `UN-1234`) | Plan from ticket | Fetch ticket via `/jira`, then Steps 1-8 |
+| Epic description (e.g., `payment processing system`) | Multi-feature roadmap | Steps 1-8; emphasis on phase dependencies |
+| `"overview"` / `"map"` / `"codebase"` | Codebase context for planning | Gather codebase context, then Steps 1-8 |
 | `"resume"` / `"continue"` | Resume from state file | Read `.planning/STATE.md`, pick up from current phase |
 | Direction unclear (e.g., `how should we handle auth?`) | Explore options first | Diverge-then-converge: generate 2-3 options with trade-offs, then plan the chosen direction |
 | (none) | Ask user | Pre-flight stop |
@@ -50,7 +50,34 @@ Decompose goals, epics, or Jira tickets into structured implementation phases wi
 - Existing plan found → ask whether to resume, revise, or replace
 - On main/master branch → note that implementation will require a feature branch; suggest creating one now (following `<JIRA-ID>-<feature-description>` naming from git-conventions.md) or before invoking `/feature`
 
-### 2. Define Done (Goal-Backward Verification)
+### 2. Explore
+
+- Launch 1-3 Explore agents in parallel to understand the relevant codebase:
+  - Agent 1: "Find features similar to [goal] and trace their implementation patterns"
+  - Agent 2: "Map the architecture and abstractions relevant to [goal area]"
+  - Agent 3 (for Integration/Migration scopes): "Map the external interfaces, API contracts, and data schemas relevant to [integration target]"
+- **Once all agents return, read every file from the agents' Essential Files lists** to build deep, first-hand understanding. Do not rely solely on agent summaries — read the actual source.
+- Present a summary of: existing patterns to follow, code to reuse, integration points, conventions
+
+**Agent count guidance:**
+- 1 agent: Narrow scope (single module, small enhancement)
+- 2 agents: Multi-module scope or greenfield feature
+- 3 agents: Integration with external systems or cross-cutting concerns
+
+**Skip when:** Goal is purely strategic (no codebase to explore) or user explicitly provides all context.
+
+### 3. Clarify
+
+**CRITICAL — DO NOT SKIP this step.**
+
+- Review codebase findings from Explore and the original goal/ticket
+- Identify underspecified aspects: edge cases, error handling, integration points, scope boundaries, backward compatibility, performance needs
+- Present all questions to the user in a clear, organized list
+- **Wait for answers before proceeding to Define Done**
+
+If the user says "whatever you think is best", provide your recommendation and get explicit confirmation.
+
+### 4. Define Done (Goal-Backward Verification)
 
 This is the critical step that prevents "building the wrong thing correctly."
 
@@ -70,7 +97,30 @@ This is the critical step that prevents "building the wrong thing correctly."
 - Present observable truths to the user for validation before proceeding
 - If the user modifies truths, update and re-validate
 
-### 3. Decompose into Phases
+### 5. Architecture Design
+
+- Launch 2-3 code-architect agents in parallel, each with a different focus:
+  - Agent 1 (Minimal Changes): "Design the implementation for [goal] with a Minimal Changes focus. Codebase context: [patterns from Explore + Clarify answers]"
+  - Agent 2 (Clean Architecture): same prompt with Clean Architecture focus
+  - Agent 3 (Pragmatic Balance): include for Medium+ complexity goals
+- Once agents return, read all files they reference to validate their recommendations
+- Present a comparison to the user:
+
+  | Dimension | Minimal Changes | Clean Architecture | Pragmatic Balance |
+  |-----------|----------------|-------------------|-------------------|
+  | Files changed | [count] | [count] | [count] |
+  | New abstractions | [list] | [list] | [list] |
+  | Risk | [assessment] | [assessment] | [assessment] |
+  | Best when | [conditions] | [conditions] | [conditions] |
+
+- **Recommend** one approach with rationale
+- **Wait for user to choose** before proceeding to decomposition
+
+**Skip when:** Scope is ≤3 files with no new integration points. Default to Pragmatic Balance and note the choice.
+
+### 6. Decompose into Phases
+
+Use the chosen architecture from Step 5 to inform phase structure, file organization, and component boundaries.
 
 **Scope check:** If the work spans multiple independent subsystems, split into separate plans — each plan should produce independently testable software. A plan that requires coordinating 4+ unrelated modules is a sign it needs splitting.
 
@@ -84,7 +134,7 @@ This is the critical step that prevents "building the wrong thing correctly."
 - Work backward from the observable truths to identify required phases
 - Each phase must have:
   - **Goal**: what this phase achieves (one sentence)
-  - **Observable truths**: subset of truths from Step 2 that this phase satisfies
+  - **Observable truths**: subset of truths from Step 4 that this phase satisfies
   - **Files to create/modify**: specific paths
   - **Dependencies**: which phases must complete first
   - **Verification**: how to confirm the phase is done (commands to run, conditions to check)
@@ -99,7 +149,7 @@ This is the critical step that prevents "building the wrong thing correctly."
 - If a task requires reading more than 5 files to understand the scope, it's too broad — split it
 - Map out the file structure before listing implementation steps: every file to create or modify with its purpose
 
-### 3.5 Plan Review (Self-Check)
+### 6.5 Plan Review (Self-Check)
 
 Before presenting the plan, validate it against the checklist in `@references/plan-reviewer-prompt.md`:
 - No TODO markers or placeholder text in any task
@@ -111,17 +161,17 @@ Before presenting the plan, validate it against the checklist in `@references/pl
 
 If any check fails, revise the plan before proceeding. For large plans (5+ phases), consider dispatching this as a subagent review for more rigorous validation.
 
-### 4. Present Plan
+### 7. Present Plan
 
 - Present the complete plan to the user using the template from `@references/templates.md`
-- Include: goal summary, observable truths, phase breakdown, dependency graph, risk assessment
+- Include: goal summary, observable truths, chosen architecture, phase breakdown, dependency graph, risk assessment
 - If changes requested, revise and present again
 - **Do not proceed to state tracking without user approval**
 
-### 5. Track State
+### 8. Track State
 
 - Create or update `.planning/STATE.md` using the template from `@references/templates.md`
-- Record: current phase, completed phases, active blockers, key decisions, next steps
+- Record: current phase, completed phases, active blockers, key decisions (including architecture choice), next steps
 - This file enables session continuity — another session can read it and pick up where this one left off
 
 After user approves the plan, convert phases into tracked tasks:
@@ -143,7 +193,7 @@ After user approves the plan, convert phases into tracked tasks:
 |----------|----------|
 | Goal too vague | Ask clarifying questions to narrow scope |
 | Conflicting requirements | Surface trade-offs, request decision |
-| Missing codebase context | Search the codebase to gather context before planning |
+| Missing codebase context | Launch Explore agents to gather context before planning |
 | Existing plan conflicts | Present differences, ask user to choose |
 | Dependencies circular | Flag the cycle, suggest restructuring |
 | Scope too large | Recommend breaking into multiple plans or epics |

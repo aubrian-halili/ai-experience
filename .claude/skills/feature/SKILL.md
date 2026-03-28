@@ -2,7 +2,7 @@
 name: feature
 description: >-
   User asks to "implement this feature", "build this", "start coding",
-  "implement this ticket", or is ready to write code. Use after /plan for complex features.
+  "implement this ticket", or is ready to write code. Requires /plan first.
   Not for: still deciding on approach (use /plan).
 argument-hint: "[feature name or description]"
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Bash(npm *, npx *, node *, git *, make *), TaskCreate, TaskUpdate, TaskList
@@ -11,19 +11,19 @@ disable-model-invocation: true
 
 **Current branch:** !`git branch --show-current`
 
-Guide structured feature development from specification through incremental implementation with clear milestones and verification steps.
+Execute structured feature implementation from an approved plan through incremental, test-driven milestones with clear verification at each step.
 
 ## Development Philosophy
 
+- **Plan-first** — exploration, clarification, and architecture design happen in `/plan`; this skill implements
 - **Incremental delivery** — ship working slices, not layers; each milestone produces demonstrable value
-- **Specification before code** — clarify scope, acceptance criteria, and non-scope before writing implementation
-- **User approval gates** — present plans for review before implementation; never proceed on assumptions
+- **User approval gates** — present the implementation plan for review before writing any code
 - **Test-driven confidence** — write tests first to encode expectations, then implement to satisfy them
 - **Scope discipline** — build exactly what's needed; track out-of-scope items explicitly and defer them
 
 ## Iron Laws
 
-> - NO implementation before Definition of Done is written
+> - NO implementation before Definition of Done is confirmed from the plan
 > - NO milestone marked complete without verification evidence
 > - Tests-first or delete the code and start over
 
@@ -40,18 +40,18 @@ Guide structured feature development from specification through incremental impl
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| Feature name (e.g., `user authentication`) | Develop feature | Determine Feature Type, full Steps 1-7 |
-| Feature + scope (e.g., `add OAuth to login`) | Scoped enhancement | Steps 1-7; emphasis on impact analysis (step 2) |
-| User story (e.g., `as a user I want...`) | Story-driven development | Extract requirements from story, determine Feature Type, Steps 1-7 |
-| File path / directory (e.g., `src/auth/`) | Module-scoped feature | Steps 1-7; analyze existing module first (step 2) |
+| Feature name (e.g., `user authentication`) | Implement feature | Requires plan; full Steps 1-6 |
+| Feature + scope (e.g., `add OAuth to login`) | Scoped enhancement | Requires plan; Steps 1-6 with plan context |
+| User story (e.g., `as a user I want...`) | Story-driven development | Requires plan; load plan matching the story |
+| File path / directory (e.g., `src/auth/`) | Module-scoped feature | Requires plan; Steps 1-6 with module context |
 | (none) | Ask user | Pre-flight stop |
 
 ## Feature Types
 
 | Type | Indicators | Strategy |
 |------|-----------|----------|
-| **Greenfield** | "new feature", "add capability" | Full specification + implementation from scratch |
-| **Enhancement** | "improve", "extend", "add to existing" | Impact analysis + incremental change to existing code |
+| **Greenfield** | "new feature", "add capability" | Full implementation from scratch |
+| **Enhancement** | "improve", "extend", "add to existing" | Incremental change to existing code |
 | **Integration** | "connect", "integrate with" | Interface design + compatibility verification |
 | **Migration** | "replace", "upgrade" | Parallel implementation + switchover plan |
 
@@ -59,60 +59,38 @@ Guide structured feature development from specification through incremental impl
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent (Feature Name, Feature + Scope, User Story, File Path, or Ask User) using the Input Handling table
-- **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `acli jira workitem view <TICKET_ID>` to pull acceptance criteria, priority, and requirements directly from Jira. If acli is unavailable, proceed with user-provided context and note the limitation.
-- Determine the Feature Type (Greenfield, Enhancement, Integration, or Migration) from the Feature Types section above
-- Search for related existing features, patterns, and conventions in the codebase
-- Check for existing specs or documentation related to the feature
+- Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
+- **Check for existing plan**: look for `.planning/STATE.md` in the repo root
+  - If no plan exists → stop and redirect: "No plan found. Run `/plan [goal]` to explore the codebase, clarify requirements, and design architecture before implementation."
+  - If plan exists → proceed to Step 2
+- **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `acli jira workitem view <TICKET_ID>` to confirm alignment with the plan. If acli is unavailable, proceed with plan context.
+- Determine the Feature Type (Greenfield, Enhancement, Integration, or Migration) from the plan or Input Handling table
 
 **Stop conditions:**
+- No plan found → redirect to `/plan`
 - On main/master branch → ask user for Jira ticket ID and feature description; create branch following `<JIRA-ID>-<feature-description>` naming from git-conventions.md, then continue
 - Feature already exists → report existing implementation and ask whether to enhance or replace
-- Requirements unclear or contradictory → ask clarifying questions before proceeding
-- Scope too vague to classify (e.g., "make it better") → ask user to narrow scope
 
-### 2. Explore
+### 2. Load Plan
 
-- Launch 1-2 Explore agents in parallel to understand the relevant codebase:
-  - Agent 1: "Find features similar to [feature] and trace their implementation patterns"
-  - Agent 2: "Map the architecture and abstractions relevant to [feature area]"
-- Read all key files identified by agents to build deep context
-- Present a summary of: existing patterns to follow, code to reuse, integration points, conventions
+- Read `.planning/STATE.md` to understand current progress and any completed phases
+- Read the plan's Definition of Done, chosen architecture, and phase breakdown
+- If resuming mid-implementation, identify the current phase and pick up from there
+- Present a brief summary: what's being implemented, chosen architecture approach, phases remaining
 
-**Skip when:** Pre-flight identified <= 3 target files and no new integration points.
+### 3. Design & Present
 
-### 3. Clarify
-
-**CRITICAL — DO NOT SKIP this step.**
-
-- Review codebase findings and the feature request
-- Identify underspecified aspects: edge cases, error handling, integration points, backward compatibility, performance needs
-- Present all questions to the user in a clear, organized list
-- **Wait for answers before proceeding to design**
-
-If the user says "whatever you think is best", provide your recommendation and get explicit confirmation.
-
-### 4. Specify
-
-- Gather requirements: problem statement, user stories, acceptance criteria, out-of-scope items, and dependencies
-- Identify non-functional requirements (performance, security, scalability)
-- Analyze the codebase for existing patterns to follow, code to modify vs. create, integration points, and test coverage requirements
-
-### 5. Design & Present
-
-- **Define "Definition of Done"** — before planning milestones, define observable truths that must be TRUE when the feature is complete (see `@references/templates.md` for format)
-  - Each truth must be verifiable: a file exists, a test passes, an endpoint responds, a query returns expected data
-  - Organize by category: Artifacts, Behavior, Integration, Quality
-- Break down into incremental milestones with: goal, tasks, dependencies, and verification criteria
-- Each milestone should satisfy specific observable truths from the Definition of Done
-- Select a delivery pattern from `@references/templates.md` (Vertical Slice, Horizontal Layer, or Feature Flags)
-- **Present the complete plan to the user before proceeding to implementation**
-- Show: feature specification, Definition of Done, milestone breakdown, files to create/modify
+- Using the plan's architecture choice and observable truths as the foundation:
+  - Break down each plan phase into incremental milestones with: goal, tasks, dependencies, and verification criteria
+  - Each milestone should satisfy specific observable truths from the plan's Definition of Done
+  - Select a delivery pattern from `@references/templates.md` (Vertical Slice, Horizontal Layer, or Feature Flags)
+  - Show: milestone breakdown, files to create/modify, delivery pattern rationale
+- **Present the complete implementation plan to the user before proceeding**
 - If changes requested, revise and present again
 
-### 6. Implement
+### 4. Implement
 
-**Only proceed after user approval of the plan.**
+**Only proceed after user approval of the implementation plan.**
 
 After approval, convert the plan into tracked tasks:
 - Create a task for each milestone using `TaskCreate` with clear subject and description
@@ -129,9 +107,9 @@ For each milestone:
 7. Mark the milestone task as `completed` via `TaskUpdate`
 8. Commit with clear message following project conventions
 
-### 7. Verify
+### 5. Verify
 
-Perform three-level verification against the Definition of Done:
+Perform three-level verification against the Definition of Done from the plan:
 
 **Level 1 — Existence:** Confirm all planned artifacts exist (files, exports, tests, configs, migrations).
 
@@ -150,14 +128,28 @@ Perform three-level verification against the Definition of Done:
 **Final checks:**
 - Confirm all observable truths from the Definition of Done are satisfied
 - Verify all tests pass and cover key behaviors
-- Check that implementation follows existing codebase patterns identified in Pre-flight
+- Check that implementation follows the architecture chosen in the plan
 - Note any deferred items or out-of-scope work for follow-up
 - If feature warrants it, recommend `/review` for formal code review or `/verify` for comprehensive completeness check
 - Apply verification discipline: no completion claim without fresh evidence — all observable truths must be re-checked, not assumed
 
+### 6. Summary
+
+After verification completes, produce a concise summary:
+
+- **What was built**: one-paragraph description of the feature
+- **Key decisions**: architectural choices made and why (reference plan's architecture selection)
+- **Files created/modified**: table of all files touched with their purpose
+- **Observable truths satisfied**: final checklist status from Definition of Done
+- **Deferred items**: anything explicitly out-of-scope or flagged during implementation
+- **Recommended next steps**: suggest `/commit`, `/review`, `/pr`, or `/finish` as appropriate
+
+Update `.planning/STATE.md` marking the feature as complete with a timestamp.
+Mark all remaining tracked tasks as `completed` via `TaskUpdate`.
+
 ## Output Principles
 
-- **Plan before code** — always present the feature specification and milestone breakdown for user review before writing any implementation
+- **Plan before code** — always present the milestone breakdown for user review before writing any implementation
 - **Milestone-driven progress** — each milestone produces a working, verifiable increment; never deliver untestable intermediate states
 - **Explicit scope boundaries** — clearly state what is in-scope, out-of-scope, and deferred; surface any scope creep immediately
 - **Test-first verification** — every acceptance criterion maps to a test; untested criteria are not verified
@@ -166,22 +158,23 @@ Perform three-level verification against the Definition of Done:
 
 | Scenario | Response |
 |----------|----------|
-| Unclear requirements | Ask clarifying questions before planning |
-| Large scope | Recommend breaking into multiple features |
+| No plan found | Redirect to `/plan` before proceeding |
+| Unclear requirements | Ask `/plan` to be run first; do not clarify requirements here |
+| Large scope | Recommend breaking into multiple features, each with their own plan |
 | Missing dependencies | Identify blockers, suggest sequencing |
 | Conflicting requirements | Surface trade-offs, request decision |
 | Partial implementation blocked | Complete what is possible, mark blocked items with `[Blocked]`, report status |
 | Test failures during implementation | Stop, report failing tests, do not proceed to next milestone |
 | Existing feature overlap | Report the overlap, ask whether to extend existing or create new |
 
-Never silently skip milestones or acceptance criteria—surface gaps and blockers explicitly.
+Never silently skip milestones or acceptance criteria — surface gaps and blockers explicitly.
 
 ## Related Skills
 
 | Skill | When to Use Instead |
 |-------|---------------------|
+| `/plan` | Need to explore, clarify, and design before implementation |
 | `/review` | Feature implementation needs code review |
-| `/plan` | Need to decompose a large goal before feature implementation |
 | `/verify` | Need comprehensive post-implementation verification |
 | `/commit` | Commit changes after implementation |
 | `/finish` | Wrap up branch after implementation is complete |
