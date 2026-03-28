@@ -26,7 +26,10 @@ Audit the project's full documentation surface for factual drift, broken referen
 
 ## Input Handling
 
-Use `$ARGUMENTS` if provided.
+Parse `$ARGUMENTS` for flags:
+- `--dry-run` — boolean flag, no value
+- `--section <heading>` — next token after `--section` is the heading name
+- Remaining tokens are ignored
 
 | Input | Intent | Approach |
 |-------|--------|----------|
