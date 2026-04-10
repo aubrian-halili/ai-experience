@@ -204,8 +204,8 @@ Never silently skip requirements or assume priorities — surface gaps and trade
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/feature` | Plan is approved and ready for implementation |
+| `/jira` | Decompose approved plan into Jira tickets before implementation |
+| `/feature` | Pick up a Jira ticket and implement it (after tickets are created) |
 | `/verify` | Plan is implemented and needs verification |
-| `/jira` | Need to fetch or update Jira ticket details |
 | `/subagent-driven-development` | Parallelize implementation when plan has 3+ independent tasks |
 | `/confluence` | Reference or publish design docs and specs in Confluence |

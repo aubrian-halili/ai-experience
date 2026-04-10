@@ -2,8 +2,8 @@
 name: feature
 description: >-
   User asks to "implement this feature", "build this", "start coding",
-  "implement this ticket", or is ready to write code. Requires /plan first.
-  Not for: still deciding on approach (use /plan).
+  "implement this ticket", provides a Jira ticket ID (e.g., UN-1234), or is ready to write code.
+  Not for: still deciding on approach (use /plan). Not for: implementing 3+ independent modules in parallel (use /subagent-driven-development).
 argument-hint: "[feature name or description]"
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *), TaskCreate, TaskUpdate, TaskList
 disable-model-invocation: true
@@ -40,10 +40,11 @@ Execute structured feature implementation from an approved plan through incremen
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| Feature name (e.g., `user authentication`) | Implement feature | Requires plan; full Steps 1-6 |
-| Feature + scope (e.g., `add OAuth to login`) | Scoped enhancement | Requires plan; Steps 1-6 with plan context |
-| User story (e.g., `as a user I want...`) | Story-driven development | Requires plan; load plan matching the story |
-| File path / directory (e.g., `src/auth/`) | Module-scoped feature | Requires plan; Steps 1-6 with module context |
+| Jira ticket ID (e.g., `UN-1234`) | Implement a specific ticket | Fetch ticket from Jira, ask for plan, Steps 1-6 scoped to ticket |
+| Feature name (e.g., `user authentication`) | Implement feature | Ask for plan; full Steps 1-6 |
+| Feature + scope (e.g., `add OAuth to login`) | Scoped enhancement | Ask for plan; Steps 1-6 with plan context |
+| User story (e.g., `as a user I want...`) | Story-driven development | Ask for plan; load plan matching the story |
+| File path / directory (e.g., `src/auth/`) | Module-scoped feature | Ask for plan; Steps 1-6 with module context |
 | (none) | Ask user | Pre-flight stop |
 
 ## Feature Types
@@ -60,15 +61,20 @@ Execute structured feature implementation from an approved plan through incremen
 ### 1. Pre-flight
 
 - Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
-- **Check for existing plan**: look for `.planning/STATE.md` in the repo root
-  - If no plan exists → stop and redirect: "No plan found. Run `/plan [goal]` to explore the codebase, clarify requirements, and design architecture before implementation."
-  - If plan exists → proceed to Step 2
-- **If a Jira ticket ID is referenced** (e.g., `UN-1234`), fetch ticket details using `acli jira workitem view <TICKET_ID>` to confirm alignment with the plan. If acli is unavailable, proceed with plan context.
-- Determine the Feature Type (Greenfield, Enhancement, Integration, or Migration) from the plan or Input Handling table
+
+**If a Jira ticket ID is provided** (e.g., `UN-1234`):
+- Fetch ticket details using `acli jira workitem view <TICKET_ID>` to read scope, requirements, and acceptance criteria. If acli is unavailable, ask the user to paste the ticket content.
+- Ask the user: "Is there a plan file for this work? (e.g., `.planning/STATE.md`)" — if yes, load it for architecture context and dependency awareness; if no, proceed using the ticket alone as the source of truth.
+- Create a feature branch from the latest default branch: `<TICKET-ID>-<short-description>` (following git-conventions.md)
+- Proceed to Step 2 with ticket content as the Definition of Done
+
+**If a feature name or description is provided** (no ticket ID):
+- Ask the user: "Is there a plan file for this work? (e.g., `.planning/STATE.md`)" — if yes, load it; if no, redirect to `/plan` first.
+- Proceed to Step 2 with plan content as the Definition of Done
 
 **Stop conditions:**
-- No plan found → redirect to `/plan`
-- On main/master branch → ask user for Jira ticket ID and feature description; create branch following `<JIRA-ID>-<feature-description>` naming from git-conventions.md, then continue
+- No ticket ID and no plan found → redirect to `/plan`
+- On main/master branch with no ticket ID → ask user for Jira ticket ID before creating a branch
 - Feature already exists → report existing implementation and ask whether to enhance or replace
 
 ### 2. Load Plan
@@ -107,9 +113,13 @@ For each milestone:
 7. Mark the milestone task as `completed` via `TaskUpdate`
 8. Use the Skill tool to load: `commit` — then commit with a message following project conventions
 
-### 5. Verify
+### 5. Verify → Review → Commit → PR → Finish
 
-Use the Skill tool to load: `verify` — then perform three-level verification against the Definition of Done from the plan:
+After all milestones are implemented, run the full delivery chain:
+
+#### 5a. Verify
+
+Use the Skill tool to load: `verify` — then perform three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available):
 
 **Level 1 — Existence:** Confirm all planned artifacts exist (files, exports, tests, configs, migrations).
 
@@ -125,27 +135,44 @@ Use the Skill tool to load: `verify` — then perform three-level verification a
 - Middleware is applied to correct paths
 - Tests are included in test runner scope
 
-**Final checks:**
-- Confirm all observable truths from the Definition of Done are satisfied
-- Verify all tests pass and cover key behaviors
-- Check that implementation follows the architecture chosen in the plan
-- Note any deferred items or out-of-scope work for follow-up
-- If feature warrants it, recommend `/review` for formal code review or `/verify` for comprehensive completeness check
-- Apply verification discipline: no completion claim without fresh evidence — all observable truths must be re-checked, not assumed
+**Debug gate — do not proceed until `/verify` fully passes:**
+If `/verify` finds failures (missing artifacts, stubs, wiring gaps, or test failures):
+1. Stop — do not proceed to `/review` or `/commit`
+2. Debug following the process in `.claude/rules/debug.md`: reproduce → isolate → hypothesize → fix → verify
+3. Re-run `/verify` after each fix until all checks pass
+
+#### 5b. Review
+
+Use the Skill tool to load: `review` — perform a quality review of the changes on this branch:
+- Code smells, SOLID violations, security issues
+- Adherence to existing codebase patterns and conventions
+- Address any findings before proceeding to commit
+
+#### 5c. Commit
+
+Use the Skill tool to load: `commit` — commit all changes with a message referencing the ticket ID.
+
+#### 5d. PR
+
+Use the Skill tool to load: `pr` — create a focused draft PR for this ticket's changes.
+
+#### 5e. Finish
+
+Use the Skill tool to load: `finish` — clean up the branch, transition the Jira ticket status, and wrap up.
 
 ### 6. Summary
 
-After verification completes, produce a concise summary:
+After the full delivery chain completes (verify → review → commit → PR → finish), produce a concise summary:
 
-- **What was built**: one-paragraph description of the feature
-- **Key decisions**: architectural choices made and why (reference plan's architecture selection)
+- **What was built**: one-paragraph description of the ticket's scope
+- **Key decisions**: architectural choices made and why
 - **Files created/modified**: table of all files touched with their purpose
-- **Observable truths satisfied**: final checklist status from Definition of Done
+- **Acceptance criteria satisfied**: final checklist against the ticket's acceptance criteria
 - **Deferred items**: anything explicitly out-of-scope or flagged during implementation
-- **Recommended next steps**: suggest `/commit`, `/review`, `/pr`, or `/finish` as appropriate
+- **PR**: link to the created pull request
 
-Update `.planning/STATE.md` marking the feature as complete with a timestamp.
-Mark all remaining tracked tasks as `completed` via `TaskUpdate`.
+Update `.planning/STATE.md` marking this ticket as complete with a timestamp and PR link.
+Mark all tracked tasks as `completed` via `TaskUpdate`.
 
 ## Output Principles
 
@@ -174,8 +201,11 @@ Never silently skip milestones or acceptance criteria — surface gaps and block
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/plan` | Need to explore, clarify, and design before implementation |
-| `/review` | Feature implementation needs code review |
-| `/verify` | Need comprehensive post-implementation verification |
-| `/commit` | Commit changes after implementation |
-| `/finish` | Wrap up branch after implementation is complete |
+| `/jira` | Decompose plan into tickets before starting implementation |
+| `/verify` | Runs automatically after implementation as part of the delivery chain |
+| `/review` | Runs automatically after `/verify` as part of the delivery chain |
+| `/commit` | Runs automatically after `/review` as part of the delivery chain |
+| `/pr` | Runs automatically after `/commit` as part of the delivery chain |
+| `/finish` | Runs automatically after `/pr` as part of the delivery chain |
+| `/subagent-driven-development` | Parallelize implementation when feature has 3+ independent tasks |
 | `/confluence` | Reference Confluence specs or publish feature documentation |

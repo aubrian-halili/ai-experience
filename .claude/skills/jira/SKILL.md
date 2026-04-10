@@ -36,6 +36,7 @@ Determine ticket creation intent from `$ARGUMENTS`:
 
 | Input | Intent | Approach |
 |-------|--------|----------|
+| `decompose` / `decompose plan` | Batch decomposition from plan | Steps 1-6 in batch mode; read `.planning/STATE.md`, map phases to tickets |
 | Type keyword (e.g., `bug`, `task`, `story`) | Create typed ticket | Steps 1-6; apply template for specified type from `@references/templates.md` |
 | Type + title (e.g., `bug fix login timeout`) | Typed ticket with title | Steps 1-6; skip title inference |
 | Project + type (e.g., `PROJ bug`) | Project-scoped ticket | Steps 1-6; use specified project instead of default UN |
@@ -46,7 +47,8 @@ Determine ticket creation intent from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent (Type Keyword, Type + Title, Project + Type, Project + Type + Title, or Infer from Conversation) using the Input Handling table
+- Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
+- **If batch decomposition mode** (`decompose` / `decompose plan`): skip to **Batch Decomposition** section below
 - Resolve project: user-provided project code from arguments, or default to `UN`
 - Resolve ticket type (priority order):
   1. User-provided type (`bug`, `task`, or `story` in arguments)
@@ -59,6 +61,71 @@ Determine ticket creation intent from `$ARGUMENTS`:
 **Stop conditions:**
 - Unclear ticket type and cannot infer from conversation → ask user to clarify (bug, task, or story)
 - No meaningful conversation context and no title provided → prompt user to describe the issue or task
+
+---
+
+## Batch Decomposition Mode
+
+Used when `$ARGUMENTS` is `decompose` or `decompose plan`. Reads an approved plan and creates one Jira ticket per phase.
+
+### BD-1. Load Plan
+
+- Read `.planning/STATE.md` (or ask the user for the plan file path if not found)
+- Extract for each phase:
+  - **Goal** → ticket summary
+  - **Observable truths** → acceptance criteria
+  - **Dependencies** → blocking relationships between tickets
+  - **Files to create/modify** + **Verification** → technical details
+
+**Stop conditions:**
+- No plan file found and user cannot provide one → redirect to `/plan` first
+- Plan has no phases → ask user to run `/plan` to decompose the goal into phases
+
+### BD-2. Draft Ticket Set
+
+For each plan phase, draft a ticket:
+- **Type**: Task (default); use Story if the phase delivers user-facing value
+- **Summary**: phase goal (one sentence, imperative)
+- **Acceptance criteria**: each observable truth from the phase, formatted as a checklist
+- **Technical details**: files to create/modify and verification commands from the phase
+- **Dependencies**: list blocking ticket titles (resolved to IDs after creation)
+- **Suggested Story Points**: estimate based on phase scope:
+  - 1 pt — single file, trivial change
+  - 2 pts — 2-4 files, clear implementation path
+  - 3 pts — 5+ files or new integration point
+  - 5 pts — cross-cutting concern or significant unknowns
+  - 8 pts — consider splitting the phase
+
+Present the full ticket set to the user as a table before creating anything:
+
+| # | Summary | Type | Story Points | Depends On |
+|---|---------|------|-------------|------------|
+| 1 | ... | Task | 3 | — |
+| 2 | ... | Task | 2 | #1 |
+
+Ask the user to confirm, adjust story points, or cancel individual tickets before proceeding.
+
+### BD-3. Create Tickets Sequentially
+
+**Only proceed after user approval of the full ticket set.**
+
+For each ticket in dependency order:
+1. Check for duplicates (Step 2 of normal flow)
+2. Scan content for secrets/PII
+3. Create via acli (or generate copy-ready content if unavailable)
+4. Verify the ticket was created by fetching it back
+5. Record the ticket ID in a manifest
+
+After all tickets are created, output the manifest:
+
+| Ticket ID | Summary | Branch Name |
+|-----------|---------|-------------|
+| UN-1234 | ... | UN-1234-short-description |
+| UN-1235 | ... | UN-1235-short-description |
+
+Store the manifest in `.planning/STATE.md` under a `## Tickets` section for use by `/feature`.
+
+---
 
 ### 2. Check for Duplicates
 
@@ -121,7 +188,7 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 - **Ticket ID** and URL: derive the Atlassian base URL from `acli` config if possible, otherwise use `https://qredab.atlassian.net/browse/<TICKET-ID>`
 - **Type**, **priority**, and **summary**
 - **Suggested branch name**: `<TICKET-ID>-<short-description>` (e.g., `UN-1234-fix-login-timeout`)
-- **Workflow reminder**: Create branch → implement → `/commit` → `/pr`
+- **Workflow reminder**: `/plan` → `/jira decompose` → pick up ticket → `/feature <TICKET-ID>` → `/verify` → `/review` → `/commit` → `/pr` → `/finish`
 
 ## Output Principles
 
@@ -149,7 +216,8 @@ Never create a ticket without user confirmation or skip duplicate checking — s
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/feature` | Implement feature after ticket is created |
+| `/plan` | Create an implementation plan before decomposing into tickets |
+| `/feature` | Pick up a Jira ticket and implement it (`/feature <TICKET-ID>`) |
 | `/commit` | Commit with ticket reference (after branch created) |
 | `/pr` | Create pull request (after commits made) |
 | `/confluence` | Create or view Confluence pages (not Jira tickets) |
