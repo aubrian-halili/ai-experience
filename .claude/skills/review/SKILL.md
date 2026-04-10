@@ -151,6 +151,7 @@ Present findings using the Severity Levels defined above and the Local Changes t
    gh pr diff <number>
    gh pr view <number> --json reviews,comments
    ```
+   > **Important:** Run `gh pr diff` exactly as shown — it does not support `-- <file>` path filtering or any additional arguments. Retrieve the full diff once, then analyze relevant sections from the output.
 
 2. **Classify Changes**
    | Category | Indicators | Review Focus |
