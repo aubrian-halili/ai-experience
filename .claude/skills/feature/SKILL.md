@@ -138,8 +138,12 @@ After all milestones are implemented, run the full delivery chain:
 
 Use the Skill tool to load: `verify` — run full three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available).
 
-**Debug gate — do not proceed until `/verify` fully passes:**
-If `/verify` finds failures, stop and debug following `.claude/rules/debug.md` (reproduce → isolate → hypothesize → fix → verify). Re-run `/verify` after each fix until all checks pass.
+**Gate 4 — Verification must pass:**
+If `/verify` reports any FAIL, PARTIAL, or CRITICAL anti-pattern findings:
+- Stop. Do not proceed to Step 5b (`/review`).
+- Debug following `.claude/rules/debug.md` (reproduce → isolate → hypothesize → fix → verify).
+- Re-run `/verify` after each fix.
+- Only proceed to Step 5b when `/verify` reports all observable truths as PASS with evidence.
 
 #### 5b. Review
 

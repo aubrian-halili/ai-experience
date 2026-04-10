@@ -24,6 +24,15 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 - **Minimal viable phases** — each phase produces a working increment; never plan a phase that leaves the system in a broken state
 - **Plan is a living document** — track state in `.planning/STATE.md` for session continuity
 
+## Rationalization Guard
+
+| Excuse | Reality |
+|--------|---------|
+| "The scope is clear enough, let's skip architecture comparison" | Architecture shortcuts in planning cause mid-implementation pivots; ≤3 files is the only valid skip condition |
+| "We can define the observable truths later" | Observable truths defined after the plan is written are reverse-engineered from the solution, not the goal |
+| "The phases are obvious, no need to document them" | Undocumented phases drift under context pressure; write them before proceeding |
+| "Let's skip the plan-reviewer checklist, it'll slow us down" | The checklist prevents plans that fail silently in `/feature`; always validate against it |
+
 ## Input Handling
 
 | Input | Intent | Approach |
@@ -49,6 +58,11 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 - Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
 - Existing plan found → ask whether to resume, revise, or replace
 - On main/master branch → note that implementation will require a feature branch
+
+**Vague goal test** — a goal is too vague if it fails ANY of these:
+- Names a specific system, feature, component, or endpoint (not "improve the app")
+- Implies a verifiable outcome — something that can be tested or observed when done
+- Scopes to a bounded area of the codebase (not "make everything better" or "clean things up")
 
 ### 2. Define Done (Goal-Backward Verification)
 

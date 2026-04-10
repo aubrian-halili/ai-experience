@@ -13,6 +13,8 @@ allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent
 **Current branch:** !`git branch --show-current`
 **Diff stats:** !`git diff --stat origin/main..HEAD 2>/dev/null || git diff --stat HEAD~1..HEAD`
 
+ultrathink
+
 Perform a thorough multi-dimensional review of code, local changes, or pull requests.
 
 ## Review Philosophy
@@ -22,6 +24,15 @@ Perform a thorough multi-dimensional review of code, local changes, or pull requ
 - **Uncertainty principle** — if uncertain about a finding, leave it out rather than risk noise
 - **Context-aware** — respect existing patterns and conventions; cross-reference CLAUDE.md before flagging style issues
 - **Constructive balance** — pair criticism with positive observations; reviews that only list problems discourage contributors
+
+## Rationalization Guard
+
+| Excuse | Reality |
+|--------|---------|
+| "This is obviously a problem, no need to check git blame" | Pre-existing issues scored as 0 are not reported; blame is not optional |
+| "I know the line number from the diff" | Diff offsets are not source file line numbers; always read the source file |
+| "The confidence gate is too strict — I'll report it anyway" | The gate exists to protect signal-to-noise ratio; below 80 means insufficient evidence |
+| "Skipping the specialized passes, the diff is small" | The threshold is >10 files for parallel agents, not for skipping passes entirely |
 
 ### Confidence Scoring Rubric
 
@@ -35,6 +46,13 @@ Perform a thorough multi-dimensional review of code, local changes, or pull requ
 | **100** | Definite and self-evident — clearly wrong, clearly harmful | Report |
 
 The confidence gate remains **>= 80**. Report at 80 only when you have strong supporting evidence (file references, grep results, test output). Report 100 for self-evident issues.
+
+**Gate enforcement — a finding reaches 80 only when ALL of these are true:**
+1. You can cite the exact `file:line` where the issue occurs (read the source file, not just the diff)
+2. You ran `git blame -L <start>,<end> <file>` to confirm this is a new issue, not pre-existing
+3. You can describe the concrete negative consequence if the issue is left unfixed
+
+If any of these are missing, score the finding below 80 regardless of how "obvious" it seems.
 
 ### Do Not Flag
 

@@ -82,29 +82,3 @@ localhost:
 password.*=.*['"]
 secret.*=.*['"]
 ```
-
-## Verification Checklist
-
-Use this checklist when running a full verification pass:
-
-### Level 1: Existence
-- [ ] All planned files exist
-- [ ] All planned exports are present
-- [ ] Test files exist for implementation files
-- [ ] Configuration files are present
-- [ ] Database migrations exist (if applicable)
-
-### Level 2: Substance
-- [ ] No stub returns in core logic
-- [ ] No placeholder throws
-- [ ] No empty catch blocks
-- [ ] Test assertions are meaningful
-- [ ] Configuration values are real (not placeholders)
-
-### Level 3: Wiring
-- [ ] All exports are consumed
-- [ ] Routes are registered
-- [ ] Middleware is applied
-- [ ] Event handlers are subscribed
-- [ ] Environment variables are loaded
-- [ ] Tests are in test runner scope

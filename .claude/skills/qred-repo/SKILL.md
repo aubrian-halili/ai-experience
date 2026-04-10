@@ -19,6 +19,17 @@ Layered repository exploration and code searching across the Qred GitHub organiz
 - **Documentation first** — always prefer README and docs over source code for understanding intent
 - **Bound every operation** — limit search results, truncate large files, and cap directory depth
 
+## Guardrails
+
+**Read-only and informational operations only.** The following `gh` subcommands are forbidden — refuse if requested and explain why:
+
+- `gh repo delete`, `gh repo archive`, `gh repo rename`, `gh repo transfer`
+- `gh pr close`, `gh pr merge`, `gh pr edit` (modifying state)
+- `gh issue close`, `gh issue delete`
+- Any command with `--confirm`, `--yes`, or `-y` flags on destructive operations
+
+For pass-through commands (input starting with `gh`), validate against this blocklist before executing. If the command matches a forbidden pattern, refuse: "That command modifies repository state — use the GitHub UI or CLI directly for this action."
+
 ## Input Handling
 
 Parse `$ARGUMENTS` to determine operation type — direct operations execute immediately, while exploration operations enter the layered workflow at the appropriate layer:

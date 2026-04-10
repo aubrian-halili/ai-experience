@@ -13,24 +13,15 @@ allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Gl
 
 Verify that an implementation fully achieves its intended goals using three-level artifact checks and anti-pattern scanning.
 
-## Verification Philosophy
-
-- **Three levels, not one** — checking that a file exists is not verification; check existence, then substance, then wiring
-- **Evidence-based** — every pass/fail references a specific `file:line`; never claim completion without proof
-- **Anti-pattern awareness** — actively scan for common shortcuts that masquerade as completion (stubs, TODOs, empty catches)
-- **Confidence markers** — distinguish between verified facts and assumptions; surface uncertainty explicitly
-- **Goal-backward** — verify against the intended outcome (observable truths), not just the code that was written
-
 See `@references/verification-discipline.md` for the behavioral rules that apply during any workflow, not just when `/verify` is invoked.
 
-## Rationalization Guard
+## Iron Laws
 
-| Excuse | Reality |
-|--------|---------|
-| "The file exists so it's wired" | Existence is Level 1; you haven't checked Level 3 |
-| "I wrote it, I know it works" | The anti-pattern list exists because experienced devs write stubs too |
-| "Tests pass so it's complete" | Passing tests verify behavior, not wiring or substance |
-| "It's just a config change, no verification needed" | Config errors are silent failures; verify the runtime loads the value |
+> - NO "PASS" status without `file:line` evidence in the current message
+> - NO Level 1 check substitutes for Level 2 or Level 3 — all three levels are required
+> - NO anti-pattern scan skipped — run the full catalog on every changed file
+
+Apply the rationalization guards from `@references/verification-discipline.md` before claiming any status.
 
 ## Input Handling
 
@@ -41,7 +32,6 @@ See `@references/verification-discipline.md` for the behavioral rules that apply
 | Acceptance criteria (inline or file) | Verify against criteria | Parse criteria, map to code, three-level checks |
 | Directory (e.g., `src/auth/`) | Verify module completeness | Anti-pattern scan + wiring check |
 | `"stubs"` / `"todos"` / `"placeholders"` | Anti-pattern scan only | Focused scan across codebase |
-| (none) | Ask user | Pre-flight stop |
 
 ## Three-Level Verification
 
@@ -77,22 +67,7 @@ Is everything connected?
 - Tests are included in test runner configuration
 - Environment variables are documented and loaded
 
-## Anti-Pattern Catalog
-
-Actively scan for these patterns that indicate incomplete implementation:
-
-| Anti-Pattern | Detection | Severity |
-|---|---|---|
-| **TODO/FIXME comments** | Grep for `TODO`, `FIXME`, `HACK`, `XXX` in new/modified files | High |
-| **Stub returns** | Functions returning `null`, `undefined`, `{}`, `[]`, `''` without logic | Critical |
-| **Placeholder throws** | `throw new Error('Not implemented')`, `throw new Error('TODO')` | Critical |
-| **Empty catch blocks** | `catch (e) {}` or `catch (e) { /* ignore */ }` | High |
-| **Console-only error handling** | `catch (e) { console.log(e) }` without recovery or re-throw | Medium |
-| **Hardcoded test data** | Test assertions against magic numbers without explanation | Low |
-| **Orphaned exports** | Exported functions/types not imported anywhere | Medium |
-| **Dead imports** | Imported modules not used in the file | Low |
-| **Commented-out code** | Large blocks of commented code (>5 lines) | Medium |
-| **any types** | TypeScript `any` usage bypassing type safety | Medium |
+Run the full anti-pattern scan from `@references/anti-patterns.md` on every changed file.
 
 ## Process
 
@@ -151,32 +126,11 @@ Include:
 - Anti-pattern findings with severity and location
 - Recommended actions for any non-PASS results
 
-## Output Principles
-
-- **Structured results** — use tables for verification results; one row per observable truth or artifact
-- **Evidence always** — every PASS or FAIL cites `file:line`; never claim status without proof
-- **Severity-ranked findings** — Critical > High > Medium > Low; address Critical items first
-- **Actionable recommendations** — for every FAIL or PARTIAL, suggest the specific fix needed
-
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
-| No criteria to verify against | Ask user for plan, acceptance criteria, or feature name |
-| File access fails | Mark as `[SKIP]` with reason, continue with remaining checks |
 | Ambiguous scope | Ask user to clarify which feature or module to verify |
-| All checks pass | Report PASS with confidence; recommend `/review` for code quality |
 | Critical anti-patterns found | Report immediately with exact locations; recommend fixing before PR |
 | Plan file outdated | Warn user that plan may not reflect current implementation |
 | User asks to skip verification | Explain what verification protects against; offer reduced-scope check rather than none |
-
-Never silently skip verification steps — surface limitations and skipped items explicitly.
-
-## Related Skills
-
-| Skill | When to Use Instead |
-|-------|---------------------|
-| `/review` | Need code quality review, not completeness verification |
-| `/plan` | Need to create a plan before verification |
-| `/feature` | Need to implement features, not verify them |
-| `/doc-sync` | Check documentation accuracy alongside implementation completeness |

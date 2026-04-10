@@ -89,7 +89,10 @@ If `@references/database-overview.md` exists, present its cached data directly i
 3. Present columns, types, constraints, and indexes
 
 **SQL Query**
-1. Validate query is read-only (must start with SELECT, WITH, SHOW, EXPLAIN, or DESCRIBE)
+1. Validate query is read-only:
+   - Must start with SELECT, WITH, SHOW, EXPLAIN, or DESCRIBE
+   - Must not contain semicolons followed by additional statements (no multi-statement queries — e.g., `SELECT 1; DROP TABLE foo` is rejected)
+   - The server enforces read-only via `default_transaction_read_only=on` as a safety net, but reject ambiguous queries client-side before running
 2. Using the psql pattern with the resolved `dbname`, run the validated SQL
 3. Present results in a clear table format
 4. If query fails, show error and suggest corrections

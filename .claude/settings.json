@@ -13,7 +13,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Context was compacted. If a .planning/STATE.md file exists, re-read it. Run TaskList to recover in-progress task context."
+            "prompt": "Context was compacted. If a .planning/STATE.md file exists, re-read it. Run TaskList to recover in-progress task context. If tasks show a skill was active (e.g., /feature, /verify, /review), re-read that skill's SKILL.md file from .claude/skills/<name>/SKILL.md to restore the exact gates, Iron Laws, and process steps before continuing."
           }
         ]
       }

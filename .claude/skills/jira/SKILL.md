@@ -124,7 +124,9 @@ For each ticket in dependency order:
    - Priority is embedded in the description via the template's "Suggested Priority" field; default to Medium if no signal
    - Descriptions must use Markdown format (`##`, `###`, `1.`, `-`, fenced code blocks)
 4. **Verify** — fetch the created ticket back using `acli jira workitem view <ISSUE_KEY>` to confirm it exists; if fetch fails, warn the user and suggest checking Jira manually
-5. **Record** the ticket ID in the manifest
+5. **Record** the ticket ID in the manifest — write it to `.planning/STATE.md` under `## Tickets` immediately after each successful creation (not at the end of the batch), so partial progress is preserved if the batch fails mid-way
+
+**Partial batch failure:** If creation fails after some tickets have already been created, immediately surface a status table: which tickets were created (with IDs), which failed, and which are pending. Record created IDs in `.planning/STATE.md` before attempting fallback for remaining tickets.
 
 ### 4. Present Manifest
 
