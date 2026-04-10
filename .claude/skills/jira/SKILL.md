@@ -34,23 +34,27 @@ Create Jira tickets from the current conversation context with structured templa
 
 ## Input Handling
 
-Determine ticket creation intent from `$ARGUMENTS`:
+Determine ticket creation intent from `$ARGUMENTS` (evaluated in priority order):
 
-| Input | Intent | Approach |
-|-------|--------|----------|
-| `decompose` / `decompose plan` | Batch decomposition from plan | Steps 1-6 in batch mode; read `.planning/STATE.md`, map phases to tickets |
-| Type keyword (e.g., `bug`, `task`, `story`) | Create typed ticket | Steps 1-6; apply template for specified type from `@references/templates.md` |
-| Type + title (e.g., `bug fix login timeout`) | Typed ticket with title | Steps 1-6; skip title inference |
-| Project + type (e.g., `PROJ bug`) | Project-scoped ticket | Steps 1-6; use specified project instead of default UN |
-| Project + type + title (e.g., `PROJ bug fix login`) | Fully specified ticket | Steps 1-6; minimal inference needed |
-| (none / ambiguous) | Infer from conversation | Steps 1-6; emphasis on type resolution (step 1) |
+| Priority | Input | Intent | Approach |
+|----------|-------|--------|----------|
+| 1 | `decompose` / `decompose plan` | Explicit batch decomposition | Steps 1-6 in batch mode; read `.planning/STATE.md`, map phases to tickets |
+| 2 | Type keyword (e.g., `bug`, `task`, `story`) | Create typed ticket | Steps 1-6 single-ticket mode; plan is ignored even if it exists |
+| 2 | Type + title (e.g., `bug fix login timeout`) | Typed ticket with title | Steps 1-6; skip title inference |
+| 2 | Project + type (e.g., `PROJ bug`) | Project-scoped ticket | Steps 1-6; use specified project instead of default UN |
+| 2 | Project + type + title (e.g., `PROJ bug fix login`) | Fully specified ticket | Steps 1-6; minimal inference needed |
+| 3 | (none / ambiguous) and `.planning/STATE.md` has phases | Auto batch decomposition | Steps 1-6 in batch mode; plan detected automatically |
+| 4 | (none / ambiguous) and no plan exists | Infer from conversation | Steps 1-6; emphasis on type resolution (step 1) |
 
 ## Process
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
-- **If batch decomposition mode** (`decompose` / `decompose plan`): skip to **Batch Decomposition** section below
+- Parse `$ARGUMENTS` and resolve batch decomposition mode using this priority order:
+  1. `$ARGUMENTS` is `decompose` or `decompose plan` → **batch mode**
+  2. `$ARGUMENTS` matches a ticket-type keyword (`bug`, `task`, `story`) or includes a project/title → **single-ticket mode** (skip plan check entirely)
+  3. `$ARGUMENTS` is absent or ambiguous → check if `.planning/STATE.md` exists and contains at least one `#### Phase` heading → if yes, **batch mode**; otherwise continue to single-ticket flow
+- **If batch decomposition mode**: skip to **Batch Decomposition** section below
 - Resolve project: user-provided project code from arguments, or default to `UN`
 - Resolve ticket type (priority order):
   1. User-provided type (`bug`, `task`, or `story` in arguments)
@@ -68,7 +72,7 @@ Determine ticket creation intent from `$ARGUMENTS`:
 
 ## Batch Decomposition Mode
 
-Used when `$ARGUMENTS` is `decompose` or `decompose plan`. Reads an approved plan and creates one Jira ticket per phase.
+Triggered automatically when `.planning/STATE.md` contains phases and no explicit ticket-type argument was provided, or explicitly via `decompose` / `decompose plan`. Reads an approved plan and creates one Jira ticket per phase, with modularity-aware grouping.
 
 ### BD-1. Load Plan
 
@@ -78,6 +82,14 @@ Used when `$ARGUMENTS` is `decompose` or `decompose plan`. Reads an approved pla
   - **Observable truths** → acceptance criteria
   - **Dependencies** → blocking relationships between tickets
   - **Files to create/modify** + **Verification** → technical details
+
+#### Modularity Assessment
+
+After extracting phases, classify each phase:
+- **Independent** — `Dependencies` is `None`; can be worked in parallel with other independent phases
+- **Dependent** — `Dependencies` lists one or more other phases; must be sequenced after them
+
+Record the classification for each phase. This drives the `Depends On` column and execution wave grouping in BD-2.
 
 **Stop conditions:**
 - No plan file found and user cannot provide one → redirect to `/plan` first
@@ -98,12 +110,20 @@ For each plan phase, draft a ticket:
   - 5 pts — cross-cutting concern or significant unknowns
   - 8 pts — consider splitting the phase
 
-Present the full ticket set to the user as a table before creating anything:
+Present the full ticket set to the user as a table before creating anything. Use the modularity classification from BD-1 to annotate independent tickets:
 
 | # | Summary | Type | Story Points | Depends On |
 |---|---------|------|-------------|------------|
-| 1 | ... | Task | 3 | — |
-| 2 | ... | Task | 2 | #1 |
+| 1 | ... | Task | 3 | — (parallel) |
+| 2 | ... | Task | 2 | — (parallel) |
+| 3 | ... | Task | 2 | #1 |
+| 4 | ... | Story | 3 | #2, #3 |
+
+After the table, present execution waves so the user can see what can be worked in parallel:
+
+> **Execution waves:**
+> - Wave 1 (parallel): #1, #2
+> - Wave 2: #3 (after #1), #4 (after #2, #3)
 
 Ask the user to confirm, adjust story points, or cancel individual tickets before proceeding.
 
@@ -190,7 +210,7 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 - **Ticket ID** and URL: derive the Atlassian base URL from `acli` config if possible, otherwise use `https://qredab.atlassian.net/browse/<TICKET-ID>`
 - **Type**, **priority**, and **summary**
 - **Suggested branch name**: `<TICKET-ID>-<short-description>` (e.g., `UN-1234-fix-login-timeout`)
-- **Workflow reminder**: `/plan` → `/jira decompose` → pick up ticket → `/feature <TICKET-ID>` → `/verify` → `/review` → `/commit` → `/pr` → `/finish`
+- **Workflow reminder**: `/plan` → `/jira` (auto-decomposes if plan exists) → pick up ticket → `/feature <TICKET-ID>` → `/verify` → `/review` → `/commit` → `/pr` → `/finish`
 
 ## Output Principles
 
