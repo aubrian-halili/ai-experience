@@ -5,11 +5,13 @@ description: >-
   or mentions "Jira" in context of creating or searching tickets.
   Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature).
 argument-hint: "[PROJECT] [bug|task|story] [title or description]"
-allowed-tools: Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version)
+allowed-tools: Read, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version)
 disable-model-invocation: true
 ---
 
 **Current branch:** !`git branch --show-current`
+
+ultrathink
 
 Create Jira tickets from the current conversation context with structured templates. Returns a ticket ID for use in branch creation and downstream workflows.
 

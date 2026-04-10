@@ -1,15 +1,16 @@
 ---
 name: feature
 description: >-
-  User asks to "implement this feature", "build this", "start coding",
-  "implement this ticket", provides a Jira ticket ID (e.g., UN-1234), or is ready to write code.
-  Not for: still deciding on approach (use /plan). Not for: implementing 3+ independent modules in parallel (use /subagent-driven-development).
+  Implement a feature from an approved plan or Jira ticket (e.g., UN-1234) through test-driven milestones.
+  Not for: planning (use /plan) or 3+ parallel modules (use /subagent-driven-development).
 argument-hint: "[feature name or description]"
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *), TaskCreate, TaskUpdate, TaskList
 disable-model-invocation: true
 ---
 
 **Current branch:** !`git branch --show-current`
+
+ultrathink
 
 Execute structured feature implementation from an approved plan through incremental, test-driven milestones with clear verification at each step.
 
@@ -119,27 +120,10 @@ After all milestones are implemented, run the full delivery chain:
 
 #### 5a. Verify
 
-Use the Skill tool to load: `verify` — then perform three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available):
-
-**Level 1 — Existence:** Confirm all planned artifacts exist (files, exports, tests, configs, migrations).
-
-**Level 2 — Substance:** Verify implementations are real, not stubs. Scan for anti-patterns:
-- TODO/FIXME comments in new code
-- Stub returns (`return null`, `return {}`, `throw new Error('TODO')`)
-- Empty catch blocks or console-only error handling
-- Placeholder configuration values
-
-**Level 3 — Wiring:** Verify all artifacts are connected:
-- Exports are imported where needed
-- Routes/handlers are registered
-- Middleware is applied to correct paths
-- Tests are included in test runner scope
+Use the Skill tool to load: `verify` — run full three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available).
 
 **Debug gate — do not proceed until `/verify` fully passes:**
-If `/verify` finds failures (missing artifacts, stubs, wiring gaps, or test failures):
-1. Stop — do not proceed to `/review` or `/commit`
-2. Debug following the process in `.claude/rules/debug.md`: reproduce → isolate → hypothesize → fix → verify
-3. Re-run `/verify` after each fix until all checks pass
+If `/verify` finds failures, stop and debug following `.claude/rules/debug.md` (reproduce → isolate → hypothesize → fix → verify). Re-run `/verify` after each fix until all checks pass.
 
 #### 5b. Review
 
@@ -150,7 +134,7 @@ Use the Skill tool to load: `review` — perform a quality review of the changes
 
 #### 5c. Commit
 
-Use the Skill tool to load: `commit` — commit all changes with a message referencing the ticket ID.
+Use the Skill tool to load: `commit` — commit any fixes made during the review step, referencing the ticket ID.
 
 #### 5d. PR
 
