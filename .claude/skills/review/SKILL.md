@@ -129,6 +129,7 @@ This enables two-stage analysis:
 
 1. Read target code (diff output for uncommitted changes, full file for single-file review)
 2. Analyze across dimensions: correctness, readability, maintainability, performance, security, testing, architecture alignment
+   > **Line number rule:** Diff output uses relative offsets — do not cite diff line numbers as source file line numbers. Use `Read` on the actual source file to confirm the correct line before referencing it in a finding.
 3. For any potential finding, run `git blame -L <start>,<end> <file>` to confirm the issue was introduced in the current change. Score pre-existing issues as 0.
 4. Cross-reference against CLAUDE.md conventions
 5. Apply confidence gate — only flag findings scored >= 80
@@ -152,6 +153,8 @@ Present findings using the Severity Levels defined above and the Local Changes t
    gh pr view <number> --json reviews,comments
    ```
    > **Important:** Run `gh pr diff` exactly as shown — it does not support `-- <file>` path filtering or any additional arguments. Retrieve the full diff once, then analyze relevant sections from the output.
+   >
+   > **Line number rule:** Diff hunk headers (e.g., `@@ -10,5 +12,7 @@`) show relative offsets, not source file line numbers. Never cite these as `file:line` references. Use `Read` on the actual source file to confirm the correct line number before citing it in any finding.
 
 2. **Classify Changes**
    | Category | Indicators | Review Focus |
@@ -241,7 +244,7 @@ When applying `--refactor`, avoid over-simplification that introduces new proble
 ## Output Principles
 
 - **Severity-first ordering** — group findings by severity (Critical first), not by file or dimension
-- **Location precision** — every finding references `file:line`; for PR reviews include diff hunk context
+- **Location precision** — every finding references `file:line`; for PR reviews include diff hunk context. **Never cite line numbers from diff output as source file line numbers** — diff hunks use relative offsets that do not match the actual file. Always read the source file to verify the correct line number before citing it.
 - **Actionable fixes** — provide concrete fix suggestions with diff examples for Critical and High findings
 - **Balanced perspective** — include positive observations; a review that only lists problems discourages contributors
 
