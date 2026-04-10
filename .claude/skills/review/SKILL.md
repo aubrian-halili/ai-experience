@@ -270,5 +270,4 @@ Never silently omit findings or skip review dimensions—surface limitations and
 |-------|---------------------|
 | `/receiving-review` | Addressing feedback received on your PR |
 | `/verify` | Verify completeness against a plan, not code quality |
-| `/commit` | Commit changes after review is complete |
 | `/feature` | Return to implementation to address review findings |

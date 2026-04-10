@@ -210,14 +210,14 @@ Ask the user to confirm before creating the ticket. This prevents incorrect tick
 - **Ticket ID** and URL: derive the Atlassian base URL from `acli` config if possible, otherwise use `https://qredab.atlassian.net/browse/<TICKET-ID>`
 - **Type**, **priority**, and **summary**
 - **Suggested branch name**: `<TICKET-ID>-<short-description>` (e.g., `UN-1234-fix-login-timeout`)
-- **Workflow reminder**: `/plan` → `/jira` (auto-decomposes if plan exists) → pick up ticket → `/feature <TICKET-ID>` → `/verify` → `/review` → `/commit` → `/pr` → `/finish`
+- **Workflow reminder**: `/plan` → `/jira` (auto-decomposes if plan exists) → pick up ticket → `/feature <TICKET-ID>` → `/verify` → `/review` → commit → `/pr`
 
 ## Output Principles
 
 - **Ticket preview first** — present the complete ticket summary for user approval before creation; no surprises
 - **Actionable results** — include ticket ID, URL, suggested branch name, and workflow next steps after creation
 - **Template compliance** — all tickets follow structured templates with required fields filled; incomplete sections noted explicitly
-- **Workflow continuity** — connect the ticket to downstream workflows: create branch → implement → `/commit` → `/pr`
+- **Workflow continuity** — connect the ticket to downstream workflows: create branch → implement → commit → `/pr`
 
 ## Error Handling
 
@@ -240,6 +240,5 @@ Never create a ticket without user confirmation or skip duplicate checking — s
 |-------|---------------------|
 | `/plan` | Create an implementation plan before decomposing into tickets |
 | `/feature` | Pick up a Jira ticket and implement it (`/feature <TICKET-ID>`) |
-| `/commit` | Commit with ticket reference (after branch created) |
 | `/pr` | Create pull request (after commits made) |
 | `/confluence` | Create or view Confluence pages (not Jira tickets) |

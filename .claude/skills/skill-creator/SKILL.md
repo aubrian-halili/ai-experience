@@ -144,7 +144,7 @@ Test the skill with real invocations and refine based on:
 | `description` | string | Trigger phrases and purpose. Claude uses this to decide when to auto-invoke. If omitted, uses first paragraph of markdown. | Recommended | Common |
 | `argument-hint` | string | Placeholder shown during autocomplete (e.g., `[issue-number]`, `[filename] [format]`) | No | Common |
 | `allowed-tools` | string | Tools available without per-use approval when skill is active (e.g., `Read, Grep, Glob`) | No | Common |
-| `disable-model-invocation` | boolean | Prevent Claude auto-triggering; use for action skills like `/commit`, `/pr` that should be manual-only | No | Common |
+| `disable-model-invocation` | boolean | Prevent Claude auto-triggering; use for action skills like `/pr`, `/jira` that should be manual-only | No | Common |
 | `user-invocable` | boolean | Set `false` to hide from `/` menu; use for background knowledge skills | No | Advanced |
 | `model` | string | Override model for skill execution (e.g., `haiku`, `sonnet`, `opus`) | No | Advanced |
 | `context` | string | Set to `fork` to run in isolated subagent context (no conversation history) | No | Advanced |

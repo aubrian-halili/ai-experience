@@ -2,7 +2,7 @@
 name: feature
 description: >-
   Implement a feature from an approved plan or Jira ticket (e.g., UN-1234) through test-driven milestones.
-  Not for: planning (use /plan) or 3+ parallel modules (use /subagent-driven-development).
+  Not for: planning (use /plan).
 argument-hint: "[feature name or description]"
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *), TaskCreate, TaskUpdate, TaskList
 disable-model-invocation: true
@@ -112,9 +112,9 @@ For each milestone:
 5. Run the test — confirm it PASSES (and no other tests broke)
 6. Refactor if needed (tests must remain green)
 7. Mark the milestone task as `completed` via `TaskUpdate`
-8. Use the Skill tool to load: `commit` — then commit with a message following project conventions
+8. Stage and commit: stage specific files by name (`git add <file>`), never `git add .`; commit using the `<TICKET-ID> <type>(<scope>): <subject>` format from `git-conventions.md`
 
-### 5. Verify → Review → Commit → PR → Finish
+### 5. Verify → Review → Commit → PR
 
 After all milestones are implemented, run the full delivery chain:
 
@@ -134,19 +134,15 @@ Use the Skill tool to load: `review` — perform a quality review of the changes
 
 #### 5c. Commit
 
-Use the Skill tool to load: `commit` — commit any fixes made during the review step, referencing the ticket ID.
+Stage and commit any fixes made during the review step: stage specific files by name (`git add <file>`), never `git add .`; commit using the `<TICKET-ID> <type>(<scope>): <subject>` format from `git-conventions.md`.
 
 #### 5d. PR
 
 Use the Skill tool to load: `pr` — create a focused draft PR for this ticket's changes.
 
-#### 5e. Finish
-
-Use the Skill tool to load: `finish` — clean up the branch, transition the Jira ticket status, and wrap up.
-
 ### 6. Summary
 
-After the full delivery chain completes (verify → review → commit → PR → finish), produce a concise summary:
+After the full delivery chain completes (verify → review → commit → PR), produce a concise summary:
 
 - **What was built**: one-paragraph description of the ticket's scope
 - **Key decisions**: architectural choices made and why
@@ -188,8 +184,5 @@ Never silently skip milestones or acceptance criteria — surface gaps and block
 | `/jira` | Decompose plan into tickets before starting implementation |
 | `/verify` | Runs automatically after implementation as part of the delivery chain |
 | `/review` | Runs automatically after `/verify` as part of the delivery chain |
-| `/commit` | Runs automatically after `/review` as part of the delivery chain |
-| `/pr` | Runs automatically after `/commit` as part of the delivery chain |
-| `/finish` | Runs automatically after `/pr` as part of the delivery chain |
-| `/subagent-driven-development` | Parallelize implementation when feature has 3+ independent tasks |
+| `/pr` | Runs automatically after commit as part of the delivery chain |
 | `/confluence` | Reference Confluence specs or publish feature documentation |

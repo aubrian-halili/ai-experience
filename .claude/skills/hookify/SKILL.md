@@ -225,4 +225,3 @@ Never create hooks that silently swallow errors — always surface blocking reas
 |-------|---------------------|
 | `/skill-creator` | Creating skills, not hooks |
 | `/review` | Review hook script quality and logic |
-| `/commit` | Committing hook changes; hooks may affect commit workflows |

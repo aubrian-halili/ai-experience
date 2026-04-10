@@ -3,8 +3,7 @@ name: pr
 description: >-
   User asks to "create a PR", "open a pull request", "push and create PR",
   or mentions "pull request" in context of creating one.
-  Not for: reviewing an existing PR (use /review), committing without pushing (use /commit).
-  Not for: full branch wrap-up with pre-flight verification (use /finish).
+  Not for: reviewing an existing PR (use /review).
 argument-hint: "[optional: --major, --fe, --ready, target branch, or PR title]"
 allowed-tools: Bash(git branch *, git log *, git diff *, git show *, git status *, git rev-list *, git push *, git fetch *, git remote *, gh repo *, gh pr *, acli *), Read, Grep, Glob
 disable-model-invocation: true
@@ -60,7 +59,7 @@ EXISTING_PR=$(gh pr list --head "$BRANCH" --json number,url --jq '.[0].url // em
 
 **Stop conditions:**
 - On `main`/`master` → Cannot create PR from default branch
-- No commits ahead → Use `/commit` first
+- No commits ahead → Commit changes first
 - Uncommitted changes → Commit or stash first
 - PR already exists → Show existing PR URL, status, and next steps (view: `gh pr view`, push more commits: `git push`, edit: `gh pr edit`)
 - No ticket ID in branch → Ask user for ticket ID
@@ -71,7 +70,7 @@ Use `$ARGUMENTS` if provided (handles `--ready`, custom title, or target branch)
 
 **Title generation** (priority order):
 1. User-provided title (auto-prefix ticket ID if missing)
-2. Single commit → use its message directly (already convention-formatted from `/commit`)
+2. Single commit → use its message directly (convention-formatted per `git-conventions.md`)
 3. Multiple commits → summarize with `<TICKET-ID> <type>(<scope>): <summary>`
 4. Fallback: branch name converted `UN-1234-add-auth` → `UN-1234 feat: add auth`
 
@@ -160,8 +159,6 @@ Never force push or create a PR from the default branch — always verify branch
 |-------|---------------------|
 | `/jira` | Create Jira ticket before starting work |
 | `/feature` | Implement features before creating PR |
-| `/commit` | Commit changes before creating PR |
 | `/review` | Review a PR (yours or others) |
 | `/receiving-review` | Address review feedback on your PR |
-| `/finish` | Decide what to do with the branch (PR, merge, park, or discard) |
 | `/confluence` | Link to or create Confluence documentation pages for the PR |

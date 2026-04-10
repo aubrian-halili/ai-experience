@@ -187,4 +187,3 @@ Never silently skip a check — surface what was checked, what was skipped, and 
 | `/plan` | Planning new work; run `/doc-sync` first so `/plan` has accurate context to explore |
 | `/review` | Reviewing code quality, not documentation accuracy |
 | `/verify` | Verifying implementation completeness against a plan |
-| `/finish` | Wrapping up a branch; consider running `/doc-sync` first |
