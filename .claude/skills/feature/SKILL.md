@@ -1,9 +1,10 @@
 ---
 name: feature
 description: >-
-  Implement a feature from an approved plan or Jira ticket (e.g., UN-1234) through test-driven milestones.
-  Not for: planning (use /plan).
-argument-hint: "[feature name or description]"
+  Implement a feature from a Jira ticket ID (e.g., UN-1234) and an approved plan through test-driven milestones.
+  Requires: a Jira ticket ID and an approved plan in .planning/STATE.md.
+  Not for: planning (use /plan). Not for: creating tickets (use /jira).
+argument-hint: "<JIRA-TICKET-ID>"
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *), TaskCreate, TaskUpdate, TaskList
 disable-model-invocation: true
 ---
@@ -41,12 +42,8 @@ Execute structured feature implementation from an approved plan through incremen
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| Jira ticket ID (e.g., `UN-1234`) | Implement a specific ticket | Fetch ticket from Jira, ask for plan, Steps 1-6 scoped to ticket |
-| Feature name (e.g., `user authentication`) | Implement feature | Ask for plan; full Steps 1-6 |
-| Feature + scope (e.g., `add OAuth to login`) | Scoped enhancement | Ask for plan; Steps 1-6 with plan context |
-| User story (e.g., `as a user I want...`) | Story-driven development | Ask for plan; load plan matching the story |
-| File path / directory (e.g., `src/auth/`) | Module-scoped feature | Ask for plan; Steps 1-6 with module context |
-| (none) | Ask user | Pre-flight stop |
+| Jira ticket ID (e.g., `UN-1234`) | Implement a specific ticket | Fetch ticket, locate plan, Steps 1-6 scoped to ticket |
+| Anything else (feature name, story, path, none) | Missing ticket | **Stop** — redirect to `/plan` first, then `/jira` to create tickets |
 
 ## Feature Types
 
@@ -61,21 +58,40 @@ Execute structured feature implementation from an approved plan through incremen
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
+Parse `$ARGUMENTS` to extract a Jira ticket ID (pattern: `[A-Z]+-\d+`, e.g., `UN-1234`).
 
-**If a Jira ticket ID is provided** (e.g., `UN-1234`):
-- Fetch ticket details using `acli jira workitem view <TICKET_ID>` to read scope, requirements, and acceptance criteria. If acli is unavailable, ask the user to paste the ticket content.
-- Ask the user: "Is there a plan file for this work? (e.g., `.planning/STATE.md`)" — if yes, load it for architecture context and dependency awareness; if no, proceed using the ticket alone as the source of truth.
-- Create a feature branch from the latest default branch: `<TICKET-ID>-<short-description>` (following git-conventions.md)
-- Proceed to Step 2 with ticket content as the Definition of Done
+**Gate 1 — Jira ticket required:**
+If no ticket ID is found in `$ARGUMENTS`:
+- Stop. Tell the user: "A Jira ticket ID is required to use `/feature`. Run `/plan` to create an implementation plan, then `/jira` to decompose it into tickets."
 
-**If a feature name or description is provided** (no ticket ID):
-- Ask the user: "Is there a plan file for this work? (e.g., `.planning/STATE.md`)" — if yes, load it; if no, redirect to `/plan` first.
-- Proceed to Step 2 with plan content as the Definition of Done
+**Gate 2 — Branch check:**
+If on `main` or `master`:
+- Stop. Ask the user to switch to a feature branch or confirm creating one: "You are on `main`. Should I create a feature branch `<TICKET-ID>-<short-description>` from the latest default branch?"
+
+**Fetch & confirm requirements:**
+- Fetch ticket details: `acli jira workitem view <TICKET_ID>` — read scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content.
+- Present a concise ticket summary to the user:
+  - **Title** and **type** (Task/Story/Bug)
+  - **Requirements** (what must be built)
+  - **Acceptance criteria** (how done is defined)
+- Ask the user: "Does this match your understanding? Any clarifications needed before we proceed?"
+- Wait for user confirmation before continuing.
+
+**Gate 3 — Plan required:**
+- Check if `.planning/STATE.md` exists.
+  - If found → load it. Cross-reference the plan's Definition of Done and phases with the ticket's acceptance criteria. Note any mismatches and surface them to the user.
+  - If not found → ask the user: "Is there an existing plan file for this work? If so, provide the path."
+    - If user provides a path → load that file.
+    - If no plan exists → Stop. Tell the user: "An approved plan is required before implementation. Run `/plan` first, then `/jira` to create tickets."
+
+**Branch creation:**
+- Create a feature branch from the latest default branch: `<TICKET-ID>-<short-description>` (following `git-conventions.md`)
+- Proceed to Step 2.
 
 **Stop conditions:**
-- No ticket ID and no plan found → redirect to `/plan`
-- On main/master branch with no ticket ID → ask user for Jira ticket ID before creating a branch
+- No Jira ticket ID → redirect to `/plan` then `/jira`
+- On main/master → confirm branch creation before proceeding
+- No plan found → redirect to `/plan`
 - Feature already exists → report existing implementation and ask whether to enhance or replace
 
 ### 2. Load Plan
@@ -165,8 +181,9 @@ Mark all tracked tasks as `completed` via `TaskUpdate`.
 
 | Scenario | Response |
 |----------|----------|
-| No plan found | Redirect to `/plan` before proceeding |
-| Unclear requirements | Ask `/plan` to be run first; do not clarify requirements here |
+| No Jira ticket ID | Stop — redirect to `/plan` first, then `/jira` to create tickets |
+| No plan found | Stop — redirect to `/plan` first, then `/jira` to create tickets |
+| Unclear requirements | Stop — redirect to `/plan`; do not clarify requirements here |
 | Large scope | Recommend breaking into multiple features, each with their own plan |
 | Missing dependencies | Identify blockers, suggest sequencing |
 | Conflicting requirements | Surface trade-offs, request decision |

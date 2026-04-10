@@ -29,7 +29,8 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 | Input | Intent | Approach |
 |-------|--------|----------|
 | Goal description (e.g., `add user authentication`) | Decompose goal | Full Steps 1-5 |
-| Jira ticket ID (e.g., `UN-1234`) | Plan from ticket | Fetch ticket via `acli`, then Steps 1-5 |
+| Jira ticket ID (e.g., `UN-1234`) | Plan from ticket | Fetch ticket via `acli`, then Steps 1-5. Record ticket ID in plan. At end, prompt user to continue with `/feature <TICKET-ID>` |
+| Goal + Jira ticket ID | Scoped plan from ticket | Fetch ticket, use goal as additional context, Steps 1-5. Record ticket ID. At end, prompt `/feature <TICKET-ID>` |
 | `"resume"` / `"continue"` | Resume from state file | Read `.planning/STATE.md`, pick up from current phase |
 | (none) | Ask user | Pre-flight stop |
 
@@ -37,12 +38,15 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` — if a Jira ticket ID is referenced, fetch it: `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria. If acli is unavailable, ask the user to paste the ticket content.
+- Parse `$ARGUMENTS` — extract any Jira ticket ID (pattern: `[A-Z]+-\d+`) and/or goal description.
+- **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content. Store the ticket ID — it will be recorded in `.planning/STATE.md` and used for the `/feature` hand-off.
+- **If only a goal description is provided**: use it as the planning scope.
+- **If neither**: ask the user for a goal or Jira ticket ID.
 - Check for existing `.planning/STATE.md` — if found, ask whether to resume or start fresh.
 - Search the codebase for related existing code, patterns, and conventions.
 
 **Stop conditions:**
-- Goal too vague → ask user to narrow scope
+- Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
 - Existing plan found → ask whether to resume, revise, or replace
 - On main/master branch → note that implementation will require a feature branch
 
@@ -85,10 +89,19 @@ Validate the plan against `@references/plan-reviewer-prompt.md` before presentin
 
 Write or update `.planning/STATE.md` using the template from `@references/templates.md`. Record: current phase, completed phases, key decisions, next steps.
 
+**If the plan was sourced from a Jira ticket**: record the ticket ID in the `**Source**` field of `.planning/STATE.md` (e.g., `**Source**: UN-1234`). This allows `/feature` to cross-reference the plan with the ticket.
+
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description
 - Set `addBlockedBy` dependencies matching the phase dependency graph
 - Update task status via `TaskUpdate` as phases complete
+
+### 6. Next Steps
+
+After the plan is written and tasks are tracked, guide the user to the next step in the workflow:
+
+- **If a Jira ticket ID was provided**: prompt the user — "Plan is ready. Run `/feature <TICKET-ID>` to start implementation."
+- **If no Jira ticket exists yet**: prompt the user — "Plan is ready. Run `/jira` to decompose this plan into Jira tickets, then `/feature <TICKET-ID>` to implement."
 
 ## Output Principles
 
@@ -110,8 +123,8 @@ Convert phases into tracked tasks:
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/jira` | Decompose approved plan into Jira tickets before implementation |
-| `/feature` | Pick up a Jira ticket and implement it (after tickets are created) |
+| `/jira` | Decompose approved plan into Jira tickets (when no ticket exists yet) |
+| `/feature` | Implement a Jira ticket with an approved plan (`/feature <TICKET-ID>` — requires both ticket and plan) |
 | `/verify` | Plan is implemented and needs verification |
 | `/confluence` | Reference or publish design docs and specs in Confluence |
 | `/qred-repo` | Browse existing repos for research before finalizing the plan |
