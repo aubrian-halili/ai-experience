@@ -148,3 +148,4 @@ Never present results without context—always state what was searched, where, a
 | `/review` | Code quality review or PR audit |
 | `/backoffice-database` | Exploring PostgreSQL database schemas and data |
 | `/plan` | Plan implementation after exploring a repo |
+| `/confluence` | Reference design docs or specs related to the repository |

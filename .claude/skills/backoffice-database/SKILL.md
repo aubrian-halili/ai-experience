@@ -3,7 +3,7 @@ name: backoffice-database
 description: >-
   User asks to "query the database", "show tables", "run a SQL query",
   "database schema", or mentions "backoffice" or "postgres".
-  Not for: writing application code or migrations.
+  Not for: writing application code or migrations (use /feature for implementation, /qred-repo for browsing schema-related code).
 argument-hint: "[database or table name, or SQL query]"
 allowed-tools: Bash(PGPASSWORD=*)
 disable-model-invocation: true

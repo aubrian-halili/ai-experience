@@ -179,5 +179,4 @@ Never silently skip verification steps — surface limitations and skipped items
 | `/review` | Need code quality review, not completeness verification |
 | `/plan` | Need to create a plan before verification |
 | `/feature` | Need to implement features, not verify them |
-| `/commit` | Commit changes after verification passes |
-| `/finish` | Wrap up branch after verification passes |
+| `/doc-sync` | Check documentation accuracy alongside implementation completeness |

@@ -3,7 +3,8 @@ name: skill-creator
 description: >-
   User asks to "create a new skill", "scaffold a skill", "add a skill to Claude",
   or mentions "skill template" or "SKILL.md".
-  Not for: updating CLAUDE.md manually.
+  Not for: updating CLAUDE.md manually (use /doc-sync).
+  Not for: creating Claude Code hooks (use /hookify).
 argument-hint: "[skill name]"
 disable-model-invocation: true
 allowed-tools: Bash(*/init-skill.sh *, */validate-skill.sh *), Read, Grep, Glob, Write, Edit
@@ -143,7 +144,7 @@ Test the skill with real invocations and refine based on:
 | `description` | string | Trigger phrases and purpose. Claude uses this to decide when to auto-invoke. If omitted, uses first paragraph of markdown. | Recommended | Common |
 | `argument-hint` | string | Placeholder shown during autocomplete (e.g., `[issue-number]`, `[filename] [format]`) | No | Common |
 | `allowed-tools` | string | Tools available without per-use approval when skill is active (e.g., `Read, Grep, Glob`) | No | Common |
-| `disable-model-invocation` | boolean | Prevent Claude auto-triggering; use for action skills like `/commit`, `/pr` that should be manual-only | No | Common |
+| `disable-model-invocation` | boolean | Prevent Claude auto-triggering; use for action skills like `/pr`, `/jira` that should be manual-only | No | Common |
 | `user-invocable` | boolean | Set `false` to hide from `/` menu; use for background knowledge skills | No | Advanced |
 | `model` | string | Override model for skill execution (e.g., `haiku`, `sonnet`, `opus`) | No | Advanced |
 | `context` | string | Set to `fork` to run in isolated subagent context (no conversation history) | No | Advanced |
@@ -186,6 +187,5 @@ Never create a skill without running validation — an unvalidated skill may fai
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/review` | Review a skill's quality before finalizing |
-| `/review --refactor` | Refactor an existing skill for maintainability |
+| `/review` | Review or refactor an existing skill for quality and maintainability |
 | `/hookify` | Creating Claude Code hooks, not skills |

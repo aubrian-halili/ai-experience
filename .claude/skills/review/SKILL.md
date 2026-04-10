@@ -5,6 +5,7 @@ description: >-
   "review PR #123", "is this ready to merge", "refactor this", "clean up this code",
   "reduce complexity", mentions "SOLID", "code smells", or "technical debt".
   Not for: verifying completeness against a plan (use /verify).
+  Not for: addressing PR review feedback (use /receiving-review).
 argument-hint: "[file, PR number, URL, or component to review] [--refactor]"
 allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent
 ---
@@ -269,3 +270,4 @@ Never silently omit findings or skip review dimensions—surface limitations and
 |-------|---------------------|
 | `/receiving-review` | Addressing feedback received on your PR |
 | `/verify` | Verify completeness against a plan, not code quality |
+| `/feature` | Return to implementation to address review findings |

@@ -188,7 +188,7 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 
 After all changes are implemented and replies posted:
 
-1. Stage and commit changes — invoke `/commit` (follows git conventions from `.claude/rules/git-conventions.md`)
+1. Stage and commit changes — stage specific files by name (`git add <file>`) and commit using the `<TICKET-ID> <type>(<scope>): <subject>` format from `git-conventions.md`; never use `git add .`
 2. **Ask user for confirmation before pushing** — pushing affects shared state
 3. Push changes: `git push`
 4. Verify PR state:
@@ -227,6 +227,5 @@ Never silently skip feedback items or post replies without user approval.
 |-------|---------------------|
 | `/review` | Giving a code review (not receiving one) |
 | `/pr` | Creating a pull request |
-| `/commit` | Committing changes after addressing feedback |
-| `/review --refactor` | Reviewer suggests deep refactoring beyond PR scope |
-| `/finish` | Wrap up branch after all review feedback is addressed |
+| `/feature` | Re-implementation needed for significant reviewer feedback |
+| `/verify` | Re-verify after significant changes from review feedback |
