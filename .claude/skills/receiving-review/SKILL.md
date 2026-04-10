@@ -129,8 +129,9 @@ For each actionable suggestion, verify it before implementing:
 
 **YAGNI check:**
 ```bash
-# Before adding a suggested abstraction/interface/pattern, check if it's used
-grep -r "SuggestedThing" --include="*.ts" --include="*.tsx" src/
+# Before adding a suggested abstraction/interface/pattern, check if it's actually consumed
+# Replace <SuggestedName> with the actual interface, class, or pattern name being suggested
+grep -r "<SuggestedName>" --include="*.ts" --include="*.tsx" src/
 ```
 If the suggested addition has zero consumers → push back with evidence.
 

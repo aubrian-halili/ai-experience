@@ -151,7 +151,7 @@ For each confirmed finding, use the appropriate tool:
 - **Never rewrite prose** — only correct factual claims; intentional phrasing is off-limits
 - **5-line threshold** — if a finding requires more than 5 lines of change, flag for manual review instead of applying automatically
 
-After edits, re-read modified files to confirm changes look correct.
+After edits, re-read modified files to confirm changes look correct. Also re-check CLAUDE.md line count: if edits pushed it over 200 lines, flag the new length and identify extraction candidates (sections that could move to `.claude/rules/` or `docs/`).
 
 ## Output Principles
 

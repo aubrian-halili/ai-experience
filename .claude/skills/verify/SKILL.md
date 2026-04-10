@@ -23,6 +23,13 @@ Verify that an implementation fully achieves its intended goals using three-leve
 
 See `@references/verification-discipline.md` for the behavioral rules that apply during any workflow, not just when `/verify` is invoked.
 
+## Iron Laws
+
+> - NO "PASS" status without `file:line` evidence in the current message
+> - NO Level 1 check substitutes for Level 2 or Level 3 — all three levels are required
+> - NO anti-pattern scan skipped — run the full catalog on every changed file
+> - NEVER claim "all checks pass" without showing the command output that proves it
+
 ## Rationalization Guard
 
 | Excuse | Reality |

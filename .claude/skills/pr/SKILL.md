@@ -93,6 +93,8 @@ Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr
 
 All other sections (Type of Change, Checklist, Checklist for reviewers, etc.) must be copied verbatim from the template with checkboxes intact. Check off only the items that apply.
 
+**Template completeness check:** Before presenting, verify the generated body contains every `## ` heading from the selected template file. If any heading is missing, re-read the template and add the missing section before proceeding.
+
 **Present to user:**
 - Show the full PR details: ticket ID, title, body, flags (draft by default, `--ready` to override, `--base <branch>`)
 - Indicate which template was used (minor/major, and `(frontend)` when `--fe` is active) so the user can override with `--major` or `--fe` if needed
