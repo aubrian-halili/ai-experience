@@ -228,3 +228,4 @@ Never silently skip feedback items or post replies without user approval.
 | `/review` | Giving a code review (not receiving one) |
 | `/pr` | Creating a pull request |
 | `/feature` | Re-implementation needed for significant reviewer feedback |
+| `/verify` | Re-verify after significant changes from review feedback |

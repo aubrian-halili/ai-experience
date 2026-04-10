@@ -3,7 +3,7 @@ name: skill-creator
 description: >-
   User asks to "create a new skill", "scaffold a skill", "add a skill to Claude",
   or mentions "skill template" or "SKILL.md".
-  Not for: updating CLAUDE.md manually.
+  Not for: updating CLAUDE.md manually (use /doc-sync).
   Not for: creating Claude Code hooks (use /hookify).
 argument-hint: "[skill name]"
 disable-model-invocation: true

@@ -169,5 +169,7 @@ Never create a ticket without user confirmation or skip duplicate checking — s
 |-------|---------------------|
 | `/plan` | Required first step — create an implementation plan that /jira will decompose into tickets |
 | `/feature` | Pick up a Jira ticket and implement it (`/feature <TICKET-ID>`) |
+| `/verify` | Verify implementation completeness after `/feature` |
+| `/review` | Code quality review after `/verify` in the delivery chain |
 | `/pr` | Create pull request (after commits made) |
 | `/confluence` | Create or view Confluence pages (not Jira tickets) |
