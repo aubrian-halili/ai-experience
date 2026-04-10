@@ -26,6 +26,10 @@ This applies to:
 | "I just ran the tests" | If the output isn't in this message, re-run |
 | "The code looks correct" | Code reading is not verification |
 | "Same pattern as the working one" | Patterns can be applied incorrectly |
+| "The file exists so it's wired" | Existence is Level 1; you haven't checked Level 3 |
+| "I wrote it, I know it works" | The anti-pattern list exists because experienced devs write stubs too |
+| "Tests pass so it's complete" | Passing tests verify behavior, not wiring or substance |
+| "It's just a config change, no verification needed" | Config errors are silent failures; verify the runtime loads the value |
 
 ## The Gate Function
 
