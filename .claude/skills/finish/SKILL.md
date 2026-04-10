@@ -106,3 +106,6 @@ If `$ARGUMENTS` specifies an option, skip to execution. Otherwise present all fo
 | `/pr` | Specifically want to create a PR with full description |
 | `/verify` | Want to check completeness before finishing |
 | `/subagent-driven-development` | Created worktrees that need integration before finishing |
+| `/feature` | Return to implementation if pre-flight reveals incomplete work |
+| `/receiving-review` | Address review feedback before finishing the branch |
+| `/doc-sync` | Sync project documentation before wrapping up |

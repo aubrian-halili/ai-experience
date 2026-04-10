@@ -3,6 +3,7 @@ name: commit
 description: >-
   User asks to "commit", "create a commit", "commit my changes", or mentions "git commit".
   Not for: creating a PR (use /pr) or pushing changes (use /pr).
+  Not for: wrapping up a branch (use /finish).
 argument-hint: "[optional commit message or scope]"
 allowed-tools: Bash(git *), Read, Grep, Glob
 disable-model-invocation: true
@@ -128,8 +129,10 @@ Never commit without user approval or stage files with `git add -A` — always s
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/review` | Review changes before committing |
+| `/review` | Review or refactor code before committing |
 | `/pr` | Create pull request after committing |
-| `/review --refactor` | Clean up code before committing |
 | `/jira` | Look up or update Jira ticket details |
 | `/finish` | Wrap up branch after all changes are committed |
+| `/feature` | Continue implementation after committing a milestone |
+| `/receiving-review` | Address the next round of review feedback after committing |
+| `/verify` | Verify completeness after committing |

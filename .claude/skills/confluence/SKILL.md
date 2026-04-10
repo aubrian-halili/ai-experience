@@ -5,6 +5,7 @@ description: >-
   "find a page", "write documentation in Confluence", "list spaces", "search blogs",
   or mentions "Confluence" in context of reading, writing, or updating pages.
   Not for: Jira ticket management (use /jira).
+  Not for: syncing local repo documentation like CLAUDE.md (use /doc-sync).
 argument-hint: "[view <page-id> | update <page-id> | search <query> | blogs <space-id> | spaces]"
 allowed-tools: Bash(acli confluence page view *, acli confluence space list *, acli confluence space view *, acli confluence blog list *, acli confluence blog view *, acli --version)
 disable-model-invocation: true

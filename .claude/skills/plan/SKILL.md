@@ -5,6 +5,7 @@ description: >-
   "compare approaches", "trade-offs", "pros and cons", "brainstorm",
   or references a Jira epic needing implementation steps. Use before /feature.
   Not for: implementing directly (use /feature).
+  Not for: creating or managing Jira tickets (use /jira).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
 allowed-tools: Read, Grep, Glob, Write, Agent, Skill, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
 disable-model-invocation: true
@@ -209,3 +210,5 @@ Never silently skip requirements or assume priorities — surface gaps and trade
 | `/verify` | Plan is implemented and needs verification |
 | `/subagent-driven-development` | Parallelize implementation when plan has 3+ independent tasks |
 | `/confluence` | Reference or publish design docs and specs in Confluence |
+| `/qred-repo` | Browse existing repos for research before finalizing the plan |
+| `/doc-sync` | Sync docs first so planning has accurate project context |

@@ -4,6 +4,7 @@ description: >-
   User asks to "create a PR", "open a pull request", "push and create PR",
   or mentions "pull request" in context of creating one.
   Not for: reviewing an existing PR (use /review), committing without pushing (use /commit).
+  Not for: full branch wrap-up with pre-flight verification (use /finish).
 argument-hint: "[optional: --major, --fe, --ready, target branch, or PR title]"
 allowed-tools: Bash(git branch *, git log *, git diff *, git show *, git status *, git rev-list *, git push *, git fetch *, git remote *, gh repo *, gh pr *, acli *), Read, Grep, Glob
 disable-model-invocation: true

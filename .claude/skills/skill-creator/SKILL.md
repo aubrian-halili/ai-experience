@@ -4,6 +4,7 @@ description: >-
   User asks to "create a new skill", "scaffold a skill", "add a skill to Claude",
   or mentions "skill template" or "SKILL.md".
   Not for: updating CLAUDE.md manually.
+  Not for: creating Claude Code hooks (use /hookify).
 argument-hint: "[skill name]"
 disable-model-invocation: true
 allowed-tools: Bash(*/init-skill.sh *, */validate-skill.sh *), Read, Grep, Glob, Write, Edit
@@ -186,6 +187,5 @@ Never create a skill without running validation — an unvalidated skill may fai
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/review` | Review a skill's quality before finalizing |
-| `/review --refactor` | Refactor an existing skill for maintainability |
+| `/review` | Review or refactor an existing skill for quality and maintainability |
 | `/hookify` | Creating Claude Code hooks, not skills |
