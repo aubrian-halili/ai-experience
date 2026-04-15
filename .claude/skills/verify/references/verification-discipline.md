@@ -45,19 +45,9 @@ Before claiming ANY status (passes, works, fixed, complete, done):
 
 Skipping any step means the claim is unverified.
 
-## Red Flags — Stop and Verify
-
-If you catch yourself about to say any of these, STOP and run the Gate Function:
-
-- "should", "probably", "seems to", "looks correct"
-- "Great!", "Perfect!", "Done!", or any satisfaction before verification
-- About to commit, push, or create a PR without fresh test output
-- Trusting an agent's success report without checking the diff
-- "Just this once" or "this is too small to verify"
-
 ## Agent Delegation
 
 | Claim | Required Evidence |
 |-------|-------------------|
-| Agent completed task | VCS diff shows expected changes; tests pass |
-| Agent reports "success" | Verify independently — agent success ≠ verified success |
+| Agent reports success | VCS diff shows expected changes; tests pass independently — agent's word is not evidence |
+| About to commit/push/PR | Fresh test output in current message — not "just ran them" |
