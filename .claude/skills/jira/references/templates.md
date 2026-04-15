@@ -99,37 +99,3 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 | New functionality needed | Task | Requirements, Acceptance Criteria |
 | Code improvement | Task | Technical Details, Testing |
 | Configuration change | Task | Requirements (simple), Files to Modify |
-
-## Field Completion Guidelines
-
-### For Bugs
-
-**Steps to Reproduce** - Be specific:
-- Bad: "Click the button"
-- Good: "Click the 'Submit' button in the top-right corner of the form"
-
-**Expected vs Actual** - Be precise:
-- Bad: "It should work"
-- Good: "Form should submit and redirect to /dashboard with success message"
-
-**Environment** - Include versions:
-- Always include OS, browser/runtime versions
-- Include app version or commit hash
-- Note any special configuration
-
-### For Tasks
-
-**Acceptance Criteria** - Make them testable:
-- Bad: "User can log in"
-- Good: "User can log in with email/password and receives JWT token valid for 24 hours"
-
-**Technical Details** - Be actionable:
-- List specific files to modify
-- Note any architectural decisions
-- Call out potential risks
-
-**Scope Estimation**:
-- **S**: < 1 day, single file, no dependencies
-- **M**: 1-3 days, few files, minimal dependencies
-- **L**: 3-5 days, multiple files/components, some dependencies
-- **XL**: > 5 days, significant changes, many dependencies
