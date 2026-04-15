@@ -3,9 +3,9 @@ name: jira
 description: >-
   User asks to "create Jira tickets", "decompose into tickets", "file tickets from plan",
   or mentions "Jira" in context of creating tickets from a plan.
-  Requires a plan file path as the first argument (e.g., .planning/STATE.md) — stops if no path is provided.
+  Requires an approved plan in .planning/STATE.md — redirects to /plan if none exists.
   Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature).
-argument-hint: "<plan-file-path> [PROJECT]"
+argument-hint: "[PROJECT]"
 allowed-tools: Read, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version)
 disable-model-invocation: true
 ---
@@ -14,11 +14,11 @@ disable-model-invocation: true
 
 ultrathink
 
-Decompose an approved implementation plan into Jira tickets. Reads phases from a user-supplied plan file path and creates one ticket per phase with dependency tracking and execution wave grouping.
+Decompose an approved implementation plan into Jira tickets. Reads phases from `.planning/STATE.md` and creates one ticket per phase with dependency tracking and execution wave grouping.
 
 ## Ticket Philosophy
 
-- **Context from plan** — extract ticket content from the supplied plan file's phases, not from conversation or git history
+- **Context from plan** — extract ticket content from `.planning/STATE.md` phases, not from conversation or git history
 - **User confirmation** — always present ticket details for review before creating; never file a ticket without explicit approval
 - **Template-driven content** — use structured templates for consistent, actionable tickets; every field should be filled or explicitly marked as unknown
 - **Graceful degradation** — if acli is unavailable, generate copy-ready content for manual entry rather than failing
@@ -35,26 +35,19 @@ Decompose an approved implementation plan into Jira tickets. Reads phases from a
 
 ## Input Handling
 
-Parse `$ARGUMENTS` as: `<plan-file-path> [PROJECT]`.
-
-- The first token that contains a path separator (`/`) or file extension is treated as the plan file path.
-- The next token matching only uppercase letters and digits (no slash) is treated as the project key.
-- If `<plan-file-path>` is absent → **stop immediately**:
-  > "No plan file path provided. Re-run as `/jira <plan-file-path> [PROJECT]` (e.g., `/jira .planning/STATE.md UN`). Run `/plan` first if you do not have a plan file yet."
+Parse `$ARGUMENTS` for an optional project key override (e.g., `PROJ`). Default project is `UN`.
 
 ### Pre-flight
 
-1. **Resolve plan path**: extract `<plan-file-path>` from `$ARGUMENTS`. If absent → stop (see above).
-2. **Read plan file**: read the file at the provided path.
-   - If the file does not exist → **stop**: "Plan file not found at `<path>`. Verify the path or run `/plan` to create one."
-   - If the file exists but contains no `#### Phase` headings → **stop**: "No phases found in `<path>`. Run `/plan` to decompose the goal into phases."
-   - If phases exist → proceed to Process.
-3. **Resolve project**: second argument if present, else default to `UN`.
-4. **Check acli availability**: run `acli --version`; available → create directly via acli; unavailable → generate content for manual entry.
+1. **Check for plan**: Read `.planning/STATE.md`
+   - If the file does not exist or contains no `#### Phase` headings → **stop** and redirect:
+     > "No approved plan found. Run `/plan` first to create an implementation plan, then come back to `/jira` to decompose it into tickets."
+   - If the file exists with phases → proceed to Process
+2. **Resolve project**: user-provided project code from `$ARGUMENTS`, or default to `UN`
+3. **Check acli availability**: run `acli --version`; available → create directly via acli; unavailable → generate content for manual entry
 
 **Stop conditions:**
-- No plan file path in `$ARGUMENTS` → stop and prompt user for the path
-- Plan file not found or has no phases → stop and direct to `/plan`
+- No `.planning/STATE.md` or no phases → redirect to `/plan`
 - acli authentication failure → prompt user to run `acli jira auth login`
 
 ---
@@ -63,7 +56,7 @@ Parse `$ARGUMENTS` as: `<plan-file-path> [PROJECT]`.
 
 ### 1. Load Plan
 
-- Read the plan file at the path provided in `$ARGUMENTS`
+- Read `.planning/STATE.md`
 - Extract for each phase:
   - **Goal** → ticket summary
   - **Observable truths** → acceptance criteria
@@ -79,7 +72,7 @@ After extracting phases, classify each phase:
 Record the classification for each phase. This drives the `Depends On` column and execution wave grouping in Step 2.
 
 **Stop conditions:**
-- Plan file has no phases → ask user to run `/plan` to decompose the goal into phases
+- Plan has no phases → ask user to run `/plan` to decompose the goal into phases
 
 ### 2. Draft Ticket Set
 
@@ -131,9 +124,9 @@ For each ticket in dependency order:
    - Priority is embedded in the description via the template's "Suggested Priority" field; default to Medium if no signal
    - Descriptions must use Markdown format (`##`, `###`, `1.`, `-`, fenced code blocks)
 4. **Verify** — fetch the created ticket back using `acli jira workitem view <ISSUE_KEY>` to confirm it exists; if fetch fails, warn the user and suggest checking Jira manually
-5. **Record** the ticket ID in the manifest — write it to the plan file (the path supplied in `$ARGUMENTS`) under `## Tickets` immediately after each successful creation (not at the end of the batch), so partial progress is preserved if the batch fails mid-way
+5. **Record** the ticket ID in the manifest — write it to `.planning/STATE.md` under `## Tickets` immediately after each successful creation (not at the end of the batch), so partial progress is preserved if the batch fails mid-way
 
-**Partial batch failure:** If creation fails after some tickets have already been created, immediately surface a status table: which tickets were created (with IDs), which failed, and which are pending. Record created IDs in the plan file before attempting fallback for remaining tickets.
+**Partial batch failure:** If creation fails after some tickets have already been created, immediately surface a status table: which tickets were created (with IDs), which failed, and which are pending. Record created IDs in `.planning/STATE.md` before attempting fallback for remaining tickets.
 
 ### 4. Present Manifest
 
@@ -144,7 +137,7 @@ After all tickets are created, output the manifest:
 | UN-1234 | ... | UN-1234-short-description |
 | UN-1235 | ... | UN-1235-short-description |
 
-Store the manifest in the plan file (the path supplied in `$ARGUMENTS`) under a `## Tickets` section for use by `/feature`.
+Store the manifest in `.planning/STATE.md` under a `## Tickets` section for use by `/feature`.
 
 **Workflow reminder:** `/plan` → `/jira` → pick up ticket → `/feature <TICKET-ID>` → `/verify` → `/review` → commit → `/pr`
 
@@ -161,9 +154,7 @@ Store the manifest in the plan file (the path supplied in `$ARGUMENTS`) under a 
 
 | Scenario | Response |
 |----------|----------|
-| No plan file path in `$ARGUMENTS` | Stop: "Provide a plan file path: `/jira <plan-file-path> [PROJECT]`" |
-| Plan file not found at supplied path | Stop: "Plan file not found at `<path>`. Verify the path or run `/plan`." |
-| Plan file has no phases | Stop: "No phases in `<path>`. Run `/plan` to decompose the goal." |
+| No plan found | Redirect to `/plan`: "Run `/plan` first to create an implementation plan" |
 | acli not available | Fall back to content generation |
 | Authentication error | "Run `acli jira auth login` to authenticate" |
 | Unknown project | Prompt for project key |
@@ -178,7 +169,7 @@ Never create a ticket without user confirmation or skip duplicate checking — s
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/plan` | Required first step — creates the plan file that you pass to `/jira <plan-file-path>` |
+| `/plan` | Required first step — create an implementation plan that /jira will decompose into tickets |
 | `/feature` | Pick up a Jira ticket and implement it (`/feature <TICKET-ID>`) |
 | `/verify` | Verify implementation completeness after `/feature` |
 | `/review` | Code quality review after `/verify` in the delivery chain |
