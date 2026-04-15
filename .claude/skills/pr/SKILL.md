@@ -14,13 +14,6 @@ disable-model-invocation: true
 
 Create pull requests with auto-generated titles and descriptions from commit history.
 
-## PR Philosophy
-
-- **User confirmation** — always present the complete PR details for review before creating; never push or open a PR without explicit approval
-- **Convention compliance** — titles and descriptions follow project conventions (pr-conventions.md); ticket ID is always present
-- **Safety-first** — never force push, never push to main, never skip divergence checks; ask before destructive actions
-- **Commit-driven content** — PR title and description are generated from commit history, not invented; quality commits produce quality PRs
-
 > **Iron Laws — never violate these:**
 > 1. Never push or create a PR without explicit user approval
 > 2. Never force push to any branch
@@ -74,8 +67,6 @@ Use `$ARGUMENTS` if provided (handles `--ready`, custom title, or target branch)
 3. Multiple commits → summarize with `<TICKET-ID> <type>(<scope>): <summary>`
 4. Fallback: branch name converted `UN-1234-add-auth` → `UN-1234 feat: add auth`
 
-Title format: `<TICKET-ID> <type>(<scope>): <description>` (max 72 chars, per pr-conventions.md)
-
 **Body generation** — select template based on flags:
 
 | Flags          | Template                                 |
@@ -99,13 +90,8 @@ All other sections (Type of Change, Checklist, Checklist for reviewers, etc.) mu
 - Show the full PR details: ticket ID, title, body, flags (draft by default, `--ready` to override, `--base <branch>`)
 - Indicate which template was used (minor/major, and `(frontend)` when `--fe` is active) so the user can override with `--major` or `--fe` if needed
 - Ask the user to review and confirm before proceeding
-- If changes requested, regenerate and present again
 
 ### 3. Push & Create PR
-
-**Only proceed after user approval.**
-
-**Safety note:** If the remote branch exists and has diverged (e.g., after rebase), never use `git push --force` without explicit user confirmation.
 
 ```bash
 # Push branch if needed (check if remote exists first)
@@ -118,8 +104,6 @@ gh pr create --draft --title "<TICKET-ID> <type>(<scope>): <description>" --body
 EOF
 )"
 ```
-
-PRs are created as drafts by default. Add `--ready` to skip draft mode, `--base <branch>` for non-main target, `--label <name>` to add labels.
 
 ### 4. Verify & Link
 
@@ -136,24 +120,12 @@ Show the user: PR number, URL, title, state, and next steps:
 
 **Jira integration (optional):** If a Jira ticket ID was detected and acli is available, offer to transition the ticket status (e.g., to "In Review") using `acli jira workitem transition --key <ISSUE_KEY> --status "In Review"`. Always confirm with the user before changing ticket status.
 
-## Output Principles
-
-- **PR preview before creation** — present the complete PR (title, body, flags) for user review before pushing or creating
-- **Convention-formatted title** — follows pr-conventions.md format (already loaded)
-- **Template-driven body** — PR body is always constructed from the selected template file (never improvised); dynamic sections are filled from commits, static sections are copied verbatim
-- **Actionable result** — after creation, show PR number, URL, and next steps (request reviews, monitor CI)
-
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
 | Push rejected | "Run `git pull --rebase origin <branch>`" or check for diverged history |
-| Remote branch diverged | Never use `--force` without explicit user confirmation |
-| No gh CLI | "Install from https://cli.github.com/" |
-| gh auth failure | "Run `gh auth login` to authenticate" |
 | Branch protection rules | "Push to a feature branch instead, or request access" |
-
-Never force push or create a PR from the default branch — always verify branch state and user intent before pushing.
 
 ## Related Skills
 
