@@ -14,10 +14,6 @@ Explore PostgreSQL database schemas and run read-only queries against the backof
 ## Database Philosophy
 
 - **Read-only only** — Never execute INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE, CREATE, or any DDL/DML. Only SELECT, WITH, SHOW, EXPLAIN, and DESCRIBE are permitted. Enforced server-side via `default_transaction_read_only=on`
-- **No credential exposure** — Never include connection strings, passwords, or auth tokens in output
-- **Bounded results** — Always LIMIT queries; cap at 50 rows unless the user explicitly requests more
-- **Explicit scope** — State the target database and schema before every operation
-- **Progressive exploration** — Start with high-level overview (databases → schemas → tables) before diving into detailed queries; guide users toward discovering structure naturally
 
 ## Connection
 
@@ -53,33 +49,30 @@ Parse `$ARGUMENTS` to understand what the user wants:
 - Set default schema: `public`
 - Parse `$ARGUMENTS` and map to the appropriate workflow (Overview, Table Schema, Query Data, Schema Tables, or Database Schemas) using the Input Handling table
 
-**Stop condition:**
-- Auth command fails → "Aurora login failed. Check aurora-login configuration and credentials."
-- psql not found → "psql not found. Ensure PostgreSQL client tools are installed."
-
-
 ### 2. Execute
+
+All queries use the psql pattern from Connection above with the resolved `dbname`.
 
 **Overview (no arguments)**
 
 If `@references/database-overview.md` exists, present its cached data directly instead of re-querying. The cached file contains databases, schemas, and table names only — no column-level detail. If the user wants column detail for a specific table, proceed to the **Table Schema** workflow. If the user asks to refresh, re-run the queries below and update the reference file.
 
-1. Using the psql pattern with the resolved `dbname`, run the following command to show all available databases:
-  ```sql
+1. Show all available databases:
+   ```sql
    SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname;
    ```
-2. Using the psql pattern with the resolved `dbname`, run the following command to show schemas in the default database:
+2. Show schemas in the default database:
    ```sql
    SELECT schema_name FROM information_schema.schemata ORDER BY schema_name;
    ```
-3. Using the psql pattern with the resolved `dbname`, run the following command to show tables:
+3. Show tables:
    ```sql
    SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name;
    ```
 
 **Table Schema**
 1. Parse table name (extract schema and table from `schema.table` or assume `public` schema)
-2. Using the psql pattern with the resolved `dbname`, run:
+2. Run:
    ```sql
    SELECT column_name, data_type, is_nullable, column_default
    FROM information_schema.columns
@@ -93,30 +86,22 @@ If `@references/database-overview.md` exists, present its cached data directly i
    - Must start with SELECT, WITH, SHOW, EXPLAIN, or DESCRIBE
    - Must not contain semicolons followed by additional statements (no multi-statement queries — e.g., `SELECT 1; DROP TABLE foo` is rejected)
    - The server enforces read-only via `default_transaction_read_only=on` as a safety net, but reject ambiguous queries client-side before running
-2. Using the psql pattern with the resolved `dbname`, run the validated SQL
-3. Present results in a clear table format
-4. If query fails, show error and suggest corrections
+2. Run the validated SQL
 
 **Schema Tables**
-1. Using the psql pattern with the resolved `dbname`, run:
-   ```sql
-   SELECT table_name FROM information_schema.tables WHERE table_schema = '<schema>' ORDER BY table_name;
-   ```
-2. Present list of tables
+```sql
+SELECT table_name FROM information_schema.tables WHERE table_schema = '<schema>' ORDER BY table_name;
+```
 
-**Database Schemas**
-1. Using the psql pattern with `dbname=<database>`, run:
-   ```sql
-   SELECT schema_name FROM information_schema.schemata ORDER BY schema_name;
-   ```
-2. Present list of schemas
+**Database Schemas** — use `dbname=<database>`:
+```sql
+SELECT schema_name FROM information_schema.schemata ORDER BY schema_name;
+```
 
 ### 3. Verify Results
 
-- Confirm the command returned data successfully
 - If empty result set → Note "Query returned 0 rows" explicitly; if querying `information_schema`, check that the correct `dbname` was used
 - If entity not found (database, schema, or table) → Fall through to Error Handling
-- Present results following Output Principles
 
 ## Output Principles
 
@@ -135,12 +120,7 @@ If `@references/database-overview.md` exists, present its cached data directly i
 | Database not found | List known databases from catalog and ask user to specify |
 | Schema not found | List available schemas in the database |
 | Table not found | List available tables in the schema |
-| Query syntax error | Show the error message and suggest corrections |
 | Write operation attempted | "Only read-only queries are allowed. Use SELECT, WITH, SHOW, or EXPLAIN." |
-| Authentication error | "PostgreSQL connection failed. Check aurora-login configuration and credentials." |
-| Connection timeout | "Database connection timeout. Check server availability and network." |
-
-Never execute a write operation or expose credentials — if a query appears to modify data, refuse it and explain why.
 
 ## Related Skills
 
