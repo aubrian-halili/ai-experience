@@ -30,7 +30,6 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 |--------|---------|
 | "The scope is clear enough, let's skip architecture comparison" | Architecture shortcuts in planning cause mid-implementation pivots; ≤3 files is the only valid skip condition |
 | "We can define the observable truths later" | Observable truths defined after the plan is written are reverse-engineered from the solution, not the goal |
-| "The phases are obvious, no need to document them" | Undocumented phases drift under context pressure; write them before proceeding |
 | "Let's skip the plan-reviewer checklist, it'll slow us down" | The checklist prevents plans that fail silently in `/feature`; always validate against it |
 
 ## Input Handling
@@ -40,23 +39,26 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 | Goal description (e.g., `add user authentication`) | Decompose goal | Full Steps 1-5 |
 | Jira ticket ID (e.g., `UN-1234`) | Plan from ticket | Fetch ticket via `acli`, then Steps 1-5. Record ticket ID in plan. At end, prompt user to continue with `/feature <TICKET-ID>` |
 | Goal + Jira ticket ID | Scoped plan from ticket | Fetch ticket, use goal as additional context, Steps 1-5. Record ticket ID. At end, prompt `/feature <TICKET-ID>` |
-| `"resume"` / `"continue"` | Resume from state file | Read `.planning/STATE.md`, pick up from current phase |
-| (none) | Ask user | Pre-flight stop |
+
+> **Note:** Resuming an in-progress plan requires no special argument. If `.planning/STATE.md` exists, the skill automatically prompts **resume** or **start over** before proceeding.
 
 ## Process
 
 ### 1. Pre-flight
 
 - Parse `$ARGUMENTS` — extract any Jira ticket ID (pattern: `[A-Z]+-\d+`) and/or goal description.
-- **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content. Store the ticket ID — it will be recorded in `.planning/STATE.md` and used for the `/feature` hand-off.
-- **If only a goal description is provided**: use it as the planning scope.
-- **If neither**: ask the user for a goal or Jira ticket ID.
-- Check for existing `.planning/STATE.md` — if found, ask whether to resume or start fresh.
-- Search the codebase for related existing code, patterns, and conventions.
+- **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content. Store the ticket ID for Step 5.
+- Check for existing `.planning/STATE.md` — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
+  - **resume** → read the file, skip completed phases, continue from the phase marked current
+  - **start over** → back up the existing file first, then proceed with a new plan:
+    1. Derive a short description from the existing file's `**Goal**:` line — kebab-case, strip stop-words, truncate to ≤40 chars → `STATE-<short-description>.md` (e.g. `STATE-login-implementation.md`)
+    2. If `**Goal**:` is missing or empty → fallback to `STATE-<YYYYMMDD-HHMM>.md`
+    3. If `.planning/<backup-name>` already exists → append `-<YYYYMMDD>` before `.md` to avoid overwrite
+    4. Rename `.planning/STATE.md` → `.planning/<backup-name>`, then continue
+- **Write a skeleton `.planning/STATE.md` immediately after the goal is confirmed** (before Definition of Done, before phases). The skeleton contains: Goal, Source, Created date, Last Updated, and empty sections for Definition of Done / Progress / Current Phase. This ensures session continuity even if planning is interrupted at any later step.
 
 **Stop conditions:**
 - Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
-- Existing plan found → ask whether to resume, revise, or replace
 - On main/master branch → note that implementation will require a feature branch
 
 **Vague goal test** — a goal is too vague if it fails ANY of these:
@@ -75,7 +77,7 @@ Define **observable truths** — concrete conditions that must be TRUE when the 
 - [ ] [Quality] All auth endpoints have integration tests with >80% coverage
 ```
 
-Present observable truths to the user for validation before proceeding. Update if the user modifies them.
+Present observable truths to the user for validation before proceeding.
 
 ### 3. Architecture Comparison
 
@@ -84,7 +86,7 @@ Launch 2-3 `code-architect` agents in parallel, each with a different focus:
 - **Clean Architecture** — proper separation of concerns, SOLID principles
 - **Pragmatic Balance** — follow existing conventions (include for Medium+ complexity)
 
-Present a comparison table and recommend one approach. Wait for user to choose before proceeding.
+Present a comparison table and recommend one approach.
 
 **Skip when:** Scope is ≤3 files with no new integration points. Default to Pragmatic Balance.
 
@@ -101,7 +103,13 @@ Validate the plan against `@references/plan-reviewer-prompt.md` before presentin
 
 ### 5. Track State
 
-Write or update `.planning/STATE.md` using the template from `@references/templates.md`. Record: current phase, completed phases, key decisions, next steps.
+Finalize `.planning/STATE.md` (first written as a skeleton in Step 1) using the template from `@references/templates.md`. By this point the file should already contain Goal, Source, Definition of Done, and Key Decisions — added progressively after Steps 2 and 3. This step adds the full phase breakdown and reconciles the Progress table.
+
+**Progressive update rule**: after each planning step completes, append its output to `.planning/STATE.md` and bump `Last Updated`:
+- After Step 2 → append Definition of Done
+- After Step 3 → append chosen architecture to Key Decisions
+- After Step 4 → append full phase breakdown and dependency graph
+- Step 5 → verify all sections present, finalize Progress table
 
 **If the plan was sourced from a Jira ticket**: record the ticket ID in the `**Source**` field of `.planning/STATE.md` (e.g., `**Source**: UN-1234`). This allows `/feature` to cross-reference the plan with the ticket.
 
@@ -116,22 +124,6 @@ After the plan is written and tasks are tracked, guide the user to the next step
 
 - **If a Jira ticket ID was provided**: prompt the user — "Plan is ready. Run `/feature <TICKET-ID>` to start implementation."
 - **If no Jira ticket exists yet**: prompt the user — "Plan is ready. Run `/jira` to decompose this plan into Jira tickets, then `/feature <TICKET-ID>` to implement."
-
-## Output Principles
-
-- **Truths before tasks** — define observable end-state before breaking into phases
-- **Verifiable phases** — every phase has runnable verification commands
-- **Session continuity** — always write `.planning/STATE.md`
-
-## Error Handling
-
-| Scenario | Response |
-|----------|----------|
-| Goal too vague | Ask clarifying questions |
-| Conflicting requirements | Surface trade-offs, request decision |
-| Existing plan conflicts | Present differences, ask user to choose |
-| acli unavailable | Ask user to paste ticket content |
-| Scope too large | Recommend splitting into multiple plans |
 
 ## Related Skills
 
