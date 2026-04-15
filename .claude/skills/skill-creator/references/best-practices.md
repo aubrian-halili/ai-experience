@@ -5,11 +5,8 @@
 Skills consume context tokens. The system budget is ~2% of the context window (~16,000 chars as a practical fallback). Override with the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable if skills need more room. Optimize by:
 
 1. **Description efficiency** — Descriptions are always in context for auto-invocable skills. Keep under 500 chars. Use `disable-model-invocation: true` for action skills to exclude from auto-invoke context
-2. **Front-load essentials** — Put critical instructions in SKILL.md directly
-3. **Defer details** — Use `@references/` for supplementary guidance
-4. **Avoid redundancy** — Don't repeat what's in project CLAUDE.md
-5. **Trim examples** — One good example beats three mediocre ones
-6. **Manual-only for actions** — Skills that perform destructive or external actions (deploy, push, delete) should set `disable-model-invocation: true` to avoid accidental auto-invocation and to save context budget
+2. **Defer details** — Use `@references/` for supplementary guidance; don't repeat what's in project CLAUDE.md
+3. **Manual-only for actions** — Skills that perform destructive or external actions (deploy, push, delete) should set `disable-model-invocation: true` to avoid accidental auto-invocation and to save context budget
 
 ## CSO Principle: Description as Trigger, Not Summary
 
@@ -99,11 +96,8 @@ Best for: Tasks with meaningful variation in execution path.
 
 | Anti-Pattern | Problem | Solution |
 |--------------|---------|----------|
-| Kitchen sink | Too many responsibilities | Split into focused skills |
 | Echo chamber | Repeats CLAUDE.md | Reference don't repeat |
-| Template prison | Over-constrains output | Add degrees of freedom |
 | Missing triggers | Hard to discover/invoke | Add clear trigger phrases |
-| Silent failure | No guidance on errors | Add error handling section |
 
 ## Quality Checklist
 
