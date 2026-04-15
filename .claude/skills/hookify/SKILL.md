@@ -16,9 +16,7 @@ Guide creation and management of Claude Code hooks for enforcing behaviors, prot
 ## Hook Philosophy
 
 - **Prevention over detection** — hooks that block unwanted actions before they happen are more valuable than ones that report after the fact
-- **Minimal friction** — hooks should be fast and silent when conditions are met; only surface when they block something
 - **Fail-safe defaults** — if a hook errors, it should block the action (fail closed) rather than silently allow it
-- **Composable** — each hook does one thing well; combine multiple hooks for layered enforcement
 
 ## Input Handling
 
@@ -26,7 +24,6 @@ Classify `$ARGUMENTS` to determine the hook workflow:
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| (none) | Explore hook options | Show available hook events and common patterns |
 | Hook type (e.g., `PreToolUse`) | Create hook for event | Scaffold hook for that event type |
 | Behavior description (e.g., `prevent force push`) | Enforce behavior | Match to pattern, create appropriate hook |
 | `list` or `validate` | Manage existing hooks | Inventory and test current hooks |
@@ -89,7 +86,7 @@ Based on the desired behavior:
 Create the hook script and configuration:
 
 1. **Write the hook script** in `.claude/hooks/` directory
-   - Use bash for simple hooks, or the appropriate language for complex logic
+   - Use bash for simple hooks, or the appropriate language for complex logic; prefer bash + jq, avoid requiring additional tools
    - Include proper error handling and exit codes
    - Exit 0 to allow, exit 2 to block (with stderr message shown to user)
 2. **Make executable**: `chmod +x $CLAUDE_PROJECT_DIR/.claude/hooks/<script-name>`
@@ -182,42 +179,22 @@ Exit codes still apply: `0` = allow (parse stdout for JSON decisions), `2` = blo
 
 Test the hook works correctly:
 
-1. Verify the script is executable
-2. Test with sample input matching the expected JSON format
-3. Verify it blocks when it should (exit 2) and allows when it should (exit 0)
-4. Check that stderr messages are informative when blocking
-
-### 5. Document
-
-Add a brief comment in the hook script explaining:
-- What behavior it enforces
-- What event and matcher it responds to
-- How to disable it if needed
+1. Test with sample input matching the expected JSON format
+2. Verify it blocks when it should (exit 2) and allows when it should (exit 0)
+3. Check that stderr messages are informative when blocking
 
 ## Common Hook Patterns
 
 See `@references/hook-patterns.md` for detailed pattern implementations.
-
-## Output Principles
-
-- **Working code first** — provide a complete, tested hook script, not pseudocode
-- **Security-conscious** — hooks that protect sensitive operations should fail closed
-- **Well-documented** — each hook includes inline comments explaining the logic
-- **Minimal dependencies** — prefer bash + jq; avoid requiring additional tools
 
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
 | No `.claude/settings.json` found | Create it with the hook configuration |
-| Hook script not executable | Fix permissions with `chmod +x` |
-| Invalid JSON in settings file | Report the parse error location and fix |
 | Hook script has syntax errors | Test with `bash -n` before registering |
 | jq not available | Suggest installation or provide jq-free alternative using grep/sed |
-| Hook blocks unintentionally | Guide debugging with test input and stderr output |
 | Stop hook causes infinite loop | Check `stop_hook_active` field in stdin JSON; skip logic if `true` |
-
-Never create hooks that silently swallow errors — always surface blocking reasons to the user via stderr.
 
 ## Related Skills
 
