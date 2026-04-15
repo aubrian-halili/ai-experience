@@ -21,7 +21,6 @@ Perform a thorough multi-dimensional review of code, local changes, or pull requ
 
 - **Precision over completeness** — zero false positives matters more than exhaustive coverage
 - **Confidence gate** — internally score each finding 0-100; only report findings with confidence >= 80
-- **Uncertainty principle** — if uncertain about a finding, leave it out rather than risk noise
 - **Context-aware** — respect existing patterns and conventions; cross-reference CLAUDE.md before flagging style issues
 - **Constructive balance** — pair criticism with positive observations; reviews that only list problems discourage contributors
 
@@ -44,8 +43,6 @@ Perform a thorough multi-dimensional review of code, local changes, or pull requ
 | **75** | Important and verified — real issue with meaningful impact | Do not report (below gate) |
 | **80** | Verified with strong supporting evidence — real issue, confirmed impact | Report |
 | **100** | Definite and self-evident — clearly wrong, clearly harmful | Report |
-
-The confidence gate remains **>= 80**. Report at 80 only when you have strong supporting evidence (file references, grep results, test output). Report 100 for self-evident issues.
 
 **Gate enforcement — a finding reaches 80 only when ALL of these are true:**
 1. You can cite the exact `file:line` where the issue occurs (read the source file, not just the diff)
@@ -148,14 +145,9 @@ This enables two-stage analysis:
 
 1. Read target code (diff output for uncommitted changes, full file for single-file review)
 2. Analyze across dimensions: correctness, readability, maintainability, performance, security, testing, architecture alignment
-   > **Line number rule:** Diff output uses relative offsets — do not cite diff line numbers as source file line numbers. Use `Read` on the actual source file to confirm the correct line before referencing it in a finding.
-3. For any potential finding, run `git blame -L <start>,<end> <file>` to confirm the issue was introduced in the current change. Score pre-existing issues as 0.
+3. Apply gate enforcement rules (file:line from source, git blame to confirm newness, concrete consequence)
 4. Cross-reference against CLAUDE.md conventions
 5. Apply confidence gate — only flag findings scored >= 80
-
-### 2.5. Specialized Review Passes (Optional Deep Dive)
-
-When scope is large (>10 files) or user requests thorough review, run the Specialized Review Passes defined above.
 
 ### 3. Report Local Findings (Local only)
 
@@ -191,7 +183,7 @@ Present findings using the Severity Levels defined above and the Local Changes t
    - **Downstream Impact**: Files that depend on changes
    - **Upstream Impact**: Changes to dependencies
 
-4. For any potential finding, run `git blame -L <start>,<end> <file>` to confirm the issue was introduced in the current change. Score pre-existing issues as 0.
+4. Apply gate enforcement rules (file:line from source, git blame to confirm newness, concrete consequence)
 
 5. **Evaluate Risk**
    | Risk Factor | Low | Medium | High |
@@ -200,10 +192,6 @@ Present findings using the Severity Levels defined above and the Local Changes t
    | Lines Changed | <100 | 100-500 | 500+ |
    | Test Coverage | Added/Updated | Unchanged | Removed |
    | Breaking Changes | None | Internal only | External API |
-
-### 4.5. Specialized Review Passes (Optional Deep Dive)
-
-When PR has >10 changed files or user requests thorough review, run the Specialized Review Passes defined above.
 
 ### 5. Report PR Findings (PR only)
 
@@ -225,28 +213,12 @@ Apply confidence gate — only flag findings scored >= 80.
 - Sanity-check severity distribution — if all findings are Critical or all are Note, re-evaluate consistency
 - Suggest next steps: recommend related skills for deeper analysis, or state merge readiness for PR reviews
 
-## SOLID Checks (Clean Code Pass)
-
-| Principle | Violation Signal | Fix |
-|-----------|-----------------|-----|
-| **SRP** | Class has multiple reasons to change | Extract classes by responsibility |
-| **OCP** | Modifying existing code for new types | Use polymorphism or strategy |
-| **LSP** | Subclass breaks parent's contract | Redesign hierarchy |
-| **ISP** | Client depends on methods it doesn't use | Split into focused interfaces |
-| **DIP** | High-level module depends on concrete class | Inject abstractions |
-
 ## Code Smells to Detect (Clean Code Pass)
+
+Detect standard Fowler smells (Long Method, Large Class, Feature Envy, Duplicate Code, etc.) plus these project-specific preferences:
 
 | Smell | Refactoring |
 |-------|-------------|
-| Long Method (> 20 lines) | Extract Method |
-| Large Class | Extract Class |
-| Feature Envy | Move Method |
-| Data Clumps | Extract Class / Parameter Object |
-| Primitive Obsession | Value Objects |
-| Switch Statements | Polymorphism |
-| Speculative Generality | Remove unused abstraction |
-| Duplicate Code | Extract Method/Class |
 | Nested Ternaries | `if`/`else` chains or `switch` statements |
 | Dense One-liners | Break into named steps for readability |
 
@@ -257,25 +229,19 @@ When applying `--refactor`, avoid over-simplification that introduces new proble
 - **Clarity over brevity** — explicit code is better than compact code that requires mental unpacking
 - **Don't combine too many concerns** — merging functions to reduce count can violate SRP
 - **Don't remove helpful abstractions** — an abstraction that improves organization earns its existence
-- **Don't create overly clever solutions** — if the simplified version is harder to debug or extend, it's not simpler
-- **Don't prioritize fewer lines over readability** — line count is not a quality metric
 
 ## Output Principles
 
 - **Severity-first ordering** — group findings by severity (Critical first), not by file or dimension
-- **Location precision** — every finding references `file:line`; for PR reviews include diff hunk context. **Never cite line numbers from diff output as source file line numbers** — diff hunks use relative offsets that do not match the actual file. Always read the source file to verify the correct line number before citing it.
+- **Location precision** — every finding references `file:line`; always read the source file, never cite diff hunk offsets directly
 - **Actionable fixes** — provide concrete fix suggestions with diff examples for Critical and High findings
-- **Balanced perspective** — include positive observations; a review that only lists problems discourages contributors
 
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
-| Not a git repository | Report and stop |
-| No local changes found | Report; suggest specifying a file or PR number |
 | File not found | Report the missing path and ask user to verify |
 | PR not found | Check PR number/URL format, verify repository access with `gh` |
-| `gh` not authenticated | Report auth status, provide `gh auth login` instructions |
 | Branch not found | List available branches, ask user to verify |
 | Cannot fetch diff | Fall back to file-by-file review using `gh pr view --json files` |
 | Too many files (>30 changed) | Prioritize by risk using Evaluate Risk table, note coverage gaps |
