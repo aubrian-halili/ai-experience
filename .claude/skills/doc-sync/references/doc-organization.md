@@ -31,7 +31,6 @@ Always-on context costs context budget on every interaction — keep it lean and
 - Technology stack restated from `package.json`/`go.mod`/etc.
 - Step-by-step tutorials (put in `docs/`)
 - Exhaustive API references (put in `docs/`)
-- Git history or recent changes (use `git log`)
 
 **If CLAUDE.md exceeds 200 lines:** Extract sections into either `.claude/rules/` (if they're always-applicable conventions) or `docs/` (if they're reference material), then replace the section with a one-line pointer.
 
@@ -79,43 +78,8 @@ When a fresh agent starts work on a feature, the first thing it does is explore 
 3. What is non-obvious about how this codebase works?
 4. Where do I look for more detail on topic X?
 
-**A bad CLAUDE.md:**
-- Lists every file and directory (derivable)
-- Says "This is a TypeScript project" when `package.json` says so
-- Includes full API documentation inline
-- Documents what the code does without explaining why key decisions were made
+## Monorepo Structure Note
 
-## Recommended Structure for Common Project Types
-
-### TypeScript/Node project
-```
-CLAUDE.md                    # Project purpose, key architecture, non-obvious conventions
-.claude/
-  rules/
-    code-style.md            # TypeScript conventions, formatting
-    git-conventions.md       # Branch/commit naming
-    testing.md               # TDD, test framework specifics
-docs/
-  architecture/
-    decisions/               # ADRs
-  api/                       # OpenAPI/endpoint reference
-  runbooks/                  # Operations guides
-```
-
-### Python project
-```
-CLAUDE.md                    # Same as above
-.claude/
-  rules/
-    code-style.md            # PEP8 deviations, linting rules
-    testing.md               # pytest conventions, fixtures
-docs/
-  architecture/
-  api/
-  deployment/
-```
-
-### Monorepo
 ```
 CLAUDE.md                    # Monorepo overview + which packages exist + how they relate
 packages/

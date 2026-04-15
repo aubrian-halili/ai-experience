@@ -23,8 +23,7 @@ Qred/<repo>
 
 - Use `+--` for entries and `|` for continuation lines
 - Annotate key directories with brief descriptions when their purpose is clear (e.g., `src/ — application source`)
-- Mark unexplored directories with `(...)` to indicate more content exists
-- Respect the 3-level depth limit — show `(...)` for deeper levels
+- Mark unexplored directories or truncated depth with `(...)` to indicate more content exists
 
 ## Follow-up Suggestions by Layer
 

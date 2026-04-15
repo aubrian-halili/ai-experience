@@ -17,8 +17,6 @@ Process, evaluate, and implement code review feedback with technical rigor.
 ## Review Response Philosophy
 
 - **Actions over words** — demonstrate understanding through code, not performative agreement
-- **Verify before implementing** — check reviewer suggestions against codebase reality before acting
-- **Clarify all before implementing any** — partial understanding leads to wrong implementations
 - **Technical pushback is professional** — disagree with evidence when suggestions are wrong for this codebase
 - **YAGNI discipline** — grep for actual usage before implementing "proper" features a reviewer suggests
 
@@ -26,7 +24,6 @@ Process, evaluate, and implement code review feedback with technical rigor.
 
 > - NO performative agreement — no "great point!", "you're absolutely right!", no gratitude expressions in PR comments
 > - NO implementation before ALL unclear items are clarified
-> - NO suggested addition without checking if it's actually used/needed in the codebase
 > - ALWAYS verify a suggestion against the actual code before implementing it
 
 ## Rationalization Guard
@@ -94,7 +91,6 @@ Categorize each comment:
 - **Question** — reviewer asking for clarification (respond, don't change code)
 - **Suggestion** — optional improvement (evaluate before implementing)
 - **Nitpick** — minor style/preference (evaluate against project conventions)
-- **Approval note** — positive feedback (no action needed)
 
 ### 2. Classify and Prioritize
 
@@ -109,8 +105,6 @@ Sort feedback items by implementation order:
 | **5 — Defer** | Out-of-scope improvements, future enhancements | Acknowledge, don't implement |
 
 ### 3. Clarify Before Implementing
-
-**CRITICAL — DO NOT SKIP this step.**
 
 Before implementing ANY changes, identify ALL unclear items:
 
@@ -163,7 +157,6 @@ For each change:
 **Thread reply format** (concise, action-focused):
 - What was changed and why (1-2 sentences max)
 - If pushing back: technical reasoning with file/line references
-- No performative language — no "thanks for catching this", no "great suggestion"
 
 ### 6. Reply to Review Threads
 
@@ -183,7 +176,7 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 - For pushback: "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit"
 - For deferred items: "Tracked as follow-up — this is out of scope for the current PR but worth addressing"
 
-**Always present all draft replies to the user before posting.** Never post to GitHub without explicit approval.
+Present all draft replies to the user for approval before posting.
 
 ### 7. Commit, Push, and Verify
 
@@ -202,25 +195,15 @@ Report to the user: changes made, replies posted, remaining items (if any), and 
 ## Output Principles
 
 - **Action-first communication** — lead with what was done, not what was discussed
-- **Evidence-based pushback** — every disagreement includes file paths, grep results, or test output
 - **Batch presentation** — show all planned changes and draft replies together for single approval
-- **No performative language** — in PR comments, communicate through actions and technical reasoning only
 
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
-| No PR found for current branch | Report; suggest creating PR with `/pr` first |
-| No review comments found | Report "no pending review comments"; suggest requesting review |
-| `gh` not authenticated | Provide `gh auth login` instructions and stop |
-| PR is closed or merged | Report state and stop |
 | Reviewer comment references deleted code | Note the staleness, ask user how to proceed |
 | Conflicting reviewer feedback | Surface the contradiction, ask user to decide |
 | Too many comments (>20) | Prioritize by blocking/required, batch quick wins, defer complex items |
-| Current branch doesn't match PR head branch (clean tree) | Report mismatch, offer to `gh pr checkout` the PR branch |
-| Current branch doesn't match PR head branch (dirty tree) | Report mismatch, stop — ask user to stash or commit first |
-
-Never silently skip feedback items or post replies without user approval.
 
 ## Related Skills
 

@@ -18,11 +18,8 @@ Decompose an approved implementation plan into Jira tickets. Reads phases from `
 
 ## Ticket Philosophy
 
-- **Context from plan** — extract ticket content from `.planning/STATE.md` phases, not from conversation or git history
-- **User confirmation** — always present ticket details for review before creating; never file a ticket without explicit approval
 - **Template-driven content** — use structured templates for consistent, actionable tickets; every field should be filled or explicitly marked as unknown
 - **Graceful degradation** — if acli is unavailable, generate copy-ready content for manual entry rather than failing
-- **Duplicate awareness** — search for existing tickets before creating new ones; avoid cluttering the backlog
 
 ## Iron Laws
 
@@ -31,7 +28,6 @@ Decompose an approved implementation plan into Jira tickets. Reads phases from `
 > - NEVER include secrets, credentials, API keys, or connection strings in ticket content
 > - NEVER apply bulk `update`, `edit`, or `transition` operations without first listing all affected ticket IDs and getting explicit user confirmation
 > - ALWAYS search for duplicates before creating a new ticket
-> - ALWAYS use Markdown formatting in ticket descriptions (`##`/`###` headings, `1.` numbered lists, `-` bullets, fenced code blocks)
 
 ## Input Handling
 
@@ -63,14 +59,6 @@ Parse `$ARGUMENTS` for an optional project key override (e.g., `PROJ`). Default 
   - **Dependencies** → blocking relationships between tickets
   - **Files to create/modify** + **Verification** → technical details
 
-#### Modularity Assessment
-
-After extracting phases, classify each phase:
-- **Independent** — `Dependencies` is `None`; can be worked in parallel with other independent phases
-- **Dependent** — `Dependencies` lists one or more other phases; must be sequenced after them
-
-Record the classification for each phase. This drives the `Depends On` column and execution wave grouping in Step 2.
-
 **Stop conditions:**
 - Plan has no phases → ask user to run `/plan` to decompose the goal into phases
 
@@ -89,7 +77,7 @@ For each plan phase, draft a ticket:
   - 5 pts — cross-cutting concern or significant unknowns
   - 8 pts — consider splitting the phase
 
-Present the full ticket set to the user as a table before creating anything. Use the modularity classification from Step 1 to annotate independent tickets:
+Present the full ticket set to the user as a table before creating anything, annotating independent tickets (no dependencies) with `— (parallel)`:
 
 | # | Summary | Type | Story Points | Depends On |
 |---|---------|------|-------------|------------|
@@ -117,14 +105,13 @@ For each ticket in dependency order:
      - Example: `project = UN AND summary ~ "login timeout" ORDER BY created DESC`
    - If similar tickets found → present them to the user and ask whether to proceed with creation or link to an existing ticket
    - If no matches → proceed
-2. **Scan content for secrets/PII** — strip or redact any secrets, credentials, API keys, tokens, connection strings, or PII found; ticket content is visible to all project members
-3. **Create via acli** (or generate copy-ready content if unavailable):
+2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
    - Priority is embedded in the description via the template's "Suggested Priority" field; default to Medium if no signal
    - Descriptions must use Markdown format (`##`, `###`, `1.`, `-`, fenced code blocks)
-4. **Verify** — fetch the created ticket back using `acli jira workitem view <ISSUE_KEY>` to confirm it exists; if fetch fails, warn the user and suggest checking Jira manually
-5. **Record** the ticket ID in the manifest — write it to `.planning/STATE.md` under `## Tickets` immediately after each successful creation (not at the end of the batch), so partial progress is preserved if the batch fails mid-way
+3. **Verify** — fetch the created ticket back using `acli jira workitem view <ISSUE_KEY>` to confirm it exists; if fetch fails, warn the user and suggest checking Jira manually
+4. **Record** the ticket ID in the manifest — write it to `.planning/STATE.md` under `## Tickets` immediately after each successful creation (not at the end of the batch), so partial progress is preserved if the batch fails mid-way
 
 **Partial batch failure:** If creation fails after some tickets have already been created, immediately surface a status table: which tickets were created (with IDs), which failed, and which are pending. Record created IDs in `.planning/STATE.md` before attempting fallback for remaining tickets.
 
@@ -143,27 +130,13 @@ Store the manifest in `.planning/STATE.md` under a `## Tickets` section for use 
 
 ---
 
-## Output Principles
-
-- **Ticket set preview first** — present the complete batch ticket table for user approval before creation; no surprises
-- **Actionable results** — include ticket IDs, URLs, suggested branch names, and workflow next steps after creation
-- **Template compliance** — all tickets follow structured templates with required fields filled; incomplete sections noted explicitly
-- **Workflow continuity** — connect tickets to downstream workflows: create branch → implement → commit → `/pr`
-
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
 | No plan found | Redirect to `/plan`: "Run `/plan` first to create an implementation plan" |
-| acli not available | Fall back to content generation |
-| Authentication error | "Run `acli jira auth login` to authenticate" |
-| Unknown project | Prompt for project key |
-| API error | Provide content for manual entry |
 | Duplicate ticket found | Present existing tickets, ask user to confirm or cancel |
-| Verification fetch fails | Warn user, provide ticket ID and suggest checking Jira |
 | Forbidden operation requested | Refuse: "Deletion and admin commands are outside this skill's scope — manage these directly in Jira" |
-
-Never create a ticket without user confirmation or skip duplicate checking — surface existing tickets before filing new ones.
 
 ## Related Skills
 

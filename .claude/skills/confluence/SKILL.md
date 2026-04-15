@@ -15,10 +15,8 @@ View Confluence pages, browse spaces and blog posts, and generate ready-to-paste
 
 ## Confluence Philosophy
 
-- **Read-first orientation** — viewing and searching existing content is the primary use case; page creation and update are assisted via Markdown generation
 - **Graceful degradation** — when acli lacks a command (page create/update), generate copy-ready Markdown content for manual entry rather than failing
 - **Instance-scoped** — all operations target `qredab.atlassian.net`; never assume a different instance
-- **User-owned publishing** — never publish autonomously; the user always controls what lands in Confluence
 
 ## Guardrails
 
@@ -28,14 +26,10 @@ This skill is scoped to **read and generate** operations only. The following rul
 
 **Forbidden actions**: `space archive`, `space restore`, `space create`, `space update` — these are administrative operations. If requested, refuse and direct the user to manage these directly in Confluence.
 
-**Sensitive data exclusion**: Before generating any page content, scan for secrets, credentials, API keys, tokens, connection strings, and PII. Strip or redact any sensitive values — Confluence content is visible to all space members.
-
 ## Iron Laws
 
 > - NEVER generate content containing secrets, credentials, API keys, or connection strings
 > - NEVER execute administrative space commands (`archive`, `restore`, `create`, `update`)
-> - ALWAYS present generated content for user review before they paste it manually
-> - ALWAYS include the direct Confluence URL after any read operation
 
 ## Input Handling
 
@@ -62,10 +56,6 @@ Determine operation intent from `$ARGUMENTS`:
   - acli available → proceed with native commands for read operations
   - acli unavailable → skip to content generation fallback and note the issue
 - If no arguments provided → ask the user what they'd like to do (view a page, browse spaces, create/update content)
-
-**Stop conditions:**
-- No arguments and context is unclear → ask user to specify: view, update, search, blogs, spaces, or page create
-- Administrative space operation requested → refuse: "Administrative space commands are outside this skill's scope — manage these directly in Confluence"
 
 ### 2. View Page
 
@@ -129,25 +119,12 @@ Since `acli confluence page create` does not exist, generate copy-ready content 
   3. **Instruction**: "Paste this content into the Confluence editor — it accepts Markdown directly"
 - If target space is unknown, first run Step 6 (List Spaces) and ask user to confirm
 
-## Output Principles
-
-- **Content preview before action** — always present generated Markdown for review before the user pastes it; include a clear "Copy and paste into Confluence" instruction
-- **Actionable results** — every operation ends with a direct Confluence URL (page, edit, search, or space)
-- **Capability transparency** — clearly state when an operation requires manual steps due to acli limitations; explain the exact manual steps
-- **Format awareness** — page content is generated in Markdown; Confluence's editor converts it on paste
-
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
-| acli not available | Fall back to content generation for writes; for reads, suggest running `acli confluence auth login` |
-| Authentication error | "Run `acli confluence auth login` to authenticate, then retry" |
 | Page ID not found | "Page not found — verify the page ID from the Confluence URL (it's the number after `/pages/`)" |
-| Space ID unknown | List available spaces via Step 6 and ask user to pick one |
 | Space ID not found | "Space not found — run `/confluence spaces` to list available spaces" |
-| No conversation context for page creation | Ask user to describe the page topic, purpose, and key sections |
-| API error (non-auth) | Present content generation fallback and include Confluence web URL for manual action |
-| Administrative operation requested | Refuse: "Administrative space commands are outside this skill's scope — manage these directly in Confluence" |
 
 ## Related Skills
 

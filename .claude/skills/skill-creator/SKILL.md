@@ -14,10 +14,7 @@ Create new Claude Code skills following established patterns and best practices.
 
 ## Skill Design Philosophy
 
-- **Context efficiency** — minimize token usage; front-load critical instructions in SKILL.md and defer supplementary detail to `@references/` files
-- **Progressive disclosure** — start with essentials (frontmatter, opening paragraph, process); let reference files carry depth so skills stay scannable
 - **Degrees of freedom** — match constraint level to task variability; creative tasks need principles, mechanical tasks need strict templates (see `@references/best-practices.md`)
-- **Fail-safe design** — handle missing inputs with clear guidance and stop conditions; a skill that silently proceeds with wrong assumptions is worse than one that asks
 - **Consistent naming** — use gerund form (verb + -ing) for skill names when possible; avoid vague, generic, or reserved words (see `@references/best-practices.md` for conventions)
 
 ## Input Handling
@@ -57,22 +54,15 @@ Ask clarifying questions:
 - Should Claude auto-invoke it, or manual-only (`disable-model-invocation`)?
 - Should this be a personal skill (`~/.claude/skills/`, cross-project) or project skill (`.claude/skills/`, team-shared)?
 
-### 3. Plan Structure
+### 3. Plan and Confirm Structure
 
-Determine:
-- Skill name (kebab-case, descriptive, max 64 characters)
-- Directory structure needs (references, scripts, examples)
-- Whether templates or examples better serve the use case (see `@references/best-practices.md`, Output Pattern Selection)
-- Constraint level: high freedom (creative), medium (structured), or low (mechanical)
+Determine and present to the user **before running the init script**:
 
-### 3.5. Present Structure for Approval
-
-**Before running the init script**, present the planned skill structure to the user and wait for explicit approval:
-
-- **Skill name**: the kebab-case directory and command name
+- **Skill name**: kebab-case, descriptive, max 64 characters
 - **Directory layout**: which subdirectories will be created (e.g., `references/`, `scripts/`)
 - **Frontmatter fields**: proposed `allowed-tools`, `disable-model-invocation`, `argument-hint`
-- **Sections**: which SKILL.md sections are planned
+- **Constraint level**: high freedom (creative), medium (structured), or low (mechanical)
+- Whether templates or examples better serve the use case (see `@references/best-practices.md`, Output Pattern Selection)
 
 **Do not proceed to Step 4 until the user confirms the structure.**
 
@@ -88,19 +78,7 @@ This creates the skill directory and a SKILL.md from `@template.md` with the ski
 
 ### 5. Author the SKILL.md
 
-Edit the generated SKILL.md following the optimized skill pattern:
-
-1. **Frontmatter**: Set name, description with trigger phrases, argument-hint, allowed-tools (see Frontmatter Reference below)
-
-> **Context budget**: Descriptions are always in context for auto-invocable skills. Keep under 500 chars. Set `disable-model-invocation: true` for action skills to exclude from auto-invoke context.
-
-2. **Opening paragraph**: One-line purpose statement (no H1 heading)
-3. **Philosophy**: 3–5 bold-dash principles that guide the skill's decisions
-4. **Input Handling**: Table mapping input types to intent and approach (includes `(none)` case)
-5. **Process**: Numbered steps with Pre-flight (including stop conditions), bullet-list sub-steps, and branching for different input types
-6. **Output Principles**: 3–4 bold-dash bullets describing what good output looks like
-7. **Error Handling**: 6–8 scenarios in a table + closing "Never..." principle
-8. **Related Skills**: 4–5 entries with "When to Use Instead" descriptions
+Author each section per the Skill Anatomy table below. Start with Frontmatter — set name, description with trigger phrases, argument-hint, and allowed-tools (see Frontmatter Reference below).
 
 Cross-reference `@references/best-practices.md` for anti-patterns and quality checklist.
 
@@ -154,30 +132,19 @@ Test the skill with real invocations and refine based on:
 | `paths` | string/list | Glob patterns limiting when skill auto-activates based on files being worked on (e.g., `"**/*.ts"`) | No | Advanced |
 | `shell` | string | Shell for `` !`command` `` blocks: `bash` (default) or `powershell` | No | Advanced |
 
-**String substitution variables** available in skill content:
-- `$ARGUMENTS` — all arguments passed when invoking the skill
-- `$ARGUMENTS[N]` or `$N` — specific argument by 0-based index
-- `${CLAUDE_SESSION_ID}` — unique session identifier; useful for per-session logging or temp file isolation
-- `${CLAUDE_SKILL_DIR}` — absolute path to the skill's directory; use in `!<command>` or Bash steps to reference bundled scripts/files portably
-- `!<command>` — dynamic context; shell command output replaces the placeholder before skill content is sent to Claude
+See `@references/best-practices.md` for string substitution variables and dynamic context injection.
 
 ## Output Principles
 
 - **Scaffold, don't over-specify** — generate the structural skeleton with clear placeholders; let the skill author fill in domain-specific content rather than guessing it
-- **Optimized pattern by default** — every generated skill should include the standard sections (Philosophy, Input Handling, Process with Pre-flight, Output Principles, Error Handling, Related Skills)
 - **Inline references** — wire up `@references/` links within process steps, not as a standalone References section; this teaches skills to load context only when needed
-- **Validate before done** — always run the validation script and quality checklist before presenting the skill as complete
 
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
-| No skill name provided | Ask for a skill name with examples of good kebab-case names |
-| Invalid skill name format | Explain kebab-case requirement: lowercase letters, numbers, hyphens (max 64 chars) |
 | Skill already exists | Warn user, ask whether to update existing skill or choose a different name |
 | Skill scope overlaps existing skill | Show the overlapping skill, suggest extending it instead of creating a duplicate |
-| Missing required section in authored skill | Guide user to complete the section; reference Skill Anatomy table |
-| Init script fails | Check script permissions (`chmod +x`), verify template.md exists at expected path |
 | Validation script reports warnings | Distinguish errors from warnings; fix errors, evaluate warnings case-by-case |
 | Generated skill too long (>500 lines) | Move supplementary content to `references/` files; keep SKILL.md under 500 lines per official guidance |
 

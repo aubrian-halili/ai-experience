@@ -15,9 +15,6 @@ Layered repository exploration and code searching across the Qred GitHub organiz
 
 - **Orient before reading** — understand a repo's purpose and structure before opening any code file
 - **Search, don't scan** — use keyword search to find relevant code instead of reading files sequentially
-- **Read the minimum** — only open files directly relevant to the question at hand
-- **Documentation first** — always prefer README and docs over source code for understanding intent
-- **Bound every operation** — limit search results, truncate large files, and cap directory depth
 
 ## Guardrails
 
@@ -52,11 +49,7 @@ Parse `$ARGUMENTS` to determine operation type — direct operations execute imm
 
 Parse `$ARGUMENTS` and validate GitHub CLI access:
 
-1. Run `gh auth status` and confirm authentication is active
-2. **Stop conditions:**
-   - `gh` not installed → "Install with `brew install gh`, then `gh auth login`."
-   - Not authenticated → "Run `gh auth login` to authenticate."
-   - No Qred org access → "Ensure your GitHub account has access to the Qred organization."
+1. Run `gh auth status`; on failure, see Error Handling (`@references/examples-and-errors.md`).
 
 ### 2. Route Request
 
@@ -90,7 +83,7 @@ For all direct operations, use `--json` to get structured data:
 1. Run `gh api repos/Qred/<repo>/contents/<path>` to get directory listing
 2. Present as an indented tree view (see `@references/formatting.md` for tree format)
 
-**Guardrails:** Max 3 directory levels deep. Max 30 entries per directory — if exceeded, show first 30 and note the remainder. Only follow paths relevant to the user's question.
+**Guardrails:** Max 3 directory levels deep. Max 30 entries per directory — if exceeded, show first 30 and note the remainder.
 
 #### Layer 3: Search
 
@@ -131,7 +124,7 @@ For all direct operations, use `--json` to get structured data:
 2. Decode the content: pipe through `jq -r '.content' | base64 -d`
 3. Present file contents in a syntax-highlighted code block
 
-**Guardrails:** One file at a time. **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more. Skip binary/generated/lock files (e.g., `package-lock.json`, `yarn.lock`, `.min.js`). Summarize the file's purpose before presenting raw content.
+**Guardrails:** **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more. Skip binary/generated/lock files (e.g., `package-lock.json`, `yarn.lock`, `.min.js`).
 
 ### 5. Verify
 
@@ -139,18 +132,11 @@ For all direct operations, use `--json` to get structured data:
 - Note any repos, paths, or search terms that returned no results
 - Suggest the natural next action using the follow-up table in `@references/formatting.md`
 
-## Output Principles
-
-- **Context first** — State what was searched/listed and where
-- **Structured presentation** — Use tables for listings, code blocks for file contents, tree format for directories (see `@references/formatting.md`)
-- **Bounded output** — Truncate large results with clear indicators of what was omitted
-- **Follow-up suggestions** — After each layer, suggest the natural next action (see `@references/formatting.md`)
-
 ## Error Handling
 
 See `@references/examples-and-errors.md` for error scenarios and responses.
 
-Never present results without context—always state what was searched, where, and what was omitted.
+Never present results without context — always state what was searched, where, and what was omitted.
 
 ## Related Skills
 

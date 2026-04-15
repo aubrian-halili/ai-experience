@@ -19,11 +19,11 @@ Audit the project's full documentation surface for factual drift, broken referen
 
 ## Sync Philosophy
 
-- **Accuracy over coverage** — fix factual errors before adding new content; a wrong count is worse than a missing paragraph
+- **Accuracy over coverage** — fix factual errors before adding new content
 - **Derivable means deletable** — if a future session can figure it out by reading the code or running `ls`, it doesn't belong in CLAUDE.md; document the "why", not the "what"
 - **Present findings before editing** — always show what you found and what you propose to change; never silently modify files
-- **Targeted edits, not rewrites** — use Edit on specific lines; rewriting sections destroys intentional phrasing
-- **Conservative by default** — when uncertain whether a finding warrants a change, skip it; the cost of clutter exceeds the cost of a missing note
+- **Targeted edits, not rewrites** — rewriting sections destroys intentional phrasing
+- **Conservative by default** — when uncertain whether a finding warrants a change, skip it
 
 ## Input Handling
 
@@ -51,11 +51,6 @@ Parse `$ARGUMENTS` for flags:
 - Build a **documentation inventory**: for each doc file found, note its tier (always-on / on-demand) and whether CLAUDE.md references it
 - Confirm git repo via `git log`; if `--section` is provided, match against actual `## ` headings
 
-**Stop conditions:**
-- `CLAUDE.md` does not exist → report and suggest creating one with project overview
-- Not a git repo → skip drift detection, proceed with structural audit only and note the limitation
-- `--section` names a heading not found in CLAUDE.md → list available headings and ask user to choose
-
 ### 2. Project Discovery
 
 Detect project type and documentation conventions already in use:
@@ -78,8 +73,6 @@ Parse all documentation files from the inventory and extract verifiable claims. 
 | **Command references** | Backtick commands (`` `npm test` ``, `` `make build` ``), `/slash-commands` | Verify scripts in package.json/Makefile, or skill directories |
 | **Cross-doc references** | "see `docs/foo.md`", "defined in `.claude/rules/bar.md`" | Verify target file exists |
 | **Convention file references** | Paths to config files (`.eslintrc`, `tsconfig.json`, `.prettierrc`) | Verify each exists |
-
-Only flag claims where verification is definitive — skip claims that cannot be tested without running code.
 
 ### 4. Drift Detection
 
@@ -145,21 +138,17 @@ If `--dry-run`, stop here. Otherwise ask user to confirm before proceeding to St
 
 For each confirmed finding, use the appropriate tool:
 
-- **Factual corrections** (`Edit`): update counts, paths, or references inline — match existing format and indentation
-- **Drift updates** (`Edit`): append to relevant section using same style as existing entries
+- **Factual corrections** (`Edit`): update counts, paths, or references inline
+- **Drift updates** (`Edit`): append to relevant section
 - **Documentation reorganization** (`Write`/`Edit`): present specific file moves/creates; get confirmation per file; execute with `Write` for new files and `Edit` for pointer additions
 - **Never rewrite prose** — only correct factual claims; intentional phrasing is off-limits
 - **5-line threshold** — if a finding requires more than 5 lines of change, flag for manual review instead of applying automatically
 
-After edits, re-read modified files to confirm changes look correct. Also re-check CLAUDE.md line count: if edits pushed it over 200 lines, flag the new length and identify extraction candidates (sections that could move to `.claude/rules/` or `docs/`).
+After edits, re-check CLAUDE.md line count: if edits pushed it over 200 lines, flag the new length and identify extraction candidates (sections that could move to `.claude/rules/` or `docs/`).
 
 ## Output Principles
 
-- **Report before edit** — the full findings report always precedes any file modification
-- **Categorize by confidence** — Factual Errors (certain) vs. Drift (likely) vs. Suggestions (optional)
 - **Cite evidence** — every finding references the file/line and the filesystem evidence that contradicts it
-- **Project-agnostic evidence** — never assume a specific project structure; cite the actual path or git output
-- **Minimal diff** — if a finding requires more than 5 lines of change, flag it for manual review
 
 ## Error Handling
 
@@ -177,8 +166,6 @@ After edits, re-read modified files to confirm changes look correct. Also re-che
 | `--section` argument not found in CLAUDE.md | List available section headings; ask user to choose |
 | Reorganization involves >10 file moves | Flag as large change; recommend manual review rather than auto-applying |
 | User declines all proposed changes | Report "No changes made" and exit cleanly |
-
-Never silently skip a check — surface what was checked, what was skipped, and why.
 
 ## Related Skills
 

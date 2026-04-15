@@ -17,17 +17,13 @@ Execute structured feature implementation from an approved plan through incremen
 
 ## Development Philosophy
 
-- **Plan-first** — exploration, clarification, and architecture design happen in `/plan`; this skill implements
 - **Incremental delivery** — ship working slices, not layers; each milestone produces demonstrable value
-- **User approval gates** — present the implementation plan for review before writing any code
-- **Test-driven confidence** — write tests first to encode expectations, then implement to satisfy them
 - **Scope discipline** — build exactly what's needed; track out-of-scope items explicitly and defer them
 
 ## Iron Laws
 
 > - NO implementation before Definition of Done is confirmed from the plan
 > - NO milestone marked complete without verification evidence
-> - Tests-first or delete the code and start over
 
 ## Rationalization Guard
 
@@ -37,22 +33,6 @@ Execute structured feature implementation from an approved plan through incremen
 | "This milestone is too small to verify" | Small milestones are exactly where verification is cheapest |
 | "The plan is in my head" | Unwritten plans drift; observable truths prevent scope creep |
 | "I'll track tasks manually" | Manual tracking drops items; use TaskCreate for accountability |
-
-## Input Handling
-
-| Input | Intent | Approach |
-|-------|--------|----------|
-| Jira ticket ID (e.g., `UN-1234`) | Implement a specific ticket | Fetch ticket, locate plan, Steps 1-6 scoped to ticket |
-| Anything else (feature name, story, path, none) | Missing ticket | **Stop** — redirect to `/plan` first, then `/jira` to create tickets |
-
-## Feature Types
-
-| Type | Indicators | Strategy |
-|------|-----------|----------|
-| **Greenfield** | "new feature", "add capability" | Full implementation from scratch |
-| **Enhancement** | "improve", "extend", "add to existing" | Incremental change to existing code |
-| **Integration** | "connect", "integrate with" | Interface design + compatibility verification |
-| **Migration** | "replace", "upgrade" | Parallel implementation + switchover plan |
 
 ## Process
 
@@ -79,29 +59,15 @@ If on `main` or `master`:
 
 **Gate 3 — Plan required:**
 - Check if `.planning/STATE.md` exists.
-  - If found → load it. Cross-reference the plan's Definition of Done and phases with the ticket's acceptance criteria. Note any mismatches and surface them to the user.
+  - If found → load it. Cross-reference the plan's Definition of Done and phases with the ticket's acceptance criteria. Note any mismatches and surface them to the user. If resuming mid-implementation, identify the current phase and pick up from there.
   - If not found → ask the user: "Is there an existing plan file for this work? If so, provide the path."
     - If user provides a path → load that file.
     - If no plan exists → Stop. Tell the user: "An approved plan is required before implementation. Run `/plan` first, then `/jira` to create tickets."
 
 **Branch creation:**
-- Create a feature branch from the latest default branch: `<TICKET-ID>-<short-description>` (following `git-conventions.md`)
-- Proceed to Step 2.
+- If not already on a feature branch (Gate 2 confirmed), create one now: `<TICKET-ID>-<short-description>` (per `git-conventions.md`).
 
-**Stop conditions:**
-- No Jira ticket ID → redirect to `/plan` then `/jira`
-- On main/master → confirm branch creation before proceeding
-- No plan found → redirect to `/plan`
-- Feature already exists → report existing implementation and ask whether to enhance or replace
-
-### 2. Load Plan
-
-- Read `.planning/STATE.md` to understand current progress and any completed phases
-- Read the plan's Definition of Done, chosen architecture, and phase breakdown
-- If resuming mid-implementation, identify the current phase and pick up from there
-- Present a brief summary: what's being implemented, chosen architecture approach, phases remaining
-
-### 3. Design & Present
+### 2. Design & Present
 
 - Using the plan's architecture choice and observable truths as the foundation:
   - Break down each plan phase into incremental milestones with: goal, tasks, dependencies, and verification criteria
@@ -111,7 +77,7 @@ If on `main` or `master`:
 - **Present the complete implementation plan to the user before proceeding**
 - If changes requested, revise and present again
 
-### 4. Implement
+### 3. Implement
 
 **Only proceed after user approval of the implementation plan.**
 
@@ -122,45 +88,40 @@ After approval, convert the plan into tracked tasks:
 
 For each milestone:
 1. Mark the milestone task as `in_progress` via `TaskUpdate`
-2. Write test encoding the acceptance criterion
-3. Run the test — confirm it FAILS (if it passes, investigate: test may be wrong or feature may already exist)
-4. Implement minimum viable code to pass the test
-5. Run the test — confirm it PASSES (and no other tests broke)
-6. Refactor if needed (tests must remain green)
-7. Mark the milestone task as `completed` via `TaskUpdate`
-8. Stage and commit: stage specific files by name (`git add <file>`), never `git add .`; commit using the `<TICKET-ID> <type>(<scope>): <subject>` format from `git-conventions.md`
+2. Follow the TDD cycle from `testing.md` (RED → GREEN → REFACTOR) — write the test first, confirm it fails, then implement the minimum code to pass it
+3. Mark the milestone task as `completed` via `TaskUpdate`
+4. Stage and commit per `git-conventions.md`
 
-### 5. Verify → Review → Commit → PR
+### 4. Verify → Review → Commit → PR
 
 After all milestones are implemented, run the full delivery chain:
 
-#### 5a. Verify
+#### 4a. Verify
 
 Use the Skill tool to load: `verify` — run full three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available).
 
 **Gate 4 — Verification must pass:**
 If `/verify` reports any FAIL, PARTIAL, or CRITICAL anti-pattern findings:
-- Stop. Do not proceed to Step 5b (`/review`).
-- Debug following `.claude/rules/debug.md` (reproduce → isolate → hypothesize → fix → verify).
-- Re-run `/verify` after each fix.
-- Only proceed to Step 5b when `/verify` reports all observable truths as PASS with evidence.
+- Stop. Do not proceed to Step 4b (`/review`).
+- Debug per `debug.md`, then re-run `/verify`.
+- Only proceed to Step 4b when `/verify` reports all observable truths as PASS with evidence.
 
-#### 5b. Review
+#### 4b. Review
 
 Use the Skill tool to load: `review` — perform a quality review of the changes on this branch:
 - Code smells, SOLID violations, security issues
 - Adherence to existing codebase patterns and conventions
 - Address any findings before proceeding to commit
 
-#### 5c. Commit
+#### 4c. Commit
 
-Stage and commit any fixes made during the review step: stage specific files by name (`git add <file>`), never `git add .`; commit using the `<TICKET-ID> <type>(<scope>): <subject>` format from `git-conventions.md`.
+Stage and commit any fixes from the review step per `git-conventions.md`.
 
-#### 5d. PR
+#### 4d. PR
 
 Use the Skill tool to load: `pr` — create a focused draft PR for this ticket's changes.
 
-### 6. Summary
+### 5. Summary
 
 After the full delivery chain completes (verify → review → commit → PR), produce a concise summary:
 
@@ -174,28 +135,16 @@ After the full delivery chain completes (verify → review → commit → PR), p
 Update `.planning/STATE.md` marking this ticket as complete with a timestamp and PR link.
 Mark all tracked tasks as `completed` via `TaskUpdate`.
 
-## Output Principles
-
-- **Plan before code** — always present the milestone breakdown for user review before writing any implementation
-- **Milestone-driven progress** — each milestone produces a working, verifiable increment; never deliver untestable intermediate states
-- **Explicit scope boundaries** — clearly state what is in-scope, out-of-scope, and deferred; surface any scope creep immediately
-- **Test-first verification** — every acceptance criterion maps to a test; untested criteria are not verified
-
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
-| No Jira ticket ID | Stop — redirect to `/plan` first, then `/jira` to create tickets |
-| No plan found | Stop — redirect to `/plan` first, then `/jira` to create tickets |
-| Unclear requirements | Stop — redirect to `/plan`; do not clarify requirements here |
 | Large scope | Recommend breaking into multiple features, each with their own plan |
 | Missing dependencies | Identify blockers, suggest sequencing |
 | Conflicting requirements | Surface trade-offs, request decision |
 | Partial implementation blocked | Complete what is possible, mark blocked items with `[Blocked]`, report status |
 | Test failures during implementation | Stop, report failing tests, do not proceed to next milestone |
 | Existing feature overlap | Report the overlap, ask whether to extend existing or create new |
-
-Never silently skip milestones or acceptance criteria — surface gaps and blockers explicitly.
 
 ## Related Skills
 
