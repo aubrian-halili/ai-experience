@@ -26,11 +26,6 @@ This skill is scoped to **read and generate** operations only. The following rul
 
 **Forbidden actions**: `space archive`, `space restore`, `space create`, `space update` — these are administrative operations. If requested, refuse and direct the user to manage these directly in Confluence.
 
-## Iron Laws
-
-> - NEVER generate content containing secrets, credentials, API keys, or connection strings
-> - NEVER execute administrative space commands (`archive`, `restore`, `create`, `update`)
-
 ## Input Handling
 
 Determine operation intent from `$ARGUMENTS`:
@@ -55,7 +50,6 @@ Determine operation intent from `$ARGUMENTS`:
 - Check acli availability: run `acli --version`
   - acli available → proceed with native commands for read operations
   - acli unavailable → skip to content generation fallback and note the issue
-- If no arguments provided → ask the user what they'd like to do (view a page, browse spaces, create/update content)
 
 ### 2. View Page
 
@@ -72,7 +66,6 @@ Fetch and display a Confluence page by ID or URL:
 Since `acli confluence page update` does not exist, generate updated content for manual paste:
 
 - First, fetch current page content: `acli confluence page view --id <PAGE_ID> --body-format storage`
-- Understand what changes the user wants (from conversation context or `$ARGUMENTS`)
 - Apply changes to the content using the Page Update template from `@references/templates.md`
 - Present:
   1. **What changed** — a brief diff summary (sections added/removed/modified)
@@ -111,7 +104,6 @@ List all accessible Confluence spaces:
 
 Since `acli confluence page create` does not exist, generate copy-ready content for manual creation:
 
-- Gather content from conversation context (topic, purpose, audience, key sections)
 - Apply the Page Create template from `@references/templates.md`
 - Present:
   1. **Full page content** in Markdown format (ready to paste into Confluence editor)
@@ -119,18 +111,8 @@ Since `acli confluence page create` does not exist, generate copy-ready content 
   3. **Instruction**: "Paste this content into the Confluence editor — it accepts Markdown directly"
 - If target space is unknown, first run Step 6 (List Spaces) and ask user to confirm
 
-## Error Handling
-
-| Scenario | Response |
-|----------|----------|
-| Page ID not found | "Page not found — verify the page ID from the Confluence URL (it's the number after `/pages/`)" |
-| Space ID not found | "Space not found — run `/confluence spaces` to list available spaces" |
-
 ## Related Skills
 
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/jira` | Create or manage Jira tickets (not Confluence pages) |
-| `/plan` | Decompose work into implementation phases (may reference Confluence for design docs) |
-| `/feature` | Implement features (may reference Confluence specs) |
-| `/pr` | Create pull requests (may link to Confluence documentation) |

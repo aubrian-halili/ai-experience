@@ -21,9 +21,7 @@ Audit the project's full documentation surface for factual drift, broken referen
 
 - **Accuracy over coverage** — fix factual errors before adding new content
 - **Derivable means deletable** — if a future session can figure it out by reading the code or running `ls`, it doesn't belong in CLAUDE.md; document the "why", not the "what"
-- **Present findings before editing** — always show what you found and what you propose to change; never silently modify files
-- **Targeted edits, not rewrites** — rewriting sections destroys intentional phrasing
-- **Conservative by default** — when uncertain whether a finding warrants a change, skip it
+- **Never rewrite prose** — only correct factual claims; intentional phrasing is off-limits
 
 ## Input Handling
 
@@ -136,19 +134,12 @@ If `--dry-run`, stop here. Otherwise ask user to confirm before proceeding to St
 
 ### 7. Apply Updates
 
-For each confirmed finding, use the appropriate tool:
+For each confirmed finding:
 
-- **Factual corrections** (`Edit`): update counts, paths, or references inline
-- **Drift updates** (`Edit`): append to relevant section
-- **Documentation reorganization** (`Write`/`Edit`): present specific file moves/creates; get confirmation per file; execute with `Write` for new files and `Edit` for pointer additions
-- **Never rewrite prose** — only correct factual claims; intentional phrasing is off-limits
+- **Documentation reorganization**: present specific file moves/creates; get confirmation per file
 - **5-line threshold** — if a finding requires more than 5 lines of change, flag for manual review instead of applying automatically
 
 After edits, re-check CLAUDE.md line count: if edits pushed it over 200 lines, flag the new length and identify extraction candidates (sections that could move to `.claude/rules/` or `docs/`).
-
-## Output Principles
-
-- **Cite evidence** — every finding references the file/line and the filesystem evidence that contradicts it
 
 ## Error Handling
 
@@ -158,14 +149,9 @@ After edits, re-check CLAUDE.md line count: if edits pushed it over 200 lines, f
 | No `docs/` or `.claude/rules/` | Note absence; suggest if project would benefit from them |
 | Not a git repo | Skip drift detection; proceed with structural audit only; note limitation |
 | Shallow clone (no history) | Skip drift detection; proceed with structural audit only |
-| CLAUDE.md has no verifiable claims | Report; suggest adding structural information if project would benefit |
 | CLAUDE.md has no `## ` section headings | Warn that audit is limited to count/reference checks; continue |
-| Project type unrecognizable | Proceed with generic path/count verification; note limitation |
 | CLAUDE.md very short (<10 lines) | Run possible checks; suggest expanding if it would help future agents |
 | Monorepo with multiple CLAUDE.md files | Audit root only unless user specifies; note other locations |
-| `--section` argument not found in CLAUDE.md | List available section headings; ask user to choose |
-| Reorganization involves >10 file moves | Flag as large change; recommend manual review rather than auto-applying |
-| User declines all proposed changes | Report "No changes made" and exit cleanly |
 
 ## Related Skills
 

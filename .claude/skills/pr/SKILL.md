@@ -12,13 +12,7 @@ disable-model-invocation: true
 **Current branch:** !`git branch --show-current`
 **Recent commits:** !`git log --oneline -5`
 
-Create pull requests with auto-generated titles and descriptions from commit history.
-
-> **Iron Laws — never violate these:**
-> 1. Never push or create a PR without explicit user approval
-> 2. Never force push to any branch
-> 3. Never create a PR from the default branch (`main`/`master`)
-> 4. Always use the selected template verbatim for the PR body — never improvise sections
+Create pull requests with auto-generated titles and descriptions from commit history. Always use the selected template verbatim for the PR body — never improvise sections.
 
 ## Input Handling
 
@@ -53,7 +47,6 @@ EXISTING_PR=$(gh pr list --head "$BRANCH" --json number,url --jq '.[0].url // em
 **Stop conditions:**
 - On `main`/`master` → Cannot create PR from default branch
 - No commits ahead → Commit changes first
-- Uncommitted changes → Commit or stash first
 - PR already exists → Show existing PR URL, status, and next steps (view: `gh pr view`, push more commits: `git push`, edit: `gh pr edit`)
 - No ticket ID in branch → Ask user for ticket ID
 
@@ -63,7 +56,7 @@ Use `$ARGUMENTS` if provided (handles `--ready`, custom title, or target branch)
 
 **Title generation** (priority order):
 1. User-provided title (auto-prefix ticket ID if missing)
-2. Single commit → use its message directly (convention-formatted per `git-conventions.md`)
+2. Single commit → use its message directly
 3. Multiple commits → summarize with `<TICKET-ID> <type>(<scope>): <summary>`
 4. Fallback: branch name converted `UN-1234-add-auth` → `UN-1234 feat: add auth`
 
@@ -76,13 +69,7 @@ Use `$ARGUMENTS` if provided (handles `--ready`, custom title, or target branch)
 | `--fe`         | @references/frontend-minor-template.md   |
 | `--fe --major` | @references/frontend-major-template.md   |
 
-**CRITICAL: The PR body MUST be constructed from the selected template file.** Read the template file and include **every section, checkbox, and line** — do not omit or summarize any part of the template. Then fill in only these dynamic sections from commit history:
-- **Summary** — bullet points derived from commit messages
-- **Jira** — ticket ID from branch name, linked to `https://qredab.atlassian.net/browse/<TICKET-ID>`
-- **Breaking Changes** — "None" or list from commits
-- **Test Plan** — verification steps relevant to the changes
-
-All other sections (Type of Change, Checklist, Checklist for reviewers, etc.) must be copied verbatim from the template with checkboxes intact. Check off only the items that apply.
+**CRITICAL: The PR body MUST be constructed from the selected template file.** Read the template file and include **every section, checkbox, and line** — do not omit or summarize any part of the template. Fill in dynamic sections from commit history; copy all other sections verbatim with checkboxes intact. Check off only the items that apply.
 
 **Template completeness check:** Before presenting, verify the generated body contains every `## ` heading from the selected template file. If any heading is missing, re-read the template and add the missing section before proceeding.
 
@@ -112,27 +99,4 @@ After successful PR creation:
 gh pr view --json number,url,title,state
 ```
 
-Show the user: PR number, URL, title, state, and next steps:
-- Request reviews
-- Monitor CI (draft PRs still trigger CI workflows)
-- Mark ready for review: `gh pr ready`
-- Convert back to draft: `gh pr ready --undo`
-
 **Jira integration (optional):** If a Jira ticket ID was detected and acli is available, offer to transition the ticket status (e.g., to "In Review") using `acli jira workitem transition --key <ISSUE_KEY> --status "In Review"`. Always confirm with the user before changing ticket status.
-
-## Error Handling
-
-| Scenario | Response |
-|----------|----------|
-| Push rejected | "Run `git pull --rebase origin <branch>`" or check for diverged history |
-| Branch protection rules | "Push to a feature branch instead, or request access" |
-
-## Related Skills
-
-| Skill | When to Use Instead |
-|-------|---------------------|
-| `/jira` | Create Jira ticket before starting work |
-| `/feature` | Implement features before creating PR |
-| `/review` | Review a PR (yours or others) |
-| `/receiving-review` | Address review feedback on your PR |
-| `/confluence` | Link to or create Confluence documentation pages for the PR |

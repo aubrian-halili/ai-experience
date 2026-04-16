@@ -17,13 +17,6 @@ ultrathink
 
 Perform a thorough multi-dimensional review of code, local changes, or pull requests.
 
-## Review Philosophy
-
-- **Precision over completeness** — zero false positives matters more than exhaustive coverage
-- **Confidence gate** — internally score each finding 0-100; only report findings with confidence >= 80
-- **Context-aware** — respect existing patterns and conventions; cross-reference CLAUDE.md before flagging style issues
-- **Constructive balance** — pair criticism with positive observations; reviews that only list problems discourage contributors
-
 ## Rationalization Guard
 
 | Excuse | Reality |
@@ -64,45 +57,11 @@ These categories produce noise, not value — exclude them regardless of confide
 
 ## Input Handling
 
-Classify `$ARGUMENTS` to determine the review workflow:
-
-| Input | Intent | Approach |
-|-------|--------|----------|
-| (none) | Review uncommitted changes | Diff-based local review |
-| File path (e.g., `src/auth/login.ts`) | Review specific file | Direct file analysis |
-| Component name (e.g., `AuthService`) | Review matching files | Locate component, review matches |
-| Branch name (e.g., `feature/auth`) | Review branch changes | Branch diff against base |
-| PR number/URL (e.g., `123`, `#123`, URL) | Review pull request | Full PR analysis via `gh` |
-| `--refactor` flag (e.g., `src/auth/ --refactor`) | Clean code & SOLID analysis | Refactoring-focused review with Edit suggestions |
-
-## Severity Levels
-
-| Level | Description | Action |
-|-------|-------------|--------|
-| **Critical** | Security vulnerability, data loss risk, crash | Must fix before merge |
-| **High** | Bug, significant perf issue, bad practice | Should fix before merge |
-| **Medium** | Code smell, maintainability concern | Fix soon, can merge |
-| **Note** | Style, minor improvement, question | Optional |
+Pass `--refactor` to perform a Clean Code & SOLID-focused review with Edit suggestions (e.g., `src/auth/ --refactor`). All other inputs (file paths, PR numbers, branch names, component names) are inferred from context.
 
 ## Specialized Review Passes
 
-When the review scope is large (>10 files) or the user requests a thorough review, run targeted passes using subagents. Use `code-quality-reviewer` agents (from `.claude/agents/code-quality-reviewer.md`) for quality dimensions and `security-scanner` (from `.claude/agents/security-scanner.md`) for the security pass:
-
-| Pass | Agent | Focus | Key Questions |
-|------|-------|-------|---------------|
-| **Type Safety** | `code-quality-reviewer` | Type correctness, generic usage, any casts | Are types precise? Any `any` escape hatches? |
-| **Type Design** | `code-quality-reviewer` | Type expressiveness, invariant encoding, encapsulation | Do types prevent illegal states? Are constraints encoded in the type system? |
-| **Error Handling** | `code-quality-reviewer` | Error paths, missing catches, error propagation | Are all failure modes handled? Errors informative? |
-| **Test Coverage** | `code-quality-reviewer` | Test quality, missing scenarios, assertion depth | Are edge cases tested? Are assertions meaningful? |
-| **Performance** | `code-quality-reviewer` | N+1 queries, unnecessary re-renders, memory leaks | Any hot paths? Algorithmic complexity concerns? |
-| **Security** | `security-scanner` | Input validation, auth checks, data exposure | Use `security-scanner` agent for deep findings |
-| **Clean Code** | `code-quality-reviewer` | SOLID violations, code smells, naming, dead code | Apply refactoring fixes with `--refactor` flag |
-| **Documentation** | `code-quality-reviewer` | Comment accuracy, comment rot, misleading docs | Do comments match actual code behavior? Any stale/lying comments? |
-
-Each pass produces findings with:
-- **Confidence score** (0-100): Only surface findings >= 80
-- **Severity**: Using existing severity levels (Critical/High/Medium/Note)
-- **Pass tag**: e.g., `[Type Safety]` prefix so findings are traceable to the pass
+When the review scope is large (>10 files) or the user requests a thorough review, dispatch targeted subagents: `code-quality-reviewer` for quality dimensions (Type Safety, Type Design, Error Handling, Test Coverage, Performance, Clean Code, Documentation) and `security-scanner` for the security pass. See agent definitions for dimension details.
 
 ## Process
 
@@ -110,7 +69,6 @@ Each pass produces findings with:
 
 ### 1. Pre-flight
 
-- Classify review context from `$ARGUMENTS` using the Input Handling table
 - Verify working directory is a git repo: `git rev-parse --is-inside-work-tree`
 - For local reviews: confirm changes exist via `git diff` and `git diff --cached`
 - For PR reviews: verify `gh` is authenticated: `gh auth status`
@@ -129,18 +87,6 @@ Each pass produces findings with:
 - PR author is a bot (e.g., `dependabot`, `renovate`) → report and stop (unless user explicitly requests)
 - Ambiguous argument (could be file path or component name) → search codebase, prefer exact file match
 
-### 1.5. Extract Intent
-
-Before analyzing code quality, establish what the code is supposed to do:
-
-- **For PR reviews:** Read the PR description and any linked Jira ticket to understand the intended behavior
-- **For file reviews:** Ask what the code was supposed to accomplish if not obvious from context
-- **For local changes:** Infer intent from commit messages, branch name, and diff context
-
-This enables two-stage analysis:
-- **Stage 1 — Spec Compliance:** Does the code implement the stated intent? Flag gaps between what was requested and what was built. If Stage 1 fails, report spec compliance issues before proceeding.
-- **Stage 2 — Code Quality:** Is the code well-written? Only perform quality review after confirming the code addresses the right problem.
-
 ### 2. Analyze Local Changes (Local only)
 
 1. Read target code (diff output for uncommitted changes, full file for single-file review)
@@ -151,7 +97,7 @@ This enables two-stage analysis:
 
 ### 3. Report Local Findings (Local only)
 
-Present findings using the Severity Levels defined above and the Local Changes template from `@references/templates.md`.
+Present findings using the Local Changes template from `@references/templates.md`.
 
 **No findings case:** If analysis produces no findings above the confidence threshold, explicitly state: "No findings above confidence threshold. Code meets review standards for the dimensions analyzed."
 
@@ -167,31 +113,7 @@ Present findings using the Severity Levels defined above and the Local Changes t
    >
    > **Line number rule:** Diff hunk headers (e.g., `@@ -10,5 +12,7 @@`) show relative offsets, not source file line numbers. Never cite these as `file:line` references. Use `Read` on the actual source file to confirm the correct line number before citing it in any finding.
 
-2. **Classify Changes**
-   | Category | Indicators | Review Focus |
-   |----------|-----------|--------------|
-   | **Core Logic** | Business rules, algorithms | Correctness, edge cases |
-   | **API Changes** | Endpoints, contracts | Breaking changes, versioning |
-   | **Data Layer** | Models, migrations, queries | Data integrity, performance |
-   | **Configuration** | Config files, env vars | Security, deployment impact |
-   | **Tests** | Test files | Coverage, quality |
-   | **Documentation** | README, comments | Accuracy, completeness |
-   | **Dependencies** | package.json, lock files | Security, compatibility |
-
-3. **Assess Impact**
-   - **Direct Impact**: Files modified
-   - **Downstream Impact**: Files that depend on changes
-   - **Upstream Impact**: Changes to dependencies
-
-4. Apply gate enforcement rules (file:line from source, git blame to confirm newness, concrete consequence)
-
-5. **Evaluate Risk**
-   | Risk Factor | Low | Medium | High |
-   |-------------|-----|--------|------|
-   | Files Changed | 1-5 | 6-15 | 16+ |
-   | Lines Changed | <100 | 100-500 | 500+ |
-   | Test Coverage | Added/Updated | Unchanged | Removed |
-   | Breaking Changes | None | Internal only | External API |
+2. Apply gate enforcement rules (file:line from source, git blame to confirm newness, concrete consequence)
 
 ### 5. Report PR Findings (PR only)
 
@@ -209,44 +131,18 @@ Apply confidence gate — only flag findings scored >= 80.
 ### 6. Verify
 
 - Confirm all files or diff hunks in scope were evaluated; note any that were skipped with rationale
-- Verify every reported finding includes a `file:line` reference and a severity from the Severity Levels table
+- Verify every reported finding includes a `file:line` reference and a severity level
 - Sanity-check severity distribution — if all findings are Critical or all are Note, re-evaluate consistency
 - Suggest next steps: recommend related skills for deeper analysis, or state merge readiness for PR reviews
 
 ## Code Smells to Detect (Clean Code Pass)
 
-Detect standard Fowler smells (Long Method, Large Class, Feature Envy, Duplicate Code, etc.) plus these project-specific preferences:
+Project-specific preferences (beyond standard smells):
 
 | Smell | Refactoring |
 |-------|-------------|
 | Nested Ternaries | `if`/`else` chains or `switch` statements |
 | Dense One-liners | Break into named steps for readability |
-
-### Refactoring Guardrails
-
-When applying `--refactor`, avoid over-simplification that introduces new problems:
-
-- **Clarity over brevity** — explicit code is better than compact code that requires mental unpacking
-- **Don't combine too many concerns** — merging functions to reduce count can violate SRP
-- **Don't remove helpful abstractions** — an abstraction that improves organization earns its existence
-
-## Output Principles
-
-- **Severity-first ordering** — group findings by severity (Critical first), not by file or dimension
-- **Location precision** — every finding references `file:line`; always read the source file, never cite diff hunk offsets directly
-- **Actionable fixes** — provide concrete fix suggestions with diff examples for Critical and High findings
-
-## Error Handling
-
-| Scenario | Response |
-|----------|----------|
-| File not found | Report the missing path and ask user to verify |
-| PR not found | Check PR number/URL format, verify repository access with `gh` |
-| Branch not found | List available branches, ask user to verify |
-| Cannot fetch diff | Fall back to file-by-file review using `gh pr view --json files` |
-| Too many files (>30 changed) | Prioritize by risk using Evaluate Risk table, note coverage gaps |
-
-Never silently omit findings or skip review dimensions—surface limitations and partial coverage explicitly.
 
 ## Related Skills
 

@@ -50,66 +50,14 @@ Match constraint level to task variability:
 - Specify exact format, validate output structure
 - Example: Changelog entries, commit messages
 
-## Output Pattern Selection
-
-### Use Templates When
-
-- Output format is consistent across invocations
-- Users expect predictable structure
-- Compliance or standards require specific format
-
-### Use Examples When
-
-- Output varies significantly by input
-- Creativity or judgment drives output quality
-- Multiple valid approaches exist
-
-## Workflow Patterns
-
-### Sequential Workflow
-
-Steps execute in order. Each step depends on previous.
-
-```
-1. Gather context
-2. Analyze
-3. Generate
-4. Validate
-```
-
-Best for: Linear tasks with clear dependencies.
-
-### Conditional Workflow
-
-Steps branch based on conditions.
-
-```
-1. Assess input type
-2. IF type A → Process A
-   IF type B → Process B
-3. Merge results
-```
-
-Best for: Tasks with meaningful variation in execution path.
-
-## Anti-Patterns to Avoid
-
-| Anti-Pattern | Problem | Solution |
-|--------------|---------|----------|
-| Echo chamber | Repeats CLAUDE.md | Reference don't repeat |
-| Missing triggers | Hard to discover/invoke | Add clear trigger phrases |
-
 ## Quality Checklist
 
 Before finalizing a skill:
 
 - [ ] **Discoverable**: Description contains natural trigger phrases
-- [ ] **Scoped**: Single, clear responsibility
 - [ ] **Efficient**: No unnecessary context loading
-- [ ] **Guided**: Clear step-by-step process
 - [ ] **Graceful**: Handles missing inputs and edge cases
 - [ ] **Connected**: Links to related skills where appropriate
-- [ ] **Tested**: Verified with real invocations
 
 ## Naming Conventions
 
@@ -119,12 +67,6 @@ Use **gerund form** (verb + -ing) for skill names when possible:
 - `processing-pdfs` — gerund form (preferred)
 - `pdf-processing` — noun phrase (acceptable)
 - `process-pdfs` — action-oriented (acceptable)
-
-**Avoid**:
-- Vague names: `helper`, `utils`, `tools`
-- Overly generic: `documents`, `data`, `files`
-- Reserved words: `anthropic-helper`, `claude-tools`
-- Inconsistent patterns within your skill collection
 
 **Why this matters**: Consistent naming makes skills easier to reference, understand at a glance, and organize. The name becomes the `/slash-command`.
 

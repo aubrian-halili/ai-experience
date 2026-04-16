@@ -13,7 +13,7 @@ Explore PostgreSQL database schemas and run read-only queries against the backof
 
 ## Database Philosophy
 
-- **Read-only only** — Never execute INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE, CREATE, or any DDL/DML. Only SELECT, WITH, SHOW, EXPLAIN, and DESCRIBE are permitted. Enforced server-side via `default_transaction_read_only=on`
+- **Read-only only** — Only SELECT, WITH, SHOW, EXPLAIN, and DESCRIBE are permitted. Enforced server-side via `default_transaction_read_only=on`
 
 ## Connection
 
@@ -71,22 +71,17 @@ If `@references/database-overview.md` exists, present its cached data directly i
    ```
 
 **Table Schema**
-1. Parse table name (extract schema and table from `schema.table` or assume `public` schema)
-2. Run:
+1. Run:
    ```sql
    SELECT column_name, data_type, is_nullable, column_default
    FROM information_schema.columns
    WHERE table_schema = '<schema>' AND table_name = '<table>'
    ORDER BY ordinal_position;
    ```
-3. Present columns, types, constraints, and indexes
+2. Present columns, types, constraints, and indexes
 
 **SQL Query**
-1. Validate query is read-only:
-   - Must start with SELECT, WITH, SHOW, EXPLAIN, or DESCRIBE
-   - Must not contain semicolons followed by additional statements (no multi-statement queries — e.g., `SELECT 1; DROP TABLE foo` is rejected)
-   - The server enforces read-only via `default_transaction_read_only=on` as a safety net, but reject ambiguous queries client-side before running
-2. Run the validated SQL
+Run the query.
 
 **Schema Tables**
 ```sql
@@ -98,29 +93,17 @@ SELECT table_name FROM information_schema.tables WHERE table_schema = '<schema>'
 SELECT schema_name FROM information_schema.schemata ORDER BY schema_name;
 ```
 
-### 3. Verify Results
-
-- If empty result set → Note "Query returned 0 rows" explicitly; if querying `information_schema`, check that the correct `dbname` was used
-- If entity not found (database, schema, or table) → Fall through to Error Handling
-
-## Output Principles
-
-- **Context first** — Always show which database and schema you're querying before presenting results
-- **Structured presentation** — Use markdown tables for schemas (Column Name | Data Type | Nullable | Constraints) and query results (proper headers); use bullet lists for databases, schemas, and table names; always include row counts and indicate if results are truncated
-- **Bounded results** — For large result sets, show first 50 rows with clear truncation notice (e.g., "Showing 50 of 1,247 rows")
-- **Next steps** — Suggest related queries or tables to explore based on results; if exploring schema that maps to application models, reference relevant code files
+Limit output to 50 rows with a truncation notice for larger result sets (e.g., "Showing 50 of 1,247 rows").
 
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
 | Auth command fails | "Aurora login failed. Check aurora-login configuration and credentials." |
-| psql not found | "psql not found. Ensure PostgreSQL client tools are installed." |
 | 0 rows from information_schema | "Got 0 rows — this query must target a specific app database. Retrying with psql against the resolved `dbname`." |
 | Database not found | List known databases from catalog and ask user to specify |
 | Schema not found | List available schemas in the database |
 | Table not found | List available tables in the schema |
-| Write operation attempted | "Only read-only queries are allowed. Use SELECT, WITH, SHOW, or EXPLAIN." |
 
 ## Related Skills
 

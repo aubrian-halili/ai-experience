@@ -33,9 +33,7 @@ See `@references/verification-discipline.md` for the behavioral rules that apply
 
 ## Three-Level Verification
 
-### Level 1: Existence
-
-Does the artifact exist?
+### Level 1: Existence — record `[EXISTS]` or `[MISSING]` with expected path
 
 - File exists at expected path
 - Function/class/export exists with expected name
@@ -43,17 +41,15 @@ Does the artifact exist?
 - Configuration entries present
 - Database migrations exist
 
-### Level 2: Substance
+### Level 2: Substance — record `[SUBSTANTIVE]`, `[STUB]`, or `[PARTIAL]` with `file:line` evidence
 
-Is the implementation real, not a stub?
+Run the full anti-pattern scan from `@references/anti-patterns.md` (Iron Law #3).
 
 - Functions have meaningful bodies (not just `return null`, `throw new Error('TODO')`, `pass`)
 - Test assertions are substantive (not just `expect(true).toBe(true)`)
 - Error handling has real recovery logic (not empty catch blocks)
 
-### Level 3: Wiring
-
-Is everything connected?
+### Level 3: Wiring — record `[WIRED]`, `[ORPHANED]`, or `[PARTIAL]` with `file:line` evidence
 
 - Exports are imported where needed
 - Routes are registered in the router
@@ -65,28 +61,7 @@ Is everything connected?
 
 ## Process
 
-### 1. Pre-flight
-
-- Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
-- If verifying against a plan, read `.planning/STATE.md` or the specified plan file
-- Extract observable truths or acceptance criteria to verify against
-- Identify the scope of files and modules to check
-
 **Stop condition:** Verifying against a plan but no plan file resolves → ask for the path.
-
-### 2. Level 1 — Existence Check
-
-Apply Level 1 checks from the Three-Level Verification section above. Record `[EXISTS]` or `[MISSING]` with expected path.
-
-### 3. Level 2 — Substance Check
-
-Apply Level 2 checks and the full anti-pattern scan from `@references/anti-patterns.md` (Iron Law #3). Record `[SUBSTANTIVE]`, `[STUB]`, or `[PARTIAL]` with `file:line` evidence.
-
-### 4. Level 3 — Wiring Check
-
-Apply Level 3 checks from the Three-Level Verification section above. Record `[WIRED]`, `[ORPHANED]`, or `[PARTIAL]` with `file:line` evidence.
-
-### 5. Report
 
 Present structured verification results using confidence markers:
 
@@ -94,16 +69,3 @@ Present structured verification results using confidence markers:
 - **PARTIAL** — exists and has substance but wiring incomplete or untested
 - **FAIL** — missing, stub, or orphaned
 - **SKIP** — could not verify (explain why)
-
-Include:
-- Summary: X/Y observable truths verified
-- Per-truth breakdown with level results and evidence
-- Anti-pattern findings with severity and location
-- Recommended actions for any non-PASS results
-
-## Error Handling
-
-| Scenario | Response |
-|----------|----------|
-| Critical anti-patterns found | Report immediately with exact locations; recommend fixing before PR |
-| Plan file outdated | Warn user that plan may not reflect current implementation |

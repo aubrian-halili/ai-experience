@@ -46,24 +46,4 @@ Templates for page creation and update operations, formatted as copy-ready Markd
 
 ## Page Update Template
 
-Use this when updating an existing page. Present both the diff summary and the full updated content.
-
-### Diff Summary Format
-
-```
-Changes to: [Page Title]
-
-Added:
-  - [New section or content added]
-
-Modified:
-  - [Existing section updated — brief description of change]
-
-Removed:
-  - [Content removed, if any]
-```
-
-### Full Updated Content
-
-Provide the complete updated page in Markdown format (same structure as Page Create Template above), with changes applied.
-
+Use this when updating an existing page. Present a brief diff summary (sections added/removed/modified), then the full updated page content in Markdown format.

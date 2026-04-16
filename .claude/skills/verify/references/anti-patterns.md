@@ -30,16 +30,6 @@ panic("not implemented")
 
 ### High Severity
 
-**TODO/FIXME Comments:**
-```
-TODO
-FIXME
-HACK
-XXX
-TEMP
-WORKAROUND
-```
-
 **Empty Catch Blocks:**
 ```
 catch.*\{\s*\}
@@ -54,14 +44,6 @@ except:\s*pass
 ```
 catch.*console\.(log|error|warn)
 catch.*print\(
-```
-
-**Orphaned Code:**
-```
-// Removed
-// Deprecated
-// Old implementation
-// No longer used
 ```
 
 **Type Safety Bypasses:**

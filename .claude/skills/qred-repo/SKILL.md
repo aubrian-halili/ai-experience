@@ -11,11 +11,6 @@ allowed-tools: Bash(gh *)
 
 Layered repository exploration and code searching across the Qred GitHub organization — orient first, then navigate, search, and read only what is relevant.
 
-## Exploration Philosophy
-
-- **Orient before reading** — understand a repo's purpose and structure before opening any code file
-- **Search, don't scan** — use keyword search to find relevant code instead of reading files sequentially
-
 ## Guardrails
 
 **Read-only and informational operations only.** The following `gh` subcommands are forbidden — refuse if requested and explain why:
@@ -74,7 +69,7 @@ For all direct operations, use `--json` to get structured data:
 2. Summarize the repo's purpose in 2-3 sentences
 3. Present: language, stars, last push, and key README sections
 
-**Guardrails:** Never skip this layer when exploring a repo for the first time. Do not auto-navigate into directories — let the user decide where to go next.
+**Guardrails:** Never skip this layer when exploring a repo for the first time.
 
 #### Layer 2: Navigate
 
@@ -128,15 +123,12 @@ For all direct operations, use `--json` to get structured data:
 
 ### 5. Verify
 
-- Confirm the user's question has been answered by the layer(s) executed
 - Note any repos, paths, or search terms that returned no results
 - Suggest the natural next action using the follow-up table in `@references/formatting.md`
 
 ## Error Handling
 
 See `@references/examples-and-errors.md` for error scenarios and responses.
-
-Never present results without context — always state what was searched, where, and what was omitted.
 
 ## Related Skills
 
