@@ -26,7 +26,7 @@ If no ticket ID is found in `$ARGUMENTS`:
 - Stop. Tell the user: "A Jira ticket ID is required to use `/feature`. Run `/plan` to create an implementation plan, then `/jira` to decompose it into tickets."
 
 **Gate 2 — Branch check:**
-If on `main` or `master`, offer to create a feature branch: "You are on `main`. Should I create a feature branch `<TICKET-ID>-<short-description>` from the latest default branch?"
+If on `main` or `master`, offer to create a feature branch per git conventions.
 
 **Fetch & confirm requirements:**
 - Fetch ticket details: `acli jira workitem view <TICKET_ID>` — read scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content.
@@ -38,9 +38,6 @@ If on `main` or `master`, offer to create a feature branch: "You are on `main`. 
   - If not found → ask the user: "Is there an existing plan file for this work? If so, provide the path."
     - If user provides a path → load that file.
     - If no plan exists → Stop. Tell the user: "An approved plan is required before implementation. Run `/plan` first, then `/jira` to create tickets."
-
-**Branch creation:**
-- If not already on a feature branch (Gate 2 confirmed), create one.
 
 ### 2. Design & Present
 

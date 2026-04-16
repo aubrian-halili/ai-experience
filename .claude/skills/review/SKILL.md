@@ -15,14 +15,7 @@ allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent
 
 ultrathink
 
-## Rationalization Guard
-
-| Excuse | Reality |
-|--------|---------|
-| "The confidence gate is too strict — I'll report it anyway" | The gate exists to protect signal-to-noise ratio; below 80 means insufficient evidence |
-| "Skipping the specialized passes, the diff is small" | The threshold is >10 files for parallel agents, not for skipping passes entirely |
-
-### Confidence Scoring Rubric
+## Confidence Scoring Rubric
 
 | Score | Meaning | Action |
 |-------|---------|--------|
@@ -40,8 +33,7 @@ If any of these are missing, score the finding below 80 regardless of how "obvio
 
 Exclude regardless of confidence:
 
-1. **Out-of-scope missing features**
-2. **TODOs the author already flagged**
+1. **TODOs the author already flagged**
 
 ## Input Handling
 
@@ -53,7 +45,7 @@ When the review scope is large (>10 files) or the user requests a thorough revie
 
 ## Process
 
-**Branch point:** Local review → steps 1–3, 6. PR review → steps 1, 4–6.
+**Branch point:** Local review → steps 1–3. PR review → steps 1, 4–5.
 
 ### 1. Pre-flight
 
@@ -64,8 +56,6 @@ When the review scope is large (>10 files) or the user requests a thorough revie
   ```
 
 **Stop conditions:**
-- No local changes found (for local review) → report and suggest specifying a file or PR number
-- PR review requested but `gh` not authenticated → provide `gh auth login` instructions and stop
 - PR is a draft → report draft status and stop (unless user explicitly requests draft review)
 - PR author is a bot (e.g., `dependabot`, `renovate`) → report and stop (unless user explicitly requests)
 
@@ -92,10 +82,6 @@ Present findings using the Local Changes template from `@references/templates.md
 ### 5. Report PR Findings (PR only)
 
 Present findings using the Pull Request Review template from `@references/templates.md`.
-
-### 6. Verify
-
-- Note any files or diff hunks that were skipped with rationale
 
 ## Related Skills
 

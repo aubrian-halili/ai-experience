@@ -1,84 +1,29 @@
 # Jira Ticket Templates
 
-## Bug Template
-
-```markdown
-## Description
-
-[Brief description of the bug]
-
-## Steps to Reproduce
-
-1. [First step]
-2. [Second step]
-3. [Third step]
-
-## Expected Behavior
-
-[What should happen]
-
-## Actual Behavior
-
-[What actually happens]
-
-## Environment
-
-[OS, browser/runtime, app version, relevant config]
-
-## Error Messages
-
-```
-[Error messages, stack traces, or logs]
-```
-
-## Suggested Priority
-
-[Critical/High/Medium/Low] - [Brief justification]
-```
-
 ## Task Template
 
 ```markdown
 ## Summary
 
-[Brief description of what needs to be implemented]
-
 ## Background
-
-[Context and motivation]
 
 ## Requirements
 
 ### Functional Requirements
 
-- [Requirement 1]
-- [Requirement 2]
-
 ### Non-Functional Requirements
 
-- [Performance/security/other NFR]
-
 ## Acceptance Criteria
-
-- [Criterion 1 - specific, measurable]
-- [Criterion 2 - specific, measurable]
 
 ## Technical Details
 
 ### Approach
 
-[High-level technical approach]
-
 ### Files to Modify
 
-[List key files and changes]
-
 ### Dependencies
-
-[Internal or external dependencies]
 
 ## Suggested Priority
 
 [Critical/High/Medium/Low] - [Brief justification]
 ```
-

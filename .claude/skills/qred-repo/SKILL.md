@@ -20,8 +20,6 @@ Layered repository exploration and code searching across the Qred GitHub organiz
 - `gh issue close`, `gh issue delete`
 - Any command with `--confirm`, `--yes`, or `-y` flags on destructive operations
 
-For pass-through commands (input starting with `gh`), validate against this blocklist before executing. If the command matches a forbidden pattern, refuse: "That command modifies repository state — use the GitHub UI or CLI directly for this action."
-
 ## Input Handling
 
 | Input | Intent | Approach |
@@ -40,7 +38,7 @@ For pass-through commands (input starting with `gh`), validate against this bloc
 
 ### 1. Pre-flight
 
-1. Run `gh auth status`; on failure, see Error Handling below.
+1. Run `gh auth status`; on failure, prompt the user to run `gh auth login`.
 
 ### 2. Execute Direct Operations
 
@@ -53,8 +51,6 @@ For pass-through commands (input starting with `gh`), validate against this bloc
 #### Layer 1: Orient
 
 1. Run `gh repo view Qred/<repo>` to get README and metadata
-
-**Guardrails:** Never skip this layer when exploring a repo for the first time.
 
 #### Layer 2: Navigate
 
@@ -74,7 +70,7 @@ For pass-through commands (input starting with `gh`), validate against this bloc
    ```
    Use `+--` for entries, `|` for continuation lines, `(...)` for unexplored/truncated directories.
 
-**Guardrails:** Max 3 directory levels deep. Max 30 entries per directory — if exceeded, show first 30 and note the remainder.
+**Guardrails:** Max 3 directory levels deep.
 
 #### Layer 3: Search
 
@@ -100,14 +96,7 @@ For pass-through commands (input starting with `gh`), validate against this bloc
 
 1. Run `gh api repos/Qred/<repo>/contents/<path>` to get file metadata and encoded content
 
-**Guardrails:** **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more. Skip binary/generated/lock files (e.g., `package-lock.json`, `yarn.lock`, `.min.js`).
-
-## Error Handling
-
-| Scenario | Response |
-|---|---|
-| `gh auth status` fails | "Run `gh auth login` and ensure your account has access to the Qred organization." |
-| No Qred org access | "Ensure your GitHub account has access to the Qred organization." |
+**Guardrails:** **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more.
 
 ## Related Skills
 
@@ -115,5 +104,4 @@ For pass-through commands (input starting with `gh`), validate against this bloc
 |---|---|
 | `/review` | Code quality review or PR audit |
 | `/backoffice-database` | Exploring PostgreSQL database schemas and data |
-| `/plan` | Plan implementation after exploring a repo |
 | `/confluence` | Reference design docs or specs related to the repository |

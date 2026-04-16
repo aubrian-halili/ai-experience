@@ -20,7 +20,7 @@ disable-model-invocation: true
 
 ## Input Handling
 
-Parse `$ARGUMENTS` for an optional project key override (e.g., `PROJ`). Default project is `UN`.
+Default project: `UN`. Override via `$ARGUMENTS` (e.g., `/jira PROJ`).
 
 ### Pre-flight
 
@@ -36,18 +36,12 @@ Parse `$ARGUMENTS` for an optional project key override (e.g., `PROJ`). Default 
 
 ### 1. Load Plan
 
-- Read `.planning/STATE.md`
-- Extract for each phase:
-  - **Goal** → ticket summary
-  - **Observable truths** → acceptance criteria
-  - **Dependencies** → blocking relationships between tickets
-  - **Files to create/modify** + **Verification** → technical details
+Read `.planning/STATE.md` and extract each phase's goal, observable truths, dependencies, files to create/modify, and verification commands.
 
 ### 2. Draft Ticket Set
 
 For each plan phase, draft a ticket:
-- **Type**: Task (default); use Story if the phase delivers user-facing value
-- **Summary**: phase goal (imperative)
+- **Type**: Task (default); Story if user-facing value
 - **Acceptance criteria**: each observable truth from the phase
 - **Technical details**: files to create/modify and verification commands from the phase
 - **Dependencies**: list blocking ticket titles (resolved to IDs after creation)
@@ -64,9 +58,7 @@ Present the full ticket set as a markdown table with columns: #, Summary, Type, 
 
 For each ticket in dependency order:
 
-1. **Check for duplicates** — use `acli jira workitem search --jql` to search the project for tickets with a similar summary
-   - If similar tickets found → present them to the user and ask whether to proceed with creation or link to an existing ticket
-   - If no matches → proceed
+1. **Check for duplicates** — use `acli jira workitem search --jql` to search for tickets with a similar summary; if found, present them before proceeding
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
@@ -86,5 +78,3 @@ After all tickets are created, output the manifest and store it in `.planning/ST
 ## Related Skills
 
 Pipeline order: `/plan` → `/jira` → `/feature` → `/verify` → `/review` → `/pr`
-
-Use `/confluence` to create or view Confluence pages (not Jira tickets).

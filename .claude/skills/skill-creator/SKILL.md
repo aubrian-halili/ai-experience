@@ -34,7 +34,6 @@ First, classify the request type:
 
 ### 1. Pre-flight
 
-- Classify request using the Input Handling table
 - If `$ARGUMENTS` contains a skill name, check if it already exists in `.claude/skills/`; if so, suggest updating the existing skill instead of creating a new one
 
 **Stop conditions:**
@@ -73,7 +72,7 @@ This creates the skill directory and a SKILL.md from `@template.md` with the ski
 
 ### 5. Author the SKILL.md
 
-Follow the section structure in `@template.md`. Start with Frontmatter — set name, description with trigger phrases, argument-hint, and allowed-tools. All frontmatter fields are documented with inline comments in `@template.md`.
+Follow the section structure in `@template.md`. Start with Frontmatter — set name, description with trigger phrases, argument-hint, and allowed-tools.
 
 Cross-reference `@references/best-practices.md` for anti-patterns and quality checklist. Keep SKILL.md under 500 lines; move supplementary content to `references/`.
 

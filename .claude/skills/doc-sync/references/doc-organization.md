@@ -10,8 +10,6 @@ Claude loads documentation in a strict hierarchy. Placing content in the wrong t
 | **Invocation-triggered** | Skill/agent bodies | When invoked | Workflow instructions, task-specific guidance |
 | **Step-triggered** | `docs/`, `references/`, linked files | When explicitly loaded | API references, detailed guides, ADRs, runbooks, schemas |
 
-Always-on context costs context budget on every interaction — keep it lean and high-signal.
-
 ## CLAUDE.md Sizing Guidelines
 
 **Target: 50–150 lines** for most projects.
@@ -26,13 +24,10 @@ Always-on context costs context budget on every interaction — keep it lean and
 
 **If CLAUDE.md exceeds 200 lines:** Extract sections into either `.claude/rules/` (if they're always-applicable conventions) or `docs/` (if they're reference material), then replace the section with a one-line pointer.
 
-## When to Use `.claude/rules/`
+## `.claude/rules/` and `docs/`
 
-Use `.claude/rules/` for conventions that should apply to **every interaction**. One concern per file, named descriptively. Keep each file under 80 lines — these are auto-loaded and accumulate across all rule files.
-
-## When to Use `docs/`
-
-Use `docs/` for reference material only needed for specific tasks. Architecture decision records live at `docs/architecture/decisions/adr-NNN-*.md`.
+- `.claude/rules/`: one concern per file, named descriptively, keep each file under 80 lines
+- `docs/`: architecture decision records live at `docs/architecture/decisions/adr-NNN-*.md`
 
 ## Monorepo Structure Note
 
