@@ -40,13 +40,11 @@ Determine operation intent from `$ARGUMENTS`:
 | `spaces` / `list spaces` | List available spaces | Step 6 (List Spaces) |
 | `space <space-id>` / `view space <space-id>` | View a specific space | Step 6 (List Spaces) |
 | `page <title or description>` | Create a page (no acli support) | Step 7 (Create Fallback) |
-| `(none)` | Unclear intent | Pre-flight stop — ask user |
 
 ## Process
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` and map to the appropriate intent using the Input Handling table
 - Check acli availability: run `acli --version`
   - acli available → proceed with native commands for read operations
   - acli unavailable → skip to content generation fallback and note the issue
@@ -55,7 +53,6 @@ Determine operation intent from `$ARGUMENTS`:
 
 Fetch and display a Confluence page by ID or URL:
 
-- If a full Confluence URL is provided, extract the page ID (the number after `/pages/` in the URL path) before running the command
 - Run `acli confluence page view --id <PAGE_ID> --body-format storage --json`
 - Key flags: `--body-format` (storage|atlas_doc_format|view), `--include-labels`, `--include-versions`, `--version <N>`, `--get-draft`, `--status` (current|draft|archived)
 - Present: page title, content summary, labels, last modified, and direct URL: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/<PAGE_ID>`
@@ -78,8 +75,7 @@ Since there is no dedicated `acli confluence search` command:
 
 - For blog content: `acli confluence blog list --space-id <SPACE_ID> --title "<query>" --json`
 - For page content: note the acli limitation and suggest Confluence web search: `https://qredab.atlassian.net/wiki/search?text=<query>`
-  - If `acli` adds search support in the future, the query language is CQL: `type=page AND text ~ "<query>"`
-- If space ID is not known, first run Step 6 (List Spaces) and ask user to pick one
+  - CQL for future reference: `type=page AND text ~ "<query>"`
 
 ### 5. List / View Blogs
 
@@ -109,7 +105,6 @@ Since `acli confluence page create` does not exist, generate copy-ready content 
   1. **Full page content** in Markdown format (ready to paste into Confluence editor)
   2. **Direct link** to create a new page in the target space: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/create`
   3. **Instruction**: "Paste this content into the Confluence editor — it accepts Markdown directly"
-- If target space is unknown, first run Step 6 (List Spaces) and ask user to confirm
 
 ## Related Skills
 

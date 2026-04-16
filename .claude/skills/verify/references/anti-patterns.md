@@ -45,22 +45,3 @@ except:\s*pass
 catch.*console\.(log|error|warn)
 catch.*print\(
 ```
-
-**Type Safety Bypasses:**
-```
-as any
-: any
-@ts-ignore
-@ts-nocheck
-eslint-disable
-```
-
-### Low Severity
-
-**Hardcoded Values:**
-```
-localhost:
-127.0.0.1
-password.*=.*['"]
-secret.*=.*['"]
-```

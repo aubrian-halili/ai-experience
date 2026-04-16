@@ -28,7 +28,7 @@ First, classify the request type:
 | **New Skill** | "create a skill", "build a skill for", skill name provided | Steps 1–7; full workflow from requirements to validation |
 | **Skill Update** | "optimize", "improve", "update this skill" | Steps 1, 3–5, 7; skip init, focus on structural alignment with peers |
 | **Skill Validation** | "validate", "check this skill" | Step 6 only; run validation script and report |
-| **Template Question** | "how to write a skill", "skill structure" | Steps 1–2 only; explain Skill Anatomy and Frontmatter Reference |
+| **Template Question** | "how to write a skill", "skill structure" | Steps 1–2 only; walk through `@template.md` structure |
 | **Skill Review** | "review this skill", "is this skill good" | Steps 1, 3–5, 7; audit against quality checklist in `@references/best-practices.md` |
 
 ## Process
@@ -76,9 +76,9 @@ This creates the skill directory and a SKILL.md from `@template.md` with the ski
 
 ### 5. Author the SKILL.md
 
-Author each section per the Skill Anatomy table below. Start with Frontmatter — set name, description with trigger phrases, argument-hint, and allowed-tools (see Frontmatter Reference below).
+Follow the section structure in `@template.md`. Start with Frontmatter — set name, description with trigger phrases, argument-hint, and allowed-tools. All frontmatter fields are documented with inline comments in `@template.md`.
 
-Cross-reference `@references/best-practices.md` for anti-patterns and quality checklist.
+Cross-reference `@references/best-practices.md` for anti-patterns and quality checklist. Keep SKILL.md under 500 lines; move supplementary content to `references/`.
 
 ### 6. Validate
 
@@ -94,40 +94,6 @@ Verify against the quality checklist: Discoverable, Efficient, Graceful, Connect
 
 Test the skill with real invocations and refine.
 
-## Skill Anatomy
-
-| Section | Purpose | Required |
-|---------|---------|----------|
-| Frontmatter | Metadata for skill discovery and invocation | Yes |
-| Introduction | Quick orientation (no H1 heading) | Yes |
-| [Domain] Philosophy | 3-5 guiding principles | Yes |
-| Input Handling | Maps input types to intent, approach, and `(none)` case | Yes |
-| Process | Step-by-step with Pre-flight and stop conditions | Yes |
-| Output Principles | Bold-dash bullets on what good output looks like | Yes |
-| Error Handling | Scenario table + closing "Never..." principle | Yes |
-| Related Skills | Cross-references with "When to Use Instead" | Recommended |
-| Iron Laws / Rationalization Guard | Skill-specific guardrails (optional) | No |
-
-## Frontmatter Reference
-
-| Field | Type | Description | Required | Usage |
-|-------|------|-------------|----------|-------|
-| `name` | string | Skill identifier; lowercase letters, numbers, hyphens only (max 64 chars). Becomes the `/slash-command`. If omitted, uses directory name. | No (recommended) | Common |
-| `description` | string | Trigger phrases and purpose. Claude uses this to decide when to auto-invoke. If omitted, uses first paragraph of markdown. | Recommended | Common |
-| `argument-hint` | string | Placeholder shown during autocomplete (e.g., `[issue-number]`, `[filename] [format]`) | No | Common |
-| `allowed-tools` | string | Tools available without per-use approval when skill is active (e.g., `Read, Grep, Glob`) | No | Common |
-| `disable-model-invocation` | boolean | Prevent Claude auto-triggering; use for action skills like `/pr`, `/jira` that should be manual-only | No | Common |
-| `user-invocable` | boolean | Set `false` to hide from `/` menu; use for background knowledge skills | No | Advanced |
-| `model` | string | Override model for skill execution (e.g., `haiku`, `sonnet`, `opus`) | No | Advanced |
-| `context` | string | Set to `fork` to run in isolated subagent context (no conversation history) | No | Advanced |
-| `agent` | string | Subagent type when `context: fork` (e.g., `Explore`, `Plan`, `general-purpose`, or custom from `.claude/agents/`) | No | Advanced |
-| `hooks` | object | Skill-scoped hooks configuration (see Hooks documentation) | No | Advanced |
-| `effort` | string | Reasoning effort level: `low`, `medium`, `high`, `max` (Opus 4.6 only). Overrides session effort. | No | Advanced |
-| `paths` | string/list | Glob patterns limiting when skill auto-activates based on files being worked on (e.g., `"**/*.ts"`) | No | Advanced |
-| `shell` | string | Shell for `` !`command` `` blocks: `bash` (default) or `powershell` | No | Advanced |
-
-See `@references/best-practices.md` for string substitution variables and dynamic context injection.
-
 ## Output Principles
 
 - **Scaffold, don't over-specify** — generate the structural skeleton with clear placeholders; let the skill author fill in domain-specific content rather than guessing it
@@ -137,12 +103,7 @@ See `@references/best-practices.md` for string substitution variables and dynami
 
 | Scenario | Response |
 |----------|----------|
-| Skill already exists | Warn user, ask whether to update existing skill or choose a different name |
-| Skill scope overlaps existing skill | Show the overlapping skill, suggest extending it instead of creating a duplicate |
 | Validation script reports warnings | Distinguish errors from warnings; fix errors, evaluate warnings case-by-case |
-| Generated skill too long (>500 lines) | Move supplementary content to `references/` files; keep SKILL.md under 500 lines per official guidance |
-
-Never create a skill without running validation — an unvalidated skill may fail silently when invoked.
 
 ## Related Skills
 

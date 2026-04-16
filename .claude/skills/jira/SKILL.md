@@ -67,22 +67,7 @@ For each plan phase, draft a ticket:
   - 5 pts — cross-cutting concern or significant unknowns
   - 8 pts — consider splitting the phase
 
-Present the full ticket set to the user as a table before creating anything, annotating independent tickets (no dependencies) with `— (parallel)`:
-
-| # | Summary | Type | Story Points | Depends On |
-|---|---------|------|-------------|------------|
-| 1 | ... | Task | 3 | — (parallel) |
-| 2 | ... | Task | 2 | — (parallel) |
-| 3 | ... | Task | 2 | #1 |
-| 4 | ... | Story | 3 | #2, #3 |
-
-After the table, present execution waves so the user can see what can be worked in parallel:
-
-> **Execution waves:**
-> - Wave 1 (parallel): #1, #2
-> - Wave 2: #3 (after #1), #4 (after #2, #3)
-
-Ask the user to confirm, adjust story points, or cancel individual tickets before proceeding.
+Present the full ticket set as a markdown table with columns: #, Summary, Type, Story Points, Depends On. Annotate independent tickets with `— (parallel)`. Follow the table with execution waves showing which tickets can be worked in parallel.
 
 ### 3. Create Tickets
 
@@ -97,9 +82,7 @@ For each ticket in dependency order:
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
    - Priority is embedded in the description via the template's "Suggested Priority" field; default to Medium if no signal
-3. **Record** the ticket ID in the manifest — write it to `.planning/STATE.md` under `## Tickets` immediately after each successful creation (not at the end of the batch), so partial progress is preserved if the batch fails mid-way
-
-**Partial batch failure:** On partial failure, record created ticket IDs in `.planning/STATE.md` immediately before attempting fallback for remaining tickets.
+3. **Record** each ticket ID in `.planning/STATE.md` under `## Tickets` immediately after creation
 
 ### 4. Present Manifest
 

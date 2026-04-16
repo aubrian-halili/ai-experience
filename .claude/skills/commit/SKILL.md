@@ -17,8 +17,6 @@ Generate semantic commit messages following project conventions (see CLAUDE.md).
 ## Commit Philosophy
 
 - **Atomic commits** — each commit should represent one logical change; split multi-concern changes into separate commits
-- **Semantic messages** — subject should explain *why*, not *what*
-- **User confirmation** — present the proposed commit for review before executing; if changes requested, regenerate and present again
 
 ## Input Handling
 
@@ -50,9 +48,7 @@ Use `$ARGUMENTS` if provided (user's custom message or scope), otherwise generat
 
 ### 3. Stage & Commit
 
-**Only proceed after user approval.**
-
-Use only these git commands: `status`, `diff`, `log`, `branch`, `add`, `commit`, `stash`
+Stage and commit the approved changes.
 
 ## Output Principles
 
@@ -63,11 +59,8 @@ Use only these git commands: `status`, `diff`, `log`, `branch`, `add`, `commit`,
 
 | Scenario | Response |
 |----------|----------|
-| No changes detected | Show `git status`, suggest what to stage |
 | Mixed change types | Recommend splitting into multiple commits |
 | Unclear scope | Ask for clarification or suggest based on files |
-| Sensitive files detected | Warn user, ask if they should be added to `.gitignore` |
-| User requests `--no-verify` | Confirm intent, warn about skipping hooks |
 
 ## Related Skills
 

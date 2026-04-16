@@ -2,11 +2,7 @@
 
 ## Context Window Principles
 
-Skills consume context tokens. The system budget is ~2% of the context window (~16,000 chars as a practical fallback). Override with the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable if skills need more room. Optimize by:
-
-1. **Description efficiency** — Descriptions are always in context for auto-invocable skills. Keep under 500 chars. Use `disable-model-invocation: true` for action skills to exclude from auto-invoke context
-2. **Defer details** — Use `@references/` for supplementary guidance; don't repeat what's in project CLAUDE.md
-3. **Manual-only for actions** — Skills that perform destructive or external actions (deploy, push, delete) should set `disable-model-invocation: true` to avoid accidental auto-invocation and to save context budget
+Skills consume context tokens. The system budget is ~2% of the context window (~16,000 chars as a practical fallback). Override with the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable if skills need more room.
 
 ## CSO Principle: Description as Trigger, Not Summary
 
@@ -59,77 +55,11 @@ Before finalizing a skill:
 - [ ] **Graceful**: Handles missing inputs and edge cases
 - [ ] **Connected**: Links to related skills where appropriate
 
-## Naming Conventions
-
-Use **gerund form** (verb + -ing) for skill names when possible:
-
-**Recommended patterns**:
-- `processing-pdfs` — gerund form (preferred)
-- `pdf-processing` — noun phrase (acceptable)
-- `process-pdfs` — action-oriented (acceptable)
-
-**Why this matters**: Consistent naming makes skills easier to reference, understand at a glance, and organize. The name becomes the `/slash-command`.
-
 ## Dynamic Context Injection
 
-**String substitution variables** available in skill content:
-
-- `$ARGUMENTS` — all arguments passed when invoking
-- `$ARGUMENTS[N]` or `$N` — specific argument by index (0-based)
-- `${CLAUDE_SESSION_ID}` — unique session identifier, useful for per-session logging or temp file isolation
-- `${CLAUDE_SKILL_DIR}` — the skill's own directory path; use to reference bundled scripts portably instead of hardcoding `.claude/skills/<name>/`
-- `!<command>` — dynamic context injection; shell command output replaces placeholder before skill content is sent to Claude
-
-**Example use case**: Inject current git branch into skill instructions
-
-```markdown
-Current branch: !<git rev-parse --abbrev-ref HEAD>
-```
-
-Claude sees: "Current branch: feature/auth-flow" (output replaced at runtime).
-
-## Subagent Patterns
-
-Use `context: fork` + `agent` field to run skills in isolated subagent context (no conversation history):
-
-```yaml
-context: fork
-agent: Explore
-```
-
-**When to use**:
-- Deep codebase investigation where conversation history is noise
-- Tasks requiring specialized agent capabilities
-- Operations that should not leak into main conversation
-
-**Available agents**: `Explore`, `Plan`, `general-purpose`, or custom agents defined in `.claude/agents/<name>.md`
-
-**Tradeoff**: Subagent has no conversation context but focused instructions.
-
-## Path-Based Activation
-
-Use the `paths` frontmatter field to limit when a skill auto-activates based on the files being worked on:
-
-```yaml
-paths: ["**/*.ts", "**/*.tsx"]
-```
-
-**When to use**:
-- Monorepo skills scoped to specific packages (e.g., `paths: ["packages/frontend/**"]`)
-- Language-specific conventions that should only apply for certain file types
-- Skills that would be noise or wrong in other parts of the codebase
-
-**Tradeoff**: Skills without `paths` are always candidates for auto-invocation. Narrowing with `paths` reduces false positives but means the skill won't trigger when editing unmatched files even if the task is relevant.
-
-**Manual invocation is unaffected**: `paths` only controls *auto*-activation. The skill is always available via `/skill-name` regardless.
+Use `!<command>` to inject shell output before skill content is sent to Claude. Example: `` Current branch: !`git rev-parse --abbrev-ref HEAD` `` resolves to `Current branch: feature/auth-flow` at runtime.
 
 ## Testing Strategy
-
-**Test with multiple models**: Skills work differently across Haiku (fast/economical), Sonnet (balanced), and Opus (powerful reasoning).
-
-- **Haiku**: Does the skill provide enough guidance?
-- **Sonnet**: Is the skill clear and efficient?
-- **Opus**: Does the skill avoid over-explaining?
 
 **A/B Iteration Pattern**:
 1. Work with Claude A (expert) to refine the skill
@@ -137,32 +67,9 @@ paths: ["**/*.ts", "**/*.tsx"]
 3. Observe Claude B's behavior and bring insights back to Claude A
 4. Iterate: refine → test → observe → repeat
 
-**Evaluation-driven development**:
-1. Identify gaps by running Claude without the skill
-2. Create 3+ evaluation scenarios
-3. Establish baseline performance
-4. Write minimal instructions to pass evaluations
-5. Iterate based on real usage
-
 ## Extended Thinking
 
-Skills can enable extended thinking (deeper reasoning) by including the keyword **"ultrathink"** in their content. When Claude encounters this keyword during skill execution, it activates extended thinking mode for more thorough analysis.
-
-**When to use**: Complex analysis skills, architecture decisions, security audits, or any skill where deeper reasoning improves output quality.
-
-**Pattern**:
-```markdown
-## Process
-
-### 1. Deep Analysis
-
-ultrathink
-
-Analyze the codebase considering:
-- [complex criteria requiring extended reasoning]
-```
-
-**Tradeoff**: Extended thinking increases latency and token usage. Only use for skills where reasoning depth meaningfully improves results.
+Include the keyword **"ultrathink"** in skill content to activate extended thinking mode. Use for complex analysis, architecture decisions, or security audits where reasoning depth meaningfully improves results. Tradeoff: higher latency and token usage.
 
 ## Visual Output Generation
 
@@ -191,25 +98,10 @@ The script generates an HTML file and opens it in the default browser.
 
 ## Skill Location Hierarchy
 
-Skills are loaded in priority order (highest to lowest):
-
-1. **Enterprise skills** (organization-wide)
-2. **Personal skills** (`~/.claude/skills/`)
-3. **Project skills** (`.claude/skills/`)
-4. **Plugin skills** (MCP plugins)
-
 **When to use each level**:
-- **Personal skills** (`~/.claude/skills/`): Role-specific workflows that apply across all your projects (e.g., your PR style, personal code review checklist). Available only to you, not committed to any repo.
-- **Project skills** (`.claude/skills/`): Team-shareable, project-specific workflows committed to the repo. All team members get them automatically.
-- **Enterprise skills**: Organization-wide standards enforced across all projects and users.
-- **Plugin skills**: Distributed via MCP plugins for cross-project reuse without committing to individual repos. Useful for shared tooling across an organization's repos.
+- **Personal skills** (`~/.claude/skills/`): Role-specific workflows across all your projects. Available only to you.
+- **Project skills** (`.claude/skills/`): Team-shareable, committed to the repo.
 
 **Best practices**:
-- **Don't duplicate**: Check existing skills at all levels before creating new ones
 - **Promote upward**: If a personal skill proves useful across the team, move it to project level
 - **Keep personal lean**: Only keep skills in `~/.claude/skills/` that are truly personal preference
-
-### Monorepo & Plugin Namespacing
-
-- **Monorepo auto-discovery**: Nested `.claude/skills/` directories in subdirectories are auto-loaded. Each package in a monorepo can define its own skills without collisions
-- **Plugin namespace**: Plugin skills use `plugin-name:skill-name` format (e.g., `my-plugin:deploy`) to prevent collisions with project or personal skills of the same name

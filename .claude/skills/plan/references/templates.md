@@ -158,26 +158,3 @@ Use this during Step 5 (Architecture Design) when presenting approaches to the u
 - **Notes**: [Any deviations from plan]
 ```
 
-## Observable Truth Examples
-
-Examples of well-formed observable truths by category:
-
-**Artifacts:**
-- `src/auth/middleware.ts` exists and exports `authMiddleware` function
-- `src/auth/__tests__/middleware.test.ts` exists with >5 test cases
-- Database migration `migrations/001_create_users_table.sql` exists
-
-**Behavior:**
-- `POST /api/login` returns 200 with JWT token for valid credentials
-- `POST /api/login` returns 401 for invalid credentials
-- JWT token expires after 24 hours (configurable via `AUTH_TOKEN_TTL`)
-
-**Integration:**
-- Auth middleware applied to all routes under `/api/protected/*`
-- Login endpoint registered in main router at `src/routes/index.ts`
-- User model imported and used by auth service (not duplicated)
-
-**Quality:**
-- All auth endpoints have integration tests
-- No `any` types in auth module (TypeScript strict)
-- Error responses follow existing API error format

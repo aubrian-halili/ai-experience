@@ -66,8 +66,6 @@ For all direct operations, use `--json` to get structured data:
 **Purpose:** Understand the repo before diving into code.
 
 1. Run `gh repo view Qred/<repo>` to get README and metadata
-2. Summarize the repo's purpose in 2-3 sentences
-3. Present: language, stars, last push, and key README sections
 
 **Guardrails:** Never skip this layer when exploring a repo for the first time.
 
@@ -89,16 +87,7 @@ For all direct operations, use `--json` to get structured data:
 
 **Result presentation:**
 
-- **Summary header** — Always show scope and count first: `Found N results in M repositories` (org-wide) or `Found N results in Qred/<repo>` (repo-scoped)
-- **Repository breakdown** (org-wide only) — Group by repo with match counts before showing individual files:
-  ```
-  Found 23 results in 4 repositories:
-  - qred-api (8 matches)
-  - qred-mcp-proxy (7 matches)
-  - qred-ui (5 matches)
-  - backoffice-db (3 matches)
-  ```
-- **Individual matches** — Present matching files with `repo/path:line` format for editor-friendly references, with enough context to judge relevance before reading
+- Present matching files with `repo/path:line` format for editor-friendly references, with enough context to judge relevance before reading
 - **Truncation block** (only when results = limit) — Show a multi-line refinement block:
   ```
   > Showing 30 results (limit reached) — results may be incomplete.
@@ -123,7 +112,6 @@ For all direct operations, use `--json` to get structured data:
 
 ### 5. Verify
 
-- Note any repos, paths, or search terms that returned no results
 - Suggest the natural next action using the follow-up table in `@references/formatting.md`
 
 ## Error Handling

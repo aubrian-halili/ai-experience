@@ -44,10 +44,10 @@ Classify `$ARGUMENTS` to determine the hook workflow:
 
 Based on the desired behavior:
 
-1. **Select event**: Match behavior to the appropriate hook event (see Claude Code's native hook documentation for the full list of events)
+1. **Select event**: Match behavior to the appropriate hook event
 2. **Define matcher**: Determine which tool calls or conditions trigger the hook
-3. **Plan action**: What the hook script should do (block, modify, log, notify)
-4. **Choose scope**: Project-level (`.claude/settings.json`) or user-level (`.claude/settings.local.json`) — use project-level for team-wide guardrails, user-level for personal preferences
+3. **Plan action**: What the hook script should do
+4. **Choose scope**: Project-level vs user-level — use project-level for team-wide guardrails, user-level for personal preferences
 
 ### 2.5. Present Plan for Approval
 
@@ -64,24 +64,10 @@ Based on the desired behavior:
 
 Create the hook script and configuration:
 
-1. **Write the hook script** in `.claude/hooks/` directory
-   - Use bash for simple hooks, or the appropriate language for complex logic; prefer bash + jq, avoid requiring additional tools
-   - Include proper error handling and exit codes
-   - Exit 0 to allow, exit 2 to block (with stderr message shown to user)
-2. **Make executable**: `chmod +x $CLAUDE_PROJECT_DIR/.claude/hooks/<script-name>`
-3. **Register in settings**: Add hook configuration to the appropriate settings file
+1. **Write the hook script** in `.claude/hooks/` directory; prefer bash + jq, avoid requiring additional tools
+2. **Make executable** and **register in settings**
 
-Use a `command` hook for shell scripts, `prompt` or `agent` for LLM-based judgment (no script file needed). See `@references/hook-patterns.md` for ready-to-use implementations.
-
-For LLM-based decisions without a shell script, use a `prompt` hook:
-
-```json
-{
-  "type": "prompt",
-  "prompt": "Check if the file being edited contains secrets or credentials. If so, respond with permissionDecision: deny and explain why.",
-  "model": "claude-haiku-4-5-20251001"
-}
-```
+Prefer `command` hooks for deterministic checks, `prompt` or `agent` for judgment calls. See `@references/hook-patterns.md` for ready-to-use implementations.
 
 ### 4. Validate
 
@@ -94,13 +80,6 @@ Test the hook works correctly:
 ## Common Hook Patterns
 
 See `@references/hook-patterns.md` for detailed pattern implementations.
-
-## Error Handling
-
-| Scenario | Response |
-|----------|----------|
-| jq not available | Suggest installation or provide jq-free alternative using grep/sed |
-| Stop hook causes infinite loop | Check `stop_hook_active` field in stdin JSON; skip logic if `true` |
 
 ## Related Skills
 

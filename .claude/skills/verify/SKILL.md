@@ -13,13 +13,19 @@ allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Gl
 
 Verify that an implementation fully achieves its intended goals using three-level artifact checks and anti-pattern scanning.
 
-See `@references/verification-discipline.md` for the behavioral rules that apply during any workflow, not just when `/verify` is invoked.
-
 ## Iron Laws
 
 > - NO "PASS" status without `file:line` evidence in the current message
 > - NO Level 1 check substitutes for Level 2 or Level 3 — all three levels are required
 > - NO anti-pattern scan skipped — run the full catalog on every changed file
+> - NO completion claim without fresh terminal output as evidence
+
+| Claim | Required Evidence |
+|-------|-------------------|
+| Tests pass | Test runner output showing 0 failures in current message |
+| Build succeeds | Build command output with exit code 0 |
+| Feature works | Demonstration command output or test output |
+| Bug fixed | Regression test red-green cycle output |
 
 ## Input Handling
 
@@ -35,19 +41,9 @@ See `@references/verification-discipline.md` for the behavioral rules that apply
 
 ### Level 1: Existence — record `[EXISTS]` or `[MISSING]` with expected path
 
-- File exists at expected path
-- Function/class/export exists with expected name
-- Test file exists alongside implementation
-- Configuration entries present
-- Database migrations exist
-
 ### Level 2: Substance — record `[SUBSTANTIVE]`, `[STUB]`, or `[PARTIAL]` with `file:line` evidence
 
 Run the full anti-pattern scan from `@references/anti-patterns.md` (Iron Law #3).
-
-- Functions have meaningful bodies (not just `return null`, `throw new Error('TODO')`, `pass`)
-- Test assertions are substantive (not just `expect(true).toBe(true)`)
-- Error handling has real recovery logic (not empty catch blocks)
 
 ### Level 3: Wiring — record `[WIRED]`, `[ORPHANED]`, or `[PARTIAL]` with `file:line` evidence
 

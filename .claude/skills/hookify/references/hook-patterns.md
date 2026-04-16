@@ -2,24 +2,6 @@
 
 ## Prevention Patterns
 
-### Block Force Push
-
-Prevents `git push --force` and `git push -f`:
-
-```bash
-#!/bin/bash
-INPUT=$(cat)
-COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
-
-if echo "$COMMAND" | grep -qE 'git\s+push\s+.*(--force|-f)'; then
-  echo "BLOCKED: Force push is not allowed. Use --force-with-lease instead." >&2
-  exit 2
-fi
-exit 0
-```
-
-**Event:** `PreToolUse` | **Matcher:** `Bash`
-
 ### Block Sensitive File Edits
 
 Prevents editing `.env`, secrets, or key files:
@@ -41,26 +23,6 @@ exit 0
 
 **Event:** `PreToolUse` | **Matcher:** `Edit|Write`
 
-### Enforce Lint Before Commit
-
-Runs linter before allowing commit operations:
-
-```bash
-#!/bin/bash
-INPUT=$(cat)
-COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
-
-if echo "$COMMAND" | grep -qE 'git\s+commit'; then
-  if ! npx eslint . --quiet 2>/dev/null; then
-    echo "BLOCKED: Lint errors found. Fix them before committing." >&2
-    exit 2
-  fi
-fi
-exit 0
-```
-
-**Event:** `PreToolUse` | **Matcher:** `Bash`
-
 ## Logging Patterns
 
 ### Log All File Modifications
@@ -79,42 +41,6 @@ exit 0
 ```
 
 **Event:** `PostToolUse` | **Matcher:** `Edit|Write`
-
-## Notification Patterns
-
-### Notify on Completion
-
-Sends a system notification when Claude finishes a task:
-
-```bash
-#!/bin/bash
-if command -v osascript &>/dev/null; then
-  osascript -e 'display notification "Claude has finished the task" with title "Claude Code"'
-elif command -v notify-send &>/dev/null; then
-  notify-send "Claude Code" "Claude has finished the task"
-fi
-exit 0
-```
-
-**Event:** `Stop`
-
-## Prompt-Based Patterns
-
-### Security Review Without a Script
-
-Uses LLM judgment to block edits that introduce secrets — no bash script required:
-
-**Event:** `PreToolUse` | **Matcher:** `Write|Edit`
-
-Configuration (directly in `settings.json`, no script file needed):
-
-```json
-{
-  "type": "prompt",
-  "prompt": "Check if the file being written or edited would contain secrets, API keys, tokens, or credentials. If so, respond with permissionDecision: deny and explain what was found.",
-  "model": "claude-haiku-4-5-20251001"
-}
-```
 
 ## Structured Output Patterns
 
@@ -139,4 +65,3 @@ exit 0
 ```
 
 **Event:** `PreToolUse` | **Matcher:** `Read`
-

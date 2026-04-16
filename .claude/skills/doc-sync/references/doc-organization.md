@@ -27,7 +27,6 @@ Always-on context costs context budget on every interaction — keep it lean and
 - Pointers to deeper documentation ("Architecture decisions live in `docs/architecture/`")
 
 **What does NOT belong in CLAUDE.md:**
-- File listings (a fresh agent can run `ls`)
 - Technology stack restated from `package.json`/`go.mod`/etc.
 - Step-by-step tutorials (put in `docs/`)
 - Exhaustive API references (put in `docs/`)
@@ -56,17 +55,6 @@ Use `docs/` for material that is **only needed for specific tasks**:
 - Onboarding guides
 - Data models and schemas
 - Integration guides for third-party services
-
-**Always reference docs/ from CLAUDE.md** so agents know the folder exists and what it contains. Without a pointer, agents won't know to look there.
-
-Example CLAUDE.md pointer:
-```markdown
-## Documentation
-
-- Architecture decisions: `docs/architecture/decisions/` (ADR format)
-- API reference: `docs/api/` (OpenAPI spec + examples)
-- Runbooks: `docs/runbooks/` (incident response, deploys)
-```
 
 ## Monorepo Structure Note
 

@@ -31,6 +31,11 @@ Use this checklist to validate a plan before presenting it to the user. Every ch
 - [ ] Each phase produces independently testable software
 - [ ] Plan is under 1000 lines — if longer, split into phase documents
 
+## State Tracking
+
+- [ ] `.planning/STATE.md` exists and contains at minimum: Goal, Source, Created date, Last Updated
+- [ ] All completed planning steps have been appended to `.planning/STATE.md`
+
 ## Coherence
 
 - [ ] All observable truths from "Define Done" are covered by at least one phase

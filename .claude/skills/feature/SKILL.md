@@ -15,13 +15,6 @@ ultrathink
 
 Execute structured feature implementation from an approved plan through incremental, test-driven milestones with clear verification at each step.
 
-## Rationalization Guard
-
-| Excuse | Reality |
-|--------|---------|
-| "The plan is in my head" | Unwritten plans drift; observable truths prevent scope creep |
-| "I'll track tasks manually" | Manual tracking drops items; use TaskCreate for accountability |
-
 ## Process
 
 ### 1. Pre-flight
@@ -62,23 +55,17 @@ If on `main` or `master`:
   - Each milestone should satisfy specific observable truths from the plan's Definition of Done
   - Select a delivery pattern from `@references/templates.md` (Vertical Slice, Horizontal Layer, or Feature Flags)
   - Show: milestone breakdown, files to create/modify, delivery pattern rationale
-- **Present the complete implementation plan to the user before proceeding**
-- If changes requested, revise and present again
+- **Present the implementation plan to the user and wait for approval before proceeding. If changes are requested, revise and present again.**
 
 ### 3. Implement
-
-**Only proceed after user approval of the implementation plan.**
 
 After approval, convert the plan into tracked tasks:
 - Create a task for each milestone using `TaskCreate` with clear subject and description
 - Set task dependencies using `addBlockedBy` where phases depend on prior phases
-- Update each task to `in_progress` when starting and `completed` when verified
 
 For each milestone:
-1. Mark the milestone task as `in_progress` via `TaskUpdate`
-2. Follow the TDD cycle from `testing.md`
-3. Mark the milestone task as `completed` via `TaskUpdate`
-4. Stage and commit per `git-conventions.md`
+1. Implement using TDD, then stage and commit
+2. Mark the milestone task as `completed` via `TaskUpdate`
 
 ### 4. Verify → Review → Commit → PR
 
@@ -88,18 +75,11 @@ After all milestones are implemented, run the full delivery chain:
 
 Use the Skill tool to load: `verify` — run full three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available).
 
-**Gate 4 — Verification must pass:**
-If `/verify` reports any FAIL, PARTIAL, or CRITICAL anti-pattern findings:
-- Stop. Do not proceed to Step 4b (`/review`).
-- Debug the failures, then re-run `/verify`.
-- Only proceed to Step 4b when `/verify` reports all observable truths as PASS with evidence.
+If `/verify` reports failures, fix them and re-run before proceeding.
 
 #### 4b. Review
 
-Use the Skill tool to load: `review` — perform a quality review of the changes on this branch:
-- Code smells, SOLID violations, security issues
-- Adherence to existing codebase patterns and conventions
-- Address any findings before proceeding to commit
+Use the Skill tool to load: `review`.
 
 #### 4c. PR
 
@@ -117,13 +97,6 @@ After the full delivery chain completes (verify → review → commit → PR), p
 - **PR**: link to the created pull request
 
 Update `.planning/STATE.md` marking this ticket as complete with a timestamp and PR link.
-Mark all tracked tasks as `completed` via `TaskUpdate`.
-
-## Error Handling
-
-| Scenario | Response |
-|----------|----------|
-| Partial implementation blocked | Complete what is possible, mark blocked items with `[Blocked]`, report status |
 
 ## Related Skills
 

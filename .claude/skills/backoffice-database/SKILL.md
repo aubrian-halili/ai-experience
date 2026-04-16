@@ -9,11 +9,7 @@ allowed-tools: Bash(PGPASSWORD=*)
 disable-model-invocation: true
 ---
 
-Explore PostgreSQL database schemas and run read-only queries against the backoffice Aurora cluster. All operations are strictly read-only.
-
-## Database Philosophy
-
-- **Read-only only** — Only SELECT, WITH, SHOW, EXPLAIN, and DESCRIBE are permitted. Enforced server-side via `default_transaction_read_only=on`
+Explore PostgreSQL database schemas and run read-only queries against the backoffice Aurora cluster.
 
 ## Connection
 
@@ -32,11 +28,11 @@ Parse `$ARGUMENTS` to understand what the user wants:
 
 | Argument Pattern | Intent | Approach |
 |------------------|--------|----------|
-| (empty) | Overview | Steps 1–3; list databases, schemas, and tables |
-| `table_name` or `schema.table_name` | Table schema | Steps 1–3; emphasis on schema inspection |
-| `SELECT ...` or SQL query | Query data | Steps 1–3; emphasis on query validation and execution |
-| `schema_name` | Schema tables | Steps 1–3; list tables in schema |
-| `database_name` (all lowercase, no dots) | Database schemas | Steps 1–3; list schemas in database |
+| (empty) | Overview | List databases, schemas, and tables |
+| `table_name` or `schema.table_name` | Table schema | Schema inspection |
+| `SELECT ...` or SQL query | Query data | Query validation and execution |
+| `schema_name` | Schema tables | List tables in schema |
+| `database_name` (all lowercase, no dots) | Database schemas | List schemas in database |
 
 **Disambiguation:** A bare word like `accounting` could be a schema or database name. Default to schema lookup within the current database first. If no schema is found, retry as a database name. If neither matches, report not found and list available options.
 
@@ -71,17 +67,12 @@ If `@references/database-overview.md` exists, present its cached data directly i
    ```
 
 **Table Schema**
-1. Run:
-   ```sql
-   SELECT column_name, data_type, is_nullable, column_default
-   FROM information_schema.columns
-   WHERE table_schema = '<schema>' AND table_name = '<table>'
-   ORDER BY ordinal_position;
-   ```
-2. Present columns, types, constraints, and indexes
-
-**SQL Query**
-Run the query.
+```sql
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns
+WHERE table_schema = '<schema>' AND table_name = '<table>'
+ORDER BY ordinal_position;
+```
 
 **Schema Tables**
 ```sql
