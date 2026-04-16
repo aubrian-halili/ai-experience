@@ -15,22 +15,10 @@ ultrathink
 
 Execute structured feature implementation from an approved plan through incremental, test-driven milestones with clear verification at each step.
 
-## Development Philosophy
-
-- **Incremental delivery** — ship working slices, not layers; each milestone produces demonstrable value
-- **Scope discipline** — build exactly what's needed; track out-of-scope items explicitly and defer them
-
-## Iron Laws
-
-> - NO implementation before Definition of Done is confirmed from the plan
-> - NO milestone marked complete without verification evidence
-
 ## Rationalization Guard
 
 | Excuse | Reality |
 |--------|---------|
-| "Let me write the code first, tests after" | Tests-after is verification theater, not TDD |
-| "This milestone is too small to verify" | Small milestones are exactly where verification is cheapest |
 | "The plan is in my head" | Unwritten plans drift; observable truths prevent scope creep |
 | "I'll track tasks manually" | Manual tracking drops items; use TaskCreate for accountability |
 
@@ -88,7 +76,7 @@ After approval, convert the plan into tracked tasks:
 
 For each milestone:
 1. Mark the milestone task as `in_progress` via `TaskUpdate`
-2. Follow the TDD cycle from `testing.md` (RED → GREEN → REFACTOR) — write the test first, confirm it fails, then implement the minimum code to pass it
+2. Follow the TDD cycle from `testing.md`
 3. Mark the milestone task as `completed` via `TaskUpdate`
 4. Stage and commit per `git-conventions.md`
 
@@ -103,7 +91,7 @@ Use the Skill tool to load: `verify` — run full three-level verification again
 **Gate 4 — Verification must pass:**
 If `/verify` reports any FAIL, PARTIAL, or CRITICAL anti-pattern findings:
 - Stop. Do not proceed to Step 4b (`/review`).
-- Debug per `debug.md`, then re-run `/verify`.
+- Debug the failures, then re-run `/verify`.
 - Only proceed to Step 4b when `/verify` reports all observable truths as PASS with evidence.
 
 #### 4b. Review
@@ -113,11 +101,7 @@ Use the Skill tool to load: `review` — perform a quality review of the changes
 - Adherence to existing codebase patterns and conventions
 - Address any findings before proceeding to commit
 
-#### 4c. Commit
-
-Stage and commit any fixes from the review step per `git-conventions.md`.
-
-#### 4d. PR
+#### 4c. PR
 
 Use the Skill tool to load: `pr` — create a focused draft PR for this ticket's changes.
 
@@ -139,12 +123,7 @@ Mark all tracked tasks as `completed` via `TaskUpdate`.
 
 | Scenario | Response |
 |----------|----------|
-| Large scope | Recommend breaking into multiple features, each with their own plan |
-| Missing dependencies | Identify blockers, suggest sequencing |
-| Conflicting requirements | Surface trade-offs, request decision |
 | Partial implementation blocked | Complete what is possible, mark blocked items with `[Blocked]`, report status |
-| Test failures during implementation | Stop, report failing tests, do not proceed to next milestone |
-| Existing feature overlap | Report the overlap, ask whether to extend existing or create new |
 
 ## Related Skills
 
@@ -152,7 +131,4 @@ Mark all tracked tasks as `completed` via `TaskUpdate`.
 |-------|---------------------|
 | `/plan` | Need to explore, clarify, and design before implementation |
 | `/jira` | Decompose plan into tickets before starting implementation |
-| `/verify` | Runs automatically after implementation as part of the delivery chain |
-| `/review` | Runs automatically after `/verify` as part of the delivery chain |
-| `/pr` | Runs automatically after commit as part of the delivery chain |
 | `/confluence` | Reference Confluence specs or publish feature documentation |

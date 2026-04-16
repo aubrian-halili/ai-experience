@@ -44,31 +44,10 @@ Classify `$ARGUMENTS` to determine the hook workflow:
 
 Based on the desired behavior:
 
-1. **Select event**: Match behavior to the appropriate hook event
+1. **Select event**: Match behavior to the appropriate hook event (see Claude Code's native hook documentation for the full list of events)
 2. **Define matcher**: Determine which tool calls or conditions trigger the hook
 3. **Plan action**: What the hook script should do (block, modify, log, notify)
-4. **Choose scope**: Project-level (`.claude/settings.json`) or user-level (`.claude/settings.local.json`)
-
-**Hook Events Reference:**
-
-| Event | Timing | Use Cases |
-|-------|--------|-----------|
-| **Tool lifecycle** | | |
-| `PreToolUse` | Before a tool executes | Block dangerous commands, validate inputs, auto-approve safe ops |
-| `PostToolUse` | After a tool executes | Log actions, trigger follow-ups, auto-format |
-| **Session lifecycle** | | |
-| `SessionStart` | Session begins | Set up env, check prerequisites, load context |
-| `SessionEnd` | Session ends | Cleanup, save summaries |
-| `Stop` | Claude stops responding | Cleanup, summary generation, notifications |
-| `StopFailure` | Claude fails to stop cleanly | Error recovery, alerting |
-| `SubagentStart` | Subagent spawns | Logging, pre-checks |
-| `SubagentStop` | Subagent finishes | Aggregate results, quality checks |
-| **User interaction** | | |
-| `UserPromptSubmit` | User sends a message | Input validation, preprocessing |
-| `Notification` | On notifications | Custom alerts, integrations |
-| **Context management** | | |
-| `PreCompact` | Before context compaction | Save important state |
-| `PostCompact` | After context compaction | Re-inject critical context |
+4. **Choose scope**: Project-level (`.claude/settings.json`) or user-level (`.claude/settings.local.json`) — use project-level for team-wide guardrails, user-level for personal preferences
 
 ### 2.5. Present Plan for Approval
 
@@ -92,36 +71,7 @@ Create the hook script and configuration:
 2. **Make executable**: `chmod +x $CLAUDE_PROJECT_DIR/.claude/hooks/<script-name>`
 3. **Register in settings**: Add hook configuration to the appropriate settings file
 
-**Hook Types:**
-
-| Type | Key Fields | Use Case |
-|------|-----------|----------|
-| `command` | `command`, `timeout` | Run a shell script |
-| `http` | `url`, `headers` | Call a webhook/API endpoint |
-| `prompt` | `prompt`, `model` | LLM-based judgment — no script needed |
-| `agent` | `prompt`, `model` | Multi-step LLM reasoning with tool access |
-
-Common optional fields (all types): `timeout` (seconds), `async` (bool, fire-and-forget), `statusMessage` (shown in UI while hook runs).
-
-**Hook Configuration Schema:**
-
-```json
-{
-  "hooks": {
-    "<event>": [
-      {
-        "matcher": "<tool-name-pattern>",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/<script-name>"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+Use a `command` hook for shell scripts, `prompt` or `agent` for LLM-based judgment (no script file needed). See `@references/hook-patterns.md` for ready-to-use implementations.
 
 For LLM-based decisions without a shell script, use a `prompt` hook:
 
@@ -132,48 +82,6 @@ For LLM-based decisions without a shell script, use a `prompt` hook:
   "model": "claude-haiku-4-5-20251001"
 }
 ```
-
-**Hook Script Template:**
-
-```bash
-#!/bin/bash
-# Hook: <description>
-# Event: <event-type>
-# Matcher: <pattern>
-
-# Read input from stdin (JSON with tool name, input, etc.)
-INPUT=$(cat)
-
-# Extract relevant fields
-TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
-TOOL_INPUT=$(echo "$INPUT" | jq -r '.tool_input // empty')
-
-# Your logic here
-# Exit 0 = allow, Exit 2 = block (stderr shown to user)
-
-exit 0
-```
-
-**Structured Output (JSON on stdout):**
-
-For richer control than exit codes alone, hooks can write JSON to stdout:
-
-```bash
-# PreToolUse — control the permission decision
-echo '{"hookSpecificOutput":{"permissionDecision":"allow"}}'   # auto-approve, skip prompt
-echo '{"hookSpecificOutput":{"permissionDecision":"deny"}}'    # block (equivalent to exit 2)
-echo '{"hookSpecificOutput":{"permissionDecision":"ask"}}'     # defer to normal permission flow
-
-# PostToolUse / Stop — block the action
-echo '{"decision":"block","reason":"Reason shown to user"}'
-
-# Any event — inject context or modify output
-echo '{"additionalContext":"Text injected into Claude'\''s next turn"}'
-echo '{"suppressOutput":true}'                                 # hide hook output from user
-echo '{"systemMessage":"Warning shown to Claude"}'
-```
-
-Exit codes still apply: `0` = allow (parse stdout for JSON decisions), `2` = block (write reason to stderr).
 
 ### 4. Validate
 
@@ -191,8 +99,6 @@ See `@references/hook-patterns.md` for detailed pattern implementations.
 
 | Scenario | Response |
 |----------|----------|
-| No `.claude/settings.json` found | Create it with the hook configuration |
-| Hook script has syntax errors | Test with `bash -n` before registering |
 | jq not available | Suggest installation or provide jq-free alternative using grep/sed |
 | Stop hook causes infinite loop | Check `stop_hook_active` field in stdin JSON; skip logic if `true` |
 

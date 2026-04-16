@@ -36,9 +36,8 @@ First, classify the request type:
 ### 1. Pre-flight
 
 - Classify request using the Input Handling table
-- If `$ARGUMENTS` contains a skill name, validate it is kebab-case (`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`)
-- Check if a skill with that name already exists in `.claude/skills/`
-- Review existing skills via Glob to avoid overlap with the proposed skill's scope
+- If `$ARGUMENTS` contains a skill name, check if it already exists in `.claude/skills/`
+- Review existing skills via Glob to avoid scope overlap with the proposed skill
 
 **Stop conditions:**
 - Proposed skill duplicates an existing skill's scope → suggest updating the existing skill instead
@@ -62,7 +61,6 @@ Determine and present to the user **before running the init script**:
 - **Directory layout**: which subdirectories will be created (e.g., `references/`, `scripts/`)
 - **Frontmatter fields**: proposed `allowed-tools`, `disable-model-invocation`, `argument-hint`
 - **Constraint level**: high freedom (creative), medium (structured), or low (mechanical)
-- Whether templates or examples better serve the use case (see `@references/best-practices.md`, Output Pattern Selection)
 
 **Do not proceed to Step 4 until the user confirms the structure.**
 
@@ -90,15 +88,11 @@ Run validation to check structure:
 ${CLAUDE_SKILL_DIR}/scripts/validate-skill.sh [skill-name]
 ```
 
-Verify against the quality checklist: Discoverable, Scoped, Efficient, Guided, Graceful, Connected, Tested (see `@references/best-practices.md`).
+Verify against the quality checklist: Discoverable, Efficient, Graceful, Connected (see `@references/best-practices.md`).
 
 ### 7. Iterate
 
-Test the skill with real invocations and refine based on:
-- Missing edge cases or input types
-- Unclear instructions that cause wrong behavior
-- Output format issues or missing context
-- Comparison against peer skills for structural consistency
+Test the skill with real invocations and refine.
 
 ## Skill Anatomy
 

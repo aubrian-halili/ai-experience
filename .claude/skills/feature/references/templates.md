@@ -136,35 +136,3 @@ if (featureFlags.isEnabled('new-feature')) {
 
 **Best for**: Risk mitigation, A/B testing, gradual rollout to users, easy rollback.
 
-## Verification Checklist Template
-
-Use this template during Step 5 (Verify) for three-level verification.
-
-```markdown
-### Verification Results
-
-#### Level 1: Existence
-| Artifact | Status | Path |
-|----------|--------|------|
-| [Expected artifact] | [EXISTS / MISSING] | `path/to/file` |
-
-#### Level 2: Substance
-| Artifact | Status | Evidence |
-|----------|--------|----------|
-| [Artifact] | [SUBSTANTIVE / STUB / PARTIAL] | `file:line` — [brief note] |
-
-#### Level 3: Wiring
-| Connection | Status | Evidence |
-|------------|--------|----------|
-| [Expected wiring] | [WIRED / ORPHANED / PARTIAL] | `file:line` — [brief note] |
-
-#### Anti-Pattern Scan
-| Finding | Severity | Location | Action |
-|---------|----------|----------|--------|
-| [Anti-pattern] | [Critical/High/Medium/Low] | `file:line` | [Fix needed] |
-
-#### Summary
-- Observable truths satisfied: X/Y
-- Anti-patterns found: N (C critical, H high, M medium, L low)
-- Overall: [PASS / PARTIAL / FAIL]
-```

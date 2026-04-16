@@ -64,7 +64,6 @@ Process, evaluate, and implement code review feedback with technical rigor.
 **Stop conditions:**
 - No PR found for current branch → report; suggest creating PR with `/pr` first
 - PR is closed or merged → report state and stop
-- `gh` not authenticated → provide `gh auth login` instructions and stop
 - No review comments found → report "no pending review comments"
 - Current branch doesn't match PR head branch with dirty working tree → report mismatch, stop
 
@@ -130,13 +129,8 @@ grep -r "<SuggestedName>" --include="*.ts" --include="*.tsx" src/
 If the suggested addition has zero consumers → push back with evidence.
 
 **Correctness check:**
-- Read the actual code the reviewer is commenting on
 - Check if the reviewer's assumption about behavior is correct
 - Verify the suggested fix doesn't break other callers/tests
-
-**Convention check:**
-- Does the suggestion align with existing codebase patterns?
-- Check CLAUDE.md, linter config, and surrounding code for precedent
 
 **Report findings to the user:**
 - Suggestions that are correct and should be implemented
@@ -182,10 +176,9 @@ Present all draft replies to the user for approval before posting.
 
 After all changes are implemented and replies posted:
 
-1. Stage and commit changes — stage specific files by name (`git add <file>`) and commit using the `<TICKET-ID> <type>(<scope>): <subject>` format from `git-conventions.md`; never use `git add .`
-2. **Ask user for confirmation before pushing** — pushing affects shared state
-3. Push changes: `git push`
-4. Verify PR state:
+1. Stage and commit following `git-conventions.md`
+2. Push changes: `git push`
+3. Verify PR state:
 ```bash
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup
 ```
@@ -194,7 +187,6 @@ Report to the user: changes made, replies posted, remaining items (if any), and 
 
 ## Output Principles
 
-- **Action-first communication** — lead with what was done, not what was discussed
 - **Batch presentation** — show all planned changes and draft replies together for single approval
 
 ## Error Handling
@@ -202,7 +194,6 @@ Report to the user: changes made, replies posted, remaining items (if any), and 
 | Scenario | Response |
 |----------|----------|
 | Reviewer comment references deleted code | Note the staleness, ask user how to proceed |
-| Conflicting reviewer feedback | Surface the contradiction, ask user to decide |
 | Too many comments (>20) | Prioritize by blocking/required, batch quick wins, defer complex items |
 
 ## Related Skills

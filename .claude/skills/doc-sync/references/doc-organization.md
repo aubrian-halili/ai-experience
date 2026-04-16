@@ -68,16 +68,6 @@ Example CLAUDE.md pointer:
 - Runbooks: `docs/runbooks/` (incident response, deploys)
 ```
 
-## Documentation as Exploration Accelerant
-
-When a fresh agent starts work on a feature, the first thing it does is explore the codebase. Good documentation shortens this exploration loop significantly.
-
-**A good CLAUDE.md answers:**
-1. What is this project and what problem does it solve?
-2. What is the key architectural shape? (What are the main components and how do they interact?)
-3. What is non-obvious about how this codebase works?
-4. Where do I look for more detail on topic X?
-
 ## Monorepo Structure Note
 
 ```

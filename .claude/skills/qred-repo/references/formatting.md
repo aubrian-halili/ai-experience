@@ -22,7 +22,6 @@ Qred/<repo>
 ```
 
 - Use `+--` for entries and `|` for continuation lines
-- Annotate key directories with brief descriptions when their purpose is clear (e.g., `src/ — application source`)
 - Mark unexplored directories or truncated depth with `(...)` to indicate more content exists
 
 ## Follow-up Suggestions by Layer
