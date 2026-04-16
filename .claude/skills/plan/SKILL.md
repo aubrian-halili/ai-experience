@@ -22,14 +22,11 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 - **Goal-backward verification** — define "what must be TRUE when done" before planning how to get there
 - **Observable truths over vague milestones** — every phase defines concrete, verifiable conditions (file exists, test passes, endpoint responds)
 - **Minimal viable phases** — each phase produces a working increment; never plan a phase that leaves the system in a broken state
-- **Plan is a living document** — track state in `.planning/STATE.md` for session continuity
 
 ## Rationalization Guard
 
 | Excuse | Reality |
 |--------|---------|
-| "The scope is clear enough, let's skip architecture comparison" | Architecture shortcuts in planning cause mid-implementation pivots; ≤3 files is the only valid skip condition |
-| "We can define the observable truths later" | Observable truths defined after the plan is written are reverse-engineered from the solution, not the goal |
 | "Let's skip the plan-reviewer checklist, it'll slow us down" | The checklist prevents plans that fail silently in `/feature`; always validate against it |
 
 ## Input Handling
@@ -47,7 +44,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 ### 1. Pre-flight
 
 - Parse `$ARGUMENTS` — extract any Jira ticket ID (pattern: `[A-Z]+-\d+`) and/or goal description.
-- **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content. Store the ticket ID for Step 5.
+- **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content.
 - Check for existing `.planning/STATE.md` — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
   - **resume** → read the file, skip completed phases, continue from the phase marked current
   - **start over** → back up the existing file first, then proceed with a new plan:
@@ -59,7 +56,6 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 
 **Stop conditions:**
 - Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
-- On main/master branch → note that implementation will require a feature branch
 
 **Vague goal test** — a goal is too vague if it fails ANY of these:
 - Names a specific system, feature, component, or endpoint (not "improve the app")

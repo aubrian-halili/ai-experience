@@ -4,8 +4,6 @@ Use this checklist to validate a plan before presenting it to the user. Every ch
 
 ## Completeness
 
-- [ ] No TODO markers or placeholder text in any task
-- [ ] No steps that say "similar to X" or "like the previous one" without spelling out actual content
 - [ ] Every task has specific file paths, not vague references like "the config file" or "the main module"
 - [ ] Every task specifies what to write or modify, not just which file to touch
 
