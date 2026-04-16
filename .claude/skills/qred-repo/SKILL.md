@@ -24,8 +24,6 @@ For pass-through commands (input starting with `gh`), validate against this bloc
 
 ## Input Handling
 
-Parse `$ARGUMENTS` to determine operation type — direct operations execute immediately, while exploration operations enter the layered workflow at the appropriate layer:
-
 | Input | Intent | Approach |
 |-------|--------|----------|
 | (empty) or `repos` | List repositories | Direct; execute immediately |
@@ -42,28 +40,17 @@ Parse `$ARGUMENTS` to determine operation type — direct operations execute imm
 
 ### 1. Pre-flight
 
-Parse `$ARGUMENTS` and validate GitHub CLI access:
+1. Run `gh auth status`; on failure, see Error Handling below.
 
-1. Run `gh auth status`; on failure, see Error Handling (`@references/examples-and-errors.md`).
+### 2. Execute Direct Operations
 
-### 2. Route Request
-
-Route `$ARGUMENTS` using the Input Handling tables:
-- **Direct operations** → proceed to step 3
-- **Exploration operations** → proceed to step 4 at the specified entry layer
-
-### 3. Execute Direct Operations
-
-For all direct operations, use `--json` to get structured data:
 - **List repos:** `gh repo list Qred --limit 30 --no-archived --json name,description,url,isArchived,pushedAt`
 - **List PRs/issues:** add `--json number,title,state,author,updatedAt`
 - **View PR/issue:** add `--json number,title,body,state,author`
 
-### 4. Layered Exploration Workflow
+### 3. Layered Exploration Workflow
 
 #### Layer 1: Orient
-
-**Purpose:** Understand the repo before diving into code.
 
 1. Run `gh repo view Qred/<repo>` to get README and metadata
 
@@ -71,23 +58,32 @@ For all direct operations, use `--json` to get structured data:
 
 #### Layer 2: Navigate
 
-**Purpose:** Understand directory structure without reading file contents.
-
 1. Run `gh api repos/Qred/<repo>/contents/<path>` to get directory listing
-2. Present as an indented tree view (see `@references/formatting.md` for tree format)
+2. Present as an indented tree view:
+   ```
+   Qred/<repo>
+   +-- README.md
+   +-- src/
+   |   +-- index.ts
+   |   +-- config/
+   |   |   +-- database.ts
+   |   +-- routes/
+   |       +-- (...)
+   +-- tests/
+       +-- (...)
+   ```
+   Use `+--` for entries, `|` for continuation lines, `(...)` for unexplored/truncated directories.
 
 **Guardrails:** Max 3 directory levels deep. Max 30 entries per directory — if exceeded, show first 30 and note the remainder.
 
 #### Layer 3: Search
-
-**Purpose:** Find relevant code by keyword, not by browsing.
 
 1. Run `gh search code --owner Qred "<term>" --limit 30 --json path,repository,textMatches`
 2. For repo-scoped search: `gh search code --repo Qred/<repo> "<term>" --limit 30 --json path,repository,textMatches`
 
 **Result presentation:**
 
-- Present matching files with `repo/path:line` format for editor-friendly references, with enough context to judge relevance before reading
+- Present matching files in `repo/path:line` format
 - **Truncation block** (only when results = limit) — Show a multi-line refinement block:
   ```
   > Showing 30 results (limit reached) — results may be incomplete.
@@ -102,16 +98,16 @@ For all direct operations, use `--json` to get structured data:
 
 #### Layer 4: Read
 
-**Purpose:** Read a single file's contents when you know it's relevant.
-
 1. Run `gh api repos/Qred/<repo>/contents/<path>` to get file metadata and encoded content
-2. Decode the base64-encoded content field
 
 **Guardrails:** **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more. Skip binary/generated/lock files (e.g., `package-lock.json`, `yarn.lock`, `.min.js`).
 
 ## Error Handling
 
-See `@references/examples-and-errors.md` for error scenarios and responses.
+| Scenario | Response |
+|---|---|
+| `gh auth status` fails | "Run `gh auth login` and ensure your account has access to the Qred organization." |
+| No Qred org access | "Ensure your GitHub account has access to the Qred organization." |
 
 ## Related Skills
 

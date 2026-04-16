@@ -2,11 +2,6 @@
 
 Use this checklist to validate a plan before presenting it to the user. Every check must pass — if any fails, revise the plan before proceeding.
 
-## Completeness
-
-- [ ] Every task has specific file paths, not vague references like "the config file" or "the main module"
-- [ ] Every task specifies what to write or modify, not just which file to touch
-
 ## Verifiability
 
 - [ ] Every phase has a verification section with runnable commands or checkable conditions
@@ -37,6 +32,4 @@ Use this checklist to validate a plan before presenting it to the user. Every ch
 ## Coherence
 
 - [ ] All observable truths from "Define Done" are covered by at least one phase
-- [ ] No phase lacks a clear connection to at least one observable truth
-- [ ] Dependencies between phases are explicit and acyclic
 - [ ] Phase ordering follows the dependency graph, not arbitrary sequencing

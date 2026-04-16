@@ -26,8 +26,7 @@ If no ticket ID is found in `$ARGUMENTS`:
 - Stop. Tell the user: "A Jira ticket ID is required to use `/feature`. Run `/plan` to create an implementation plan, then `/jira` to decompose it into tickets."
 
 **Gate 2 — Branch check:**
-If on `main` or `master`:
-- Stop. Ask the user to switch to a feature branch or confirm creating one: "You are on `main`. Should I create a feature branch `<TICKET-ID>-<short-description>` from the latest default branch?"
+If on `main` or `master`, offer to create a feature branch: "You are on `main`. Should I create a feature branch `<TICKET-ID>-<short-description>` from the latest default branch?"
 
 **Fetch & confirm requirements:**
 - Fetch ticket details: `acli jira workitem view <TICKET_ID>` — read scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content.
@@ -41,7 +40,7 @@ If on `main` or `master`:
     - If no plan exists → Stop. Tell the user: "An approved plan is required before implementation. Run `/plan` first, then `/jira` to create tickets."
 
 **Branch creation:**
-- If not already on a feature branch (Gate 2 confirmed), create one following branch naming conventions.
+- If not already on a feature branch (Gate 2 confirmed), create one.
 
 ### 2. Design & Present
 
@@ -50,7 +49,6 @@ If on `main` or `master`:
   - Each milestone should satisfy specific observable truths from the plan's Definition of Done
   - Select a delivery pattern from `@references/templates.md` (Vertical Slice, Horizontal Layer, or Feature Flags)
   - Show: milestone breakdown, files to create/modify, delivery pattern rationale
-- **Present the implementation plan to the user and wait for approval before proceeding.**
 
 ### 3. Implement
 
@@ -60,7 +58,6 @@ After approval, convert the plan into tracked tasks:
 
 For each milestone:
 1. Implement the milestone, then commit
-2. Mark the milestone task as `completed` via `TaskUpdate`
 
 ### 4. Verify → Review → Commit → PR
 
@@ -82,5 +79,5 @@ Use the Skill tool to load: `pr` — create a focused draft PR for this ticket's
 
 ### 5. Summary
 
-After the full delivery chain completes (verify → review → commit → PR), produce a concise summary of what was built, key decisions, and acceptance criteria satisfied. Update `.planning/STATE.md` marking this ticket as complete with a timestamp and PR link.
+After the full delivery chain completes, update `.planning/STATE.md` marking this ticket as complete with a timestamp and PR link.
 

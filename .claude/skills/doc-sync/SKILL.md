@@ -46,14 +46,12 @@ Parse `$ARGUMENTS` for flags:
   - Root-level markdown files (README.md, CONTRIBUTING.md, etc.)
   - Any `CLAUDE.md` files in subdirectories
 - Build a **documentation inventory**: for each doc file found, note its tier (always-on / on-demand) and whether CLAUDE.md references it
-- Confirm git repo via `git log`; if `--section` is provided, match against actual `## ` headings
+- If `--section` is provided, match against actual `## ` headings
 
 ### 2. Project Discovery
 
-Detect project type and documentation conventions already in use:
+Detect project type from marker files and existing doc conventions:
 
-- **Project type**: check for marker files (`package.json`, `go.mod`, `pyproject.toml`, `Cargo.toml`, `pom.xml`, `build.gradle`, `.claude/skills/`)
-- **Existing doc conventions**: ADR folders (`docs/architecture/decisions/`), API docs, changelog, contributing guides
 - **Monorepo signals**: multiple `package.json` / workspace config files, nested `CLAUDE.md` files
 
 Produces an internal project profile — not written anywhere. Used to contextualize findings (e.g., "this is a Node project" tells us to verify `package.json` script references).
@@ -62,14 +60,14 @@ Produces an internal project profile — not written anywhere. Used to contextua
 
 Parse all documentation files from the inventory and extract verifiable claims. For each claim, verify it against the filesystem and report any discrepancy.
 
-| Claim Type | Detection Pattern | Verification Method |
-|------------|-------------------|---------------------|
-| **Numeric counts** | `\d+\s+\w+` in structural context ("5 services", "3 rule files") | Count actual items via Glob/ls; compare |
-| **File/directory paths** | Backtick-wrapped paths, inline paths matching `foo/bar.ext` | Verify each exists on filesystem |
-| **Directory trees** | Fenced code blocks with `├──`, `└──`, `│` characters | Parse tree; verify each entry exists; check for unlisted siblings at same depth |
-| **Command references** | Backtick commands (`` `npm test` ``, `` `make build` ``), `/slash-commands` | Verify scripts in package.json/Makefile, or skill directories |
-| **Cross-doc references** | "see `docs/foo.md`", "defined in `.claude/rules/bar.md`" | Verify target file exists |
-| **Convention file references** | Paths to config files (`.eslintrc`, `tsconfig.json`, `.prettierrc`) | Verify each exists |
+| Claim Type | Verification Method |
+|------------|---------------------|
+| **Numeric counts** | Count actual items via Glob/ls; compare |
+| **File/directory paths** | Verify each exists on filesystem |
+| **Directory trees** | Parse tree; verify each entry exists; check for unlisted siblings at same depth |
+| **Command references** | Verify scripts in package.json/Makefile, or skill directories |
+| **Cross-doc references** | Verify target file exists |
+| **Convention file references** | Verify each exists |
 
 ### 4. Drift Detection
 
@@ -79,8 +77,6 @@ Use git history to find undocumented structural changes:
 - `git log --oneline --since="<that date>" --diff-filter=A --name-only` to find files added since then
 - Focus on **structurally significant** additions: new top-level directories, new config files at root, new `index.*` / `main.*` / `app.*` files, new doc files in `docs/`
 - Cross-reference additions against what CLAUDE.md describes — flag additions a future agent would benefit from knowing about
-
-Skip individual source files unless they represent a new top-level module.
 
 ### 5. Documentation Organization Assessment
 

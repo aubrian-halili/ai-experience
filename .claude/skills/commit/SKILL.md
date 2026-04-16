@@ -12,8 +12,6 @@ disable-model-invocation: true
 **Recent commits:**
 !`git log --oneline -3`
 
-Generate semantic commit messages following project conventions (see CLAUDE.md).
-
 ## Input Handling
 
 Determine commit workflow from `$ARGUMENTS`:
@@ -34,7 +32,3 @@ Use `$ARGUMENTS` if provided (user's custom message or scope), otherwise generat
 **Present to user:**
 - Show the proposed commit message (with body if needed)
 - Ask the user to review and confirm before proceeding
-
-### 2. Stage & Commit
-
-Stage and commit the approved changes.

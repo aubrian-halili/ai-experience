@@ -19,7 +19,6 @@ ultrathink
 
 | Excuse | Reality |
 |--------|---------|
-| "I know the line number from the diff" | Diff offsets are not source file line numbers; always read the source file |
 | "The confidence gate is too strict — I'll report it anyway" | The gate exists to protect signal-to-noise ratio; below 80 means insufficient evidence |
 | "Skipping the specialized passes, the diff is small" | The threshold is >10 files for parallel agents, not for skipping passes entirely |
 
@@ -41,11 +40,8 @@ If any of these are missing, score the finding below 80 regardless of how "obvio
 
 Exclude regardless of confidence:
 
-1. **Linter/formatter issues**
-2. **Compiler/build errors**
-3. **Pedantic style nitpicks**
-4. **Out-of-scope missing features**
-5. **TODOs the author already flagged**
+1. **Out-of-scope missing features**
+2. **TODOs the author already flagged**
 
 ## Input Handling
 
@@ -53,7 +49,7 @@ Pass `--refactor` to perform a Clean Code & SOLID-focused review with Edit sugge
 
 ## Specialized Review Passes
 
-When the review scope is large (>10 files) or the user requests a thorough review, dispatch targeted subagents: `code-quality-reviewer` for quality dimensions (Type Safety, Type Design, Error Handling, Test Coverage, Performance, Clean Code, Documentation) and `security-scanner` for the security pass.
+When the review scope is large (>10 files) or the user requests a thorough review, dispatch targeted subagents: `code-quality-reviewer` for quality dimensions and `security-scanner` for the security pass.
 
 ## Process
 
@@ -95,28 +91,11 @@ Present findings using the Local Changes template from `@references/templates.md
 
 ### 5. Report PR Findings (PR only)
 
-Before reporting, re-check PR state to avoid posting stale reviews:
-```bash
-gh pr view <number> --json state,isDraft,updatedAt,commits
-```
-- If PR is now closed or merged → skip reporting, inform user
-- If new commits were pushed since analysis began → warn user that findings may be outdated and offer to re-run
-
 Present findings using the Pull Request Review template from `@references/templates.md`.
 
 ### 6. Verify
 
 - Note any files or diff hunks that were skipped with rationale
-- Sanity-check severity distribution — if all findings are Critical or all are Note, re-evaluate consistency
-
-## Code Smells to Detect (Clean Code Pass)
-
-Project-specific preferences (beyond standard smells):
-
-| Smell | Refactoring |
-|-------|-------------|
-| Nested Ternaries | `if`/`else` chains or `switch` statements |
-| Dense One-liners | Break into named steps for readability |
 
 ## Related Skills
 

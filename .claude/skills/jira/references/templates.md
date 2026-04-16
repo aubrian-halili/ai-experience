@@ -1,7 +1,5 @@
 # Jira Ticket Templates
 
-Templates for Bug and Task ticket types with structured fields for clarity and completeness.
-
 ## Bug Template
 
 ```markdown
@@ -78,12 +76,6 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 ### Dependencies
 
 [Internal or external dependencies]
-
-## Testing Requirements
-
-- Unit tests
-- Integration tests
-- E2E tests (if needed)
 
 ## Suggested Priority
 
