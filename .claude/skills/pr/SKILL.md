@@ -12,8 +12,6 @@ disable-model-invocation: true
 **Current branch:** !`git branch --show-current`
 **Recent commits:** !`git log --oneline -5`
 
-Create pull requests with auto-generated titles and descriptions from commit history. Always use the selected template verbatim for the PR body — never improvise sections.
-
 ## Process
 
 ### 1. Pre-flight Checks
@@ -22,7 +20,7 @@ Parse `$ARGUMENTS` for flags (`--major`, `--fe`, `--ready`, `--base`, `--label`)
 
 - On `main`/`master` → Cannot create PR from default branch
 - No commits ahead of the default branch → Commit changes first
-- PR already exists → Show existing PR URL, status, and next steps (view: `gh pr view`, push more commits: `git push`, edit: `gh pr edit`)
+- PR already exists → Show existing PR URL and suggest next steps
 
 ### 2. Prepare Body
 
@@ -35,9 +33,7 @@ Parse `$ARGUMENTS` for flags (`--major`, `--fe`, `--ready`, `--base`, `--label`)
 | `--fe`         | @references/frontend-minor-template.md   |
 | `--fe --major` | @references/frontend-major-template.md   |
 
-**CRITICAL: The PR body MUST be constructed from the selected template file.** Read the template file and include **every section, checkbox, and line** — do not omit or summarize any part of the template. Fill in dynamic sections from commit history; copy all other sections verbatim with checkboxes intact. Check off only the items that apply.
-
-**Template completeness check:** Before presenting, verify the generated body contains every `## ` heading from the selected template file. If any heading is missing, re-read the template and add the missing section before proceeding.
+**CRITICAL: The PR body MUST be constructed from the selected template file.** Read the template file and include **every section, checkbox, and line** — do not omit or summarize any part of the template. Fill in dynamic sections from commit history and check off only the items that apply.
 
 Indicate which template was used (minor/major, and `(frontend)` when `--fe` is active) so the user can override with `--major` or `--fe` if needed.
 

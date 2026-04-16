@@ -15,7 +15,6 @@ Create new Claude Code skills following established patterns and best practices.
 ## Skill Design Philosophy
 
 - **Degrees of freedom** — match constraint level to task variability; creative tasks need principles, mechanical tasks need strict templates (see `@references/best-practices.md`)
-- **Consistent naming** — use gerund form (verb + -ing) for skill names when possible; avoid vague, generic, or reserved words (see `@references/best-practices.md` for conventions)
 
 ## Input Handling
 
@@ -25,11 +24,11 @@ First, classify the request type:
 
 | Type | Indicators | Approach |
 |------|-----------|----------|
-| **New Skill** | "create a skill", "build a skill for", skill name provided | Steps 1–7; full workflow from requirements to validation |
-| **Skill Update** | "optimize", "improve", "update this skill" | Steps 1, 3–5, 7; skip init, focus on structural alignment with peers |
+| **New Skill** | "create a skill", "build a skill for", skill name provided | Steps 1–6; full workflow from requirements to validation |
+| **Skill Update** | "optimize", "improve", "update this skill" | Steps 1, 3–5; skip init, focus on structural alignment with peers |
 | **Skill Validation** | "validate", "check this skill" | Step 6 only; run validation script and report |
 | **Template Question** | "how to write a skill", "skill structure" | Steps 1–2 only; walk through `@template.md` structure |
-| **Skill Review** | "review this skill", "is this skill good" | Steps 1, 3–5, 7; audit against quality checklist in `@references/best-practices.md` |
+| **Skill Review** | "review this skill", "is this skill good" | Steps 1, 3–5; audit against quality checklist in `@references/best-practices.md` |
 
 ## Process
 
@@ -57,7 +56,6 @@ Ask clarifying questions:
 
 Determine and present to the user **before running the init script**:
 
-- **Skill name**: kebab-case, descriptive, max 64 characters
 - **Directory layout**: which subdirectories will be created (e.g., `references/`, `scripts/`)
 - **Frontmatter fields**: proposed `allowed-tools`, `disable-model-invocation`, `argument-hint`
 - **Constraint level**: high freedom (creative), medium (structured), or low (mechanical)
@@ -90,20 +88,13 @@ ${CLAUDE_SKILL_DIR}/scripts/validate-skill.sh [skill-name]
 
 Verify against the quality checklist: Discoverable, Efficient, Graceful, Connected (see `@references/best-practices.md`).
 
-### 7. Iterate
-
-Test the skill with real invocations and refine.
-
 ## Output Principles
 
-- **Scaffold, don't over-specify** — generate the structural skeleton with clear placeholders; let the skill author fill in domain-specific content rather than guessing it
 - **Inline references** — wire up `@references/` links within process steps, not as a standalone References section; this teaches skills to load context only when needed
 
 ## Error Handling
 
-| Scenario | Response |
-|----------|----------|
-| Validation script reports warnings | Distinguish errors from warnings; fix errors, evaluate warnings case-by-case |
+Never silently skip validation errors.
 
 ## Related Skills
 

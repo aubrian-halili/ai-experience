@@ -18,15 +18,14 @@ Process, evaluate, and implement code review feedback with technical rigor.
 
 > - NO performative agreement — no "great point!", "you're absolutely right!", no gratitude expressions in PR comments
 > - NO implementation before ALL unclear items are clarified
-> - ALWAYS verify a suggestion against the actual code before implementing it
 > - YAGNI discipline — grep for actual usage before implementing "proper" features a reviewer suggests
 
 ## Input Handling
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| PR number (e.g., `123`, `#123`) | Address feedback on specific PR | Fetch PR comments, full process. Will verify current branch matches PR head branch and offer to checkout if needed |
-| PR URL | Address feedback on specific PR | Extract PR number, full process. Will verify current branch matches PR head branch and offer to checkout if needed |
+| PR number (e.g., `123`, `#123`) | Address feedback on specific PR | Fetch PR comments, full process |
+| PR URL | Address feedback on specific PR | Extract PR number, full process |
 | `latest` or (none) | Address feedback on current branch's PR | Detect PR from branch, full process |
 | Specific comment quote | Address single piece of feedback | Targeted single-comment workflow |
 
@@ -34,7 +33,6 @@ Process, evaluate, and implement code review feedback with technical rigor.
 
 ### 0. Pre-flight
 
-- Verify `gh` is authenticated: `gh auth status`
 - Resolve PR number, state, and head branch in a single call: `gh pr view --json number,state,headRefName`
   - Use `$ARGUMENTS` to target a specific PR number/URL if provided, otherwise detect from current branch
 - Verify PR is open: check `state` from the call above
@@ -58,9 +56,6 @@ Process, evaluate, and implement code review feedback with technical rigor.
 Fetch all review comments and organize them:
 
 ```bash
-# Get PR number from branch if not provided
-PR_NUMBER=$(gh pr view --json number --jq '.number')
-
 # Fetch inline review comments with diff context (file path, diff position, in_reply_to_id)
 # These details are not exposed by `gh pr view`
 gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments --paginate
@@ -91,14 +86,7 @@ Sort feedback items by implementation order:
 
 ### 3. Clarify Before Implementing
 
-Before implementing ANY changes, identify ALL unclear items:
-
-- Ambiguous phrasing — "this could be cleaner" (how specifically?)
-- Assumed context — reviewer references something not visible in the diff
-- Contradictory feedback — two comments suggest opposite approaches
-- Scope uncertainty — unclear if the suggestion is a must-fix or nice-to-have
-
-Present all unclear items to the user in a single organized list. Wait for answers before proceeding.
+Before implementing ANY changes, identify ALL unclear items and present them to the user in a single organized list. Wait for answers before proceeding.
 
 If the feedback source is a GitHub PR, draft clarifying questions as thread replies (not top-level comments) for user approval before posting.
 
@@ -121,9 +109,7 @@ If the suggested addition has zero consumers → push back with evidence.
 
 ### 5. Implement Changes
 
-After user approval of the plan from step 4:
-
-**Implementation order:** Blocking → Required → Quick wins → Complex (approved only)
+After user approval of the plan from step 4, implement in priority order from Step 2.
 
 For each change, draft a thread reply explaining what was done (for user to post).
 
@@ -161,14 +147,6 @@ After all changes are implemented and replies posted:
 ```bash
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup
 ```
-
-Report to the user: changes made, replies posted, remaining items (if any), and PR state.
-
-## Error Handling
-
-| Scenario | Response |
-|----------|----------|
-| Too many comments (>20) | Prioritize by blocking/required, batch quick wins, defer complex items |
 
 ## Related Skills
 

@@ -17,6 +17,3 @@
 | Scenario | Response |
 |---|---|
 | No Qred org access | "Ensure your GitHub account has access to the Qred organization." |
-| File/path not found | List parent directory contents to help navigate |
-| File too large (>300 lines) | Show first 100 lines and ask: "This file has N lines. Show more?" |
-| Directory >30 entries | Show first 30 entries and note: "Showing 30 of N entries. Narrow with a path or search." |

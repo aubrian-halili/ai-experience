@@ -85,54 +85,9 @@ Observable truths that must be TRUE when this feature is complete:
 
 ---
 
-### Risk Assessment
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| [Risk 1] | Low/Med/High | Low/Med/High | [Strategy] |
-
-### Open Questions
-
-- [ ] [Question that needs resolution]
 ```
 
 ## Incremental Delivery Patterns
 
-### Vertical Slice
-
-Deliver end-to-end functionality for a narrow use case:
-
-```
-Slice 1: Create basic entity (full stack)
-Slice 2: Add validation (full stack)
-Slice 3: Add advanced features (full stack)
-```
-
-**Best for**: Getting feedback early, validating integration points, demonstrating progress quickly.
-
-### Horizontal Layer
-
-Build foundation first, then add capabilities:
-
-```
-Layer 1: Domain model complete
-Layer 2: All services complete
-Layer 3: All endpoints complete
-```
-
-**Best for**: When dependencies are clear, team can parallelize, architecture is well-defined.
-
-### Feature Flags
-
-For gradual rollout:
-
-```typescript
-if (featureFlags.isEnabled('new-feature')) {
-  // New implementation
-} else {
-  // Existing behavior
-}
-```
-
-**Best for**: Risk mitigation, A/B testing, gradual rollout to users, easy rollback.
+Choose one: **Vertical Slice** (end-to-end per use case), **Horizontal Layer** (foundation first, then capabilities), or **Feature Flags** (gradual rollout with easy rollback).
 

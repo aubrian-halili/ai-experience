@@ -26,11 +26,6 @@ Always-on context costs context budget on every interaction — keep it lean and
 - Common tasks as quick commands
 - Pointers to deeper documentation ("Architecture decisions live in `docs/architecture/`")
 
-**What does NOT belong in CLAUDE.md:**
-- Technology stack restated from `package.json`/`go.mod`/etc.
-- Step-by-step tutorials (put in `docs/`)
-- Exhaustive API references (put in `docs/`)
-
 **If CLAUDE.md exceeds 200 lines:** Extract sections into either `.claude/rules/` (if they're always-applicable conventions) or `docs/` (if they're reference material), then replace the section with a one-line pointer.
 
 ## When to Use `.claude/rules/`
@@ -43,8 +38,6 @@ Use `.claude/rules/` for conventions that should apply to **every interaction**:
 - Debugging methodology
 
 **Structure:** One concern per file, named descriptively (`git-conventions.md`, `testing.md`). Keep each file under 80 lines — these are auto-loaded and accumulate across all rule files.
-
-**Do not use for:** Reference material, project-specific deep dives, or content only relevant to specific tasks.
 
 ## When to Use `docs/`
 
