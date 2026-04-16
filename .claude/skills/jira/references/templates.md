@@ -90,12 +90,3 @@ Templates for Bug and Task ticket types with structured fields for clarity and c
 [Critical/High/Medium/Low] - [Brief justification]
 ```
 
-## Template Selection Guide
-
-| Scenario | Template | Key Sections |
-|----------|----------|--------------|
-| Something isn't working | Bug | Steps to Reproduce, Expected vs Actual |
-| Error/crash reported | Bug | Error Messages, Environment |
-| New functionality needed | Task | Requirements, Acceptance Criteria |
-| Code improvement | Task | Technical Details, Testing |
-| Configuration change | Task | Requirements (simple), Files to Modify |

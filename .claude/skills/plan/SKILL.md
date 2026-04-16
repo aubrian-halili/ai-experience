@@ -17,18 +17,6 @@ ultrathink
 
 Decompose goals, epics, or Jira tickets into structured implementation phases using goal-backward verification, architecture comparison, and persistent state tracking.
 
-## Planning Philosophy
-
-- **Goal-backward verification** — define "what must be TRUE when done" before planning how to get there
-- **Observable truths over vague milestones** — every phase defines concrete, verifiable conditions (file exists, test passes, endpoint responds)
-- **Minimal viable phases** — each phase produces a working increment; never plan a phase that leaves the system in a broken state
-
-## Rationalization Guard
-
-| Excuse | Reality |
-|--------|---------|
-| "Let's skip the plan-reviewer checklist, it'll slow us down" | The checklist prevents plans that fail silently in `/feature`; always validate against it |
-
 ## Input Handling
 
 | Input | Intent | Approach |
@@ -64,16 +52,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 
 ### 2. Define Done (Goal-Backward Verification)
 
-> **Guard:** If `.planning/STATE.md` does not exist at this point, create the skeleton now before continuing (see Step 1.4).
-
-Define **observable truths** — concrete conditions that must be TRUE when the goal is complete. Each truth must be verifiable: a file exists, a test passes, an endpoint responds, a query returns expected data.
-
-```
-- [ ] [Artifact] `src/auth/middleware.ts` exists and exports `authMiddleware`
-- [ ] [Behavior] POST /api/login returns 200 with valid credentials and 401 with invalid
-- [ ] [Integration] Auth middleware applied to all /api/protected/* routes
-- [ ] [Quality] All auth endpoints have integration tests with >80% coverage
-```
+Define **observable truths** — concrete conditions that must be TRUE when the goal is complete. Each truth must be verifiable: a file exists, a test passes, an endpoint responds, a query returns expected data. See `@references/templates.md` for examples by category.
 
 Present observable truths to the user for validation before proceeding.
 
@@ -90,12 +69,7 @@ Present a comparison table and recommend one approach.
 
 ### 4. Decompose into Phases
 
-Work backward from the observable truths using the chosen architecture. Each phase must have:
-- **Goal**: one sentence
-- **Observable truths**: subset satisfied by this phase
-- **Files to create/modify**: specific paths
-- **Dependencies**: which phases must complete first
-- **Verification**: runnable commands with expected output
+Work backward from the observable truths using the chosen architecture. Structure each phase per the Project Plan Template in `@references/templates.md`.
 
 Validate the plan against `@references/plan-reviewer-prompt.md` before presenting.
 
@@ -103,25 +77,12 @@ Validate the plan against `@references/plan-reviewer-prompt.md` before presentin
 
 Finalize `.planning/STATE.md` (first written as a skeleton in Step 1) using the template from `@references/templates.md`. By this point the file should already contain Goal, Source, Definition of Done, and Key Decisions — added progressively after Steps 2 and 3. This step adds the full phase breakdown and reconciles the Progress table.
 
-**Progressive update rule**: after each planning step completes, append its output to `.planning/STATE.md` and bump `Last Updated`:
-- After Step 2 → append Definition of Done
-- After Step 3 → append chosen architecture to Key Decisions
-- After Step 4 → append full phase breakdown and dependency graph
-- Step 5 → verify all sections present, finalize Progress table
-
-**If the plan was sourced from a Jira ticket**: record the ticket ID in the `**Source**` field of `.planning/STATE.md` (e.g., `**Source**: UN-1234`). This allows `/feature` to cross-reference the plan with the ticket.
+**Progressive update rule**: after each planning step completes, append its output to `.planning/STATE.md` and bump `Last Updated`. Step 5 verifies all sections are present and finalizes the Progress table.
 
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description
 - Set `addBlockedBy` dependencies matching the phase dependency graph
 - Update task status via `TaskUpdate` as phases complete
-
-### 6. Next Steps
-
-After the plan is written and tasks are tracked, guide the user to the next step in the workflow:
-
-- **If a Jira ticket ID was provided**: prompt the user — "Plan is ready. Run `/feature <TICKET-ID>` to start implementation."
-- **If no Jira ticket exists yet**: prompt the user — "Plan is ready. Run `/jira` to decompose this plan into Jira tickets, then `/feature <TICKET-ID>` to implement."
 
 ## Related Skills
 

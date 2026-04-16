@@ -15,13 +15,10 @@ allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent
 
 ultrathink
 
-Perform a thorough multi-dimensional review of code, local changes, or pull requests.
-
 ## Rationalization Guard
 
 | Excuse | Reality |
 |--------|---------|
-| "This is obviously a problem, no need to check git blame" | Pre-existing issues scored as 0 are not reported; blame is not optional |
 | "I know the line number from the diff" | Diff offsets are not source file line numbers; always read the source file |
 | "The confidence gate is too strict — I'll report it anyway" | The gate exists to protect signal-to-noise ratio; below 80 means insufficient evidence |
 | "Skipping the specialized passes, the diff is small" | The threshold is >10 files for parallel agents, not for skipping passes entirely |
@@ -50,10 +47,9 @@ These categories produce noise, not value — exclude them regardless of confide
 
 1. **Linter/formatter issues** — these are caught by automated tooling, not human review
 2. **Compiler/build errors** — the CI pipeline catches these; flagging them wastes review time
-3. **Pre-existing issues** — problems that existed before the current change (verify with `git blame`)
-4. **Pedantic style nitpicks** — minor formatting preferences not codified in project conventions
-5. **Out-of-scope missing features** — functionality the PR never intended to add
-6. **TODOs the author already flagged** — the author is aware; re-flagging is redundant
+3. **Pedantic style nitpicks** — minor formatting preferences not codified in project conventions
+4. **Out-of-scope missing features** — functionality the PR never intended to add
+5. **TODOs the author already flagged** — the author is aware; re-flagging is redundant
 
 ## Input Handling
 
@@ -69,14 +65,11 @@ When the review scope is large (>10 files) or the user requests a thorough revie
 
 ### 1. Pre-flight
 
-- Verify working directory is a git repo: `git rev-parse --is-inside-work-tree`
-- For local reviews: confirm changes exist via `git diff` and `git diff --cached`
 - For PR reviews: verify `gh` is authenticated: `gh auth status`
 - For PR reviews: screen PR eligibility before proceeding:
   ```bash
   gh pr view <number> --json state,isDraft,author,labels
   ```
-- Check for CLAUDE.md conventions to cross-reference during review
 
 **Stop conditions:**
 - Not a git repository → report and stop
@@ -90,16 +83,11 @@ When the review scope is large (>10 files) or the user requests a thorough revie
 ### 2. Analyze Local Changes (Local only)
 
 1. Read target code (diff output for uncommitted changes, full file for single-file review)
-2. Analyze across dimensions: correctness, readability, maintainability, performance, security, testing, architecture alignment
-3. Apply gate enforcement rules (file:line from source, git blame to confirm newness, concrete consequence)
-4. Cross-reference against CLAUDE.md conventions
-5. Apply confidence gate — only flag findings scored >= 80
+2. Apply gate enforcement rules (file:line from source, git blame to confirm newness, concrete consequence)
 
 ### 3. Report Local Findings (Local only)
 
 Present findings using the Local Changes template from `@references/templates.md`.
-
-**No findings case:** If analysis produces no findings above the confidence threshold, explicitly state: "No findings above confidence threshold. Code meets review standards for the dimensions analyzed."
 
 ### 4. Analyze Pull Request (PR only)
 
@@ -126,14 +114,10 @@ gh pr view <number> --json state,isDraft,updatedAt,commits
 
 Present findings using the Pull Request Review template from `@references/templates.md`.
 
-Apply confidence gate — only flag findings scored >= 80.
-
 ### 6. Verify
 
 - Confirm all files or diff hunks in scope were evaluated; note any that were skipped with rationale
-- Verify every reported finding includes a `file:line` reference and a severity level
 - Sanity-check severity distribution — if all findings are Critical or all are Note, re-evaluate consistency
-- Suggest next steps: recommend related skills for deeper analysis, or state merge readiness for PR reviews
 
 ## Code Smells to Detect (Clean Code Pass)
 

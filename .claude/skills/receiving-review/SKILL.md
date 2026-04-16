@@ -14,26 +14,12 @@ allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Write, Edit, Agent, Skill
 
 Process, evaluate, and implement code review feedback with technical rigor.
 
-## Review Response Philosophy
-
-- **Actions over words** — demonstrate understanding through code, not performative agreement
-- **Technical pushback is professional** — disagree with evidence when suggestions are wrong for this codebase
-- **YAGNI discipline** — grep for actual usage before implementing "proper" features a reviewer suggests
-
 ## Iron Laws
 
 > - NO performative agreement — no "great point!", "you're absolutely right!", no gratitude expressions in PR comments
 > - NO implementation before ALL unclear items are clarified
 > - ALWAYS verify a suggestion against the actual code before implementing it
-
-## Rationalization Guard
-
-| Excuse | Reality |
-|--------|---------|
-| "The reviewer is probably right, just do it" | Reviewers lack full context; verify their assumptions against the code |
-| "I'll figure out what they mean as I go" | Ambiguous feedback implemented partially creates more review rounds |
-| "Adding this won't hurt" | Unnecessary additions are maintenance burden; check YAGNI first |
-| "I should be agreeable to move the PR forward" | Incorrect implementations waste more time than a clarifying question |
+> - YAGNI discipline — grep for actual usage before implementing "proper" features a reviewer suggests
 
 ## Input Handling
 
@@ -128,10 +114,6 @@ grep -r "<SuggestedName>" --include="*.ts" --include="*.tsx" src/
 ```
 If the suggested addition has zero consumers → push back with evidence.
 
-**Correctness check:**
-- Check if the reviewer's assumption about behavior is correct
-- Verify the suggested fix doesn't break other callers/tests
-
 **Report findings to the user:**
 - Suggestions that are correct and should be implemented
 - Suggestions that are incorrect (with evidence) — draft pushback response
@@ -143,10 +125,7 @@ After user approval of the plan from step 4:
 
 **Implementation order:** Blocking → Required → Quick wins → Complex (approved only)
 
-For each change:
-1. Make the code change
-2. Verify the change doesn't break existing tests
-3. Draft a thread reply explaining what was done (for user to post)
+For each change, draft a thread reply explaining what was done (for user to post).
 
 **Thread reply format** (concise, action-focused):
 - What was changed and why (1-2 sentences max)
@@ -185,15 +164,10 @@ gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup
 
 Report to the user: changes made, replies posted, remaining items (if any), and PR state.
 
-## Output Principles
-
-- **Batch presentation** — show all planned changes and draft replies together for single approval
-
 ## Error Handling
 
 | Scenario | Response |
 |----------|----------|
-| Reviewer comment references deleted code | Note the staleness, ask user how to proceed |
 | Too many comments (>20) | Prioritize by blocking/required, batch quick wins, defer complex items |
 
 ## Related Skills
