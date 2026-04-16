@@ -43,16 +43,16 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 
 ### 1. Pre-flight
 
-- Parse `$ARGUMENTS` — extract any Jira ticket ID (pattern: `[A-Z]+-\d+`) and/or goal description.
-- **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content.
-- Check for existing `.planning/STATE.md` — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
-  - **resume** → read the file, skip completed phases, continue from the phase marked current
-  - **start over** → back up the existing file first, then proceed with a new plan:
-    1. Derive a short description from the existing file's `**Goal**:` line — kebab-case, strip stop-words, truncate to ≤40 chars → `STATE-<short-description>.md` (e.g. `STATE-login-implementation.md`)
-    2. If `**Goal**:` is missing or empty → fallback to `STATE-<YYYYMMDD-HHMM>.md`
-    3. If `.planning/<backup-name>` already exists → append `-<YYYYMMDD>` before `.md` to avoid overwrite
-    4. Rename `.planning/STATE.md` → `.planning/<backup-name>`, then continue
-- **Write a skeleton `.planning/STATE.md` immediately after the goal is confirmed** (before Definition of Done, before phases). The skeleton contains: Goal, Source, Created date, Last Updated, and empty sections for Definition of Done / Progress / Current Phase. This ensures session continuity even if planning is interrupted at any later step.
+1. **Parse `$ARGUMENTS`** — extract any Jira ticket ID (pattern: `[A-Z]+-\d+`) and/or goal description.
+2. **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content.
+3. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
+   - **resume** → read the file, skip completed phases, continue from the phase marked current
+   - **start over** → back up the existing file first, then proceed with a new plan:
+     1. Derive a short description from the existing file's `**Goal**:` line — kebab-case, strip stop-words, truncate to ≤40 chars → `STATE-<short-description>.md` (e.g. `STATE-login-implementation.md`)
+     2. If `**Goal**:` is missing or empty → fallback to `STATE-<YYYYMMDD-HHMM>.md`
+     3. If `.planning/<backup-name>` already exists → append `-<YYYYMMDD>` before `.md` to avoid overwrite
+     4. Rename `.planning/STATE.md` → `.planning/<backup-name>`, then continue
+4. **Create `.planning/STATE.md` skeleton now** — do this before proceeding to Step 2, before Definition of Done, before anything else. Write the skeleton using the Session State Template from `@references/templates.md` with: Goal, Source, Created date, Last Updated, and empty sections for Definition of Done / Progress / Current Phase. This ensures session continuity even if planning is interrupted at any later step.
 
 **Stop conditions:**
 - Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
@@ -63,6 +63,8 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 - Scopes to a bounded area of the codebase (not "make everything better" or "clean things up")
 
 ### 2. Define Done (Goal-Backward Verification)
+
+> **Guard:** If `.planning/STATE.md` does not exist at this point, create the skeleton now before continuing (see Step 1.4).
 
 Define **observable truths** — concrete conditions that must be TRUE when the goal is complete. Each truth must be verifiable: a file exists, a test passes, an endpoint responds, a query returns expected data.
 
