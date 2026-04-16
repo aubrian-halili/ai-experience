@@ -24,6 +24,8 @@ PGPASSWORD=$(${AURORA_LOGIN_SCRIPT} auth DB_USER=${AURORA_DB_USER} ENV=test MARK
 
 ## Input Handling
 
+Defaults: database `qred_se_db`, schema `public`.
+
 Map `$ARGUMENTS` to a workflow:
 
 | Argument Pattern | Intent | Approach |
@@ -36,51 +38,19 @@ Map `$ARGUMENTS` to a workflow:
 
 **Disambiguation:** A bare word like `accounting` could be a schema or database name. Default to schema lookup within the current database first. If no schema is found, retry as a database name.
 
-## Process
-
-### 1. Pre-flight
-
-- Run the psql pattern to list databases: `SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname;`
-- Set default database: `qred_se_db`
-- Set default schema: `public`
-- Parse `$ARGUMENTS` and map to the appropriate workflow (Overview, Table Schema, Query Data, Schema Tables, or Database Schemas) using the Input Handling table
-
-### 2. Execute
+## Execute
 
 **Overview (no arguments)**
 
-If `@references/database-overview.md` exists, present its cached data directly instead of re-querying. The cached file contains databases, schemas, and table names only — no column-level detail. If the user wants column detail for a specific table, proceed to the **Table Schema** workflow. If the user asks to refresh, re-run the queries below and update the reference file.
+If `@references/database-overview.md` exists, present its cached data directly instead of re-querying. The cached file contains databases, schemas, and table names only — no column-level detail. If the user wants column detail for a specific table, proceed to the **Table Schema** workflow. If the user asks to refresh, re-run the queries and update the reference file.
 
-1. Show all available databases:
-   ```sql
-   SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname;
-   ```
-2. Show schemas in the default database:
-   ```sql
-   SELECT schema_name FROM information_schema.schemata ORDER BY schema_name;
-   ```
-3. Show tables:
-   ```sql
-   SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name;
-   ```
+List all databases, then schemas in the default database, then tables in the default schema.
 
-**Table Schema**
-```sql
-SELECT column_name, data_type, is_nullable, column_default
-FROM information_schema.columns
-WHERE table_schema = '<schema>' AND table_name = '<table>'
-ORDER BY ordinal_position;
-```
+**Table Schema** — inspect columns, data types, nullability, and defaults for the given table.
 
-**Schema Tables**
-```sql
-SELECT table_name FROM information_schema.tables WHERE table_schema = '<schema>' ORDER BY table_name;
-```
+**Schema Tables** — list tables in the given schema.
 
-**Database Schemas** — use `dbname=<database>`:
-```sql
-SELECT schema_name FROM information_schema.schemata ORDER BY schema_name;
-```
+**Database Schemas** — connect with `dbname=<database>` and list its schemas.
 
 Limit output to 50 rows with a truncation notice for larger result sets (e.g., "Showing 50 of 1,247 rows").
 
@@ -88,7 +58,6 @@ Limit output to 50 rows with a truncation notice for larger result sets (e.g., "
 
 | Scenario | Response |
 |----------|----------|
-| Auth command fails | Report the failure and suggest checking aurora-login config and credentials |
 | 0 rows from information_schema | Retry the query against the resolved app database `dbname` |
 
 ## Related Skills

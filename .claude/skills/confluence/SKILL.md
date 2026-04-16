@@ -11,14 +11,9 @@ allowed-tools: Bash(acli confluence page view *, acli confluence space list *, a
 disable-model-invocation: true
 ---
 
-## Confluence Philosophy
-
-- **Graceful degradation** — when acli lacks a command (page create/update), generate copy-ready Markdown content for manual entry
-- **Instance-scoped** — all operations target `qredab.atlassian.net`
-
 ## Guardrails
 
-This skill is scoped to **read and generate** operations only.
+This skill is scoped to **read and generate** operations only. All operations target `qredab.atlassian.net`.
 
 **Forbidden actions**: `space archive`, `space restore`, `space create`, `space update` — these are administrative operations. If requested, refuse and direct the user to manage these directly in Confluence.
 
@@ -43,7 +38,7 @@ Determine operation intent from `$ARGUMENTS`:
 
 - Check acli availability: run `acli --version`
   - acli available → proceed with native commands for read operations
-  - acli unavailable → skip to content generation fallback and note the issue
+  - acli unavailable → skip to content generation fallback
 
 ### 2. View Page
 
@@ -56,7 +51,6 @@ Fetch and display a Confluence page by ID or URL:
 ### 3. Update Page (Fallback)
 
 - First, fetch current page content: `acli confluence page view --id <PAGE_ID> --body-format storage`
-- Apply the requested changes to the content
 - Present:
   1. **What changed** — a brief diff summary (sections added/removed/modified)
   2. **Full updated content** in Markdown format (Confluence editor accepts Markdown paste)

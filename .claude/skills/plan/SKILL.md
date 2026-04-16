@@ -35,20 +35,16 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 2. **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria.
 3. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
    - **resume** → read the file, skip completed phases, continue from the phase marked current
-   - **start over** → back up the existing file first, then proceed with a new plan:
-     1. Derive a short description from the existing file's `**Goal**:` line — kebab-case, strip stop-words, truncate to ≤40 chars → `STATE-<short-description>.md` (e.g. `STATE-login-implementation.md`)
-     2. If `**Goal**:` is missing or empty → fallback to `STATE-<YYYYMMDD-HHMM>.md`
-     3. If `.planning/<backup-name>` already exists → append `-<YYYYMMDD>` before `.md` to avoid overwrite
-     4. Rename `.planning/STATE.md` → `.planning/<backup-name>`, then continue
+   - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
 4. **Create `.planning/STATE.md` skeleton now** — do this before proceeding to Step 2, before Definition of Done, before anything else. Write the skeleton using the Session State Template from `@references/templates.md` with: Goal, Source, Created date, Last Updated, and empty sections for Definition of Done / Progress / Current Phase. This ensures session continuity even if planning is interrupted at any later step.
 
 **Stop conditions:**
 - Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
 
 **Vague goal test** — a goal is too vague if it fails ANY of these:
-- Names a specific system, feature, component, or endpoint (not "improve the app")
+- Names a specific system, feature, component, or endpoint
 - Implies a verifiable outcome — something that can be tested or observed when done
-- Scopes to a bounded area of the codebase (not "make everything better" or "clean things up")
+- Scopes to a bounded area of the codebase
 
 ### 2. Define Done (Goal-Backward Verification)
 
@@ -72,8 +68,6 @@ Validate the plan against `@references/plan-reviewer-prompt.md` before presentin
 ### 5. Track State
 
 Finalize `.planning/STATE.md` (first written as a skeleton in Step 1) using the template from `@references/templates.md`. This step adds the full phase breakdown and reconciles the Progress table.
-
-**Progressive update rule**: after each planning step completes, append its output to `.planning/STATE.md` and bump `Last Updated`. Step 5 verifies all sections are present and finalizes the Progress table.
 
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description

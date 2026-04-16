@@ -21,7 +21,6 @@ Audit the project's full documentation surface for factual drift, broken referen
 
 - **Accuracy over coverage** — fix factual errors before adding new content
 - **Derivable means deletable** — if a future session can figure it out by reading the code or running `ls`, it doesn't belong in CLAUDE.md; document the "why", not the "what"
-- **Never rewrite prose** — only correct factual claims; intentional phrasing is off-limits
 
 ## Input Handling
 
@@ -54,20 +53,17 @@ Detect project type from marker files and existing doc conventions:
 
 - **Monorepo signals**: multiple `package.json` / workspace config files, nested `CLAUDE.md` files
 
-Produces an internal project profile — not written anywhere. Used to contextualize findings (e.g., "this is a Node project" tells us to verify `package.json` script references).
-
 ### 3. Claim Extraction & Verification
 
 Parse all documentation files from the inventory and extract verifiable claims. For each claim, verify it against the filesystem and report any discrepancy.
 
-| Claim Type | Verification Method |
-|------------|---------------------|
-| **Numeric counts** | Count actual items via Glob/ls; compare |
-| **File/directory paths** | Verify each exists on filesystem |
-| **Directory trees** | Parse tree; verify each entry exists; check for unlisted siblings at same depth |
-| **Command references** | Verify scripts in package.json/Makefile, or skill directories |
-| **Cross-doc references** | Verify target file exists |
-| **Convention file references** | Verify each exists |
+Claim types to extract and verify:
+- Numeric counts
+- File/directory paths
+- Directory trees (check for unlisted siblings at same depth)
+- Command references (scripts in package.json/Makefile, or skill directories)
+- Cross-doc references
+- Convention file references
 
 ### 4. Drift Detection
 
@@ -98,28 +94,13 @@ All organization findings go in the **Documentation Organization** category — 
 
 ### 6. Present Findings
 
-Output a structured report before any edits:
+Output a structured report before any edits with these categories:
 
-```
-## Documentation Audit Report
-
-### Factual Errors (will fix)
-- [ ] CLAUDE.md line 14: says "5 agents" but 6 exist in .claude/agents/
-
-### Drift Detected (recommend fix)
-- [ ] src/payments/ directory added 3 commits after CLAUDE.md last updated; not mentioned
-
-### Broken References
-- [ ] docs/api.md line 22: references `src/routes/v2.ts` — file renamed to `src/routes/v2/index.ts`
-
-### Documentation Organization
-- [ ] CLAUDE.md is 280 lines — consider moving "API Reference" section (lines 120-210) to `docs/api-reference.md`
-- [ ] `.claude/rules/` has no testing conventions — `docs/testing.md` would be more effective as `.claude/rules/testing.md`
-- [ ] `docs/architecture/` exists but CLAUDE.md doesn't reference it
-
-### Suggestions (optional — skipped unless you confirm)
-- Consider documenting why the codebase uses a custom auth wrapper instead of the framework default
-```
+- **Factual Errors** (will fix)
+- **Drift Detected** (recommend fix)
+- **Broken References**
+- **Documentation Organization** (never auto-applied; always presented for confirmation)
+- **Suggestions** (optional — skipped unless user confirms)
 
 If `--dry-run`, stop here. Otherwise ask user to confirm before proceeding to Step 7.
 
@@ -131,14 +112,3 @@ For each confirmed finding:
 
 After edits, re-check CLAUDE.md line count: if edits pushed it over 200 lines, flag the new length and identify extraction candidates (sections that could move to `.claude/rules/` or `docs/`).
 
-## Error Handling
-
-| Scenario | Response |
-|----------|----------|
-| CLAUDE.md has no `## ` section headings | Warn that audit is limited to count/reference checks; continue |
-
-## Related Skills
-
-| Skill | When to Use Instead |
-|-------|---------------------|
-| `/plan` | Planning new work; run `/doc-sync` first so `/plan` has accurate context to explore |

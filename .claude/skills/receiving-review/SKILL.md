@@ -17,7 +17,6 @@ Process, evaluate, and implement code review feedback with technical rigor.
 ## Iron Laws
 
 > - NO performative agreement — no "great point!", "you're absolutely right!", no gratitude expressions in PR comments
-> - NO implementation before ALL unclear items are clarified
 > - YAGNI discipline — grep for actual usage before implementing "proper" features a reviewer suggests
 
 ## Input Handling
@@ -45,9 +44,6 @@ Process, evaluate, and implement code review feedback with technical rigor.
      - If dirty → **stop**: "Working tree has uncommitted changes. Stash or commit before switching branches."
      - If clean → ask user for confirmation, then switch: `gh pr checkout $PR_NUMBER`
 
-**Stop conditions:**
-- Current branch doesn't match PR head branch with dirty working tree → report mismatch, stop
-
 ### 1. Gather Feedback
 
 Fetch all review comments and organize them:
@@ -61,7 +57,7 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments --paginate
 gh pr view $PR_NUMBER --json reviews,comments
 ```
 
-Note which review threads are already resolved. Focus on **unresolved threads** first. Mention resolved threads to the user only if they appear to contain unaddressed items.
+Note which review threads are already resolved. Focus on **unresolved threads** first.
 
 Categorize each comment:
 - **Actionable request** — clear change requested (fix, rename, refactor, add test)
@@ -71,11 +67,11 @@ Categorize each comment:
 
 ### 2. Classify and Prioritize
 
-Sort feedback by severity: security > correctness > quick wins > complex changes. For out-of-scope improvements or future enhancements: acknowledge, don't implement.
+For out-of-scope improvements or future enhancements: acknowledge, don't implement.
 
 ### 3. Clarify Before Implementing
 
-If the feedback source is a GitHub PR, draft clarifying questions as thread replies (not top-level comments) for user approval before posting.
+If the feedback source is a GitHub PR, draft clarifying questions for user approval before posting.
 
 ### 4. Verify Suggestions Against Codebase
 
@@ -91,13 +87,9 @@ If the suggested addition has zero consumers → push back with evidence.
 
 ### 5. Implement Changes
 
-**Thread reply format** (concise, action-focused):
-- What was changed and why (1-2 sentences max)
-- If pushing back: technical reasoning with file/line references
-
 ### 6. Reply to Review Threads
 
-After implementing changes, prepare GitHub thread replies for user approval.
+After implementing changes, prepare thread replies for user approval.
 
 **Reply mechanics:**
 ```bash
@@ -115,10 +107,8 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 
 ### 7. Commit, Push, and Verify
 
-After all changes are implemented and replies posted:
+After all changes are implemented and replies posted, commit and push, then verify PR state:
 
-1. Stage and commit, then push: `git push`
-2. Verify PR state:
 ```bash
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup
 ```

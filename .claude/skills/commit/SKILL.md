@@ -27,8 +27,4 @@ Determine commit workflow from `$ARGUMENTS`:
 
 ### 1. Analyze & Present for Review
 
-Use `$ARGUMENTS` if provided (user's custom message or scope), otherwise generate an appropriate commit message.
-
-**Present to user:**
-- Show the proposed commit message (with body if needed)
-- Ask the user to review and confirm before proceeding
+Present the proposed commit message to the user for review and confirmation before proceeding.

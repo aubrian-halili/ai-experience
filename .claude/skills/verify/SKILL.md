@@ -18,13 +18,13 @@ allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Gl
 
 ## Input Handling
 
-| Input | Intent | Approach |
-|-------|--------|----------|
-| Plan file path (e.g., `.planning/STATE.md`) | Verify against plan | Extract observable truths, run three-level checks |
-| Feature name (e.g., `user authentication`) | Verify feature completeness | Discover feature scope, then three-level checks |
-| Acceptance criteria (inline or file) | Verify against criteria | Parse criteria, map to code, three-level checks |
-| Directory (e.g., `src/auth/`) | Verify module completeness | Anti-pattern scan + wiring check |
-| `"stubs"` / `"todos"` / `"placeholders"` | Anti-pattern scan only | Focused scan across codebase |
+| Input | Approach |
+|-------|----------|
+| Plan file path (e.g., `.planning/STATE.md`) | Extract observable truths, run three-level checks |
+| Feature name (e.g., `user authentication`) | Discover feature scope, then three-level checks |
+| Acceptance criteria (inline or file) | Parse criteria, map to code, three-level checks |
+| Directory (e.g., `src/auth/`) | Anti-pattern scan + wiring check |
+| `"stubs"` / `"todos"` / `"placeholders"` | Focused scan across codebase |
 
 ## Three-Level Verification
 
@@ -43,8 +43,6 @@ Verify all components are connected end-to-end (imports, routes, middleware, han
 ## Process
 
 **Stop condition:** Verifying against a plan but no plan file resolves → ask for the path.
-
-Present structured verification results using confidence markers:
 
 - **PASS** — all three levels verified with evidence
 - **PARTIAL** — exists and has substance but wiring incomplete or untested

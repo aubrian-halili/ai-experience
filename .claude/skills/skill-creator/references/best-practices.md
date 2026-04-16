@@ -16,20 +16,9 @@ The `description` field serves as the **Context-Sensitive Orchestration (CSO)** 
 
 Match constraint level to task variability:
 
-### High Freedom (Creative Tasks)
-
-- Provide principles, not templates
-- Use examples to illustrate range of acceptable outputs
-
-### Medium Freedom (Structured Tasks)
-
-- Provide flexible templates with optional sections
-- Define required elements, allow variation in presentation
-
-### Low Freedom (Mechanical Tasks)
-
-- Provide strict templates with placeholders
-- Specify exact format, validate output structure
+- **High** (creative): principles and examples, not templates
+- **Medium** (structured): flexible templates with required elements
+- **Low** (mechanical): strict templates with format validation
 
 ## Quality Checklist
 
@@ -37,7 +26,6 @@ Before finalizing a skill:
 
 - [ ] **Discoverable**: Description contains natural trigger phrases
 - [ ] **Efficient**: No unnecessary context loading
-- [ ] **Graceful**: Handles missing inputs and edge cases
 - [ ] **Connected**: Links to related skills where appropriate
 
 ## Dynamic Context Injection

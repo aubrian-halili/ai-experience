@@ -46,20 +46,7 @@ Observable truths that must be TRUE when this feature is complete:
 
 ---
 
-### Milestone 1: Foundation
-**Goal**: [What this milestone establishes]
-
-**Tasks**:
-- [ ] [Specific task]
-- [ ] [Specific task]
-
-**Verification**: [How to verify completion]
-
-**Commit**: `feat: [commit message]`
-
----
-
-### Milestone 2: Core Implementation
+### Milestone N: [Name]
 **Goal**: [What this milestone delivers]
 
 **Tasks**:
@@ -68,26 +55,11 @@ Observable truths that must be TRUE when this feature is complete:
 
 **Verification**: [How to verify completion]
 
-**Commit**: `feat: [commit message]`
-
----
-
-### Milestone 3: Integration
-**Goal**: [What this milestone connects]
-
-**Tasks**:
-- [ ] [Specific task]
-- [ ] [Specific task]
-
-**Verification**: [How to verify completion]
-
-**Commit**: `feat: [commit message]`
-
 ---
 
 ```
 
 ## Incremental Delivery Patterns
 
-Choose one: **Vertical Slice** (end-to-end per use case), **Horizontal Layer** (foundation first, then capabilities), or **Feature Flags** (gradual rollout with easy rollback).
+Choose one: **Vertical Slice**, **Horizontal Layer**, or **Feature Flags**.
 
