@@ -19,8 +19,6 @@ disable-model-invocation: true
 Parse `$ARGUMENTS` for flags (`--major`, `--fe`, `--ready`, `--base`, `--label`), then stop if any of these apply:
 
 - On `main`/`master` → Cannot create PR from default branch
-- No commits ahead of the default branch → Commit changes first
-- PR already exists → Show existing PR URL and suggest next steps
 
 ### 2. Prepare Body
 

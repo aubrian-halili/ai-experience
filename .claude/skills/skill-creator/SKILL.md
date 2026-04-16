@@ -35,8 +35,7 @@ First, classify the request type:
 ### 1. Pre-flight
 
 - Classify request using the Input Handling table
-- If `$ARGUMENTS` contains a skill name, check if it already exists in `.claude/skills/`
-- Review existing skills via Glob to avoid scope overlap with the proposed skill
+- If `$ARGUMENTS` contains a skill name, check if it already exists in `.claude/skills/`; if so, suggest updating the existing skill instead of creating a new one
 
 **Stop conditions:**
 - Proposed skill duplicates an existing skill's scope → suggest updating the existing skill instead
@@ -91,10 +90,6 @@ Verify against the quality checklist: Discoverable, Efficient, Graceful, Connect
 ## Output Principles
 
 - **Inline references** — wire up `@references/` links within process steps, not as a standalone References section; this teaches skills to load context only when needed
-
-## Error Handling
-
-Never silently skip validation errors.
 
 ## Related Skills
 

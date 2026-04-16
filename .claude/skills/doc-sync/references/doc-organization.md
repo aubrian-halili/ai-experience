@@ -1,7 +1,5 @@
 # Documentation Organization Best Practices
 
-Guidelines for structuring project documentation so Claude can discover and load context efficiently.
-
 ## The Three-Tier Principle
 
 Claude loads documentation in a strict hierarchy. Placing content in the wrong tier means it either wastes context on every interaction or gets missed when it matters most.
@@ -30,24 +28,11 @@ Always-on context costs context budget on every interaction — keep it lean and
 
 ## When to Use `.claude/rules/`
 
-Use `.claude/rules/` for conventions that should apply to **every interaction**:
-- Code style and formatting preferences
-- Git branch/commit naming conventions
-- Testing approach and TDD expectations
-- Security guidelines that apply universally
-- Debugging methodology
-
-**Structure:** One concern per file, named descriptively (`git-conventions.md`, `testing.md`). Keep each file under 80 lines — these are auto-loaded and accumulate across all rule files.
+Use `.claude/rules/` for conventions that should apply to **every interaction**. One concern per file, named descriptively. Keep each file under 80 lines — these are auto-loaded and accumulate across all rule files.
 
 ## When to Use `docs/`
 
-Use `docs/` for material that is **only needed for specific tasks**:
-- API reference (load when building against the API)
-- Architecture decision records — `docs/architecture/decisions/adr-NNN-*.md`
-- Runbooks (load when debugging production issues)
-- Onboarding guides
-- Data models and schemas
-- Integration guides for third-party services
+Use `docs/` for reference material only needed for specific tasks. Architecture decision records live at `docs/architecture/decisions/adr-NNN-*.md`.
 
 ## Monorepo Structure Note
 

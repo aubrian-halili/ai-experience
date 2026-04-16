@@ -24,7 +24,7 @@ PGPASSWORD=$(${AURORA_LOGIN_SCRIPT} auth DB_USER=${AURORA_DB_USER} ENV=test MARK
 
 ## Input Handling
 
-Parse `$ARGUMENTS` to understand what the user wants:
+Map `$ARGUMENTS` to a workflow:
 
 | Argument Pattern | Intent | Approach |
 |------------------|--------|----------|
@@ -40,7 +40,7 @@ Parse `$ARGUMENTS` to understand what the user wants:
 
 ### 1. Pre-flight
 
-- Run the psql pattern with the resolved `dbname` and query `SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname;` to verify connectivity and list databases
+- Run the psql pattern to list databases: `SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname;`
 - Set default database: `qred_se_db`
 - Set default schema: `public`
 - Parse `$ARGUMENTS` and map to the appropriate workflow (Overview, Table Schema, Query Data, Schema Tables, or Database Schemas) using the Input Handling table
@@ -88,8 +88,8 @@ Limit output to 50 rows with a truncation notice for larger result sets (e.g., "
 
 | Scenario | Response |
 |----------|----------|
-| Auth command fails | "Aurora login failed. Check aurora-login configuration and credentials." |
-| 0 rows from information_schema | "Got 0 rows — this query must target a specific app database. Retrying with psql against the resolved `dbname`." |
+| Auth command fails | Report the failure and suggest checking aurora-login config and credentials |
+| 0 rows from information_schema | Retry the query against the resolved app database `dbname` |
 
 ## Related Skills
 

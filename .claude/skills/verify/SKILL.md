@@ -11,21 +11,10 @@ allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Gl
 **Current branch:** !`git branch --show-current`
 **Changed files:** !`git diff --name-only origin/main..HEAD 2>/dev/null || git diff --name-only HEAD~1..HEAD`
 
-Verify that an implementation fully achieves its intended goals using three-level artifact checks and anti-pattern scanning.
-
 ## Iron Laws
 
 > - NO "PASS" status without `file:line` evidence in the current message
-> - NO Level 1 check substitutes for Level 2 or Level 3 — all three levels are required
-> - NO anti-pattern scan skipped — run the full catalog on every changed file
 > - NO completion claim without fresh terminal output as evidence
-
-| Claim | Required Evidence |
-|-------|-------------------|
-| Tests pass | Test runner output showing 0 failures in current message |
-| Build succeeds | Build command output with exit code 0 |
-| Feature works | Demonstration command output or test output |
-| Bug fixed | Regression test red-green cycle output |
 
 ## Input Handling
 
@@ -41,9 +30,11 @@ Verify that an implementation fully achieves its intended goals using three-leve
 
 ### Level 1: Existence — record `[EXISTS]` or `[MISSING]` with expected path
 
+Check that expected files, exports, routes, and config entries exist at their expected locations.
+
 ### Level 2: Substance — record `[SUBSTANTIVE]`, `[STUB]`, or `[PARTIAL]` with `file:line` evidence
 
-Run anti-pattern scan on all changed files (stubs, placeholder throws, empty catches, TODO/FIXME markers) (Iron Law #3).
+Run anti-pattern scan on all changed files (stubs, placeholder throws, empty catches, TODO/FIXME markers).
 
 ### Level 3: Wiring — record `[WIRED]`, `[ORPHANED]`, or `[PARTIAL]` with `file:line` evidence
 

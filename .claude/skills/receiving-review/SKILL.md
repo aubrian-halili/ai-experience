@@ -46,9 +46,6 @@ Process, evaluate, and implement code review feedback with technical rigor.
      - If clean → ask user for confirmation, then switch: `gh pr checkout $PR_NUMBER`
 
 **Stop conditions:**
-- No PR found for current branch → report; suggest creating PR with `/pr` first
-- PR is closed or merged → report state and stop
-- No review comments found → report "no pending review comments"
 - Current branch doesn't match PR head branch with dirty working tree → report mismatch, stop
 
 ### 1. Gather Feedback
@@ -74,19 +71,9 @@ Categorize each comment:
 
 ### 2. Classify and Prioritize
 
-Sort feedback items by implementation order:
-
-| Priority | Category | Action |
-|----------|----------|--------|
-| **1 — Blocking** | Security issues, correctness bugs, breaking changes | Must fix before merge |
-| **2 — Required** | Reviewer-requested changes marked as "request changes" | Fix to unblock approval |
-| **3 — Quick wins** | Simple renames, typo fixes, comment updates | Batch and fix together |
-| **4 — Complex** | Architectural suggestions, refactors, new abstractions | Evaluate carefully |
-| **5 — Defer** | Out-of-scope improvements, future enhancements | Acknowledge, don't implement |
+Sort feedback by severity: security > correctness > quick wins > complex changes. For out-of-scope improvements or future enhancements: acknowledge, don't implement.
 
 ### 3. Clarify Before Implementing
-
-Before implementing ANY changes, identify ALL unclear items and present them to the user in a single organized list. Wait for answers before proceeding.
 
 If the feedback source is a GitHub PR, draft clarifying questions as thread replies (not top-level comments) for user approval before posting.
 
@@ -102,16 +89,7 @@ grep -r "<SuggestedName>" --include="*.ts" --include="*.tsx" src/
 ```
 If the suggested addition has zero consumers → push back with evidence.
 
-**Report findings to the user:**
-- Suggestions that are correct and should be implemented
-- Suggestions that are incorrect (with evidence) — draft pushback response
-- Suggestions that are unnecessary (YAGNI) — draft explanation
-
 ### 5. Implement Changes
-
-After user approval of the plan from step 4, implement in priority order from Step 2.
-
-For each change, draft a thread reply explaining what was done (for user to post).
 
 **Thread reply format** (concise, action-focused):
 - What was changed and why (1-2 sentences max)
@@ -135,15 +113,12 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 - For pushback: "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit"
 - For deferred items: "Tracked as follow-up — this is out of scope for the current PR but worth addressing"
 
-Present all draft replies to the user for approval before posting.
-
 ### 7. Commit, Push, and Verify
 
 After all changes are implemented and replies posted:
 
-1. Stage and commit following `git-conventions.md`
-2. Push changes: `git push`
-3. Verify PR state:
+1. Stage and commit, then push: `git push`
+2. Verify PR state:
 ```bash
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup
 ```

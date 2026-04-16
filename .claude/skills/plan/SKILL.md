@@ -32,7 +32,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 ### 1. Pre-flight
 
 1. **Parse `$ARGUMENTS`** — extract any Jira ticket ID (pattern: `[A-Z]+-\d+`) and/or goal description.
-2. **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content.
+2. **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria.
 3. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
    - **resume** → read the file, skip completed phases, continue from the phase marked current
    - **start over** → back up the existing file first, then proceed with a new plan:
@@ -54,16 +54,12 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 
 Define **observable truths** — concrete conditions that must be TRUE when the goal is complete. Each truth must be verifiable: a file exists, a test passes, an endpoint responds, a query returns expected data. See `@references/templates.md` for examples by category.
 
-Present observable truths to the user for validation before proceeding.
-
 ### 3. Architecture Comparison
 
 Launch 2-3 `code-architect` agents in parallel, each with a different focus:
 - **Minimal Changes** — smallest possible diff, reuse existing abstractions
 - **Clean Architecture** — proper separation of concerns, SOLID principles
 - **Pragmatic Balance** — follow existing conventions (include for Medium+ complexity)
-
-Present a comparison table and recommend one approach.
 
 **Skip when:** Scope is ≤3 files with no new integration points. Default to Pragmatic Balance.
 
@@ -75,7 +71,7 @@ Validate the plan against `@references/plan-reviewer-prompt.md` before presentin
 
 ### 5. Track State
 
-Finalize `.planning/STATE.md` (first written as a skeleton in Step 1) using the template from `@references/templates.md`. By this point the file should already contain Goal, Source, Definition of Done, and Key Decisions — added progressively after Steps 2 and 3. This step adds the full phase breakdown and reconciles the Progress table.
+Finalize `.planning/STATE.md` (first written as a skeleton in Step 1) using the template from `@references/templates.md`. This step adds the full phase breakdown and reconciles the Progress table.
 
 **Progressive update rule**: after each planning step completes, append its output to `.planning/STATE.md` and bump `Last Updated`. Step 5 verifies all sections are present and finalizes the Progress table.
 

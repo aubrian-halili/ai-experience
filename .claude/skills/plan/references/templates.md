@@ -96,7 +96,7 @@ graph LR
 
 ## Architecture Comparison Template
 
-Use this during Step 5 (Architecture Design) when presenting approaches to the user.
+Use this during Step 3 (Architecture Comparison) when presenting approaches to the user.
 
 ```markdown
 ### Architecture Options

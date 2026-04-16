@@ -12,14 +12,11 @@ disable-model-invocation: true
 
 **Current branch:** !`git branch --show-current`
 
-ultrathink
-
 ## Iron Laws
 
 > - NEVER execute `delete` or any destructive/administrative acli command — if requested, refuse and direct the user to manage these directly in Jira
 > - NEVER create or modify a ticket without user confirmation
 > - NEVER apply bulk `update`, `edit`, or `transition` operations without first listing all affected ticket IDs and getting explicit user confirmation
-> - ALWAYS search for duplicates before creating a new ticket
 
 ## Input Handling
 
@@ -61,7 +58,7 @@ For each plan phase, draft a ticket:
   - 5 pts — cross-cutting concern or significant unknowns
   - 8 pts — consider splitting the phase
 
-Present the full ticket set as a markdown table with columns: #, Summary, Type, Story Points, Depends On. Follow the table with execution waves showing which tickets can be worked in parallel.
+Present the full ticket set as a markdown table with columns: #, Summary, Type, Story Points, Depends On.
 
 ### 3. Create Tickets
 
@@ -88,11 +85,6 @@ After all tickets are created, output the manifest and store it in `.planning/ST
 
 ## Related Skills
 
-| Skill | When to Use Instead |
-|-------|---------------------|
-| `/plan` | Required first step — create an implementation plan that /jira will decompose into tickets |
-| `/feature` | Pick up a Jira ticket and implement it (`/feature <TICKET-ID>`) |
-| `/verify` | Verify implementation completeness after `/feature` |
-| `/review` | Code quality review after `/verify` in the delivery chain |
-| `/pr` | Create pull request (after commits made) |
-| `/confluence` | Create or view Confluence pages (not Jira tickets) |
+Pipeline order: `/plan` → `/jira` → `/feature` → `/verify` → `/review` → `/pr`
+
+Use `/confluence` to create or view Confluence pages (not Jira tickets).
