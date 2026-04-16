@@ -11,8 +11,6 @@ allowed-tools: Bash(acli confluence page view *, acli confluence space list *, a
 disable-model-invocation: true
 ---
 
-View Confluence pages, browse spaces and blog posts, and generate ready-to-paste Markdown content for manual page creation and updates on the Qred Atlassian instance.
-
 ## Confluence Philosophy
 
 - **Graceful degradation** — when acli lacks a command (page create/update), generate copy-ready Markdown content for manual entry rather than failing
@@ -20,9 +18,7 @@ View Confluence pages, browse spaces and blog posts, and generate ready-to-paste
 
 ## Guardrails
 
-This skill is scoped to **read and generate** operations only. The following rules apply:
-
-**Allowed actions**: `page view`, `space list`, `space view`, `blog list`, `blog view`, and Markdown content generation for page create/update
+This skill is scoped to **read and generate** operations only.
 
 **Forbidden actions**: `space archive`, `space restore`, `space create`, `space update` — these are administrative operations. If requested, refuse and direct the user to manage these directly in Confluence.
 
@@ -63,7 +59,7 @@ Fetch and display a Confluence page by ID or URL:
 Since `acli confluence page update` does not exist, generate updated content for manual paste:
 
 - First, fetch current page content: `acli confluence page view --id <PAGE_ID> --body-format storage`
-- Apply changes to the content using the Page Update template from `@references/templates.md`
+- Apply the requested changes to the content
 - Present:
   1. **What changed** — a brief diff summary (sections added/removed/modified)
   2. **Full updated content** in Markdown format (Confluence editor accepts Markdown paste)
@@ -100,11 +96,9 @@ List all accessible Confluence spaces:
 
 Since `acli confluence page create` does not exist, generate copy-ready content for manual creation:
 
-- Apply the Page Create template from `@references/templates.md`
 - Present:
   1. **Full page content** in Markdown format (ready to paste into Confluence editor)
   2. **Direct link** to create a new page in the target space: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/create`
-  3. **Instruction**: "Paste this content into the Confluence editor — it accepts Markdown directly"
 
 ## Related Skills
 

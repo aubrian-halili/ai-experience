@@ -139,14 +139,10 @@ After edits, re-check CLAUDE.md line count: if edits pushed it over 200 lines, f
 
 | Scenario | Response |
 |----------|----------|
-| No `docs/` or `.claude/rules/` | Note absence; suggest if project would benefit from them |
 | CLAUDE.md has no `## ` section headings | Warn that audit is limited to count/reference checks; continue |
-| CLAUDE.md very short (<10 lines) | Run possible checks; suggest expanding if it would help future agents |
 
 ## Related Skills
 
 | Skill | When to Use Instead |
 |-------|---------------------|
 | `/plan` | Planning new work; run `/doc-sync` first so `/plan` has accurate context to explore |
-| `/review` | Reviewing code quality, not documentation accuracy |
-| `/verify` | Verifying implementation completeness against a plan |

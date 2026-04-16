@@ -21,8 +21,6 @@ Use this checklist to validate a plan before presenting it to the user. Every ch
 
 ## File Architecture
 
-- [ ] No file is planned to hold multiple unrelated responsibilities
-- [ ] New files follow existing codebase conventions and patterns
 - [ ] Files that change together are grouped by responsibility, not technical layer
 
 ## Scope

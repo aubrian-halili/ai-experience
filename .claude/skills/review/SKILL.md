@@ -27,12 +27,8 @@ ultrathink
 
 | Score | Meaning | Action |
 |-------|---------|--------|
-| **0** | False positive or pre-existing issue not introduced by this change | Do not report |
-| **25** | Possible issue but unverified — would need more context or domain knowledge | Do not report |
-| **50** | Real issue but minor impact — unlikely to cause problems in practice | Do not report |
-| **75** | Important and verified — real issue with meaningful impact | Do not report (below gate) |
-| **80** | Verified with strong supporting evidence — real issue, confirmed impact | Report |
-| **100** | Definite and self-evident — clearly wrong, clearly harmful | Report |
+| **Below 80** | Unverified, low impact, or missing evidence | Do not report — note: a finding that feels "important" (score 75) still fails the gate without full evidence |
+| **80+** | Verified with strong supporting evidence — real issue, confirmed impact | Report |
 
 **Gate enforcement — a finding reaches 80 only when ALL of these are true:**
 1. You can cite the exact `file:line` where the issue occurs (read the source file, not just the diff)
@@ -43,21 +39,21 @@ If any of these are missing, score the finding below 80 regardless of how "obvio
 
 ### Do Not Flag
 
-These categories produce noise, not value — exclude them regardless of confidence:
+Exclude regardless of confidence:
 
-1. **Linter/formatter issues** — these are caught by automated tooling, not human review
-2. **Compiler/build errors** — the CI pipeline catches these; flagging them wastes review time
-3. **Pedantic style nitpicks** — minor formatting preferences not codified in project conventions
-4. **Out-of-scope missing features** — functionality the PR never intended to add
-5. **TODOs the author already flagged** — the author is aware; re-flagging is redundant
+1. **Linter/formatter issues**
+2. **Compiler/build errors**
+3. **Pedantic style nitpicks**
+4. **Out-of-scope missing features**
+5. **TODOs the author already flagged**
 
 ## Input Handling
 
-Pass `--refactor` to perform a Clean Code & SOLID-focused review with Edit suggestions (e.g., `src/auth/ --refactor`). All other inputs (file paths, PR numbers, branch names, component names) are inferred from context.
+Pass `--refactor` to perform a Clean Code & SOLID-focused review with Edit suggestions (e.g., `src/auth/ --refactor`).
 
 ## Specialized Review Passes
 
-When the review scope is large (>10 files) or the user requests a thorough review, dispatch targeted subagents: `code-quality-reviewer` for quality dimensions (Type Safety, Type Design, Error Handling, Test Coverage, Performance, Clean Code, Documentation) and `security-scanner` for the security pass. See agent definitions for dimension details.
+When the review scope is large (>10 files) or the user requests a thorough review, dispatch targeted subagents: `code-quality-reviewer` for quality dimensions (Type Safety, Type Design, Error Handling, Test Coverage, Performance, Clean Code, Documentation) and `security-scanner` for the security pass.
 
 ## Process
 
@@ -72,18 +68,14 @@ When the review scope is large (>10 files) or the user requests a thorough revie
   ```
 
 **Stop conditions:**
-- Not a git repository → report and stop
 - No local changes found (for local review) → report and suggest specifying a file or PR number
 - PR review requested but `gh` not authenticated → provide `gh auth login` instructions and stop
-- PR is closed or merged → report state and stop
 - PR is a draft → report draft status and stop (unless user explicitly requests draft review)
 - PR author is a bot (e.g., `dependabot`, `renovate`) → report and stop (unless user explicitly requests)
-- Ambiguous argument (could be file path or component name) → search codebase, prefer exact file match
 
 ### 2. Analyze Local Changes (Local only)
 
-1. Read target code (diff output for uncommitted changes, full file for single-file review)
-2. Apply gate enforcement rules (file:line from source, git blame to confirm newness, concrete consequence)
+Apply gate enforcement rules.
 
 ### 3. Report Local Findings (Local only)
 
@@ -98,10 +90,8 @@ Present findings using the Local Changes template from `@references/templates.md
    gh pr view <number> --json reviews,comments
    ```
    > **Important:** Run `gh pr diff` exactly as shown — it does not support `-- <file>` path filtering or any additional arguments. Retrieve the full diff once, then analyze relevant sections from the output.
-   >
-   > **Line number rule:** Diff hunk headers (e.g., `@@ -10,5 +12,7 @@`) show relative offsets, not source file line numbers. Never cite these as `file:line` references. Use `Read` on the actual source file to confirm the correct line number before citing it in any finding.
 
-2. Apply gate enforcement rules (file:line from source, git blame to confirm newness, concrete consequence)
+2. Apply gate enforcement rules.
 
 ### 5. Report PR Findings (PR only)
 
@@ -116,7 +106,7 @@ Present findings using the Pull Request Review template from `@references/templa
 
 ### 6. Verify
 
-- Confirm all files or diff hunks in scope were evaluated; note any that were skipped with rationale
+- Note any files or diff hunks that were skipped with rationale
 - Sanity-check severity distribution — if all findings are Critical or all are Note, re-evaluate consistency
 
 ## Code Smells to Detect (Clean Code Pass)
@@ -132,6 +122,4 @@ Project-specific preferences (beyond standard smells):
 
 | Skill | When to Use Instead |
 |-------|---------------------|
-| `/receiving-review` | Addressing feedback received on your PR |
-| `/verify` | Verify completeness against a plan, not code quality |
 | `/feature` | Return to implementation to address review findings |

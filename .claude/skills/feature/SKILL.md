@@ -31,12 +31,7 @@ If on `main` or `master`:
 
 **Fetch & confirm requirements:**
 - Fetch ticket details: `acli jira workitem view <TICKET_ID>` — read scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content.
-- Present a concise ticket summary to the user:
-  - **Title** and **type** (Task/Story/Bug)
-  - **Requirements** (what must be built)
-  - **Acceptance criteria** (how done is defined)
-- Ask the user: "Does this match your understanding? Any clarifications needed before we proceed?"
-- Wait for user confirmation before continuing.
+- Present a concise ticket summary and ask the user to confirm before continuing.
 
 **Gate 3 — Plan required:**
 - Check if `.planning/STATE.md` exists.
@@ -46,7 +41,7 @@ If on `main` or `master`:
     - If no plan exists → Stop. Tell the user: "An approved plan is required before implementation. Run `/plan` first, then `/jira` to create tickets."
 
 **Branch creation:**
-- If not already on a feature branch (Gate 2 confirmed), create one now: `<TICKET-ID>-<short-description>` (per `git-conventions.md`).
+- If not already on a feature branch (Gate 2 confirmed), create one following branch naming conventions.
 
 ### 2. Design & Present
 
@@ -55,7 +50,7 @@ If on `main` or `master`:
   - Each milestone should satisfy specific observable truths from the plan's Definition of Done
   - Select a delivery pattern from `@references/templates.md` (Vertical Slice, Horizontal Layer, or Feature Flags)
   - Show: milestone breakdown, files to create/modify, delivery pattern rationale
-- **Present the implementation plan to the user and wait for approval before proceeding. If changes are requested, revise and present again.**
+- **Present the implementation plan to the user and wait for approval before proceeding.**
 
 ### 3. Implement
 
@@ -64,7 +59,7 @@ After approval, convert the plan into tracked tasks:
 - Set task dependencies using `addBlockedBy` where phases depend on prior phases
 
 For each milestone:
-1. Implement using TDD, then stage and commit
+1. Implement the milestone, then commit
 2. Mark the milestone task as `completed` via `TaskUpdate`
 
 ### 4. Verify → Review → Commit → PR
@@ -87,21 +82,5 @@ Use the Skill tool to load: `pr` — create a focused draft PR for this ticket's
 
 ### 5. Summary
 
-After the full delivery chain completes (verify → review → commit → PR), produce a concise summary:
+After the full delivery chain completes (verify → review → commit → PR), produce a concise summary of what was built, key decisions, and acceptance criteria satisfied. Update `.planning/STATE.md` marking this ticket as complete with a timestamp and PR link.
 
-- **What was built**: one-paragraph description of the ticket's scope
-- **Key decisions**: architectural choices made and why
-- **Files created/modified**: table of all files touched with their purpose
-- **Acceptance criteria satisfied**: final checklist against the ticket's acceptance criteria
-- **Deferred items**: anything explicitly out-of-scope or flagged during implementation
-- **PR**: link to the created pull request
-
-Update `.planning/STATE.md` marking this ticket as complete with a timestamp and PR link.
-
-## Related Skills
-
-| Skill | When to Use Instead |
-|-------|---------------------|
-| `/plan` | Need to explore, clarify, and design before implementation |
-| `/jira` | Decompose plan into tickets before starting implementation |
-| `/confluence` | Reference Confluence specs or publish feature documentation |

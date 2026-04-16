@@ -34,7 +34,7 @@ Parse `$ARGUMENTS` to understand what the user wants:
 | `schema_name` | Schema tables | List tables in schema |
 | `database_name` (all lowercase, no dots) | Database schemas | List schemas in database |
 
-**Disambiguation:** A bare word like `accounting` could be a schema or database name. Default to schema lookup within the current database first. If no schema is found, retry as a database name. If neither matches, report not found and list available options.
+**Disambiguation:** A bare word like `accounting` could be a schema or database name. Default to schema lookup within the current database first. If no schema is found, retry as a database name.
 
 ## Process
 
@@ -46,8 +46,6 @@ Parse `$ARGUMENTS` to understand what the user wants:
 - Parse `$ARGUMENTS` and map to the appropriate workflow (Overview, Table Schema, Query Data, Schema Tables, or Database Schemas) using the Input Handling table
 
 ### 2. Execute
-
-All queries use the psql pattern from Connection above with the resolved `dbname`.
 
 **Overview (no arguments)**
 
@@ -92,9 +90,6 @@ Limit output to 50 rows with a truncation notice for larger result sets (e.g., "
 |----------|----------|
 | Auth command fails | "Aurora login failed. Check aurora-login configuration and credentials." |
 | 0 rows from information_schema | "Got 0 rows — this query must target a specific app database. Retrying with psql against the resolved `dbname`." |
-| Database not found | List known databases from catalog and ask user to specify |
-| Schema not found | List available schemas in the database |
-| Table not found | List available tables in the schema |
 
 ## Related Skills
 

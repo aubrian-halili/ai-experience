@@ -42,12 +42,7 @@ Classify `$ARGUMENTS` to determine the hook workflow:
 
 ### 2. Design Hook
 
-Based on the desired behavior:
-
-1. **Select event**: Match behavior to the appropriate hook event
-2. **Define matcher**: Determine which tool calls or conditions trigger the hook
-3. **Plan action**: What the hook script should do
-4. **Choose scope**: Project-level vs user-level — use project-level for team-wide guardrails, user-level for personal preferences
+Determine the hook event, matcher, script logic, and target settings file (project-level vs user-level).
 
 ### 2.5. Present Plan for Approval
 
@@ -62,12 +57,7 @@ Based on the desired behavior:
 
 ### 3. Implement Hook
 
-Create the hook script and configuration:
-
-1. **Write the hook script** in `.claude/hooks/` directory; prefer bash + jq, avoid requiring additional tools
-2. **Make executable** and **register in settings**
-
-Prefer `command` hooks for deterministic checks, `prompt` or `agent` for judgment calls. See `@references/hook-patterns.md` for ready-to-use implementations.
+Create hook script and register in settings. See `@references/hook-patterns.md` for ready-to-use implementations.
 
 ### 4. Validate
 

@@ -22,15 +22,4 @@ Qred/<repo>
 ```
 
 - Use `+--` for entries and `|` for continuation lines
-- Mark unexplored directories or truncated depth with `(...)` to indicate more content exists
-
-## Follow-up Suggestions by Layer
-
-After each layer, suggest the natural next action:
-
-| After Layer | Suggest |
-|---|---|
-| Orient | `tree <repo>` for structure overview, or search for specific terms |
-| Navigate | Search for specific terms, or read a specific file |
-| Search | Read the most relevant matching files, or narrow the search |
-| Read | Related files, broader search, or navigate to parent directory |
+- Mark unexplored directories or truncated depth with `(...)`

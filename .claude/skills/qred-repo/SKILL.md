@@ -55,9 +55,9 @@ Route `$ARGUMENTS` using the Input Handling tables:
 ### 3. Execute Direct Operations
 
 For all direct operations, use `--json` to get structured data:
-- **List repos:** `gh repo list Qred --limit 30 --no-archived --json name,description,url,isArchived,pushedAt` → present as table with name, description, last push date
-- **List PRs/issues:** add `--json number,title,state,author,updatedAt` → present as table
-- **View PR/issue:** add `--json number,title,body,state,author` → present title, author, state, and body
+- **List repos:** `gh repo list Qred --limit 30 --no-archived --json name,description,url,isArchived,pushedAt`
+- **List PRs/issues:** add `--json number,title,state,author,updatedAt`
+- **View PR/issue:** add `--json number,title,body,state,author`
 
 ### 4. Layered Exploration Workflow
 
@@ -98,21 +98,16 @@ For all direct operations, use `--json` to get structured data:
   > - Increase limit:   `gh search code --owner Qred "<term>" --limit 100`
   ```
 
-**Guardrails:** Cap results at 30 (`--limit 30`) — if results hit the cap, always show the truncation block. Do not auto-read all matching files — pick the 1-2 most relevant or let the user choose.
+**Guardrails:** Cap results at 30 (`--limit 30`) — if results hit the cap, always show the truncation block.
 
 #### Layer 4: Read
 
 **Purpose:** Read a single file's contents when you know it's relevant.
 
 1. Run `gh api repos/Qred/<repo>/contents/<path>` to get file metadata and encoded content
-2. Decode the content: pipe through `jq -r '.content' | base64 -d`
-3. Present file contents in a syntax-highlighted code block
+2. Decode the base64-encoded content field
 
 **Guardrails:** **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more. Skip binary/generated/lock files (e.g., `package-lock.json`, `yarn.lock`, `.min.js`).
-
-### 5. Verify
-
-- Suggest the natural next action using the follow-up table in `@references/formatting.md`
 
 ## Error Handling
 

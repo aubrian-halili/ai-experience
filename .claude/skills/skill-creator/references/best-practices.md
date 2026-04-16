@@ -32,19 +32,16 @@ Match constraint level to task variability:
 
 - Provide principles, not templates
 - Use examples to illustrate range of acceptable outputs
-- Example: Architecture design, brainstorming
 
 ### Medium Freedom (Structured Tasks)
 
 - Provide flexible templates with optional sections
 - Define required elements, allow variation in presentation
-- Example: Code reviews, documentation
 
 ### Low Freedom (Mechanical Tasks)
 
 - Provide strict templates with placeholders
 - Specify exact format, validate output structure
-- Example: Changelog entries, commit messages
 
 ## Quality Checklist
 
@@ -102,6 +99,3 @@ The script generates an HTML file and opens it in the default browser.
 - **Personal skills** (`~/.claude/skills/`): Role-specific workflows across all your projects. Available only to you.
 - **Project skills** (`.claude/skills/`): Team-shareable, committed to the repo.
 
-**Best practices**:
-- **Promote upward**: If a personal skill proves useful across the team, move it to project level
-- **Keep personal lean**: Only keep skills in `~/.claude/skills/` that are truly personal preference

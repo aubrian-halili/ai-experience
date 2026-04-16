@@ -43,17 +43,11 @@ Verify that an implementation fully achieves its intended goals using three-leve
 
 ### Level 2: Substance — record `[SUBSTANTIVE]`, `[STUB]`, or `[PARTIAL]` with `file:line` evidence
 
-Run the full anti-pattern scan from `@references/anti-patterns.md` (Iron Law #3).
+Run anti-pattern scan on all changed files (stubs, placeholder throws, empty catches, TODO/FIXME markers) (Iron Law #3).
 
 ### Level 3: Wiring — record `[WIRED]`, `[ORPHANED]`, or `[PARTIAL]` with `file:line` evidence
 
-- Exports are imported where needed
-- Routes are registered in the router
-- Middleware is applied to correct paths
-- Event handlers are subscribed
-- Database models are used by services (not orphaned)
-- Tests are included in test runner configuration
-- Environment variables are documented and loaded
+Verify all components are connected end-to-end (imports, routes, middleware, handlers, config).
 
 ## Process
 

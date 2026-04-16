@@ -14,8 +14,6 @@ disable-model-invocation: true
 
 ultrathink
 
-Decompose an approved implementation plan into Jira tickets. Reads phases from `.planning/STATE.md` and creates one ticket per phase with dependency tracking and execution wave grouping.
-
 ## Iron Laws
 
 > - NEVER execute `delete` or any destructive/administrative acli command — if requested, refuse and direct the user to manage these directly in Jira
@@ -33,8 +31,7 @@ Parse `$ARGUMENTS` for an optional project key override (e.g., `PROJ`). Default 
    - If the file does not exist or contains no `#### Phase` headings → **stop** and redirect:
      > "No approved plan found. Run `/plan` first to create an implementation plan, then come back to `/jira` to decompose it into tickets."
    - If the file exists with phases → proceed to Process
-2. **Resolve project**: user-provided project code from `$ARGUMENTS`, or default to `UN`
-3. **Check acli availability**: run `acli --version`; available → create directly via acli; unavailable → generate content for manual entry
+2. **Check acli availability**: run `acli --version`; available → create directly via acli; unavailable → generate content for manual entry
 
 ---
 
@@ -49,15 +46,12 @@ Parse `$ARGUMENTS` for an optional project key override (e.g., `PROJ`). Default 
   - **Dependencies** → blocking relationships between tickets
   - **Files to create/modify** + **Verification** → technical details
 
-**Stop conditions:**
-- Plan has no phases → ask user to run `/plan` to decompose the goal into phases
-
 ### 2. Draft Ticket Set
 
 For each plan phase, draft a ticket:
 - **Type**: Task (default); use Story if the phase delivers user-facing value
-- **Summary**: phase goal (one sentence, imperative)
-- **Acceptance criteria**: each observable truth from the phase, formatted as a checklist
+- **Summary**: phase goal (imperative)
+- **Acceptance criteria**: each observable truth from the phase
 - **Technical details**: files to create/modify and verification commands from the phase
 - **Dependencies**: list blocking ticket titles (resolved to IDs after creation)
 - **Suggested Story Points**: estimate based on phase scope:
@@ -67,33 +61,28 @@ For each plan phase, draft a ticket:
   - 5 pts — cross-cutting concern or significant unknowns
   - 8 pts — consider splitting the phase
 
-Present the full ticket set as a markdown table with columns: #, Summary, Type, Story Points, Depends On. Annotate independent tickets with `— (parallel)`. Follow the table with execution waves showing which tickets can be worked in parallel.
+Present the full ticket set as a markdown table with columns: #, Summary, Type, Story Points, Depends On. Follow the table with execution waves showing which tickets can be worked in parallel.
 
 ### 3. Create Tickets
 
 For each ticket in dependency order:
 
-1. **Check for duplicates** — search for existing tickets with a similar summary in the same project:
-   - Use `acli jira workitem search --jql` with a JQL query targeting the project and keywords from the title
-     - Example: `project = UN AND summary ~ "login timeout" ORDER BY created DESC`
+1. **Check for duplicates** — use `acli jira workitem search --jql` to search the project for tickets with a similar summary
    - If similar tickets found → present them to the user and ask whether to proceed with creation or link to an existing ticket
    - If no matches → proceed
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
    - Priority is embedded in the description via the template's "Suggested Priority" field; default to Medium if no signal
-3. **Record** each ticket ID in `.planning/STATE.md` under `## Tickets` immediately after creation
 
 ### 4. Present Manifest
 
-After all tickets are created, output the manifest:
+After all tickets are created, output the manifest and store it in `.planning/STATE.md` under a `## Tickets` section for use by `/feature`:
 
 | Ticket ID | Summary | Branch Name |
 |-----------|---------|-------------|
 | UN-1234 | ... | UN-1234-short-description |
 | UN-1235 | ... | UN-1235-short-description |
-
-Store the manifest in `.planning/STATE.md` under a `## Tickets` section for use by `/feature`.
 
 ---
 
