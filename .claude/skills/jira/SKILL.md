@@ -16,16 +16,10 @@ ultrathink
 
 Decompose an approved implementation plan into Jira tickets. Reads phases from `.planning/STATE.md` and creates one ticket per phase with dependency tracking and execution wave grouping.
 
-## Ticket Philosophy
-
-- **Template-driven content** — use structured templates for consistent, actionable tickets; every field should be filled or explicitly marked as unknown
-- **Graceful degradation** — if acli is unavailable, generate copy-ready content for manual entry rather than failing
-
 ## Iron Laws
 
 > - NEVER execute `delete` or any destructive/administrative acli command — if requested, refuse and direct the user to manage these directly in Jira
 > - NEVER create or modify a ticket without user confirmation
-> - NEVER include secrets, credentials, API keys, or connection strings in ticket content
 > - NEVER apply bulk `update`, `edit`, or `transition` operations without first listing all affected ticket IDs and getting explicit user confirmation
 > - ALWAYS search for duplicates before creating a new ticket
 
@@ -41,10 +35,6 @@ Parse `$ARGUMENTS` for an optional project key override (e.g., `PROJ`). Default 
    - If the file exists with phases → proceed to Process
 2. **Resolve project**: user-provided project code from `$ARGUMENTS`, or default to `UN`
 3. **Check acli availability**: run `acli --version`; available → create directly via acli; unavailable → generate content for manual entry
-
-**Stop conditions:**
-- No `.planning/STATE.md` or no phases → redirect to `/plan`
-- acli authentication failure → prompt user to run `acli jira auth login`
 
 ---
 
@@ -96,8 +86,6 @@ Ask the user to confirm, adjust story points, or cancel individual tickets befor
 
 ### 3. Create Tickets
 
-**Only proceed after user approval of the full ticket set.**
-
 For each ticket in dependency order:
 
 1. **Check for duplicates** — search for existing tickets with a similar summary in the same project:
@@ -109,11 +97,9 @@ For each ticket in dependency order:
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
    - Priority is embedded in the description via the template's "Suggested Priority" field; default to Medium if no signal
-   - Descriptions must use Markdown format (`##`, `###`, `1.`, `-`, fenced code blocks)
-3. **Verify** — fetch the created ticket back using `acli jira workitem view <ISSUE_KEY>` to confirm it exists; if fetch fails, warn the user and suggest checking Jira manually
-4. **Record** the ticket ID in the manifest — write it to `.planning/STATE.md` under `## Tickets` immediately after each successful creation (not at the end of the batch), so partial progress is preserved if the batch fails mid-way
+3. **Record** the ticket ID in the manifest — write it to `.planning/STATE.md` under `## Tickets` immediately after each successful creation (not at the end of the batch), so partial progress is preserved if the batch fails mid-way
 
-**Partial batch failure:** If creation fails after some tickets have already been created, immediately surface a status table: which tickets were created (with IDs), which failed, and which are pending. Record created IDs in `.planning/STATE.md` before attempting fallback for remaining tickets.
+**Partial batch failure:** On partial failure, record created ticket IDs in `.planning/STATE.md` immediately before attempting fallback for remaining tickets.
 
 ### 4. Present Manifest
 
@@ -126,17 +112,7 @@ After all tickets are created, output the manifest:
 
 Store the manifest in `.planning/STATE.md` under a `## Tickets` section for use by `/feature`.
 
-**Workflow reminder:** `/plan` → `/jira` → pick up ticket → `/feature <TICKET-ID>` → `/verify` → `/review` → commit → `/pr`
-
 ---
-
-## Error Handling
-
-| Scenario | Response |
-|----------|----------|
-| No plan found | Redirect to `/plan`: "Run `/plan` first to create an implementation plan" |
-| Duplicate ticket found | Present existing tickets, ask user to confirm or cancel |
-| Forbidden operation requested | Refuse: "Deletion and admin commands are outside this skill's scope — manage these directly in Jira" |
 
 ## Related Skills
 
