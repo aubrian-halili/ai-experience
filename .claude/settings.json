@@ -1,15 +1,10 @@
 {
-  "permissions": {
-    "allow": [
-      "Write(.planning/STATE.md)",
-      "Edit(.planning/STATE.md)"
-    ],
-    "defaultMode": "auto"
-  },
   "model": "opusplan",
   "availableModels": [
     "opusplan"
   ],
+  "effortLevel": "medium",
+  "defaultMode": "plan",
   "allowedMcpServers": [],
   "hooks": {
     "PostCompact": [
@@ -54,11 +49,14 @@
       }
     ]
   },
+  "permissions": {
+    "allow": [
+      "Write(.planning/STATE.md)",
+      "Edit(.planning/STATE.md)"
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/scripts/statusline.sh"
-  },
-  "effortLevel": "medium",
-  "defaultMode": "plan",
-  "skipAutoPermissionPrompt": true
+  }
 }
