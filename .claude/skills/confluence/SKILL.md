@@ -13,7 +13,7 @@ disable-model-invocation: true
 
 ## Guardrails
 
-This skill is scoped to **read and generate** operations only. All operations target `qredab.atlassian.net`.
+This skill is scoped to **read and generate** operations only. All operations target `qredab.atlassian.net`. Prefer `--json` on all acli commands.
 
 **Forbidden actions**: `space archive`, `space restore`, `space create`, `space update` — these are administrative operations. If requested, refuse and direct the user to manage these directly in Confluence.
 
@@ -36,13 +36,9 @@ Determine operation intent from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-- Check acli availability: run `acli --version`
-  - acli available → proceed with native commands for read operations
-  - acli unavailable → skip to content generation fallback
+Run `acli --version`; if unavailable, use Markdown-paste fallbacks (Steps 3, 7).
 
 ### 2. View Page
-
-Fetch and display a Confluence page by ID or URL:
 
 - Run `acli confluence page view --id <PAGE_ID> --body-format storage --json`
 - Key flags: `--body-format` (storage|atlas_doc_format|view), `--include-labels`, `--include-versions`, `--version <N>`, `--get-draft`, `--status` (current|draft|archived)
@@ -51,10 +47,8 @@ Fetch and display a Confluence page by ID or URL:
 ### 3. Update Page (Fallback)
 
 - First, fetch current page content: `acli confluence page view --id <PAGE_ID> --body-format storage`
-- Present:
-  1. **What changed** — a brief diff summary (sections added/removed/modified)
-  2. **Full updated content** in Markdown format (Confluence editor accepts Markdown paste)
-  3. **Direct link** to edit the page: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/edit-v2/<PAGE_ID>`
+- Output: Markdown diff summary + full updated content + edit URL: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/edit-v2/<PAGE_ID>`
+- Confluence editor accepts Markdown paste.
 
 ### 4. Search
 
@@ -63,8 +57,6 @@ Fetch and display a Confluence page by ID or URL:
 
 ### 5. List / View Blogs
 
-Browse and view blog posts in a space:
-
 - List: `acli confluence blog list --space-id <SPACE_ID> --json`
   - Key flags: `--title` (filter by title), `--status` (current|draft|deleted), `--limit` (default 25), `--body-format`, `--json`
 - View a specific post: `acli confluence blog view --id <BLOG_ID> --body-format view --json`
@@ -72,20 +64,11 @@ Browse and view blog posts in a space:
 
 ### 6. List Spaces
 
-List all accessible Confluence spaces:
-
 - Run `acli confluence space list --json`
 - Key flags: `--type` (global|personal), `--keys` (filter by space keys), `--status` (current|archived, default: current), `--limit` (default 50), `--expand` (description|homepage|permissions)
 - View a specific space: `acli confluence space view --id <SPACE_ID> --json`
 
 ### 7. Create Page (Fallback)
 
-- Present:
-  1. **Full page content** in Markdown format (ready to paste into Confluence editor)
-  2. **Direct link** to create a new page in the target space: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/create`
-
-## Related Skills
-
-| Skill | When to Use Instead |
-|-------|---------------------|
-| `/jira` | Create or manage Jira tickets (not Confluence pages) |
+- Output: full page content in Markdown format + direct link to create: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/create`
+- Confluence editor accepts Markdown paste.

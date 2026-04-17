@@ -9,8 +9,6 @@ allowed-tools: Bash(PGPASSWORD=*)
 disable-model-invocation: true
 ---
 
-Explore PostgreSQL database schemas and run read-only queries against the backoffice Aurora cluster.
-
 ## Connection
 
 Use psql with an explicit `dbname` for all queries:
@@ -34,23 +32,13 @@ Map `$ARGUMENTS` to a workflow:
 | `table_name` or `schema.table_name` | Table schema | Schema inspection |
 | `SELECT ...` or SQL query | Query data | Query validation and execution |
 | `schema_name` | Schema tables | List tables in schema |
-| `database_name` (all lowercase, no dots) | Database schemas | List schemas in database |
+| `database_name` (all lowercase, no dots) | Database schemas | List schemas in database — connect with `dbname=<database>` |
 
 **Disambiguation:** A bare word like `accounting` could be a schema or database name. Default to schema lookup within the current database first. If no schema is found, retry as a database name.
 
 ## Execute
 
-**Overview (no arguments)**
-
-If `@references/database-overview.md` exists, present its cached data directly instead of re-querying. The cached file contains databases, schemas, and table names only — no column-level detail. If the user wants column detail for a specific table, proceed to the **Table Schema** workflow. If the user asks to refresh, re-run the queries and update the reference file.
-
-List all databases, then schemas in the default database, then tables in the default schema.
-
-**Table Schema** — inspect columns, data types, nullability, and defaults for the given table.
-
-**Schema Tables** — list tables in the given schema.
-
-**Database Schemas** — connect with `dbname=<database>` and list its schemas.
+**Overview (no arguments):** If `@references/database-overview.md` exists, present its cached data directly instead of re-querying. The cached file contains databases, schemas, and table names only — no column-level detail. If the user wants column detail for a specific table, proceed to the **Table Schema** workflow. If the user asks to refresh, re-run the queries and update the reference file.
 
 Limit output to 50 rows with a truncation notice for larger result sets (e.g., "Showing 50 of 1,247 rows").
 

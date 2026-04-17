@@ -19,14 +19,9 @@ Audit the project's full documentation surface for factual drift, broken referen
 
 ## Sync Philosophy
 
-- **Accuracy over coverage** — fix factual errors before adding new content
 - **Derivable means deletable** — if a future session can figure it out by reading the code or running `ls`, it doesn't belong in CLAUDE.md; document the "why", not the "what"
 
 ## Input Handling
-
-Parse `$ARGUMENTS` for flags:
-- `--dry-run` — boolean flag, no value
-- `--section <heading>` — next token after `--section` is the heading name
 
 | Input | Intent | Approach |
 |-------|--------|----------|
@@ -55,15 +50,7 @@ Detect project type from marker files and existing doc conventions:
 
 ### 3. Claim Extraction & Verification
 
-Parse all documentation files from the inventory and extract verifiable claims. For each claim, verify it against the filesystem and report any discrepancy.
-
-Claim types to extract and verify:
-- Numeric counts
-- File/directory paths
-- Directory trees (check for unlisted siblings at same depth)
-- Command references (scripts in package.json/Makefile, or skill directories)
-- Cross-doc references
-- Convention file references
+Parse all documentation files from the inventory and extract verifiable claims, then verify each against the filesystem. Claim types include numeric counts, file/directory paths, directory trees, command references, and cross-doc references.
 
 ### 4. Drift Detection
 
@@ -76,7 +63,7 @@ Use git history to find undocumented structural changes:
 
 ### 5. Documentation Organization Assessment
 
-Evaluate how well the project's documentation is organized for Claude's context loading. See `@references/doc-organization.md` for the full best practices.
+Evaluate how well the project's documentation is organized for Claude's context loading. See `@references/doc-organization.md` for the three-tier loading model.
 
 **Flag these anti-patterns:**
 - `CLAUDE.md` exceeds 200 lines — suggest extracting sections to `.claude/rules/` (conventions) or `docs/` (reference material) with a pointer
@@ -90,7 +77,7 @@ Evaluate how well the project's documentation is organized for Claude's context 
 - `.claude/rules/` used for always-applicable conventions
 - `docs/` used for reference material with CLAUDE.md pointers
 
-All organization findings go in the **Documentation Organization** category — never auto-applied; always presented for confirmation.
+Organization findings are never auto-applied; always present them for confirmation.
 
 ### 6. Present Findings
 
@@ -102,13 +89,8 @@ Output a structured report before any edits with these categories:
 - **Documentation Organization** (never auto-applied; always presented for confirmation)
 - **Suggestions** (optional — skipped unless user confirms)
 
-If `--dry-run`, stop here. Otherwise ask user to confirm before proceeding to Step 7.
-
 ### 7. Apply Updates
-
-For each confirmed finding:
 
 - **5-line threshold** — if a finding requires more than 5 lines of change, flag for manual review instead of applying automatically
 
 After edits, re-check CLAUDE.md line count: if edits pushed it over 200 lines, flag the new length and identify extraction candidates (sections that could move to `.claude/rules/` or `docs/`).
-

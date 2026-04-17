@@ -42,19 +42,17 @@ If on `main` or `master`, offer to create a feature branch per git conventions.
 ### 2. Design & Present
 
 - Using the plan's architecture choice and observable truths as the foundation:
-  - Break down each plan phase into incremental milestones with: goal, tasks, dependencies, and verification criteria
-  - Each milestone should satisfy specific observable truths from the plan's Definition of Done
+  - Break down each plan phase into incremental milestones with: goal, tasks, dependencies, and verification criteria tied to the plan's observable truths
   - Select a delivery pattern from `@references/templates.md` (Vertical Slice, Horizontal Layer, or Feature Flags)
   - Show: milestone breakdown, files to create/modify, delivery pattern rationale
 
 ### 3. Implement
 
 After approval, convert the plan into tracked tasks:
-- Create a task for each milestone using `TaskCreate` with clear subject and description
+- Create a task per milestone with `TaskCreate`
 - Set task dependencies using `addBlockedBy` where phases depend on prior phases
 
-For each milestone:
-1. Implement the milestone, then commit
+For each milestone, implement and commit.
 
 ### 4. Verify → Review → Commit → PR
 
@@ -62,17 +60,15 @@ After all milestones are implemented, run the full delivery chain:
 
 #### 4a. Verify
 
-Use the Skill tool to load: `verify` — run full three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available).
-
-If `/verify` reports failures, fix them and re-run before proceeding.
+Run `/verify` — full three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available). Re-run until green.
 
 #### 4b. Review
 
-Use the Skill tool to load: `review`.
+Run `/review`.
 
 #### 4c. PR
 
-Use the Skill tool to load: `pr` — create a focused draft PR for this ticket's changes.
+Run `/pr`.
 
 ### 5. Summary
 

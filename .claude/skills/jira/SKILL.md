@@ -14,9 +14,7 @@ disable-model-invocation: true
 
 ## Iron Laws
 
-> - NEVER execute `delete` or any destructive/administrative acli command — if requested, refuse and direct the user to manage these directly in Jira
-> - NEVER create or modify a ticket without user confirmation
-> - NEVER apply bulk `update`, `edit`, or `transition` operations without first listing all affected ticket IDs and getting explicit user confirmation
+> - Before any bulk `update`, `edit`, or `transition`, print the list of affected ticket IDs for review
 
 ## Input Handling
 
@@ -62,7 +60,7 @@ For each ticket in dependency order:
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
-   - Priority is embedded in the description via the template's "Suggested Priority" field; default to Medium if no signal
+   - Include a `## Suggested Priority` line in the description body (`Critical/High/Medium/Low — brief justification`); default to Medium if no signal
 
 ### 4. Present Manifest
 

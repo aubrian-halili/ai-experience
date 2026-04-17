@@ -10,11 +10,7 @@ disable-model-invocation: true
 allowed-tools: Bash(*/init-skill.sh *, */validate-skill.sh *), Read, Grep, Glob, Write, Edit
 ---
 
-Create new Claude Code skills following established patterns and best practices. References `@template.md` for scaffolding and `@references/best-practices.md` for design principles.
-
-## Skill Design Philosophy
-
-- **Degrees of freedom** — match constraint level to task variability; creative tasks need principles, mechanical tasks need strict templates (see `@references/best-practices.md`)
+Create new Claude Code skills. References `@template.md` for scaffolding and `@references/best-practices.md` for design principles.
 
 ## Input Handling
 
@@ -34,11 +30,8 @@ First, classify the request type:
 
 ### 1. Pre-flight
 
-- If `$ARGUMENTS` contains a skill name, check if it already exists in `.claude/skills/`; if so, suggest updating the existing skill instead of creating a new one
-
 **Stop conditions:**
 - Proposed skill duplicates an existing skill's scope → suggest updating the existing skill instead
-- Request is not about skill creation or management → redirect to the appropriate skill
 
 ### 2. Gather Requirements
 
@@ -72,9 +65,7 @@ This creates the skill directory and a SKILL.md from `@template.md` with the ski
 
 ### 5. Author the SKILL.md
 
-Follow the section structure in `@template.md`. Start with Frontmatter — set name, description with trigger phrases, argument-hint, and allowed-tools.
-
-Cross-reference `@references/best-practices.md` for anti-patterns and quality checklist. Keep SKILL.md under 500 lines; move supplementary content to `references/`.
+Follow the section structure in `@template.md`. Cross-reference `@references/best-practices.md` for anti-patterns and quality checklist.
 
 ### 6. Validate
 
@@ -83,8 +74,6 @@ Run validation to check structure:
 ```bash
 ${CLAUDE_SKILL_DIR}/scripts/validate-skill.sh [skill-name]
 ```
-
-Verify against the quality checklist: Discoverable, Efficient, Graceful, Connected (see `@references/best-practices.md`).
 
 ## Output Principles
 

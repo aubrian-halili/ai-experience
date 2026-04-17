@@ -14,21 +14,6 @@ Claude loads documentation in a strict hierarchy. Placing content in the wrong t
 
 **Target: 50–150 lines** for most projects.
 
-**What belongs in CLAUDE.md:**
-- Project purpose (1-3 sentences max)
-- Key architectural decisions — the "why", not the "what" (e.g., "We use event sourcing because compliance requires full audit history")
-- Non-obvious conventions that differ from framework defaults
-- Known gotchas (footguns, subtle dependencies, environment setup caveats)
-- Common tasks as quick commands
-- Pointers to deeper documentation ("Architecture decisions live in `docs/architecture/`")
-
-**If CLAUDE.md exceeds 200 lines:** Extract sections into either `.claude/rules/` (if they're always-applicable conventions) or `docs/` (if they're reference material), then replace the section with a one-line pointer.
-
-## `.claude/rules/` and `docs/`
-
-- `.claude/rules/`: one concern per file, named descriptively, keep each file under 80 lines
-- `docs/`: architecture decision records live at `docs/architecture/decisions/adr-NNN-*.md`
-
 ## Monorepo Structure Note
 
 ```

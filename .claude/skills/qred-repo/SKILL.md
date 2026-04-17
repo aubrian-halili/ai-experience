@@ -9,16 +9,11 @@ disable-model-invocation: true
 allowed-tools: Bash(gh *)
 ---
 
-Layered repository exploration and code searching across the Qred GitHub organization — orient first, then navigate, search, and read only what is relevant.
+Layered repository exploration and code searching across the Qred GitHub organization.
 
 ## Guardrails
 
-**Read-only and informational operations only.** The following `gh` subcommands are forbidden — refuse if requested and explain why:
-
-- `gh repo delete`, `gh repo archive`, `gh repo rename`, `gh repo transfer`
-- `gh pr close`, `gh pr merge`, `gh pr edit` (modifying state)
-- `gh issue close`, `gh issue delete`
-- Any command with `--confirm`, `--yes`, or `-y` flags on destructive operations
+**Read-only and informational operations only.** Refuse any mutating `gh` subcommand (write, delete, close, merge, edit, transfer, archive) and explain why.
 
 ## Input Handling
 
@@ -36,67 +31,34 @@ Layered repository exploration and code searching across the Qred GitHub organiz
 
 ## Process
 
-### 1. Pre-flight
-
-1. Run `gh auth status`; on failure, prompt the user to run `gh auth login`.
-
-### 2. Execute Direct Operations
+### Direct Operations
 
 - **List repos:** `gh repo list Qred --limit 30 --no-archived --json name,description,url,isArchived,pushedAt`
-- **List PRs/issues:** add `--json number,title,state,author,updatedAt`
-- **View PR/issue:** add `--json number,title,body,state,author`
+- **List PRs/issues:** `gh pr list` / `gh issue list` with relevant `--json` fields
+- **View PR/issue:** `gh pr view` / `gh issue view` with relevant `--json` fields
 
-### 3. Layered Exploration Workflow
+### Layered Exploration Workflow
 
 #### Layer 1: Orient
 
-1. Run `gh repo view Qred/<repo>` to get README and metadata
+Run `gh repo view Qred/<repo>` to get README and metadata.
 
 #### Layer 2: Navigate
 
-1. Run `gh api repos/Qred/<repo>/contents/<path>` to get directory listing
-2. Present as an indented tree view:
-   ```
-   Qred/<repo>
-   +-- README.md
-   +-- src/
-   |   +-- index.ts
-   |   +-- config/
-   |   |   +-- database.ts
-   |   +-- routes/
-   |       +-- (...)
-   +-- tests/
-       +-- (...)
-   ```
-   Use `+--` for entries, `|` for continuation lines, `(...)` for unexplored/truncated directories.
-
-**Guardrails:** Max 3 directory levels deep.
+Run `gh api repos/Qred/<repo>/contents/<path>` to get directory listing and present as a tree.
 
 #### Layer 3: Search
 
-1. Run `gh search code --owner Qred "<term>" --limit 30 --json path,repository,textMatches`
-2. For repo-scoped search: `gh search code --repo Qred/<repo> "<term>" --limit 30 --json path,repository,textMatches`
+- Org-wide: `gh search code --owner Qred "<term>" --limit 30 --json path,repository,textMatches`
+- Repo-scoped: `gh search code --repo Qred/<repo> "<term>" --limit 30 --json path,repository,textMatches`
 
-**Result presentation:**
-
-- Present matching files in `repo/path:line` format
-- **Truncation block** (only when results = limit) — Show a multi-line refinement block:
-  ```
-  > Showing 30 results (limit reached) — results may be incomplete.
-  >
-  > Refine your search:
-  > - Narrow to a repo: `/qred-repo <term> in <repo-name>`
-  > - Narrow to a path: `gh search code --repo Qred/<repo> "<term>" path:src/`
-  > - Increase limit:   `gh search code --owner Qred "<term>" --limit 100`
-  ```
-
-**Guardrails:** Cap results at 30 (`--limit 30`) — if results hit the cap, always show the truncation block.
+If results hit the limit, say so and suggest narrowing by repo or path, or raising `--limit`.
 
 #### Layer 4: Read
 
-1. Run `gh api repos/Qred/<repo>/contents/<path>` to get file metadata and encoded content
+Run `gh api repos/Qred/<repo>/contents/<path>` to get file content.
 
-**Guardrails:** **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more.
+**300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more.
 
 ## Related Skills
 

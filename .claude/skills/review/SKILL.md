@@ -27,13 +27,7 @@ ultrathink
 2. You ran `git blame -L <start>,<end> <file>` to confirm this is a new issue, not pre-existing
 3. You can describe the concrete negative consequence if the issue is left unfixed
 
-If any of these are missing, score the finding below 80 regardless of how "obvious" it seems.
-
-### Do Not Flag
-
-Exclude regardless of confidence:
-
-1. **TODOs the author already flagged**
+**Never flag TODOs the author already flagged.**
 
 ## Input Handling
 
@@ -41,47 +35,38 @@ Pass `--refactor` to perform a Clean Code & SOLID-focused review with Edit sugge
 
 ## Specialized Review Passes
 
-When the review scope is large (>10 files) or the user requests a thorough review, dispatch targeted subagents: `code-quality-reviewer` for quality dimensions and `security-scanner` for the security pass.
+For large scopes (>10 files), dispatch `code-quality-reviewer` and `security-scanner` subagents.
 
 ## Process
 
-**Branch point:** Local review → steps 1–3. PR review → steps 1, 4–5.
+**Branch point:** Local review → step 2. PR review → steps 1, 3.
 
-### 1. Pre-flight
+### 1. Pre-flight (PR only)
 
-- For PR reviews: verify `gh` is authenticated: `gh auth status`
-- For PR reviews: screen PR eligibility before proceeding:
-  ```bash
-  gh pr view <number> --json state,isDraft,author,labels
-  ```
+Screen PR eligibility:
+```bash
+gh pr view <number> --json state,isDraft,author,labels
+```
 
 **Stop conditions:**
-- PR is a draft → report draft status and stop (unless user explicitly requests draft review)
-- PR author is a bot (e.g., `dependabot`, `renovate`) → report and stop (unless user explicitly requests)
+- PR is a draft → report and stop
+- PR author is a bot (e.g., `dependabot`, `renovate`) → report and stop
 
 ### 2. Analyze Local Changes (Local only)
 
-Apply gate enforcement rules.
+Apply gate enforcement, then present findings using the Local Changes template from `@references/templates.md`.
 
-### 3. Report Local Findings (Local only)
+### 3. Analyze Pull Request (PR only)
 
-Present findings using the Local Changes template from `@references/templates.md`.
+```bash
+gh pr view <number> --json title,body,author,baseRefName,headRefName,files,additions,deletions,changedFiles
+gh pr diff <number>
+gh pr view <number> --json reviews,comments
+```
 
-### 4. Analyze Pull Request (PR only)
+> **Important:** Run `gh pr diff` exactly as shown — it does not support `-- <file>` path filtering or any additional arguments. Retrieve the full diff once, then analyze relevant sections from the output.
 
-1. **Gather PR Context**
-   ```bash
-   gh pr view <number> --json title,body,author,baseRefName,headRefName,files,additions,deletions,changedFiles
-   gh pr diff <number>
-   gh pr view <number> --json reviews,comments
-   ```
-   > **Important:** Run `gh pr diff` exactly as shown — it does not support `-- <file>` path filtering or any additional arguments. Retrieve the full diff once, then analyze relevant sections from the output.
-
-2. Apply gate enforcement rules.
-
-### 5. Report PR Findings (PR only)
-
-Present findings using the Pull Request Review template from `@references/templates.md`.
+Apply gate enforcement, then present findings using the Pull Request Review template from `@references/templates.md`.
 
 ## Related Skills
 

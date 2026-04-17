@@ -25,20 +25,18 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 | Jira ticket ID (e.g., `UN-1234`) | Plan from ticket | Fetch ticket via `acli`, then Steps 1-5. Record ticket ID in plan. At end, prompt user to continue with `/feature <TICKET-ID>` |
 | Goal + Jira ticket ID | Scoped plan from ticket | Fetch ticket, use goal as additional context, Steps 1-5. Record ticket ID. At end, prompt `/feature <TICKET-ID>` |
 
-> **Note:** Resuming an in-progress plan requires no special argument. If `.planning/STATE.md` exists, the skill automatically prompts **resume** or **start over** before proceeding.
-
 ## Process
 
 > **Planning artifact exemption:** `.planning/STATE.md` is a planning artifact. This skill always creates and edits it — including when Claude Code is in plan mode. Treat it exactly like the plan file itself.
 
 ### 1. Pre-flight
 
-1. **Parse `$ARGUMENTS`** — extract any Jira ticket ID (pattern: `[A-Z]+-\d+`) and/or goal description.
+1. **Parse `$ARGUMENTS`** — extract any Jira ticket ID and/or goal description.
 2. **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria.
 3. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
    - **resume** → read the file, skip completed phases, continue from the phase marked current
    - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
-4. **Create `.planning/STATE.md` skeleton now** — always, including while plan mode is active (see planning artifact exemption above). Write the skeleton using the Session State Template from `@references/templates.md` with: Goal, Source, Created date, Last Updated, and empty sections for Definition of Done / Progress / Current Phase. This ensures session continuity even if planning is interrupted at any later step.
+4. **Create `.planning/STATE.md` skeleton now** — always (see planning artifact exemption above). Write the skeleton using the Session State Template from `@references/templates.md` with: Goal, Source, Created date, Last Updated, and empty sections for Definition of Done / Progress / Current Phase.
 
 **Stop conditions:**
 - Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
@@ -50,7 +48,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 
 ### 2. Define Done (Goal-Backward Verification)
 
-Define **observable truths** — concrete conditions that must be TRUE when the goal is complete. Each truth must be verifiable: a file exists, a test passes, an endpoint responds, a query returns expected data. See `@references/templates.md` for examples by category.
+Define **observable truths** — concrete conditions that must be TRUE when the goal is complete. See `@references/templates.md` for examples by category.
 
 ### 3. Architecture Comparison
 
@@ -69,7 +67,7 @@ Validate the plan against `@references/plan-reviewer-prompt.md` before presentin
 
 ### 5. Track State
 
-Finalize `.planning/STATE.md` (first written as a skeleton in Step 1) using the template from `@references/templates.md`. This step adds the full phase breakdown and reconciles the Progress table. State updates apply the planning artifact exemption — write this file regardless of plan-mode status.
+Finalize `.planning/STATE.md` using the template from `@references/templates.md`. This step adds the full phase breakdown and reconciles the Progress table.
 
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description

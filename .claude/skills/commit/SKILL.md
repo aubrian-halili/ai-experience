@@ -12,19 +12,6 @@ disable-model-invocation: true
 **Recent commits:**
 !`git log --oneline -3`
 
-## Input Handling
+## Project rule
 
-Determine commit workflow from `$ARGUMENTS`:
-
-| Input | Intent | Approach |
-|-------|--------|----------|
-| (none) | Full commit workflow | Steps 1-2; analyze all changes |
-| Commit message text | Use as proposed message | Steps 1-2; skip message generation |
-| Scope hint (e.g., `auth`) | Scope-focused commit | Steps 1-2; filter analysis to scope |
-| `--amend` | Amend last commit | Steps 1-2; warn if already pushed |
-
-## Process
-
-### 1. Analyze & Present for Review
-
-Present the proposed commit message to the user for review and confirmation before proceeding.
+Commit messages must follow `<JIRA-ID> <type>(<scope>): <description>` — extract the Jira ID from the current branch name. See `.claude/rules/git-conventions.md`.

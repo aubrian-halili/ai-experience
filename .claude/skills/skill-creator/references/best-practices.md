@@ -2,7 +2,7 @@
 
 ## Context Window Principles
 
-Skills consume context tokens. The system budget is ~2% of the context window (~16,000 chars as a practical fallback). Override with the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable if skills need more room.
+Skills consume context tokens. The system budget is ~2% of the context window (~16,000 chars as a practical fallback). Override with the `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable if skills need more room. Keep SKILL.md under 500 lines; move supplementary content to `references/`.
 
 ## CSO Principle: Description as Trigger, Not Summary
 
@@ -27,13 +27,4 @@ Before finalizing a skill:
 - [ ] **Discoverable**: Description contains natural trigger phrases
 - [ ] **Efficient**: No unnecessary context loading
 - [ ] **Connected**: Links to related skills where appropriate
-
-## Dynamic Context Injection
-
-Use `!<command>` to inject shell output before skill content is sent to Claude. Example: `` Current branch: !`git rev-parse --abbrev-ref HEAD` `` resolves to `Current branch: feature/auth-flow` at runtime.
-
-## Extended Thinking
-
-Include the keyword **"ultrathink"** in skill content to activate extended thinking mode. Use for complex analysis, architecture decisions, or security audits where reasoning depth meaningfully improves results. Tradeoff: higher latency and token usage.
-
 
