@@ -13,10 +13,7 @@ disable-model-invocation: true
 
 ## Input Handling
 
-| Input | Intent | Approach |
-|-------|--------|----------|
-| Goal description (e.g., `add user authentication`) | Decompose goal | Full Steps 1-5 |
-| Jira ticket ID (optionally with goal context) | Plan from ticket | Fetch ticket via `acli`, then Steps 1-5. Record ticket ID in plan. At end, prompt user to continue with `/feature <TICKET-ID>` |
+When a Jira ticket ID is found in `$ARGUMENTS`: fetch via `acli`, then follow Steps 1-5. Record ticket ID in plan. At end, prompt user to continue with `/feature <TICKET-ID>`.
 
 ## Process
 
@@ -24,9 +21,9 @@ disable-model-invocation: true
 
 ### 1. Pre-flight
 
-1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria.
+1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`.
 2. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
-   - **resume** → read the file, skip completed phases, continue from the phase marked current
+   - **resume** → continue from the phase marked current
    - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
 3. **Create `.planning/STATE.md` skeleton now** — always. Write the skeleton using the Session State Template in `@references/templates.md`.
 
@@ -41,15 +38,13 @@ Launch 2-3 `code-architect` agents in parallel, each with a different focus:
 - **Clean Architecture**
 - **Pragmatic Balance**
 
-Present results using the Architecture Comparison Template before proceeding.
+Present results using the Architecture Comparison Template.
 
 **Skip when:** Scope is ≤3 files with no new integration points. Default to Pragmatic Balance.
 
 ### 4. Decompose into Phases
 
-Structure each phase per the Project Plan Template.
-
-Before presenting: confirm every observable truth in Define Done maps to at least one phase.
+Confirm every observable truth in Define Done maps to at least one phase.
 
 ### 5. Track State
 
@@ -58,7 +53,6 @@ Finalize `.planning/STATE.md` using the Session State Template. This step adds t
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description
 - Set `addBlockedBy` dependencies matching the phase dependency graph
-- Update task status via `TaskUpdate` as phases complete
 
 ## Related Skills
 

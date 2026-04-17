@@ -16,16 +16,16 @@
 Observable truths that must be TRUE when this goal is complete:
 
 #### Artifacts
-- [ ] [Specific file/code that must exist]
+- [ ] [artifact]
 
 #### Behavior
-- [ ] [Specific runtime behavior that must be verifiable]
+- [ ] [behavior]
 
 #### Integration
-- [ ] [Specific wiring/connection that must be in place]
+- [ ] [integration point]
 
 #### Quality
-- [ ] [Specific test/pattern requirement]
+- [ ] [test/pattern requirement]
 
 ---
 
@@ -91,8 +91,7 @@ Observable truths that must be TRUE when this goal is complete:
 **Phase**: [Current phase name]
 **Status**: [In Progress / Blocked]
 **Next Steps**:
-1. [Immediate next action]
-2. [Following action]
+1. [next action]
 
 ### Blockers
 
