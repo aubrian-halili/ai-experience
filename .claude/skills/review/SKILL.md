@@ -19,15 +19,12 @@ ultrathink
 
 | Score | Meaning | Action |
 |-------|---------|--------|
-| **Below 80** | Unverified, low impact, or missing evidence | Do not report — note: a finding that feels "important" (score 75) still fails the gate without full evidence |
+| **Below 80** | Unverified, low impact, or missing evidence | Do not report |
 | **80+** | Verified with strong supporting evidence — real issue, confirmed impact | Report |
 
 **Gate enforcement — a finding reaches 80 only when ALL of these are true:**
-1. You can cite the exact `file:line` where the issue occurs (read the source file, not just the diff)
+1. You can cite the exact `file:line` where the issue occurs
 2. You ran `git blame -L <start>,<end> <file>` to confirm this is a new issue, not pre-existing
-3. You can describe the concrete negative consequence if the issue is left unfixed
-
-**Never flag TODOs the author already flagged.**
 
 ## Input Handling
 
@@ -40,6 +37,8 @@ For large scopes (>10 files), dispatch `code-quality-reviewer` and `security-sca
 ## Process
 
 **Branch point:** Local review → step 2. PR review → steps 1, 3.
+
+Apply gate enforcement before reporting findings. Present results using the relevant template from `@references/templates.md`.
 
 ### 1. Pre-flight (PR only)
 
@@ -54,7 +53,7 @@ gh pr view <number> --json state,isDraft,author,labels
 
 ### 2. Analyze Local Changes (Local only)
 
-Apply gate enforcement, then present findings using the Local Changes template from `@references/templates.md`.
+Analyze the diff and present findings using the Local Changes template.
 
 ### 3. Analyze Pull Request (PR only)
 
@@ -66,7 +65,7 @@ gh pr view <number> --json reviews,comments
 
 > **Important:** Run `gh pr diff` exactly as shown — it does not support `-- <file>` path filtering or any additional arguments. Retrieve the full diff once, then analyze relevant sections from the output.
 
-Apply gate enforcement, then present findings using the Pull Request Review template from `@references/templates.md`.
+Analyze the diff and present findings using the Pull Request Review template.
 
 ## Related Skills
 
