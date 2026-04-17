@@ -11,21 +11,16 @@ allowed-tools: Read, Grep, Glob, Write, Agent, Skill, TaskCreate, TaskUpdate, Ta
 disable-model-invocation: true
 ---
 
-Decompose goals, epics, or Jira tickets into structured implementation phases using goal-backward verification, architecture comparison, and persistent state tracking.
-
 ## Input Handling
 
 | Input | Intent | Approach |
 |-------|--------|----------|
 | Goal description (e.g., `add user authentication`) | Decompose goal | Full Steps 1-5 |
-| Jira ticket ID (e.g., `UN-1234`) | Plan from ticket | Fetch ticket via `acli`, then Steps 1-5. Record ticket ID in plan. At end, prompt user to continue with `/feature <TICKET-ID>` |
-| Goal + Jira ticket ID | Scoped plan from ticket | Fetch ticket, use goal as additional context, Steps 1-5. Record ticket ID. At end, prompt `/feature <TICKET-ID>` |
+| Jira ticket ID (optionally with goal context) | Plan from ticket | Fetch ticket via `acli`, then Steps 1-5. Record ticket ID in plan. At end, prompt user to continue with `/feature <TICKET-ID>` |
 
 ## Process
 
 > **Planning artifact exemption:** `.planning/STATE.md` is a planning artifact. This skill always creates and edits it — including when Claude Code is in plan mode. Treat it exactly like the plan file itself.
-
-> All templates referenced in steps below live in `@references/templates.md`.
 
 ### 1. Pre-flight
 
@@ -33,10 +28,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 2. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
    - **resume** → read the file, skip completed phases, continue from the phase marked current
    - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
-3. **Create `.planning/STATE.md` skeleton now** — always. Write the skeleton using the Session State Template.
-
-**Stop conditions:**
-- If the goal lacks a named target, verifiable outcome, or bounded scope → ask the user to narrow it or provide a ticket ID
+3. **Create `.planning/STATE.md` skeleton now** — always. Write the skeleton using the Session State Template in `@references/templates.md`.
 
 ### 2. Define Done (Goal-Backward Verification)
 

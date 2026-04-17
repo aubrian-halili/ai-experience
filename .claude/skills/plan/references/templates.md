@@ -49,15 +49,11 @@ Observable truths that must be TRUE when this goal is complete:
 **Verification**:
 - [ ] [Specific command or condition to verify]
 
-Repeat for each phase.
-
 ---
 
 ```
 
 ## Architecture Comparison Template
-
-Use this during Step 3 (Architecture Comparison) to present options to the user before selecting an approach.
 
 ```markdown
 ### Architecture Options
