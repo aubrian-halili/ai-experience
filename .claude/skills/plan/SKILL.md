@@ -29,6 +29,8 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 
 ## Process
 
+> **Planning artifact exemption:** `.planning/STATE.md` is a planning artifact. This skill always creates and edits it — including when Claude Code is in plan mode. Treat it exactly like the plan file itself.
+
 ### 1. Pre-flight
 
 1. **Parse `$ARGUMENTS`** — extract any Jira ticket ID (pattern: `[A-Z]+-\d+`) and/or goal description.
@@ -36,7 +38,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 3. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
    - **resume** → read the file, skip completed phases, continue from the phase marked current
    - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
-4. **Create `.planning/STATE.md` skeleton now** — do this before proceeding to Step 2, before Definition of Done, before anything else. Write the skeleton using the Session State Template from `@references/templates.md` with: Goal, Source, Created date, Last Updated, and empty sections for Definition of Done / Progress / Current Phase. This ensures session continuity even if planning is interrupted at any later step.
+4. **Create `.planning/STATE.md` skeleton now** — always, including while plan mode is active (see planning artifact exemption above). Write the skeleton using the Session State Template from `@references/templates.md` with: Goal, Source, Created date, Last Updated, and empty sections for Definition of Done / Progress / Current Phase. This ensures session continuity even if planning is interrupted at any later step.
 
 **Stop conditions:**
 - Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
@@ -67,7 +69,7 @@ Validate the plan against `@references/plan-reviewer-prompt.md` before presentin
 
 ### 5. Track State
 
-Finalize `.planning/STATE.md` (first written as a skeleton in Step 1) using the template from `@references/templates.md`. This step adds the full phase breakdown and reconciles the Progress table.
+Finalize `.planning/STATE.md` (first written as a skeleton in Step 1) using the template from `@references/templates.md`. This step adds the full phase breakdown and reconciles the Progress table. State updates apply the planning artifact exemption — write this file regardless of plan-mode status.
 
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description

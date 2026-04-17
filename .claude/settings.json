@@ -49,6 +49,12 @@
       }
     ]
   },
+  "permissions": {
+    "allow": [
+      "Write(.planning/STATE.md)",
+      "Edit(.planning/STATE.md)"
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/scripts/statusline.sh"
