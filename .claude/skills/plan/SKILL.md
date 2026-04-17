@@ -11,8 +11,6 @@ allowed-tools: Read, Grep, Glob, Write, Agent, Skill, TaskCreate, TaskUpdate, Ta
 disable-model-invocation: true
 ---
 
-ultrathink
-
 Decompose goals, epics, or Jira tickets into structured implementation phases using goal-backward verification, architecture comparison, and persistent state tracking.
 
 ## Input Handling
@@ -27,25 +25,22 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 
 > **Planning artifact exemption:** `.planning/STATE.md` is a planning artifact. This skill always creates and edits it — including when Claude Code is in plan mode. Treat it exactly like the plan file itself.
 
+> All templates referenced in steps below live in `@references/templates.md`.
+
 ### 1. Pre-flight
 
 1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria.
 2. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
    - **resume** → read the file, skip completed phases, continue from the phase marked current
    - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
-3. **Create `.planning/STATE.md` skeleton now** — always. Write the skeleton using the Session State Template from `@references/templates.md`.
+3. **Create `.planning/STATE.md` skeleton now** — always. Write the skeleton using the Session State Template.
 
 **Stop conditions:**
-- Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
-
-**Vague goal test** — a goal is too vague if it fails ANY of these:
-- Names a specific system, feature, component, or endpoint
-- Implies a verifiable outcome — something that can be tested or observed when done
-- Scopes to a bounded area of the codebase
+- If the goal lacks a named target, verifiable outcome, or bounded scope → ask the user to narrow it or provide a ticket ID
 
 ### 2. Define Done (Goal-Backward Verification)
 
-Define the Definition of Done per `@references/templates.md`.
+Define the Definition of Done per the Project Plan Template.
 
 ### 3. Architecture Comparison
 
@@ -54,19 +49,19 @@ Launch 2-3 `code-architect` agents in parallel, each with a different focus:
 - **Clean Architecture**
 - **Pragmatic Balance**
 
-Present results using the Architecture Comparison Template from `@references/templates.md` before proceeding.
+Present results using the Architecture Comparison Template before proceeding.
 
 **Skip when:** Scope is ≤3 files with no new integration points. Default to Pragmatic Balance.
 
 ### 4. Decompose into Phases
 
-Structure each phase per the Project Plan Template in `@references/templates.md`.
+Structure each phase per the Project Plan Template.
 
 Before presenting: confirm every observable truth in Define Done maps to at least one phase.
 
 ### 5. Track State
 
-Finalize `.planning/STATE.md` using the template from `@references/templates.md`. This step adds the full phase breakdown and reconciles the Progress table.
+Finalize `.planning/STATE.md` using the Session State Template. This step adds the full phase breakdown and reconciles the Progress table.
 
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description

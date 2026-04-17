@@ -31,9 +31,9 @@ Observable truths that must be TRUE when this goal is complete:
 
 ### Phase Breakdown
 
-#### Phase 1: [Name]
+#### Phase N: [Name]
 **Goal**: [What this phase achieves]
-**Dependencies**: None
+**Dependencies**: None | Phase N-1
 **Observable Truths Satisfied**: [List from Definition of Done]
 
 **Files to Create**:
@@ -49,25 +49,7 @@ Observable truths that must be TRUE when this goal is complete:
 **Verification**:
 - [ ] [Specific command or condition to verify]
 
----
-
-#### Phase 2: [Name]
-**Goal**: [What this phase achieves]
-**Dependencies**: Phase 1
-**Observable Truths Satisfied**: [List from Definition of Done]
-
-**Files to Create**:
-| File | Purpose |
-|------|---------|
-| `path/to/file` | [Purpose] |
-
-**Files to Modify**:
-| File | Change | Reason |
-|------|--------|--------|
-| `path/to/file` | [Change] | [Why] |
-
-**Verification**:
-- [ ] [Specific command or condition to verify]
+Repeat for each phase.
 
 ---
 
@@ -127,7 +109,6 @@ Use this during Step 3 (Architecture Comparison) to present options to the user 
 | Decision | Rationale | Date |
 |----------|-----------|------|
 | Architecture: [Minimal Changes / Clean Architecture / Pragmatic Balance] | [Why this approach was chosen] | [When] |
-| [Other decision] | [Why] | [When] |
 
 ```
 
