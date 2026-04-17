@@ -31,12 +31,11 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 
 ### 1. Pre-flight
 
-1. **Parse `$ARGUMENTS`** — extract any Jira ticket ID and/or goal description.
-2. **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria.
-3. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
+1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria.
+2. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
    - **resume** → read the file, skip completed phases, continue from the phase marked current
    - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
-4. **Create `.planning/STATE.md` skeleton now** — always (see planning artifact exemption above). Write the skeleton using the Session State Template from `@references/templates.md` with: Goal, Source, Created date, Last Updated, and empty sections for Definition of Done / Progress / Current Phase.
+3. **Create `.planning/STATE.md` skeleton now** — always. Write the skeleton using the Session State Template from `@references/templates.md`.
 
 **Stop conditions:**
 - Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
@@ -48,7 +47,7 @@ Decompose goals, epics, or Jira tickets into structured implementation phases us
 
 ### 2. Define Done (Goal-Backward Verification)
 
-Define **observable truths** — concrete conditions that must be TRUE when the goal is complete. See `@references/templates.md` for examples by category.
+Define the Definition of Done per `@references/templates.md`.
 
 ### 3. Architecture Comparison
 
@@ -57,11 +56,13 @@ Launch 2-3 `code-architect` agents in parallel, each with a different focus:
 - **Clean Architecture** — proper separation of concerns, SOLID principles
 - **Pragmatic Balance** — follow existing conventions (include for Medium+ complexity)
 
+Present results using the Architecture Comparison Template from `@references/templates.md` before proceeding.
+
 **Skip when:** Scope is ≤3 files with no new integration points. Default to Pragmatic Balance.
 
 ### 4. Decompose into Phases
 
-Work backward from the observable truths using the chosen architecture. Structure each phase per the Project Plan Template in `@references/templates.md`.
+Structure each phase per the Project Plan Template in `@references/templates.md`.
 
 Validate the plan against `@references/plan-reviewer-prompt.md` before presenting.
 

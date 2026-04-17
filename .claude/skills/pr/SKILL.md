@@ -15,7 +15,7 @@ disable-model-invocation: true
 ## Process
 
 ### 1. Pre-flight
-Parse `$ARGUMENTS` for `--major`, `--fe`, `--ready`, `--base`, `--label`. Refuse if current branch is `main`/`master`.
+Parse `$ARGUMENTS` for `--major`, `--fe`, `--ready`. Refuse if current branch is `main`/`master`.
 
 ### 2. Prepare Body
 Select template by flags:
@@ -27,7 +27,7 @@ Select template by flags:
 | `--fe`         | @references/frontend-minor-template.md   |
 | `--fe --major` | @references/frontend-major-template.md   |
 
-Include **every section, checkbox, and line** of the selected template verbatim — do not summarize. Fill dynamic sections from commit history; tick only items that apply. State which template was used.
+Include **every section, checkbox, and line** of the selected template verbatim — do not summarize. Fill dynamic sections from commit history; tick only items that apply.
 
 ### 3. Push & Create PR
 Push branch and create PR as **draft** unless `--ready` is passed.

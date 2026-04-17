@@ -96,7 +96,7 @@ graph LR
 
 ## Architecture Comparison Template
 
-Use this during Step 3 (Architecture Comparison) when presenting approaches to the user.
+Use this during Step 3 (Architecture Comparison) to present options to the user before selecting an approach.
 
 ```markdown
 ### Architecture Options
@@ -150,11 +150,5 @@ Use this during Step 3 (Architecture Comparison) when presenting approaches to t
 | Architecture: [Minimal Changes / Clean Architecture / Pragmatic Balance] | [Why this approach was chosen] | [When] |
 | [Other decision] | [Why] | [When] |
 
-### Completed Phases
-
-#### Phase 1: [Name]
-- **Completed**: [Date]
-- **Observable Truths Verified**: [List]
-- **Notes**: [Any deviations from plan]
 ```
 
