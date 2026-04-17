@@ -5,7 +5,6 @@ description: >-
   or mentions "PreToolUse", "PostToolUse". This is for Claude Code hooks, not React
   hooks or git hooks.
   Not for: git hooks (handle those manually).
-  Not for: creating skills or slash commands (use /skill-creator).
 argument-hint: "[hook type or behavior to enforce]"
 allowed-tools: Read, Write, Edit, Bash(chmod *), Glob
 disable-model-invocation: true

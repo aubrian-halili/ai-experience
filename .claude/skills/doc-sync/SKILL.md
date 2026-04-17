@@ -3,7 +3,7 @@ name: doc-sync
 description: >-
   User asks to "sync docs", "update CLAUDE.md", "audit project documentation",
   "check documentation drift", "is CLAUDE.md up to date", or "organize docs".
-  Not for: creating new skills (use /skill-creator) or reviewing code quality (use /review).
+  Not for: reviewing code quality (use /review).
   Not for: Confluence wiki pages (use /confluence).
 argument-hint: "[optional: --dry-run, --section <heading-name>]"
 disable-model-invocation: true
