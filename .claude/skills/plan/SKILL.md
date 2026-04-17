@@ -11,8 +11,6 @@ allowed-tools: Read, Grep, Glob, Write, Agent, Skill, TaskCreate, TaskUpdate, Ta
 disable-model-invocation: true
 ---
 
-**Current branch:** !`git branch --show-current`
-
 ultrathink
 
 Decompose goals, epics, or Jira tickets into structured implementation phases using goal-backward verification, architecture comparison, and persistent state tracking.
@@ -52,9 +50,9 @@ Define the Definition of Done per `@references/templates.md`.
 ### 3. Architecture Comparison
 
 Launch 2-3 `code-architect` agents in parallel, each with a different focus:
-- **Minimal Changes** — smallest possible diff, reuse existing abstractions
-- **Clean Architecture** — proper separation of concerns, SOLID principles
-- **Pragmatic Balance** — follow existing conventions (include for Medium+ complexity)
+- **Minimal Changes** (include for Medium+ complexity)
+- **Clean Architecture**
+- **Pragmatic Balance**
 
 Present results using the Architecture Comparison Template from `@references/templates.md` before proceeding.
 
@@ -64,7 +62,7 @@ Present results using the Architecture Comparison Template from `@references/tem
 
 Structure each phase per the Project Plan Template in `@references/templates.md`.
 
-Validate the plan against `@references/plan-reviewer-prompt.md` before presenting.
+Before presenting: confirm every observable truth in Define Done maps to at least one phase.
 
 ### 5. Track State
 

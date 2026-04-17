@@ -71,27 +71,6 @@ Observable truths that must be TRUE when this goal is complete:
 
 ---
 
-### Dependency Graph
-
-[Use a mermaid diagram for complex plans]
-
-```mermaid
-graph LR
-    P1[Phase 1] --> P2[Phase 2]
-    P1 --> P3[Phase 3]
-    P2 --> P4[Phase 4]
-    P3 --> P4
-```
-
-### Risk Assessment
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| [Risk] | Low/Med/High | Low/Med/High | [Strategy] |
-
-### Open Questions
-
-- [ ] [Question that needs resolution before or during implementation]
 ```
 
 ## Architecture Comparison Template
