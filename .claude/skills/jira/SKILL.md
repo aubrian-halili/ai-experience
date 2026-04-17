@@ -12,10 +12,6 @@ disable-model-invocation: true
 
 **Current branch:** !`git branch --show-current`
 
-## Iron Laws
-
-> - Before any bulk `update`, `edit`, or `transition`, print the list of affected ticket IDs for review
-
 ## Input Handling
 
 Default project: `UN`. Override via `$ARGUMENTS` (e.g., `/jira PROJ`).
@@ -50,13 +46,15 @@ For each plan phase, draft a ticket:
   - 5 pts — cross-cutting concern or significant unknowns
   - 8 pts — consider splitting the phase
 
-Present the full ticket set as a markdown table with columns: #, Summary, Type, Story Points, Depends On.
+Show as table — columns: #, Summary, Type, Story Points, Depends On.
 
 ### 3. Create Tickets
 
+Before any bulk `update`, `edit`, or `transition`: print the list of affected ticket IDs and wait for confirmation.
+
 For each ticket in dependency order:
 
-1. **Check for duplicates** — use `acli jira workitem search --jql` to search for tickets with a similar summary; if found, present them before proceeding
+1. **Check for duplicates** — use `acli jira workitem search --jql` to search for tickets with a similar summary; surface any matches before proceeding
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
