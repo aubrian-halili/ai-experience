@@ -16,24 +16,24 @@
 Observable truths that must be TRUE when this goal is complete:
 
 #### Artifacts
-- [ ] [Specific file/code that must exist]
+- [ ] [artifact]
 
 #### Behavior
-- [ ] [Specific runtime behavior that must be verifiable]
+- [ ] [behavior]
 
 #### Integration
-- [ ] [Specific wiring/connection that must be in place]
+- [ ] [integration point]
 
 #### Quality
-- [ ] [Specific test/pattern requirement]
+- [ ] [test/pattern requirement]
 
 ---
 
 ### Phase Breakdown
 
-#### Phase 1: [Name]
+#### Phase N: [Name]
 **Goal**: [What this phase achieves]
-**Dependencies**: None
+**Dependencies**: None | Phase N-1
 **Observable Truths Satisfied**: [List from Definition of Done]
 
 **Files to Create**:
@@ -51,52 +51,9 @@ Observable truths that must be TRUE when this goal is complete:
 
 ---
 
-#### Phase 2: [Name]
-**Goal**: [What this phase achieves]
-**Dependencies**: Phase 1
-**Observable Truths Satisfied**: [List from Definition of Done]
-
-**Files to Create**:
-| File | Purpose |
-|------|---------|
-| `path/to/file` | [Purpose] |
-
-**Files to Modify**:
-| File | Change | Reason |
-|------|--------|--------|
-| `path/to/file` | [Change] | [Why] |
-
-**Verification**:
-- [ ] [Specific command or condition to verify]
-
----
-
-### Dependency Graph
-
-[Use a mermaid diagram for complex plans]
-
-```mermaid
-graph LR
-    P1[Phase 1] --> P2[Phase 2]
-    P1 --> P3[Phase 3]
-    P2 --> P4[Phase 4]
-    P3 --> P4
-```
-
-### Risk Assessment
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| [Risk] | Low/Med/High | Low/Med/High | [Strategy] |
-
-### Open Questions
-
-- [ ] [Question that needs resolution before or during implementation]
 ```
 
 ## Architecture Comparison Template
-
-Use this during Step 3 (Architecture Comparison) when presenting approaches to the user.
 
 ```markdown
 ### Architecture Options
@@ -134,8 +91,7 @@ Use this during Step 3 (Architecture Comparison) when presenting approaches to t
 **Phase**: [Current phase name]
 **Status**: [In Progress / Blocked]
 **Next Steps**:
-1. [Immediate next action]
-2. [Following action]
+1. [next action]
 
 ### Blockers
 
@@ -148,13 +104,6 @@ Use this during Step 3 (Architecture Comparison) when presenting approaches to t
 | Decision | Rationale | Date |
 |----------|-----------|------|
 | Architecture: [Minimal Changes / Clean Architecture / Pragmatic Balance] | [Why this approach was chosen] | [When] |
-| [Other decision] | [Why] | [When] |
 
-### Completed Phases
-
-#### Phase 1: [Name]
-- **Completed**: [Date]
-- **Observable Truths Verified**: [List]
-- **Notes**: [Any deviations from plan]
 ```
 

@@ -2,8 +2,10 @@
 name: verify
 description: >-
   User asks "did I finish everything", "verify this is done", "am I done",
-  "check for stubs or TODOs", or references a plan to verify against. Use after /feature.
-  Not for: code quality review (use /review).
+  "check for stubs, TODOs, or orphaned code", "is this wired up",
+  or references a plan's acceptance criteria to verify against.
+  Three-level (Existence, Substance, Wiring) check with file:line evidence. Use after /feature.
+  Not for: code quality review (use /review); not for: addressing PR feedback (use /receiving-review).
 argument-hint: "[plan file, feature name, or acceptance criteria]"
 allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Glob
 ---
@@ -11,40 +13,27 @@ allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Gl
 **Current branch:** !`git branch --show-current`
 **Changed files:** !`git diff --name-only origin/main..HEAD 2>/dev/null || git diff --name-only HEAD~1..HEAD`
 
-## Iron Laws
-
-> - NO "PASS" status without `file:line` evidence in the current message
-> - NO completion claim without fresh terminal output as evidence
-
 ## Input Handling
+
+Default approach: three-level checks (Existence → Substance → Wiring).
 
 | Input | Approach |
 |-------|----------|
-| Plan file path (e.g., `.planning/STATE.md`) | Extract observable truths, run three-level checks |
-| Feature name (e.g., `user authentication`) | Discover feature scope, then three-level checks |
-| Acceptance criteria (inline or file) | Parse criteria, map to code, three-level checks |
-| Directory (e.g., `src/auth/`) | Anti-pattern scan + wiring check |
+| Plan file path | Extract observable truths |
+| Feature name | Discover feature scope |
+| Acceptance criteria | Parse criteria, map to code |
+| Directory | Anti-pattern scan + wiring check |
 | `"stubs"` / `"todos"` / `"placeholders"` | Focused scan across codebase |
 
 ## Three-Level Verification
 
-### Level 1: Existence — record `[EXISTS]` or `[MISSING]` with expected path
+- **Level 1 — Existence:** `[EXISTS]` / `[MISSING]` with expected path.
+- **Level 2 — Substance:** `[SUBSTANTIVE]` / `[STUB]` / `[PARTIAL]` with `file:line`. Scan for stubs, placeholder throws, empty catches, TODO/FIXME.
+- **Level 3 — Wiring:** `[WIRED]` / `[ORPHANED]` / `[PARTIAL]` with `file:line`. Check imports, routes, middleware, handlers, config.
 
-Check that expected files, exports, routes, and config entries exist at their expected locations.
+## Output
 
-### Level 2: Substance — record `[SUBSTANTIVE]`, `[STUB]`, or `[PARTIAL]` with `file:line` evidence
-
-Run anti-pattern scan on all changed files (stubs, placeholder throws, empty catches, TODO/FIXME markers).
-
-### Level 3: Wiring — record `[WIRED]`, `[ORPHANED]`, or `[PARTIAL]` with `file:line` evidence
-
-Verify all components are connected end-to-end (imports, routes, middleware, handlers, config).
-
-## Process
-
-**Stop condition:** Verifying against a plan but no plan file resolves → ask for the path.
-
-- **PASS** — all three levels verified with evidence
-- **PARTIAL** — exists and has substance but wiring incomplete or untested
+- **PASS** — all three levels verified with fresh `file:line` evidence
+- **PARTIAL** — exists and substantive but wiring incomplete or untested
 - **FAIL** — missing, stub, or orphaned
-- **SKIP** — could not verify (explain why)
+- **SKIP** — could not verify

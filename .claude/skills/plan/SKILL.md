@@ -11,68 +11,48 @@ allowed-tools: Read, Grep, Glob, Write, Agent, Skill, TaskCreate, TaskUpdate, Ta
 disable-model-invocation: true
 ---
 
-**Current branch:** !`git branch --show-current`
-
-ultrathink
-
-Decompose goals, epics, or Jira tickets into structured implementation phases using goal-backward verification, architecture comparison, and persistent state tracking.
-
 ## Input Handling
 
-| Input | Intent | Approach |
-|-------|--------|----------|
-| Goal description (e.g., `add user authentication`) | Decompose goal | Full Steps 1-5 |
-| Jira ticket ID (e.g., `UN-1234`) | Plan from ticket | Fetch ticket via `acli`, then Steps 1-5. Record ticket ID in plan. At end, prompt user to continue with `/feature <TICKET-ID>` |
-| Goal + Jira ticket ID | Scoped plan from ticket | Fetch ticket, use goal as additional context, Steps 1-5. Record ticket ID. At end, prompt `/feature <TICKET-ID>` |
-
-> **Note:** Resuming an in-progress plan requires no special argument. If `.planning/STATE.md` exists, the skill automatically prompts **resume** or **start over** before proceeding.
+When a Jira ticket ID is found in `$ARGUMENTS`: fetch via `acli`, then follow Steps 1-5. Record ticket ID in plan. At end, prompt user to continue with `/feature <TICKET-ID>`.
 
 ## Process
 
+> **Planning artifact exemption:** `.planning/STATE.md` is a planning artifact. This skill always creates and edits it — including when Claude Code is in plan mode. Treat it exactly like the plan file itself.
+
 ### 1. Pre-flight
 
-1. **Parse `$ARGUMENTS`** — extract any Jira ticket ID (pattern: `[A-Z]+-\d+`) and/or goal description.
-2. **If a Jira ticket ID is found**: fetch it via `acli jira workitem view <TICKET_ID>`. Extract scope, requirements, and acceptance criteria.
-3. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
-   - **resume** → read the file, skip completed phases, continue from the phase marked current
+1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`.
+2. **Check for existing `.planning/STATE.md`** — if found, **automatically** ask the user a binary choice: **resume** or **start over**.
+   - **resume** → continue from the phase marked current
    - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
-4. **Create `.planning/STATE.md` skeleton now** — do this before proceeding to Step 2, before Definition of Done, before anything else. Write the skeleton using the Session State Template from `@references/templates.md` with: Goal, Source, Created date, Last Updated, and empty sections for Definition of Done / Progress / Current Phase. This ensures session continuity even if planning is interrupted at any later step.
-
-**Stop conditions:**
-- Goal too vague and no Jira ticket → ask user to narrow scope or provide a ticket ID
-
-**Vague goal test** — a goal is too vague if it fails ANY of these:
-- Names a specific system, feature, component, or endpoint
-- Implies a verifiable outcome — something that can be tested or observed when done
-- Scopes to a bounded area of the codebase
+3. **Create `.planning/STATE.md` skeleton now** — always. Write the skeleton using the Session State Template in `@references/templates.md`.
 
 ### 2. Define Done (Goal-Backward Verification)
 
-Define **observable truths** — concrete conditions that must be TRUE when the goal is complete. Each truth must be verifiable: a file exists, a test passes, an endpoint responds, a query returns expected data. See `@references/templates.md` for examples by category.
+Define the Definition of Done per the Project Plan Template.
 
 ### 3. Architecture Comparison
 
 Launch 2-3 `code-architect` agents in parallel, each with a different focus:
-- **Minimal Changes** — smallest possible diff, reuse existing abstractions
-- **Clean Architecture** — proper separation of concerns, SOLID principles
-- **Pragmatic Balance** — follow existing conventions (include for Medium+ complexity)
+- **Minimal Changes** (include for Medium+ complexity)
+- **Clean Architecture**
+- **Pragmatic Balance**
+
+Present results using the Architecture Comparison Template.
 
 **Skip when:** Scope is ≤3 files with no new integration points. Default to Pragmatic Balance.
 
 ### 4. Decompose into Phases
 
-Work backward from the observable truths using the chosen architecture. Structure each phase per the Project Plan Template in `@references/templates.md`.
-
-Validate the plan against `@references/plan-reviewer-prompt.md` before presenting.
+Confirm every observable truth in Define Done maps to at least one phase.
 
 ### 5. Track State
 
-Finalize `.planning/STATE.md` (first written as a skeleton in Step 1) using the template from `@references/templates.md`. This step adds the full phase breakdown and reconciles the Progress table.
+Finalize `.planning/STATE.md` using the Session State Template. This step adds the full phase breakdown and reconciles the Progress table.
 
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description
 - Set `addBlockedBy` dependencies matching the phase dependency graph
-- Update task status via `TaskUpdate` as phases complete
 
 ## Related Skills
 

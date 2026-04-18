@@ -2,7 +2,7 @@
 
 ## Milestone Plan Template
 
-Use this template during Step 3 (Design & Present) to structure the implementation plan.
+Use this template during Step 2 (Design & Present) to structure the implementation plan.
 
 ```markdown
 ## Implementation Plan
@@ -32,25 +32,10 @@ Observable truths that must be TRUE when this feature is complete:
 
 ---
 
-### Files to Create
-
-| File | Purpose | Tests |
-|------|---------|-------|
-| `path/to/file` | [Purpose] | `path/to/test` |
-
-### Files to Modify
-
-| File | Change | Reason |
-|------|--------|--------|
-| `path/to/file` | [Change] | [Why needed] |
-
----
-
 ### Milestone N: [Name]
 **Goal**: [What this milestone delivers]
 
 **Tasks**:
-- [ ] [Specific task]
 - [ ] [Specific task]
 
 **Verification**: [How to verify completion]
@@ -61,5 +46,8 @@ Observable truths that must be TRUE when this feature is complete:
 
 ## Incremental Delivery Patterns
 
-Choose one: **Vertical Slice**, **Horizontal Layer**, or **Feature Flags**.
-
+| Pattern | When to use |
+|---|---|
+| **Vertical Slice** | Ship a thin end-to-end slice of one user-facing behavior; de-risks integration early |
+| **Horizontal Layer** | Build one infrastructure layer (e.g., data, API, UI) before the next; suits large teams with clear ownership boundaries |
+| **Feature Flags** | Ship code dark; toggle on per environment or user segment; required when you can't decouple deploy from release |

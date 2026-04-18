@@ -32,21 +32,6 @@
 
 1. **[Improvement]** — `file:line` — [Brief suggestion]
 
-### Review Pass Summary
-
-| Pass | Findings | Top Severity |
-|------|----------|-------------|
-| Type Safety | 2 | Medium |
-| Type Design | 0 | — |
-| Error Handling | 1 | High |
-| Test Coverage | 0 | — |
-| Performance | 1 | Note |
-| Security | 0 | — |
-| Documentation | 0 | — |
-
-### Positive Observations
-
-- [What was done well]
 ```
 
 ## Pull Request Review Template
@@ -65,19 +50,14 @@
 
 [2-3 sentence summary of what this PR does and why]
 
-### Change Analysis
+### Impact
 
-#### File Breakdown
+**Blast Radius**: [Low | Medium | High]
 
 | File | Type | Risk | Key Changes |
 |------|------|------|-------------|
 | `src/api/users.ts` | Core Logic | Medium | New endpoint |
 
-#### Impact Assessment
-
-**Blast Radius**: [Low | Medium | High]
-
-- **Direct**: [X files modified]
 - **Downstream**: [Y files depend on changes]
 - **External**: [Impact on APIs, clients]
 
@@ -109,28 +89,7 @@
 | Integration | ⚠️ Missing | API integration not tested |
 | E2E | N/A | No E2E impact |
 
-### Merge Readiness
-
-| Criterion | Status |
-|-----------|--------|
-| Tests Passing | ✅ / ❌ |
-| No Conflicts | ✅ / ❌ |
-| Review Approved | ✅ / ❌ |
-| Docs Updated | ✅ / ❌ / N/A |
-
 **Verdict**: ✅ **Ready to Merge** | ⚠️ **Needs Changes** | ❌ **Not Ready**
-
-### Review Pass Summary
-
-| Pass | Findings | Top Severity |
-|------|----------|-------------|
-| Type Safety | 2 | Medium |
-| Type Design | 0 | — |
-| Error Handling | 1 | High |
-| Test Coverage | 0 | — |
-| Performance | 1 | Note |
-| Security | 0 | — |
-| Documentation | 0 | — |
 
 ### Recommended Actions
 

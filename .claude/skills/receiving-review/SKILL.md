@@ -12,19 +12,13 @@ allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Write, Edit, Agent, Skill
 **Current branch:** !`git branch --show-current`
 **Open PR:** !`gh pr view --json number,url,title --template '#{{.number}} {{.title}} — {{.url}}'`
 
-Process, evaluate, and implement code review feedback with technical rigor.
-
-## Iron Laws
-
-> - NO performative agreement — no "great point!", "you're absolutely right!", no gratitude expressions in PR comments
-> - YAGNI discipline — grep for actual usage before implementing "proper" features a reviewer suggests
+Process, evaluate, and implement code review feedback.
 
 ## Input Handling
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| PR number (e.g., `123`, `#123`) | Address feedback on specific PR | Fetch PR comments, full process |
-| PR URL | Address feedback on specific PR | Extract PR number, full process |
+| PR number or URL | Address feedback on specific PR | Fetch PR comments, full process |
 | `latest` or (none) | Address feedback on current branch's PR | Detect PR from branch, full process |
 | Specific comment quote | Address single piece of feedback | Targeted single-comment workflow |
 
@@ -57,27 +51,13 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments --paginate
 gh pr view $PR_NUMBER --json reviews,comments
 ```
 
-Note which review threads are already resolved. Focus on **unresolved threads** first.
-
-Categorize each comment:
-- **Actionable request** — clear change requested (fix, rename, refactor, add test)
-- **Question** — reviewer asking for clarification (respond, don't change code)
-- **Suggestion** — optional improvement (evaluate before implementing)
-- **Nitpick** — minor style/preference (evaluate against project conventions)
-
-### 2. Classify and Prioritize
-
-For out-of-scope improvements or future enhancements: acknowledge, don't implement.
-
-### 3. Clarify Before Implementing
+### 2. Clarify Before Implementing
 
 If the feedback source is a GitHub PR, draft clarifying questions for user approval before posting.
 
-### 4. Verify Suggestions Against Codebase
+### 3. Verify Suggestions Against Codebase
 
-For each actionable suggestion, verify it before implementing:
-
-**YAGNI check:**
+**YAGNI check** — grep for actual usage before implementing "proper" abstractions a reviewer suggests:
 ```bash
 # Before adding a suggested abstraction/interface/pattern, check if it's actually consumed
 # Replace <SuggestedName> with the actual interface, class, or pattern name being suggested
@@ -85,11 +65,11 @@ grep -r "<SuggestedName>" --include="*.ts" --include="*.tsx" src/
 ```
 If the suggested addition has zero consumers → push back with evidence.
 
-### 5. Implement Changes
+### 4. Implement Changes
 
-### 6. Reply to Review Threads
+### 5. Reply to Review Threads
 
-After implementing changes, prepare thread replies for user approval.
+Draft replies for user approval before posting.
 
 **Reply mechanics:**
 ```bash
@@ -99,15 +79,12 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 ```
 
 **Reply guidelines:**
-- Reply in the existing thread, never as a top-level PR comment
 - One reply per thread — batch related changes into a single response
-- Lead with what was done: "Fixed — renamed to `calculateTotal` and updated callers in `OrderService`"
-- For pushback: "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit"
-- For deferred items: "Tracked as follow-up — this is out of scope for the current PR but worth addressing"
+- Examples: "Fixed — renamed to `calculateTotal` and updated callers in `OrderService`" / "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit" / "Tracked as follow-up — out of scope for this PR"
 
-### 7. Commit, Push, and Verify
+### 6. Commit, Push, and Verify
 
-After all changes are implemented and replies posted, commit and push, then verify PR state:
+Verify PR state after pushing:
 
 ```bash
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup

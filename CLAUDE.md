@@ -19,15 +19,12 @@
 
 ## Common Tasks
 
-- **Adding a skill**: Use `/skill-creator` to scaffold new skills
-- **Validating skills**: Run `.claude/skills/skill-creator/scripts/validate-skill.sh <skill-dir>`
 - **Creating PRs**: Use `/pr` skill for auto-generated titles/descriptions
 - **Code review**: Use `/review` skill for multi-dimensional analysis
 
 ## Testing
 
 - No automated test suite currently — manual verification only
-- When adding skills, validate with the skill-creator validation script
 - Test skills in real scenarios before committing
 
 ## Architecture Decisions

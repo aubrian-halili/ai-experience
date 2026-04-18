@@ -41,12 +41,14 @@
             "type": "command",
             "command": "bash ~/.claude/hooks/auto-format.sh"
           },
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/validate-skill.sh"
-          }
         ]
       }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Write(.planning/STATE.md)",
+      "Edit(.planning/STATE.md)"
     ]
   },
   "statusLine": {

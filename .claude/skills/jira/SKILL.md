@@ -2,21 +2,16 @@
 name: jira
 description: >-
   User asks to "create Jira tickets", "decompose into tickets", "file tickets from plan",
-  or mentions "Jira" in context of creating tickets from a plan.
-  Requires an approved plan in .planning/STATE.md — redirects to /plan if none exists.
-  Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature).
+  "break plan into Jira", or mentions "Jira" in context of creating tickets from a plan.
+  Requires an approved plan in .planning/STATE.md (redirects to /plan if missing).
+  Defaults to project UN (overridable); uses acli when available, otherwise emits copy-ready content.
+  Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature); not for: transitioning or editing existing tickets.
 argument-hint: "[PROJECT]"
 allowed-tools: Read, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version)
 disable-model-invocation: true
 ---
 
 **Current branch:** !`git branch --show-current`
-
-## Iron Laws
-
-> - NEVER execute `delete` or any destructive/administrative acli command — if requested, refuse and direct the user to manage these directly in Jira
-> - NEVER create or modify a ticket without user confirmation
-> - NEVER apply bulk `update`, `edit`, or `transition` operations without first listing all affected ticket IDs and getting explicit user confirmation
 
 ## Input Handling
 
@@ -52,17 +47,19 @@ For each plan phase, draft a ticket:
   - 5 pts — cross-cutting concern or significant unknowns
   - 8 pts — consider splitting the phase
 
-Present the full ticket set as a markdown table with columns: #, Summary, Type, Story Points, Depends On.
+Show as table — columns: #, Summary, Type, Story Points, Depends On.
 
 ### 3. Create Tickets
 
+Before any bulk `update`, `edit`, or `transition`: print the list of affected ticket IDs and wait for confirmation.
+
 For each ticket in dependency order:
 
-1. **Check for duplicates** — use `acli jira workitem search --jql` to search for tickets with a similar summary; if found, present them before proceeding
+1. **Check for duplicates** — use `acli jira workitem search --jql` to search for tickets with a similar summary; surface any matches before proceeding
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
-   - Priority is embedded in the description via the template's "Suggested Priority" field; default to Medium if no signal
+   - Include a `## Suggested Priority` line in the description body (`Critical/High/Medium/Low — brief justification`); default to Medium if no signal
 
 ### 4. Present Manifest
 
