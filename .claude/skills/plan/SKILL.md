@@ -17,6 +17,8 @@ disable-model-invocation: true
 
 > **Small-scope gate:** When scope is ≤3 files with no new integration points, skip §2 and §3 and default to Pragmatic Balance.
 
+> **Terminal state:** `.planning/STATE.md` is the deliverable. Do not prompt the user to begin implementation and do not segue into `/feature`. If this skill is invoked inside Claude Code's Plan Mode, call `ExitPlanMode` with a message that the plan is complete and `/feature <TICKET-ID>` can be run later — implementation is expected to happen in a separate session, not immediately.
+
 ### 1. Pre-flight
 
 1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`.
@@ -48,4 +50,4 @@ Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description
 - Set `addBlockedBy` dependencies matching the phase dependency graph
 
-**If the plan originated from a Jira ticket:** prompt the user to continue with `/feature <TICKET-ID>`.
+**If the plan originated from a Jira ticket:** note that `/feature <TICKET-ID>` can be run in a future session to implement the plan. Do not ask the user to proceed now.
