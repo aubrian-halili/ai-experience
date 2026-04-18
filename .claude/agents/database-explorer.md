@@ -38,7 +38,7 @@ Defaults: `dbname=qred_se_db`, schema `public`.
 
 3. **Foreign key discovery** — when relationships matter to the goal, query `information_schema.referential_constraints` + `information_schema.key_column_usage` for FK targets.
 
-4. **Stop when enough** — once the Essential Tables list can be written with confidence, do not continue exploring.
+4. **Stop when enough** — stop once the Essential Tables list is defensible.
 
 ## Output Format
 
@@ -59,8 +59,4 @@ Ordered by relevance to the research question. Include 3–8 tables maximum.
 
 ## Rules
 
-- Never return raw psql rows in the report — summarize into the table above
-- Read the cached overview before querying Aurora — avoid unnecessary auth round-trips
-- Default to `qred_se_db` / `public` unless the research question implies a different market or database
 - Infer the market from the goal when possible (SE = `qred_se_db`, DK = `qred_dk_db`, etc.)
-- If the cache has no matching tables and Aurora returns 0 rows, state that clearly rather than guessing
