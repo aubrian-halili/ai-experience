@@ -66,7 +66,26 @@ For each ticket in dependency order:
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
-   - Include a `## Suggested Priority` line in the description body (`Critical/High/Medium/Low — brief justification`); default to Medium if no signal
+   - Every description **must** use this markdown template — never omit a heading:
+     ```
+     ## Summary
+     <1–2 sentence problem statement from the phase goal>
+
+     ## Acceptance Criteria
+     - <observable truth 1>
+     - <observable truth 2>
+
+     ## Technical Details
+     - Files: <paths>
+     - Verification: <commands>
+
+     ## Dependencies
+     - <blocking ticket title or "None">
+
+     ## Suggested Priority
+     <Critical|High|Medium|Low> — <brief justification>
+     ```
+   - Note: acli passes `--description` as plain text (no markdown rendering in Jira), but always emit this structure so ticket bodies stay consistent and machine-parseable.
 
 ### 6. Present Manifest
 
