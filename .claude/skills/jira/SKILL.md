@@ -33,23 +33,30 @@ Default project: `UN`. Override via `$ARGUMENTS` (e.g., `/jira PROJ`).
 
 Read `.planning/STATE.md` and extract each phase's goal, observable truths, dependencies, files to create/modify, and verification commands.
 
-### 2. Draft Ticket Set
+### 2. Choose Ticket Granularity
 
-For each plan phase, draft a ticket:
+Ask the user:
+
+> "Create one ticket per plan phase, or a single ticket covering all phases?"
+
+- **Per-phase** (default): proceed with one ticket per phase as below.
+- **Single ticket**: draft one Task whose summary reflects the overall plan goal, with acceptance criteria = union of all observable truths across phases, and technical details listing all files and verification commands. Skip dependency resolution (only one ticket).
+
+### 3. Draft Ticket Set
+
+**If per-phase:** for each plan phase, draft a ticket:
 - **Type**: Task (default); Story if user-facing value
 - **Acceptance criteria**: each observable truth from the phase
 - **Technical details**: files to create/modify and verification commands from the phase
 - **Dependencies**: list blocking ticket titles (resolved to IDs after creation)
-- **Suggested Story Points**: estimate based on phase scope:
-  - 1 pt — single file, trivial change
-  - 2 pts — 2-4 files, clear implementation path
-  - 3 pts — 5+ files or new integration point
-  - 5 pts — cross-cutting concern or significant unknowns
-  - 8 pts — consider splitting the phase
 
 Show as table — columns: #, Summary, Type, Story Points, Depends On.
 
-### 3. Create Tickets
+### 4. Review & Confirm
+
+Present the drafted ticket(s) — summary, type, acceptance criteria, technical details, dependencies — and ask the user to confirm, edit, or cancel. Do **not** proceed to creation until the user confirms. Apply any requested edits and re-present until confirmed.
+
+### 5. Create Tickets
 
 Before any bulk `update`, `edit`, or `transition`: print the list of affected ticket IDs and wait for confirmation.
 
@@ -61,7 +68,7 @@ For each ticket in dependency order:
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
    - Include a `## Suggested Priority` line in the description body (`Critical/High/Medium/Low — brief justification`); default to Medium if no signal
 
-### 4. Present Manifest
+### 6. Present Manifest
 
 After all tickets are created, output the manifest and store it in `.planning/STATE.md` under a `## Tickets` section for use by `/feature`:
 
