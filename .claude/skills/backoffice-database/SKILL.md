@@ -27,20 +27,24 @@ Defaults: database `qred_se_db`, schema `public`.
 
 Map `$ARGUMENTS` to a workflow:
 
-| Argument Pattern | Intent | Approach |
-|------------------|--------|----------|
-| (empty) | Overview | List databases, schemas, and tables |
-| `table_name` or `schema.table_name` | Table schema | Schema inspection |
-| `SELECT ...` or SQL query | Query data | Query validation and execution |
-| `schema_name` | Schema tables | List tables in schema |
-| `database_name` (all lowercase, no dots) | Database schemas | List schemas in database — connect with `dbname=<database>` |
+| Argument Pattern | Approach |
+|------------------|----------|
+| (empty) | List databases, schemas, and tables |
+| `table_name` or `schema.table_name` | Schema inspection |
+| `SELECT ...` or SQL query | Query validation and execution |
+| `schema_name` | List tables in schema |
+| `database_name` (all lowercase, no dots) | List schemas in database — connect with `dbname=<database>` |
 
 **Disambiguation:** Bare word: try schema in current DB first; if none, retry as database name.
+
+If `information_schema` returns 0 rows, retry against the resolved app database `dbname`.
+
+Limit output to 50 rows with a truncation notice for larger result sets.
 
 ## Cached Overview
 
 If `@references/database-overview.md` exists, present its cached data directly instead of re-querying. The cached file contains databases, schemas, and table names only — no column-level detail. If the user wants column detail for a specific table, proceed to the **Table Schema** workflow.
 
-Limit output to 50 rows with a truncation notice for larger result sets.
+## Related
 
-If `information_schema` returns 0 rows, retry against the resolved app database `dbname`.
+For planning-time schema research, the `plan` skill spawns the `database-explorer` agent, which reuses this skill's connection pattern and cached overview to return a structured Essential Tables report to `code-architect` agents.

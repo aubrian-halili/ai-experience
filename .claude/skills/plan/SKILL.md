@@ -23,11 +23,13 @@ disable-model-invocation: true
 2. **Check for existing `.planning/STATE.md`** — if found, ask the user a binary choice: **resume** or **start over**.
    - **resume** → continue from the phase marked current
    - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
-3. **Create `.planning/STATE.md` skeleton** using the Session State Template in `@references/templates.md`. Include the Definition of Done per the Project Plan Template — observable truths that must be TRUE when the goal is complete.
+3. **Create `.planning/STATE.md` skeleton** using the Session State Template in `@references/templates.md`. Include the Definition of Done per the Project Plan Template.
 
 ### 2. Codebase Research
 
-Launch 1 `code-explorer` agent with the goal as its topic. Pass its **Essential Files** list (priority table) into every `code-architect` agent in §3 as context — architects should treat those files as the ground truth of the current implementation.
+Launch `code-explorer` with the goal as its topic. Also launch `database-explorer` in parallel (with a research question derived from the goal) if any of these hold: the goal names a table or domain entity; the Jira body contains "migration", "schema", or "model"; or `code-explorer` returns files under `*/migrations/*`, `*/models/*`, or ORM schema paths.
+
+Pass both the **Essential Files** list from `code-explorer` and the **Essential Tables** list from `database-explorer` (when present) into every `code-architect` agent in §3 — architects should treat both as ground truth of the current implementation.
 
 ### 3. Architecture Comparison
 
