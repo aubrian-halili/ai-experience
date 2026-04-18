@@ -44,3 +44,7 @@ If `@references/database-overview.md` exists, present its cached data directly i
 Limit output to 50 rows with a truncation notice for larger result sets.
 
 If `information_schema` returns 0 rows, retry against the resolved app database `dbname`.
+
+## Related
+
+For planning-time schema research, the `plan` skill spawns the `database-explorer` agent, which reuses this skill's connection pattern and cached overview to return a structured Essential Tables report to `code-architect` agents. Use this skill for interactive ad-hoc inspection; the agent handles automated research.

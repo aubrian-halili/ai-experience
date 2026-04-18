@@ -27,7 +27,11 @@ disable-model-invocation: true
 
 ### 2. Codebase Research
 
-Launch 1 `code-explorer` agent with the goal as its topic. Pass its **Essential Files** list (priority table) into every `code-architect` agent in §3 as context — architects should treat those files as the ground truth of the current implementation.
+Launch `code-explorer` with the goal as its topic. **When the goal touches persisted data, schema, or migrations** — i.e. the goal names a domain entity, references a migration/model, or the Jira ticket body mentions schema — also launch `database-explorer` in parallel with a research question derived from the goal.
+
+Trigger heuristic (any one is sufficient): goal mentions a table or entity name; Jira body contains "migration", "schema", or "model"; or `code-explorer` returns files under `*/migrations/*`, `*/models/*`, or ORM schema paths.
+
+Pass both the **Essential Files** list from `code-explorer` and the **Essential Tables** list from `database-explorer` (when present) into every `code-architect` agent in §3 — architects should treat both as ground truth of the current implementation.
 
 ### 3. Architecture Comparison
 
