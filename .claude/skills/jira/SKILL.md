@@ -54,11 +54,9 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On.
 
 ### 4. Review & Confirm
 
-Present the drafted ticket(s) — summary, type, acceptance criteria, technical details, dependencies — and ask the user to confirm, edit, or cancel. Do **not** proceed to creation until the user confirms. Apply any requested edits and re-present until confirmed.
+Present the drafted ticket(s) — summary, type, acceptance criteria, technical details, dependencies — and ask the user to confirm, edit, or cancel.
 
 ### 5. Create Tickets
-
-Before any bulk `update`, `edit`, or `transition`: print the list of affected ticket IDs and wait for confirmation.
 
 For each ticket in dependency order:
 
@@ -66,7 +64,7 @@ For each ticket in dependency order:
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
-   - Every description **must** use this markdown template — never omit a heading:
+   - Description template:
      ```
      ## Summary
      <1–2 sentence problem statement from the phase goal>
