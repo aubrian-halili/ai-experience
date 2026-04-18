@@ -19,59 +19,66 @@ Default project: `UN`. Override via `$ARGUMENTS` (e.g., `/jira PROJ`).
 
 ### Pre-flight
 
-1. **Check for plan**: Read `.planning/STATE.md`
+1. **Check for plan**: Read `.planning/STATE.md` and extract each phase's goal, observable truths, dependencies, files to create/modify, and verification commands.
    - If the file does not exist or contains no `#### Phase` headings → **stop** and redirect:
      > "No approved plan found. Run `/plan` first to create an implementation plan, then come back to `/jira` to decompose it into tickets."
-   - If the file exists with phases → proceed to Process
 2. **Check acli availability**: run `acli --version`; available → create directly via acli; unavailable → generate content for manual entry
 
 ---
 
 ## Process
 
-### 1. Load Plan
+### 1. Choose Ticket Granularity
 
-Read `.planning/STATE.md` and extract each phase's goal, observable truths, dependencies, files to create/modify, and verification commands.
+Ask the user:
 
-### 2. Draft Ticket Set
+> "Create one ticket per plan phase, or a single ticket covering all phases?"
 
-For each plan phase, draft a ticket:
+- **Per-phase**: proceed with one ticket per phase as below.
+- **Single ticket**: draft one Task whose summary reflects the overall plan goal, with acceptance criteria = union of all observable truths across phases, and technical details listing all files and verification commands.
+
+### 2. Draft & Confirm
+
+**If per-phase:** for each plan phase, draft a ticket:
 - **Type**: Task (default); Story if user-facing value
 - **Acceptance criteria**: each observable truth from the phase
 - **Technical details**: files to create/modify and verification commands from the phase
 - **Dependencies**: list blocking ticket titles (resolved to IDs after creation)
-- **Suggested Story Points**: estimate based on phase scope:
-  - 1 pt — single file, trivial change
-  - 2 pts — 2-4 files, clear implementation path
-  - 3 pts — 5+ files or new integration point
-  - 5 pts — cross-cutting concern or significant unknowns
-  - 8 pts — consider splitting the phase
 
-Show as table — columns: #, Summary, Type, Story Points, Depends On.
+Show as table — columns: #, Summary, Type, Story Points, Depends On — then ask the user to confirm, edit, or cancel.
 
 ### 3. Create Tickets
-
-Before any bulk `update`, `edit`, or `transition`: print the list of affected ticket IDs and wait for confirmation.
-
-For each ticket in dependency order:
 
 1. **Check for duplicates** — use `acli jira workitem search --jql` to search for tickets with a similar summary; surface any matches before proceeding
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
-   - Include a `## Suggested Priority` line in the description body (`Critical/High/Medium/Low — brief justification`); default to Medium if no signal
+   - Description template:
+     ```
+     ## Summary
+     <1–2 sentence problem statement from the phase goal>
+
+     ## Acceptance Criteria
+     - <observable truth 1>
+     - <observable truth 2>
+
+     ## Technical Details
+     - Files: <paths>
+     - Verification: <commands>
+
+     ## Dependencies
+     - <blocking ticket title or "None">
+
+     ## Suggested Priority
+     <Critical|High|Medium|Low> — <brief justification>
+     ```
+   - Note: acli passes `--description` as plain text (no markdown rendering in Jira).
 
 ### 4. Present Manifest
 
-After all tickets are created, output the manifest and store it in `.planning/STATE.md` under a `## Tickets` section for use by `/feature`:
+Output the manifest and store it in `.planning/STATE.md` under a `## Tickets` section:
 
 | Ticket ID | Summary | Branch Name |
 |-----------|---------|-------------|
 | UN-1234 | ... | UN-1234-short-description |
 | UN-1235 | ... | UN-1235-short-description |
-
----
-
-## Related Skills
-
-Pipeline order: `/plan` → `/jira` → `/feature` → `/verify` → `/review` → `/pr`

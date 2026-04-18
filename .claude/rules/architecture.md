@@ -6,15 +6,6 @@
 - Number format: zero-padded 3 digits (`adr-001`, `adr-002`, etc.)
 - **Always show the complete ADR to the user for review before writing to disk**
 
-## ADR Statuses
-
-| Status | Meaning |
-|--------|---------|
-| Proposed | Under discussion |
-| Accepted | Decision in effect |
-| Deprecated | No longer applies |
-| Superseded | Replaced by newer ADR |
-
 ## ADR Template
 
 ```markdown

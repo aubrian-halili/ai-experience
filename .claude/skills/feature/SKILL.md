@@ -49,7 +49,11 @@ After approval, convert the plan into tracked tasks:
 - Create a task per milestone with `TaskCreate`
 - Set task dependencies using `addBlockedBy` where phases depend on prior phases
 
-Implement each milestone in sequence.
+For each milestone:
+- **Independent milestones** (no shared files with other in-flight milestones, no ordering dependency) — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria. Collect results before merging.
+- **Sequential milestones** (depends on output of a prior milestone) — implement inline, in order.
+
+Merge worker results and resolve any conflicts before proceeding to §4.
 
 ### 4. Verify → Review → Commit → PR
 
@@ -63,7 +67,11 @@ Run `/verify` — full three-level verification against the Definition of Done (
 
 Run `/review`.
 
-#### 4c. PR
+#### 4c. Commit
+
+Run `/commit` — stages and commits all changes with a Jira-prefixed message.
+
+#### 4d. PR
 
 Run `/pr`.
 
