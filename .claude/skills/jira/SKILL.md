@@ -35,7 +35,7 @@ Ask the user:
 > "Create one ticket per plan phase, or a single ticket covering all phases?"
 
 - **Per-phase**: proceed with one ticket per phase as below.
-- **Single ticket**: draft one Task whose summary reflects the overall plan goal, with acceptance criteria = union of all observable truths across phases, and technical details listing all files and verification commands. Skip dependency resolution (only one ticket).
+- **Single ticket**: draft one Task whose summary reflects the overall plan goal, with acceptance criteria = union of all observable truths across phases, and technical details listing all files and verification commands.
 
 ### 2. Draft & Confirm
 
