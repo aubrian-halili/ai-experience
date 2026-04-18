@@ -17,7 +17,7 @@ disable-model-invocation: true
 
 > **Small-scope gate:** When scope is ≤3 files with no new integration points, skip §2 and §3 and default to Pragmatic Balance.
 
-> **Terminal state:** `.planning/STATE.md` is the deliverable. Do not prompt the user to begin implementation and do not segue into `/feature`. If this skill is invoked inside Claude Code's Plan Mode, call `ExitPlanMode` with a message that the plan is complete and `/feature <TICKET-ID>` can be run later — implementation is expected to happen in a separate session, not immediately.
+> **Terminal state:** `.planning/STATE.md` is the deliverable. Do not prompt the user to begin implementation and do not segue into `/feature`. If invoked inside Plan Mode, exit with a note that implementation is expected in a separate session.
 
 ### 1. Pre-flight
 
@@ -49,5 +49,3 @@ Finalize `.planning/STATE.md`. Complete the Plan section with the full phase bre
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description
 - Set `addBlockedBy` dependencies matching the phase dependency graph
-
-**If the plan originated from a Jira ticket:** note that `/feature <TICKET-ID>` can be run in a future session to implement the plan. Do not ask the user to proceed now.
