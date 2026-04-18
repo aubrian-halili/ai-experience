@@ -31,9 +31,7 @@ Default approach: three-level checks (Existence → Substance → Wiring).
 
 ## Output
 
-If verifying against a plan and no plan file resolves → ask for the path.
-
 - **PASS** — all three levels verified with fresh `file:line` evidence
 - **PARTIAL** — exists and substantive but wiring incomplete or untested
 - **FAIL** — missing, stub, or orphaned
-- **SKIP** — could not verify (explain why)
+- **SKIP** — could not verify

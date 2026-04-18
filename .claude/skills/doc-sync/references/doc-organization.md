@@ -2,8 +2,6 @@
 
 ## The Three-Tier Principle
 
-Claude loads documentation in a strict hierarchy. Placing content in the wrong tier means it either wastes context on every interaction or gets missed when it matters most.
-
 | Tier | Location | When Loaded | What Belongs Here |
 |------|----------|-------------|-------------------|
 | **Always-on** | `CLAUDE.md`, `.claude/rules/*.md` | Every session start | Project identity, non-obvious conventions, architectural decisions (the "why"), gotchas |

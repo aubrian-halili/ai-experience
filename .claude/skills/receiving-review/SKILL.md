@@ -12,11 +12,7 @@ allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Write, Edit, Agent, Skill
 **Current branch:** !`git branch --show-current`
 **Open PR:** !`gh pr view --json number,url,title --template '#{{.number}} {{.title}} — {{.url}}'`
 
-Process, evaluate, and implement code review feedback with technical rigor.
-
-## Iron Laws
-
-> - YAGNI discipline — grep for actual usage before implementing "proper" features a reviewer suggests
+Process, evaluate, and implement code review feedback.
 
 ## Input Handling
 
@@ -55,17 +51,13 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments --paginate
 gh pr view $PR_NUMBER --json reviews,comments
 ```
 
-Note which review threads are already resolved. Focus on **unresolved threads** first.
-
 ### 2. Clarify Before Implementing
 
 If the feedback source is a GitHub PR, draft clarifying questions for user approval before posting.
 
 ### 3. Verify Suggestions Against Codebase
 
-For each actionable suggestion, verify it before implementing:
-
-**YAGNI check:**
+**YAGNI check** — grep for actual usage before implementing "proper" abstractions a reviewer suggests:
 ```bash
 # Before adding a suggested abstraction/interface/pattern, check if it's actually consumed
 # Replace <SuggestedName> with the actual interface, class, or pattern name being suggested
@@ -77,7 +69,7 @@ If the suggested addition has zero consumers → push back with evidence.
 
 ### 5. Reply to Review Threads
 
-After implementing changes, prepare thread replies for user approval.
+Draft replies for user approval before posting.
 
 **Reply mechanics:**
 ```bash
@@ -87,13 +79,12 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 ```
 
 **Reply guidelines:**
-- Reply in the existing thread, never as a top-level PR comment
 - One reply per thread — batch related changes into a single response
 - Examples: "Fixed — renamed to `calculateTotal` and updated callers in `OrderService`" / "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit" / "Tracked as follow-up — out of scope for this PR"
 
 ### 6. Commit, Push, and Verify
 
-After all changes are implemented and replies posted, commit and push, then verify PR state:
+Verify PR state after pushing:
 
 ```bash
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup

@@ -3,7 +3,6 @@ name: qred-repo
 description: >-
   User asks to "browse a repo", "search across repos", "list Qred repos",
   or wants to navigate the Qred GitHub organization's repositories.
-  Not for: querying the database (use /backoffice-database).
 argument-hint: "[repo name, file path, search term, tree <repo>, or gh command]"
 disable-model-invocation: true
 allowed-tools: Bash(gh *)
@@ -19,10 +18,10 @@ Layered repository exploration and code searching across the Qred GitHub organiz
 
 | Input | Intent | Approach |
 |-------|--------|----------|
-| (empty) or `repos` | List repositories | Direct; execute immediately |
-| `prs <repo>` or `pr <repo> #<n>` | List or view PRs | Direct; execute immediately |
-| `issues <repo>` or `issue <repo> #<n>` | List or view issues | Direct; execute immediately |
-| Starts with `gh` | Pass-through command | Direct; execute as-is |
+| (empty) or `repos` | List repositories | Direct |
+| `prs <repo>` or `pr <repo> #<n>` | List or view PRs | Direct |
+| `issues <repo>` or `issue <repo> #<n>` | List or view issues | Direct |
+| Starts with `gh` | Pass-through command | Direct |
 | Repo name (e.g., `qred-mcp-proxy`) | Orient to repo | Layered; enter at Layer 1 |
 | `tree <repo>` or `<repo>/<path>/` | Navigate structure | Layered; enter at Layer 2 |
 | Search term (no path separators) | Search code across org | Layered; enter at Layer 3 |
@@ -51,8 +50,6 @@ Run `gh api repos/Qred/<repo>/contents/<path>` to get directory listing and pres
 
 - Org-wide: `gh search code --owner Qred "<term>" --limit 30 --json path,repository,textMatches`
 - Repo-scoped: `gh search code --repo Qred/<repo> "<term>" --limit 30 --json path,repository,textMatches`
-
-If results hit the limit, say so and suggest narrowing by repo or path, or raising `--limit`.
 
 #### Layer 4: Read
 

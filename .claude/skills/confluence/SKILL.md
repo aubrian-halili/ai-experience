@@ -15,22 +15,22 @@ disable-model-invocation: true
 
 This skill is scoped to **read and generate** operations only. All operations target `qredab.atlassian.net`. Prefer `--json` on all acli commands.
 
-**Forbidden actions**: `space archive`, `space restore`, `space create`, `space update` — these are administrative operations. If requested, refuse and direct the user to manage these directly in Confluence.
+**Forbidden actions**: `space archive`, `space restore`, `space create`, `space update`.
 
 ## Input Handling
 
 Determine operation intent from `$ARGUMENTS`:
 
-| Input | Intent | Approach |
-|-------|--------|----------|
-| `view <page-id>` | View a specific page by ID | Step 2 (View Page) |
-| `view <confluence-url>` | View a specific page by URL | Step 2 (View Page) — extract ID from URL |
-| `update <page-id>` / `edit <page-id>` | Update a page (no acli support) | Step 3 (Update Fallback) |
-| `search <query>` / `find <query>` | Search for content | Step 4 (Search) |
-| `blogs <space-id>` / `list blogs` | Browse blog posts | Step 5 (List/View Blogs) |
-| `spaces` / `list spaces` | List available spaces | Step 6 (List Spaces) |
-| `space <space-id>` / `view space <space-id>` | View a specific space | Step 6 (List Spaces) |
-| `page <title or description>` | Create a page (no acli support) | Step 7 (Create Fallback) |
+| Input | Intent |
+|-------|--------|
+| `view <page-id>` | View a specific page by ID |
+| `view <confluence-url>` | View a specific page by URL |
+| `update <page-id>` / `edit <page-id>` | Update a page |
+| `search <query>` / `find <query>` | Search for content |
+| `blogs <space-id>` / `list blogs` | Browse blog posts |
+| `spaces` / `list spaces` | List available spaces |
+| `space <space-id>` / `view space <space-id>` | View a specific space |
+| `page <title or description>` | Create a page |
 
 ## Process
 
@@ -40,35 +40,32 @@ Run `acli --version`; if unavailable, use Markdown-paste fallbacks (Steps 3, 7).
 
 ### 2. View Page
 
-- Run `acli confluence page view --id <PAGE_ID> --body-format storage --json`
+- Run `acli confluence page view --id <PAGE_ID> --body-format storage`
 - Key flags: `--body-format` (storage|atlas_doc_format|view), `--include-labels`, `--include-versions`, `--version <N>`, `--get-draft`, `--status` (current|draft|archived)
-- Direct URL format: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/<PAGE_ID>`
 
 ### 3. Update Page (Fallback)
 
 - First, fetch current page content: `acli confluence page view --id <PAGE_ID> --body-format storage`
 - Output: Markdown diff summary + full updated content + edit URL: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/edit-v2/<PAGE_ID>`
-- Confluence editor accepts Markdown paste.
 
 ### 4. Search
 
-- For blog content: `acli confluence blog list --space-id <SPACE_ID> --title "<query>" --json`
+- For blog content: `acli confluence blog list --space-id <SPACE_ID> --title "<query>"`
 - For page content: note the acli limitation and suggest Confluence web search: `https://qredab.atlassian.net/wiki/search?text=<query>`
 
 ### 5. List / View Blogs
 
-- List: `acli confluence blog list --space-id <SPACE_ID> --json`
-  - Key flags: `--title` (filter by title), `--status` (current|draft|deleted), `--limit` (default 25), `--body-format`, `--json`
-- View a specific post: `acli confluence blog view --id <BLOG_ID> --body-format view --json`
+- List: `acli confluence blog list --space-id <SPACE_ID>`
+  - Key flags: `--title` (filter by title), `--status` (current|draft|deleted), `--limit`, `--body-format`
+- View a specific post: `acli confluence blog view --id <BLOG_ID> --body-format view`
   - Key flags: `--body-format` (view|storage|atlas_doc_format), `--include` (labels,properties,versions,collaborators), `--draft`, `--version <N>`
 
 ### 6. List Spaces
 
-- Run `acli confluence space list --json`
-- Key flags: `--type` (global|personal), `--keys` (filter by space keys), `--status` (current|archived, default: current), `--limit` (default 50), `--expand` (description|homepage|permissions)
-- View a specific space: `acli confluence space view --id <SPACE_ID> --json`
+- Run `acli confluence space list`
+- Key flags: `--type` (global|personal), `--keys` (filter by space keys), `--status` (current|archived), `--limit`, `--expand` (description|homepage|permissions)
+- View a specific space: `acli confluence space view --id <SPACE_ID>`
 
 ### 7. Create Page (Fallback)
 
 - Output: full page content in Markdown format + direct link to create: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/create`
-- Confluence editor accepts Markdown paste.

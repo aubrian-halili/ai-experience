@@ -11,10 +11,6 @@ disable-model-invocation: true
 
 **Current branch:** !`git branch --show-current`
 
-ultrathink
-
-Execute structured feature implementation from an approved plan through incremental, test-driven milestones with clear verification at each step.
-
 ## Process
 
 ### 1. Pre-flight
@@ -34,7 +30,7 @@ If on `main` or `master`, offer to create a feature branch per git conventions.
 
 **Gate 3 — Plan required:**
 - Check if `.planning/STATE.md` exists.
-  - If found → load it. Cross-reference the plan's Definition of Done and phases with the ticket's acceptance criteria. Note any mismatches and surface them to the user. If resuming mid-implementation, identify the current phase and pick up from there.
+  - If found → load it. Cross-reference the plan's Definition of Done and phases with the ticket's acceptance criteria. Note any mismatches and surface them to the user.
   - If not found → ask the user: "Is there an existing plan file for this work? If so, provide the path."
     - If user provides a path → load that file.
     - If no plan exists → Stop. Tell the user: "An approved plan is required before implementation. Run `/plan` first, then `/jira` to create tickets."
@@ -52,7 +48,7 @@ After approval, convert the plan into tracked tasks:
 - Create a task per milestone with `TaskCreate`
 - Set task dependencies using `addBlockedBy` where phases depend on prior phases
 
-For each milestone, implement and commit.
+Implement each milestone in sequence.
 
 ### 4. Verify → Review → Commit → PR
 
@@ -60,7 +56,7 @@ After all milestones are implemented, run the full delivery chain:
 
 #### 4a. Verify
 
-Run `/verify` — full three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available). Re-run until green.
+Run `/verify` — full three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available).
 
 #### 4b. Review
 
