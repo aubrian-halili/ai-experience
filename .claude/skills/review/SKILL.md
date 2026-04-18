@@ -66,9 +66,3 @@ gh pr view <number> --json reviews,comments
 > **Important:** Run `gh pr diff` exactly as shown — it does not support `-- <file>` path filtering or any additional arguments. Retrieve the full diff once, then analyze relevant sections from the output.
 
 Analyze the diff and present findings using the Pull Request Review template.
-
-## Related Skills
-
-| Skill | When to Use Instead |
-|-------|---------------------|
-| `/feature` | Return to implementation to address review findings |

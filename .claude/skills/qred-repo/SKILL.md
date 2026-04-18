@@ -58,11 +58,3 @@ Run `gh api repos/Qred/<repo>/contents/<path>` to get directory listing and pres
 Run `gh api repos/Qred/<repo>/contents/<path>` to get file content.
 
 **300-line threshold:** if a file exceeds 300 lines, show the first 100 lines and ask before showing more.
-
-## Related Skills
-
-| Skill | When to Use Instead |
-|---|---|
-| `/review` | Code quality review or PR audit |
-| `/backoffice-database` | Exploring PostgreSQL database schemas and data |
-| `/confluence` | Reference design docs or specs related to the repository |

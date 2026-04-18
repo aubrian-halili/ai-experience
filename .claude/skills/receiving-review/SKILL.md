@@ -89,12 +89,3 @@ Verify PR state after pushing:
 ```bash
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup
 ```
-
-## Related Skills
-
-| Skill | When to Use Instead |
-|-------|---------------------|
-| `/review` | Giving a code review (not receiving one) |
-| `/pr` | Creating a pull request |
-| `/feature` | Re-implementation needed for significant reviewer feedback |
-| `/verify` | Re-verify after significant changes from review feedback |

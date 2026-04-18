@@ -31,7 +31,13 @@ When a Jira ticket ID is found in `$ARGUMENTS`: fetch via `acli`, then follow St
 
 Define the Definition of Done per the Project Plan Template.
 
-### 3. Architecture Comparison
+### 3. Codebase Research (Medium+ complexity only)
+
+**Skip when:** Scope is ≤3 files with no existing related features.
+
+Launch 1 `code-explorer` agent with the goal as its topic. Pass its **Essential Files** list (priority table) into every `code-architect` agent in §4 as context — architects should treat those files as the ground truth of the current implementation.
+
+### 4. Architecture Comparison
 
 Launch 2-3 `code-architect` agents in parallel, each with a different focus:
 - **Minimal Changes** (include for Medium+ complexity)
@@ -42,25 +48,14 @@ Present results using the Architecture Comparison Template.
 
 **Skip when:** Scope is ≤3 files with no new integration points. Default to Pragmatic Balance.
 
-### 4. Decompose into Phases
+### 5. Decompose into Phases
 
 Confirm every observable truth in Define Done maps to at least one phase.
 
-### 5. Track State
+### 6. Track State
 
 Finalize `.planning/STATE.md` using the Session State Template. This step adds the full phase breakdown and reconciles the Progress table.
 
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description
 - Set `addBlockedBy` dependencies matching the phase dependency graph
-
-## Related Skills
-
-| Skill | When to Use Instead |
-|-------|---------------------|
-| `/jira` | Decompose approved plan into Jira tickets (when no ticket exists yet) |
-| `/feature` | Implement a Jira ticket with an approved plan (`/feature <TICKET-ID>` — requires both ticket and plan) |
-| `/verify` | Plan is implemented and needs verification |
-| `/confluence` | Reference or publish design docs and specs in Confluence |
-| `/qred-repo` | Browse existing repos for research before finalizing the plan |
-| `/doc-sync` | Sync docs first so planning has accurate project context |

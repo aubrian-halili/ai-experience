@@ -82,9 +82,3 @@ Output the manifest and store it in `.planning/STATE.md` under a `## Tickets` se
 |-----------|---------|-------------|
 | UN-1234 | ... | UN-1234-short-description |
 | UN-1235 | ... | UN-1235-short-description |
-
----
-
-## Related Skills
-
-Pipeline order: `/plan` → `/jira` → `/feature` → `/verify` → `/review` → `/pr`
