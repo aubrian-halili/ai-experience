@@ -17,19 +17,21 @@ disable-model-invocation: true
 
 > **Small-scope gate:** When scope is ≤3 files with no new integration points, skip §2 and §3 and default to Pragmatic Balance.
 
+> **Terminal state:** `.planning/STATE.md` is the deliverable. Do not prompt the user to begin implementation and do not segue into `/feature`. If invoked inside Plan Mode, exit with a note that implementation is expected in a separate session.
+
 ### 1. Pre-flight
 
 1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`.
 2. **Check for existing `.planning/STATE.md`** — if found, ask the user a binary choice: **resume** or **start over**.
    - **resume** → continue from the phase marked current
    - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
-3. **Create `.planning/STATE.md` skeleton** using the Session State Template in `@references/templates.md`. Include the Definition of Done per the Project Plan Template.
+3. **Create `.planning/STATE.md`** from the Session State Template in `@references/templates.md`, filling the Plan section (DoD + Phase Breakdown).
 
 ### 2. Codebase Research
 
 Launch `code-explorer` with the goal as its topic. Also launch `database-explorer` in parallel (with a research question derived from the goal) if any of these hold: the goal names a table or domain entity; the Jira body contains "migration", "schema", or "model"; or `code-explorer` returns files under `*/migrations/*`, `*/models/*`, or ORM schema paths.
 
-Pass both the **Essential Files** list from `code-explorer` and the **Essential Tables** list from `database-explorer` (when present) into every `code-architect` agent in §3 — architects should treat both as ground truth of the current implementation.
+Pass both the **Essential Files** list from `code-explorer` and the **Essential Tables** list from `database-explorer` (when present) into every `code-architect` agent in §3.
 
 ### 3. Architecture Comparison
 
@@ -42,10 +44,8 @@ Present results using the Architecture Comparison Template.
 
 ### 4. Track State
 
-Finalize `.planning/STATE.md` using the Session State Template. Decompose the goal into phases and confirm every observable truth in Definition of Done maps to at least one phase. Add the full phase breakdown and reconcile the Progress table.
+Finalize `.planning/STATE.md`. Complete the Plan section with the full phase breakdown (files, verification per phase) and confirm every observable truth in the Definition of Done maps to at least one phase. Update the State section's Progress table to reflect all phases.
 
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description
 - Set `addBlockedBy` dependencies matching the phase dependency graph
-
-**If the plan originated from a Jira ticket:** prompt the user to continue with `/feature <TICKET-ID>`.
