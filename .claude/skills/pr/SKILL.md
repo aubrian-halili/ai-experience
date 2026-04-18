@@ -31,7 +31,11 @@ Select template by flags:
 
 Include **every section, checkbox, and line** of the selected template verbatim — do not summarize. Fill dynamic sections from commit history; tick only items that apply.
 
-### 3. Push & Create PR
+### 3. Present for Review
+
+Present the proposed PR details to the user for review and confirmation before proceeding.
+
+### 4. Push & Create PR
 Push branch and create PR as **draft** unless `--ready` is passed.
 
 **Jira (optional):** If a Jira ID is detected and `acli` is available, offer to run `acli jira workitem transition --key <ISSUE_KEY> --status "In Review"`.
