@@ -27,7 +27,7 @@ If on `main` or `master`, offer to create a feature branch per git conventions.
 
 **Fetch & confirm requirements:**
 - Fetch ticket details: `acli jira workitem view <TICKET_ID>` — read scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content.
-- Present a concise ticket summary and ask the user to confirm before continuing.
+- Present a ticket summary and ask the user to confirm before continuing.
 
 **Gate 3 — Plan required:**
 - Check if `.planning/STATE.md` exists.
@@ -38,9 +38,8 @@ If on `main` or `master`, offer to create a feature branch per git conventions.
 
 ### 2. Design & Present
 
-- Using the plan's architecture choice and observable truths as the foundation:
-  - Break down each plan phase into incremental milestones with: goal, tasks, dependencies, and verification criteria tied to the plan's observable truths
-  - Select a delivery pattern from `@references/templates.md` (Vertical Slice, Horizontal Layer, or Feature Flags)
+- Break down each plan phase into incremental milestones using `@references/templates.md`.
+  - Select a delivery pattern from the template (Vertical Slice, Horizontal Layer, or Feature Flags)
   - Show: milestone breakdown, files to create/modify, delivery pattern rationale
 
 ### 3. Implement
@@ -53,29 +52,13 @@ For each milestone:
 - **Independent milestones** (no shared files with other in-flight milestones, no ordering dependency) — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria. Collect results before merging.
 - **Sequential milestones** (depends on output of a prior milestone) — implement inline, in order.
 
-Merge worker results and resolve any conflicts before proceeding to §4.
+Merge worker results before proceeding to §4.
 
 ### 4. Verify → Review → Commit → PR
 
-After all milestones are implemented, run the full delivery chain:
+Run `/verify` → `/review` → `/commit` → `/pr`.
 
-#### 4a. Verify
-
-Run `/verify` — full three-level verification against the Definition of Done (ticket acceptance criteria + plan observable truths if available).
-
-#### 4b. Review
-
-Run `/review`.
-
-#### 4c. Commit
-
-Run `/commit` — stages and commits all changes with a Jira-prefixed message.
-
-#### 4d. PR
-
-Run `/pr`.
-
-### 5. Summary
+### 5. Record completion
 
 After the full delivery chain completes, update `.planning/STATE.md` marking this ticket as complete with a timestamp and PR link.
 
