@@ -23,7 +23,7 @@ disable-model-invocation: true
 2. **Check for existing `.planning/STATE.md`** — if found, ask the user a binary choice: **resume** or **start over**.
    - **resume** → continue from the phase marked current
    - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
-3. **Create `.planning/STATE.md` skeleton** using the Session State Template in `@references/templates.md`. Include the Definition of Done per the Project Plan Template.
+3. **Create `.planning/STATE.md` skeleton** using the Session State Template in `@references/templates.md`. The template is self-contained — fill in the Plan section (DoD + Phase Breakdown) and leave State sections as stubs.
 
 ### 2. Codebase Research
 
@@ -42,7 +42,7 @@ Present results using the Architecture Comparison Template.
 
 ### 4. Track State
 
-Finalize `.planning/STATE.md` using the Session State Template. Decompose the goal into phases and confirm every observable truth in Definition of Done maps to at least one phase. Add the full phase breakdown and reconcile the Progress table.
+Finalize `.planning/STATE.md`. Complete the Plan section with the full phase breakdown (files, verification per phase) and confirm every observable truth in the Definition of Done maps to at least one phase. Update the State section's Progress table to reflect all phases.
 
 Convert phases into tracked tasks:
 - `TaskCreate` per phase with goal as subject and observable truths as description

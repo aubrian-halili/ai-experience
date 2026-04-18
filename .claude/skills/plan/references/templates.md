@@ -1,15 +1,33 @@
 # Plan Templates
 
-## Project Plan Template
+## Architecture Comparison Template
 
 ```markdown
-## Project Plan
+### Architecture Options
+
+| Dimension | Minimal Changes | Clean Architecture | Pragmatic Balance |
+|-----------|----------------|-------------------|-------------------|
+| Files changed | [count] | [count] | [count] |
+| New abstractions | [list or "none"] | [list] | [list] |
+| Risk | [assessment] | [assessment] | [assessment] |
+| Best when | [conditions] | [conditions] | [conditions] |
+
+**Recommendation**: [Approach] — [one sentence rationale]
+```
+
+## Session State Template (.planning/STATE.md)
+
+```markdown
+## Planning State
 
 **Goal**: [One-sentence goal]
 **Source**: [Jira ticket ID, epic, or goal description]
-**Created**: [Date]
+**Plan Created**: YYYY-MM-DD
+**Last Updated**: YYYY-MM-DD
 
 ---
+
+## Plan *(immutable once approved)*
 
 ### Definition of Done
 
@@ -51,33 +69,7 @@ Observable truths that must be TRUE when this goal is complete:
 
 ---
 
-```
-
-## Architecture Comparison Template
-
-```markdown
-### Architecture Options
-
-| Dimension | Minimal Changes | Clean Architecture | Pragmatic Balance |
-|-----------|----------------|-------------------|-------------------|
-| Files changed | [count] | [count] | [count] |
-| New abstractions | [list or "none"] | [list] | [list] |
-| Risk | [assessment] | [assessment] | [assessment] |
-| Best when | [conditions] | [conditions] | [conditions] |
-
-**Recommendation**: [Approach] — [one sentence rationale]
-```
-
-## Session State Template (.planning/STATE.md)
-
-```markdown
-## Planning State
-
-**Goal**: [One-sentence goal]
-**Plan Created**: [Date]
-**Last Updated**: [Date]
-
----
+## State *(mutable)*
 
 ### Progress
 
@@ -104,6 +96,8 @@ Observable truths that must be TRUE when this goal is complete:
 | Decision | Rationale | Date |
 |----------|-----------|------|
 | Architecture: [Minimal Changes / Clean Architecture / Pragmatic Balance] | [Why this approach was chosen] | [When] |
+
+### Tickets *(populated by /jira)*
 
 ```
 
