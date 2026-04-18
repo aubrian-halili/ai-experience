@@ -1,9 +1,10 @@
 ---
 name: feature
 description: >-
-  Implement a feature from a Jira ticket ID (e.g., UN-1234) and an approved plan through test-driven milestones.
-  Requires: a Jira ticket ID and an approved plan in .planning/STATE.md.
-  Not for: planning (use /plan). Not for: creating tickets (use /jira).
+  Implement a Jira ticket (e.g., "implement UN-1234", "build the feature", "work on <TICKET>")
+  through test-driven milestones, then automatically run /verify → /review → /pr.
+  Requires both a Jira ticket ID and an approved plan in .planning/STATE.md; offers to branch off main if needed.
+  Not for: planning (use /plan); not for: creating tickets (use /jira).
 argument-hint: "<JIRA-TICKET-ID>"
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *), TaskCreate, TaskUpdate, TaskList
 disable-model-invocation: true

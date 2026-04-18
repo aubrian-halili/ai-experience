@@ -41,10 +41,6 @@
             "type": "command",
             "command": "bash ~/.claude/hooks/auto-format.sh"
           },
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/validate-skill.sh"
-          }
         ]
       }
     ]

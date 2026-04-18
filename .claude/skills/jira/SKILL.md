@@ -2,9 +2,10 @@
 name: jira
 description: >-
   User asks to "create Jira tickets", "decompose into tickets", "file tickets from plan",
-  or mentions "Jira" in context of creating tickets from a plan.
-  Requires an approved plan in .planning/STATE.md — redirects to /plan if none exists.
-  Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature).
+  "break plan into Jira", or mentions "Jira" in context of creating tickets from a plan.
+  Requires an approved plan in .planning/STATE.md (redirects to /plan if missing).
+  Defaults to project UN (overridable); uses acli when available, otherwise emits copy-ready content.
+  Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature); not for: transitioning or editing existing tickets.
 argument-hint: "[PROJECT]"
 allowed-tools: Read, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version)
 disable-model-invocation: true

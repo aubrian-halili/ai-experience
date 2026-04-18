@@ -1,8 +1,10 @@
 ---
 name: qred-repo
 description: >-
-  User asks to "browse a repo", "search across repos", "list Qred repos",
-  or wants to navigate the Qred GitHub organization's repositories.
+  User asks to "browse a Qred repo", "search code across Qred repos", "list Qred repos",
+  "find <term> in <repo>", "view PR/issue in <repo>", or "read a file from a Qred repo".
+  Read-only: scoped to the Qred GitHub org; refuses mutating gh subcommands (merge, close, edit, delete, transfer, archive).
+  Not for: code review (use /review); not for: DB exploration (use /backoffice-database).
 argument-hint: "[repo name, file path, search term, tree <repo>, or gh command]"
 disable-model-invocation: true
 allowed-tools: Bash(gh *)

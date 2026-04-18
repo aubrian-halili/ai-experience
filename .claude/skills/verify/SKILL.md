@@ -2,8 +2,10 @@
 name: verify
 description: >-
   User asks "did I finish everything", "verify this is done", "am I done",
-  "check for stubs or TODOs", or references a plan to verify against. Use after /feature.
-  Not for: code quality review (use /review).
+  "check for stubs, TODOs, or orphaned code", "is this wired up",
+  or references a plan's acceptance criteria to verify against.
+  Three-level (Existence, Substance, Wiring) check with file:line evidence. Use after /feature.
+  Not for: code quality review (use /review); not for: addressing PR feedback (use /receiving-review).
 argument-hint: "[plan file, feature name, or acceptance criteria]"
 allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Glob
 ---

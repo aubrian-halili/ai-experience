@@ -1,6 +1,10 @@
 ---
 name: commit
-description: User asks to "commit", "create a commit", "commit my changes", or mentions "git commit".
+description: >-
+  User asks to "commit", "create a commit", "commit my changes", "stage and commit", or mentions "git commit".
+  Enforces the project convention "<JIRA-ID> <type>(<scope>): <description>" (Jira ID extracted from the current branch)
+  and always presents the proposed message for confirmation before committing.
+  Not for: creating a pull request (use /pr).
 argument-hint: "[optional commit message or scope]"
 allowed-tools: Bash(git *), Read, Grep, Glob
 disable-model-invocation: true

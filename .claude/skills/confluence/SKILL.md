@@ -1,11 +1,10 @@
 ---
 name: confluence
 description: >-
-  User asks to "create a Confluence page", "view a Confluence page", "update a page",
-  "find a page", "write documentation in Confluence", "list spaces", "search blogs",
-  or mentions "Confluence" in context of reading, writing, or updating pages.
-  Not for: Jira ticket management (use /jira).
-  Not for: syncing local repo documentation like CLAUDE.md (use /doc-sync).
+  User asks to "view a Confluence page", "find/search a page", "list spaces", "search blogs",
+  "read Confluence", or wants to draft/preview a new or updated Confluence page.
+  Scoped to qredab.atlassian.net; read-only via acli — create/update are delivered as Markdown + an edit URL fallback (no direct writes).
+  Not for: Jira ticket management (use /jira); not for: syncing local repo docs like CLAUDE.md (use /doc-sync).
 argument-hint: "[view <page-id> | update <page-id> | search <query> | blogs <space-id> | spaces]"
 allowed-tools: Bash(acli confluence page view *, acli confluence space list *, acli confluence space view *, acli confluence blog list *, acli confluence blog view *, acli --version)
 disable-model-invocation: true

@@ -3,7 +3,9 @@ name: pr
 description: >-
   User asks to "create a PR", "open a pull request", "push and create PR",
   or mentions "pull request" in context of creating one.
-  Not for: reviewing an existing PR (use /review).
+  Opens as draft by default (pass --ready for ready-for-review); supports --major and --fe to pick the PR body template;
+  offers to transition the linked Jira ticket to "In Review".
+  Not for: reviewing an existing PR (use /review); not for: addressing PR review feedback (use /receiving-review).
 argument-hint: "[optional: --major, --fe, --ready, target branch, or PR title]"
 allowed-tools: Bash(git branch *, git log *, git diff *, git show *, git status *, git rev-list *, git push *, git fetch *, git remote *, gh repo *, gh pr *, acli *), Read, Grep, Glob
 disable-model-invocation: true
