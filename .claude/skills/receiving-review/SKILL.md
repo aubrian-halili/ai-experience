@@ -29,14 +29,7 @@ Process, evaluate, and implement code review feedback.
 - Resolve PR number, state, and head branch in a single call: `gh pr view --json number,state,headRefName`
   - Use `$ARGUMENTS` to target a specific PR number/URL if provided, otherwise detect from current branch
 - Verify PR is open: check `state` from the call above
-- **Branch verification** (when PR number/URL was provided via arguments):
-  1. Get current branch: `git branch --show-current`
-  2. Compare against `headRefName` from the pre-flight call above
-  3. If they match → proceed
-  4. If mismatch:
-     - Check for dirty working tree: `git status --porcelain`
-     - If dirty → **stop**: "Working tree has uncommitted changes. Stash or commit before switching branches."
-     - If clean → ask user for confirmation, then switch: `gh pr checkout $PR_NUMBER`
+- **Branch verification** (when PR number/URL was provided via arguments): if `headRefName` ≠ current branch, refuse if working tree is dirty; otherwise confirm with user and switch with `gh pr checkout $PR_NUMBER`
 
 ### 1. Gather Feedback
 
@@ -53,21 +46,17 @@ gh pr view $PR_NUMBER --json reviews,comments
 
 ### 2. Clarify Before Implementing
 
-If the feedback source is a GitHub PR, draft clarifying questions for user approval before posting.
+If any feedback is ambiguous, ask the user before implementing.
 
 ### 3. Verify Suggestions Against Codebase
 
 **YAGNI check** — grep for actual usage before implementing "proper" abstractions a reviewer suggests:
 ```bash
-# Before adding a suggested abstraction/interface/pattern, check if it's actually consumed
-# Replace <SuggestedName> with the actual interface, class, or pattern name being suggested
 grep -r "<SuggestedName>" --include="*.ts" --include="*.tsx" src/
 ```
 If the suggested addition has zero consumers → push back with evidence.
 
-### 4. Implement Changes
-
-### 5. Reply to Review Threads
+### 4. Reply to Review Threads
 
 Draft replies for user approval before posting.
 
@@ -82,9 +71,7 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 - One reply per thread — batch related changes into a single response
 - Examples: "Fixed — renamed to `calculateTotal` and updated callers in `OrderService`" / "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit" / "Tracked as follow-up — out of scope for this PR"
 
-### 6. Commit, Push, and Verify
-
-Verify PR state after pushing:
+### 5. Verify PR state after pushing
 
 ```bash
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup
