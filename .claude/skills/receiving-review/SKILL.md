@@ -82,7 +82,11 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 - One reply per thread — batch related changes into a single response
 - Examples: "Fixed — renamed to `calculateTotal` and updated callers in `OrderService`" / "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit" / "Tracked as follow-up — out of scope for this PR"
 
-### 6. Commit, Push, and Verify
+### 6. Present for Review
+
+Present the proposed reply message to the user for review and confirmation before proceeding.
+
+### 7. Commit, Push, and Verify
 
 Verify PR state after pushing:
 
