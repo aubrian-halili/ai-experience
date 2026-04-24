@@ -109,7 +109,7 @@
     "contributors": true,
     "fileHistory": false,
     "repositories": true,
-    "searchAndCompare": false,
+    "searchAndCompare": true,
     "launchpad": true
   },
   "extensions.allowed": {
