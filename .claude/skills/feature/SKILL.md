@@ -16,7 +16,7 @@ disable-model-invocation: true
 
 ### 1. Pre-flight
 
-Parse `$ARGUMENTS` to extract a Jira ticket ID (pattern: `[A-Z]+-\d+`, e.g., `UN-1234`).
+Parse `$ARGUMENTS` to extract a Jira ticket ID (e.g., `UN-1234`).
 
 **Gate 1 — Jira ticket required:**
 If no ticket ID is found in `$ARGUMENTS`:
@@ -26,8 +26,8 @@ If no ticket ID is found in `$ARGUMENTS`:
 If on `main` or `master`, offer to create a feature branch per git conventions.
 
 **Fetch & confirm requirements:**
-- Fetch ticket details: `acli jira workitem view <TICKET_ID>` — read scope, requirements, and acceptance criteria. If `acli` is unavailable, ask the user to paste the ticket content.
-- Present a ticket summary and ask the user to confirm before continuing.
+- Fetch ticket details: `acli jira workitem view <TICKET_ID>` — read scope, requirements, and acceptance criteria.
+- Confirm scope with the user before continuing.
 
 **Gate 3 — Plan required:**
 - Check if `.planning/STATE.md` exists.
@@ -39,20 +39,17 @@ If on `main` or `master`, offer to create a feature branch per git conventions.
 ### 2. Design & Present
 
 - Break down each plan phase into incremental milestones using `@references/templates.md`.
-  - Select a delivery pattern from the template (Vertical Slice, Horizontal Layer, or Feature Flags)
-  - Show: milestone breakdown, files to create/modify, delivery pattern rationale
+  - Select a delivery pattern from the template
 
 ### 3. Implement
 
-After approval, convert the plan into tracked tasks:
 - Create a task per milestone with `TaskCreate`
 - Set task dependencies using `addBlockedBy` where phases depend on prior phases
 
 For each milestone:
-- **Independent milestones** (no shared files with other in-flight milestones, no ordering dependency) — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria. Collect results before merging.
-- **Sequential milestones** (depends on output of a prior milestone) — implement inline, in order.
-
-Merge worker results before proceeding to §4.
+- **Independent milestones** — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria. Collect results before merging.
+  - Worker brief must include: **surgical constraint** — "change only lines required by this milestone's acceptance criteria; do not refactor, reformat, or clean up adjacent code; if orphaned imports/vars result from your change, remove them, but leave pre-existing dead code alone."
+- **Sequential milestones** — implement inline, in order.
 
 ### 4. Verify → Review → Commit → PR
 
