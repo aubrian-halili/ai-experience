@@ -50,6 +50,7 @@ After approval, convert the plan into tracked tasks:
 
 For each milestone:
 - **Independent milestones** (no shared files with other in-flight milestones, no ordering dependency) — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria. Collect results before merging.
+  - Worker brief must include: **surgical constraint** — "change only lines required by this milestone's acceptance criteria; do not refactor, reformat, or clean up adjacent code; if orphaned imports/vars result from your change, remove them, but leave pre-existing dead code alone."
 - **Sequential milestones** (depends on output of a prior milestone) — implement inline, in order.
 
 Merge worker results before proceeding to §4.
