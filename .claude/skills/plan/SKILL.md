@@ -35,10 +35,11 @@ Pass both the **Essential Files** list from `code-explorer` and the **Essential 
 
 ### 3. Architecture Comparison
 
-Launch 2-3 `code-architect` agents in parallel, each with a different focus:
+Launch 3-4 `code-architect` agents in parallel, each with a different focus:
 - **Minimal Changes** (include for Medium+ complexity)
 - **Clean Architecture**
 - **Pragmatic Balance**
+- **Hexagonal** (include when the feature crosses ≥2 external integrations, requires swappable infrastructure, or domain logic is expected to outlive the current stack — skip for CRUD endpoints, scripts, and single-adapter flows)
 
 Present results using the Architecture Comparison Template.
 

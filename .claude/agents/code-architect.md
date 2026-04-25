@@ -35,6 +35,14 @@ You will be assigned one of these focuses per invocation:
 - Follow existing conventions even if imperfect
 - Best for: most features, team codebases, iterative development
 
+### Hexagonal (Ports & Adapters)
+- Keep the domain core free of I/O — no direct calls to DBs, HTTP clients, queues, file systems, clocks, or framework types
+- Define **ports** (interfaces owned by the domain) for every external capability the core needs
+- Implement **adapters** (driven: DB/HTTP/queue clients; driving: controllers/CLI/jobs) in outer layers that depend inward
+- Inject adapters at the composition root; the core must be testable with in-memory fakes alone
+- Best for: systems with multiple external integrations, swappable infrastructure, heavy testability needs, long-lived domain logic
+- Avoid when: the domain is anemic (CRUD pass-through), there is only one adapter in sight, or the codebase is a script/thin glue layer — the indirection will outweigh the benefit
+
 ## Output Format
 
 Return a structured architecture blueprint:
@@ -44,7 +52,7 @@ Return a structured architecture blueprint:
 - [Pattern]: [How it's used in the codebase, with file:line examples]
 
 ### Architecture Decision
-**Focus**: [Minimal Changes / Clean Architecture / Pragmatic Balance]
+**Focus**: [Minimal Changes / Clean Architecture / Pragmatic Balance / Hexagonal]
 **Rationale**: [Why this approach fits the feature and codebase]
 
 ### Component Design
