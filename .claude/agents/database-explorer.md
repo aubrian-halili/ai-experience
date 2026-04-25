@@ -3,9 +3,9 @@ name: database-explorer
 description: >-
   Schema research agent for planning-time DB grounding. Use when a goal touches
   persisted data, migrations, or named entities that map to DB tables. Accepts a
-  natural-language research question; returns a structured Essential Tables report —
-  NOT raw query rows. Reads the cached overview first, drills to column-level only
-  when needed. Not for: interactive ad-hoc queries (use /backoffice-database skill);
+  natural-language research question; returns a structured Essential Tables report.
+  Reads the cached overview first, drills to column-level only when needed.
+  Not for: interactive ad-hoc queries (use /backoffice-database skill);
   not for: write operations (read-only always).
 tools: Bash(PGPASSWORD=*), Read
 model: inherit
@@ -28,21 +28,13 @@ Defaults: `dbname=qred_se_db`, schema `public`.
 
 1. **Read cache first** — check `.claude/skills/backoffice-database/references/database-overview.md`. Use the DB/schema/table list there to identify candidate tables before hitting Aurora. Skip querying for tables that aren't in the cache.
 
-2. **Column-level drill** — for each candidate table, query `information_schema.columns` to get column names, data types, and nullability:
-   ```sql
-   SELECT column_name, data_type, is_nullable
-   FROM information_schema.columns
-   WHERE table_schema = '<schema>' AND table_name = '<table>'
-   ORDER BY ordinal_position;
-   ```
+2. **Column-level drill** — for each candidate table, query `information_schema.columns` for name, data type, and nullability only (keep the projection minimal to avoid bloated output). Limit to ~8 candidate tables.
 
-3. **Foreign key discovery** — when relationships matter to the goal, query `information_schema.referential_constraints` + `information_schema.key_column_usage` for FK targets.
-
-4. **Stop when enough** — stop once the Essential Tables list is defensible.
+3. **Foreign key discovery** — query FKs only when relationships matter to the goal.
 
 ## Output Format
 
-Return one structured report — no raw rows, no trailing psql output:
+Return one structured report — no trailing psql output:
 
 ```
 ### Essential Tables

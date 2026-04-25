@@ -5,12 +5,12 @@
 ```markdown
 ### Architecture Options
 
-| Dimension | Minimal Changes | Clean Architecture | Pragmatic Balance |
-|-----------|----------------|-------------------|-------------------|
+| Dimension | Minimal Changes | Clean Architecture | Hexagonal |
+|-----------|----------------|-------------------|-----------|
 | Files changed | [count] | [count] | [count] |
-| New abstractions | [list or "none"] | [list] | [list] |
+| New abstractions | [list or "none"] | [list] | [ports + adapters list] |
 | Risk | [assessment] | [assessment] | [assessment] |
-| Best when | [conditions] | [conditions] | [conditions] |
+| Best when | [conditions] | [conditions] | ≥2 external integrations, swappable infra, long-lived domain |
 
 **Recommendation**: [Approach] — [one sentence rationale]
 ```
@@ -95,7 +95,7 @@ Observable truths that must be TRUE when this goal is complete:
 
 | Decision | Rationale | Date |
 |----------|-----------|------|
-| Architecture: [Minimal Changes / Clean Architecture / Pragmatic Balance] | [Why this approach was chosen] | [When] |
+| Architecture: [Minimal Changes / Clean Architecture / Hexagonal] | [Why this approach was chosen] | [When] |
 
 ### Tickets *(populated by /jira)*
 

@@ -15,7 +15,7 @@ disable-model-invocation: true
 
 > **Planning artifact exemption:** `.planning/STATE.md` is a planning artifact. This skill always creates and edits it — including when Claude Code is in plan mode. Treat it exactly like the plan file itself.
 
-> **Small-scope gate:** When scope is ≤3 files with no new integration points, skip §2 and §3 and default to Pragmatic Balance.
+> **Small-scope gate:** When scope is ≤3 files with no new integration points, skip §2 and §3 and default to Minimal Changes.
 
 > **Terminal state:** `.planning/STATE.md` is the deliverable. Do not prompt the user to begin implementation and do not segue into `/feature`. If invoked inside Plan Mode, exit with a note that implementation is expected in a separate session.
 
@@ -38,7 +38,7 @@ Pass both the **Essential Files** list from `code-explorer` and the **Essential 
 Launch 2-3 `code-architect` agents in parallel, each with a different focus:
 - **Minimal Changes** (include for Medium+ complexity)
 - **Clean Architecture**
-- **Pragmatic Balance**
+- **Hexagonal** (include when the feature crosses ≥2 external integrations, requires swappable infrastructure, or domain logic is expected to outlive the current stack — skip for CRUD endpoints, scripts, and single-adapter flows)
 
 Present results using the Architecture Comparison Template.
 
