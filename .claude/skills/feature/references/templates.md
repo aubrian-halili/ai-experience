@@ -7,7 +7,7 @@
 
 **Feature**: [Name]
 **Complexity**: [Low | Medium | High]
-**Architecture**: [Minimal Changes | Clean Architecture | Pragmatic Balance | Hexagonal] (from plan)
+**Architecture**: [Minimal Changes | Clean Architecture | Hexagonal] (from plan)
 **Delivery Pattern**: [Vertical Slice | Horizontal Layer | Feature Flags]
 
 ---
