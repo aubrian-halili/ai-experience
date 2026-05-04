@@ -36,7 +36,7 @@ For large scopes (>10 files), dispatch `code-quality-reviewer` and `security-sca
 
 ## Process
 
-**Branch point:** Local review → step 2. PR review → steps 1, 3.
+**Branch point:** Local review → step 2. PR review → steps 1, 3 (step 1 includes fetching the PR locally).
 
 Apply gate enforcement before reporting findings. Present results using the relevant template from `@references/templates.md`.
 
@@ -44,12 +44,16 @@ Apply gate enforcement before reporting findings. Present results using the rele
 
 Screen PR eligibility:
 ```bash
-gh pr view <number> --json state,isDraft,author,labels
+gh pr view <number> --json state,isDraft,author,labels,headRefName
 ```
 
 **Stop conditions:**
 - PR is a draft → report and stop
 - PR author is a bot (e.g., `dependabot`, `renovate`) → report and stop
+
+**Fetch PR locally** (required so `git blame`, `Read`, and `Grep` operate on the PR's actual state):
+- If `headRefName` ≠ current branch: refuse if working tree is dirty (`git status --porcelain` non-empty); otherwise confirm with the user, then `gh pr checkout <number>`.
+- If already on the PR branch: `git pull --ff-only` to ensure HEAD matches the PR.
 
 ### 2. Analyze Local Changes (Local only)
 
