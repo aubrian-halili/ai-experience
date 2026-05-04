@@ -5,7 +5,6 @@
 ```markdown
 ## Review Summary
 
-**Reviewed**: [File/Component]
 **Verdict**: Approve | Request Changes | Needs Discussion
 
 ---
@@ -31,7 +30,6 @@
 ### Minor Improvements (Could Fix)
 
 1. **[Improvement]** — `file:line` — [Brief suggestion]
-
 ```
 
 ## Pull Request Review Template
@@ -58,9 +56,6 @@
 |------|------|------|-------------|
 | `src/api/users.ts` | Core Logic | Medium | New endpoint |
 
-- **Downstream**: [Y files depend on changes]
-- **External**: [Impact on APIs, clients]
-
 ### Review Findings
 
 #### Must Address (Blocking)
@@ -81,21 +76,13 @@
 
 - [Improvement idea]
 
-### Testing Analysis
+### Testing
 
-| Test Type | Status | Notes |
-|-----------|--------|-------|
-| Unit Tests | ✅ Added | Covers happy path |
-| Integration | ⚠️ Missing | API integration not tested |
-| E2E | N/A | No E2E impact |
+[Coverage added/missing — e.g., "Unit tests cover happy path; integration not tested."]
 
-**Verdict**: ✅ **Ready to Merge** | ⚠️ **Needs Changes** | ❌ **Not Ready**
+**Verdict**: Approve | Request Changes | Needs Discussion
 
-### Recommended Actions
+### Follow-up
 
-**Before Merge**:
 1. [Action item]
-
-**After Merge**:
-1. [Post-merge task]
 ```
