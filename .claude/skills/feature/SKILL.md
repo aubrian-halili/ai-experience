@@ -2,7 +2,7 @@
 name: feature
 description: >-
   Implement a Jira ticket (e.g., "implement UN-1234", "build the feature", "work on <TICKET>")
-  through test-driven milestones, then automatically run /verify → /review → /pr.
+  through test-driven milestones, then automatically run /verify → /review and stop so the user can inspect the diff before manually running /commit and /pr.
   Requires both a Jira ticket ID and an approved plan in .planning/STATE.md; offers to branch off main if needed.
   Not for: planning (use /plan); not for: creating tickets (use /jira).
 argument-hint: "<JIRA-TICKET-ID>"
@@ -39,7 +39,6 @@ If on `main` or `master`, offer to create a feature branch per git conventions.
 ### 2. Design & Present
 
 - Break down each plan phase into incremental milestones using `@references/templates.md`.
-  - Select a delivery pattern from the template
 
 ### 3. Implement
 
@@ -47,15 +46,13 @@ If on `main` or `master`, offer to create a feature branch per git conventions.
 - Set task dependencies using `addBlockedBy` where phases depend on prior phases
 
 For each milestone:
-- **Independent milestones** — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria. Collect results before merging.
-  - Worker brief must include: **surgical constraint** — "change only lines required by this milestone's acceptance criteria; do not refactor, reformat, or clean up adjacent code; if orphaned imports/vars result from your change, remove them, but leave pre-existing dead code alone."
+- **Independent milestones** — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria.
+  - Worker brief must include a **no drive-by edits** constraint: do not refactor, reformat, or clean up adjacent code; remove orphaned imports/vars caused by the change, but leave pre-existing dead code alone.
 - **Sequential milestones** — implement inline, in order.
 
-### 4. Verify → Review → Commit → PR
+### 4. Verify, review, hand off
 
-Run `/verify` → `/review` → `/commit` → `/pr`.
+Run `/verify` → `/review`, then tell the user:
 
-### 5. Record completion
-
-After the full delivery chain completes, update `.planning/STATE.md` marking this ticket as complete with a timestamp and PR link.
+> "Implementation complete. Review the working-tree diff, then run `/commit` to commit and `/pr` to open the pull request when ready."
 
