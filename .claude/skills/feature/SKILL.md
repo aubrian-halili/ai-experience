@@ -2,7 +2,7 @@
 name: feature
 description: >-
   Implement a Jira ticket (e.g., "implement UN-1234", "build the feature", "work on <TICKET>")
-  through test-driven milestones, then automatically run /verify → /review → /pr.
+  through test-driven milestones, then automatically run /verify → /review and stop so the user can inspect the diff before manually running /commit and /pr.
   Requires both a Jira ticket ID and an approved plan in .planning/STATE.md; offers to branch off main if needed.
   Not for: planning (use /plan); not for: creating tickets (use /jira).
 argument-hint: "<JIRA-TICKET-ID>"
@@ -51,11 +51,12 @@ For each milestone:
   - Worker brief must include: **surgical constraint** — "change only lines required by this milestone's acceptance criteria; do not refactor, reformat, or clean up adjacent code; if orphaned imports/vars result from your change, remove them, but leave pre-existing dead code alone."
 - **Sequential milestones** — implement inline, in order.
 
-### 4. Verify → Review → Commit → PR
+### 4. Verify → Review
 
-Run `/verify` → `/review` → `/commit` → `/pr`.
+Run `/verify` → `/review`. Do not commit or push.
 
-### 5. Record completion
+### 5. Hand off to the user
 
-After the full delivery chain completes, update `.planning/STATE.md` marking this ticket as complete with a timestamp and PR link.
+Stop here. Tell the user:
+"Implementation complete. Review the working-tree diff, then run `/commit` to commit and `/pr` to open the pull request when ready."
 

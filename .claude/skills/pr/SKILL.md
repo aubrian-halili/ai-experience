@@ -39,3 +39,7 @@ Present the proposed PR details to the user for review and confirmation before p
 Push branch and create PR as **draft** unless `--ready` is passed.
 
 **Jira (optional):** If a Jira ID is detected and `acli` is available, offer to run `acli jira workitem transition --key <ISSUE_KEY> --status "In Review"`.
+
+### 5. Record completion
+
+If `.planning/STATE.md` exists and the Jira ID from the current branch matches an entry in it, update that entry: mark the ticket complete with the current timestamp and the URL of the PR just created. If no STATE.md or no matching entry, skip silently.
