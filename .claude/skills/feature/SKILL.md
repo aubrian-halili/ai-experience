@@ -39,7 +39,6 @@ If on `main` or `master`, offer to create a feature branch per git conventions.
 ### 2. Design & Present
 
 - Break down each plan phase into incremental milestones using `@references/templates.md`.
-  - Select a delivery pattern from the template
 
 ### 3. Implement
 
@@ -47,16 +46,13 @@ If on `main` or `master`, offer to create a feature branch per git conventions.
 - Set task dependencies using `addBlockedBy` where phases depend on prior phases
 
 For each milestone:
-- **Independent milestones** — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria. Collect results before merging.
-  - Worker brief must include: **surgical constraint** — "change only lines required by this milestone's acceptance criteria; do not refactor, reformat, or clean up adjacent code; if orphaned imports/vars result from your change, remove them, but leave pre-existing dead code alone."
+- **Independent milestones** — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria.
+  - Worker brief must include a **no drive-by edits** constraint: do not refactor, reformat, or clean up adjacent code; remove orphaned imports/vars caused by the change, but leave pre-existing dead code alone.
 - **Sequential milestones** — implement inline, in order.
 
-### 4. Verify → Review
+### 4. Verify, review, hand off
 
-Run `/verify` → `/review`. Do not commit or push.
+Run `/verify` → `/review`, then tell the user:
 
-### 5. Hand off to the user
-
-Stop here. Tell the user:
-"Implementation complete. Review the working-tree diff, then run `/commit` to commit and `/pr` to open the pull request when ready."
+> "Implementation complete. Review the working-tree diff, then run `/commit` to commit and `/pr` to open the pull request when ready."
 
