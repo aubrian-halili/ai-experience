@@ -7,25 +7,23 @@ description: >-
   Not for: implementing directly (use /feature).
   Not for: creating or managing Jira tickets (use /jira).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
-allowed-tools: Read, Grep, Glob, Write(.planning/STATE.md), Edit(.planning/STATE.md), Agent, Skill, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
+allowed-tools: Read, Grep, Glob, Write(.planning/STATE.md), Edit(.planning/STATE.md), Agent, Skill, AskUserQuestion, ExitPlanMode, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
 disable-model-invocation: true
 ---
 
 ## Process
 
-> **Planning artifact exemption:** `.planning/STATE.md` is a planning artifact. This skill always creates and edits it — including when Claude Code is in plan mode. Treat it exactly like the plan file itself.
-
 > **Small-scope gate:** When scope is ≤3 files with no new integration points, skip §2 and §3 and default to Minimal Changes.
 
-> **Terminal state:** `.planning/STATE.md` is the deliverable. Do not prompt the user to begin implementation and do not segue into `/feature`. If invoked inside Plan Mode, exit with a note that implementation is expected in a separate session.
+> **Terminal state:** `.planning/STATE.md` is the deliverable. Do not segue into `/feature` after approval. STATE.md and tasks are persisted only after the user exits plan mode.
 
 ### 1. Pre-flight
 
 1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`.
-2. **Check for existing `.planning/STATE.md`** — if found, ask the user a binary choice: **resume** or **start over**.
+2. **Check for existing `.planning/STATE.md`**. If found, ask the user a binary choice: **resume** or **start over**.
    - **resume** → continue from the phase marked current
-   - **start over** → back up the existing file with a descriptive name derived from the goal, then proceed with a new plan
-3. **Create `.planning/STATE.md`** from the Session State Template in `@references/templates.md`, filling the Plan section (DoD + Phase Breakdown).
+   - **start over** → note the choice in conversation context; **do not** back up or overwrite the file yet
+3. **Draft the Plan section** (DoD + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure. Keep this in conversation context only.
 
 ### 2. Codebase Research
 
@@ -42,10 +40,12 @@ Launch 2-3 `code-architect` agents in parallel, each with a different focus:
 
 Present results using the Architecture Comparison Template.
 
-### 4. Track State
+### 4. Plan Review
 
-Finalize `.planning/STATE.md`. Complete the Plan section with the full phase breakdown (files, verification per phase) and confirm every observable truth in the Definition of Done maps to at least one phase. Update the State section's Progress table to reflect all phases.
+Present DoD, phases, and chosen architecture, then call `ExitPlanMode` to request approval.
 
-Convert phases into tracked tasks:
-- `TaskCreate` per phase with goal as subject and observable truths as description
-- Set `addBlockedBy` dependencies matching the phase dependency graph
+### 5. Persist *(after plan-mode exit)*
+
+1. If "start over" was chosen in §1, back up the prior `.planning/STATE.md` with a goal-derived name.
+2. `Write` `.planning/STATE.md` using the drafted Plan section and initialize the State Progress table.
+3. `TaskCreate` per phase with the phase goal as subject and observable truths as description; set `addBlockedBy` to match the phase dependency graph.
