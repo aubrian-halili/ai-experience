@@ -15,15 +15,15 @@ disable-model-invocation: true
 
 > **Small-scope gate:** When scope is ≤3 files with no new integration points, skip §2 and §3 and default to Minimal Changes.
 
-> **Terminal state:** `.planning/STATE.md` is the deliverable. Do not prompt the user to begin implementation and do not segue into `/feature`. All planning steps run in plan mode (opusplan); STATE.md and tasks are persisted only after the user exits plan mode.
+> **Terminal state:** `.planning/STATE.md` is the deliverable. Do not segue into `/feature` after approval. STATE.md and tasks are persisted only after the user exits plan mode.
 
-### 1. Pre-flight *(in plan mode — read-only)*
+### 1. Pre-flight
 
 1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`.
-2. **Check for existing `.planning/STATE.md`** via `Read`. If found, ask the user a binary choice: **resume** or **start over**.
+2. **Check for existing `.planning/STATE.md`**. If found, ask the user a binary choice: **resume** or **start over**.
    - **resume** → continue from the phase marked current
    - **start over** → note the choice in conversation context; **do not** back up or overwrite the file yet
-3. **Draft the Plan section** (DoD + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure. Keep this in conversation context only — do not write to disk.
+3. **Draft the Plan section** (DoD + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure. Keep this in conversation context only.
 
 ### 2. Codebase Research
 
@@ -40,14 +40,12 @@ Launch 2-3 `code-architect` agents in parallel, each with a different focus:
 
 Present results using the Architecture Comparison Template.
 
-### 4. Plan Review *(still in plan mode)*
+### 4. Plan Review
 
-Present the finalized plan to the user: Definition of Done, phase breakdown table, chosen architecture and rationale.
-
-Call `ExitPlanMode` to request user approval. The user must exit plan mode before STATE.md is written — this preserves opusplan for the full planning session.
+Present DoD, phases, and chosen architecture, then call `ExitPlanMode` to request approval.
 
 ### 5. Persist *(after plan-mode exit)*
 
 1. If "start over" was chosen in §1, back up the prior `.planning/STATE.md` with a goal-derived name.
-2. `Write` `.planning/STATE.md` from the Session State Template, populating the Plan section (DoD + Phase Breakdown) and the State Progress table.
+2. `Write` `.planning/STATE.md` using the drafted Plan section and initialize the State Progress table.
 3. `TaskCreate` per phase with the phase goal as subject and observable truths as description; set `addBlockedBy` to match the phase dependency graph.
