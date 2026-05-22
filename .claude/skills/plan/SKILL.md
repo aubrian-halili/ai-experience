@@ -15,15 +15,15 @@ disable-model-invocation: true
 
 > **Small-scope gate:** When scope is ≤3 files with no new integration points, skip §2 and §3 and default to Minimal Changes.
 
-> **Terminal state:** `.planning/STATE.md` is the deliverable. Do not segue into `/feature` after approval. STATE.md and tasks are persisted only after the user exits plan mode.
+> **Terminal state.** `.planning/STATE.md` is the only deliverable. After §5, end the turn. **Never** invoke, suggest-then-run, or auto-chain into `/jira` or `/feature` — the user invokes the next skill explicitly.
 
 ### 1. Pre-flight
 
 1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`.
 2. **Check for existing `.planning/STATE.md`**. If found, ask the user a binary choice: **resume** or **start over**.
    - **resume** → continue from the phase marked current
-   - **start over** → note the choice in conversation context; **do not** back up or overwrite the file yet
-3. **Draft the Plan section** (DoD + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure. Keep this in conversation context only.
+   - **start over** → **do not** back up or overwrite the file yet (backup happens in §5)
+3. **Draft the Plan section** (DoD + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure.
 
 ### 2. Codebase Research
 
@@ -49,3 +49,4 @@ Present DoD, phases, and chosen architecture, then call `ExitPlanMode` to reques
 1. If "start over" was chosen in §1, back up the prior `.planning/STATE.md` with a goal-derived name.
 2. `Write` `.planning/STATE.md` using the drafted Plan section and initialize the State Progress table.
 3. `TaskCreate` per phase with the phase goal as subject and observable truths as description; set `addBlockedBy` to match the phase dependency graph.
+4. Report the STATE.md path and the created task list.
