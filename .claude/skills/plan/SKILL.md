@@ -15,7 +15,7 @@ disable-model-invocation: true
 
 > **Small-scope gate:** When scope is ≤3 files with no new integration points, skip §2 and §3 and default to Minimal Changes.
 
-> **Terminal state:** `.planning/STATE.md` is the deliverable. Do not segue into `/feature` after approval. STATE.md and tasks are persisted only after the user exits plan mode.
+> **Terminal state — STOP after persist.** `.planning/STATE.md` is the only deliverable. After §5 writes STATE.md and creates tasks, end the turn. **Never** invoke, suggest-then-run, or auto-chain into `/jira` or `/feature`. The user must explicitly invoke the next skill themselves. STATE.md and tasks are persisted only after the user exits plan mode.
 
 ### 1. Pre-flight
 
@@ -49,3 +49,4 @@ Present DoD, phases, and chosen architecture, then call `ExitPlanMode` to reques
 1. If "start over" was chosen in §1, back up the prior `.planning/STATE.md` with a goal-derived name.
 2. `Write` `.planning/STATE.md` using the drafted Plan section and initialize the State Progress table.
 3. `TaskCreate` per phase with the phase goal as subject and observable truths as description; set `addBlockedBy` to match the phase dependency graph.
+4. **Stop.** Report the STATE.md path and the created task list. Do not propose, preview, or invoke `/jira` or `/feature`. The user will explicitly invoke the next skill when ready.
