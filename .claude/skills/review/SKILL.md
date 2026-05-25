@@ -40,9 +40,11 @@ gh pr view <number> --json state,isDraft,author,labels,headRefName
 - PR is a draft → report and stop
 - PR author is a bot (e.g., `dependabot`, `renovate`) → report and stop
 
-**Fetch PR locally** (required so `git blame`, `Read`, and `Grep` operate on the PR's actual state):
-- If `headRefName` ≠ current branch: refuse if working tree is dirty (`git status --porcelain` non-empty); otherwise confirm with the user, then `gh pr checkout <number>`.
-- If already on the PR branch: `git pull --ff-only` to ensure HEAD matches the PR.
+**Fetch PR locally** (required for `git blame`):
+- Refuse if working tree is dirty (`git status --porcelain` non-empty).
+- If `suggestions/pr-<number>` already exists locally: check for unpushed commits (`git log origin/<headRefName>..suggestions/pr-<number>`); if any exist, stop and report — do not force-update. Otherwise confirm with the user, then force-update: `git fetch origin "pull/<number>/head:+suggestions/pr-<number>"`.
+- Otherwise: `git fetch origin "pull/<number>/head:suggestions/pr-<number>"` — this creates a non-tracking local branch.
+- Then: `git checkout suggestions/pr-<number>`.
 
 ### 2. Analyze Local Changes (Local only)
 
