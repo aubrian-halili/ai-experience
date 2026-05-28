@@ -8,8 +8,8 @@
       "Bash(git pull --ff-only:*)"
     ]
   },
-  "model": "opusplan",
   "availableModels": [
+    "opus",
     "opusplan"
   ],
   "allowedMcpServers": [],
@@ -58,6 +58,6 @@
   },
   "effortLevel": "high",
   "theme": "light",
-  "defaultMode": "plan",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "defaultMode": "acceptEdits"
 }
