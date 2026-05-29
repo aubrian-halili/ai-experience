@@ -7,7 +7,7 @@ description: >-
   Not for: implementing directly (use /feature).
   Not for: creating or managing Jira tickets (use /jira).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
-allowed-tools: Read, Grep, Glob, Write(.planning/STATE.md), Edit(.planning/STATE.md), Agent, Skill, AskUserQuestion, ExitPlanMode, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
+allowed-tools: Read, Grep, Glob, Write(.planning/STATE.md), Edit(.planning/STATE.md), Agent, Skill, AskUserQuestion, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
 disable-model-invocation: true
 ---
 
@@ -42,9 +42,9 @@ Present results using the Architecture Comparison Template.
 
 ### 4. Plan Review
 
-Present DoD, phases, and chosen architecture, then call `ExitPlanMode` to request approval.
+Present DoD, phases, and chosen architecture, then ask the user to approve before persisting.
 
-### 5. Persist *(after plan-mode exit)*
+### 5. Persist *(after approval)*
 
 1. If "start over" was chosen in §1, back up the prior `.planning/STATE.md` with a goal-derived name.
 2. `Write` `.planning/STATE.md` using the drafted Plan section and initialize the State Progress table.
