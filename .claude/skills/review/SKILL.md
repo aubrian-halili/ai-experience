@@ -42,7 +42,10 @@ gh pr view <number> --json state,isDraft,author,labels,headRefName
 
 **Fetch PR locally** (required for `git blame`):
 - Refuse if working tree is dirty (`git status --porcelain` non-empty).
-- If `suggestions/pr-<number>` already exists locally: check for unpushed commits (`git log origin/<headRefName>..suggestions/pr-<number>`); if any exist, stop and report — do not force-update. Otherwise confirm with the user, then force-update: `git fetch origin "pull/<number>/head:+suggestions/pr-<number>"`.
+- If `suggestions/pr-<number>` already exists locally:
+  - Fetch the latest PR head without updating the local branch: `git fetch origin "pull/<number>/head"`.
+  - Check for local-only commits: `git log FETCH_HEAD..suggestions/pr-<number> --oneline`. If any exist, stop and report — do not overwrite local work.
+  - Check if behind: `git log suggestions/pr-<number>..FETCH_HEAD --oneline`. If empty, branch is up to date; skip to checkout. Otherwise, fast-forward update: `git fetch origin "pull/<number>/head:suggestions/pr-<number>"`.
 - Otherwise: `git fetch origin "pull/<number>/head:suggestions/pr-<number>"` — this creates a non-tracking local branch.
 - Then: `git checkout suggestions/pr-<number>`.
 
