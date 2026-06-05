@@ -6,6 +6,7 @@ input=$(cat)
 
 model=$(echo "$input" | jq -r '.model.display_name // "Claude"')
 used=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
 
 if [ -n "$used" ]; then
   used_int=$(printf "%.0f" "$used")
@@ -29,3 +30,5 @@ if [ -n "$used" ]; then
 else
   printf "\033[36m%s\033[0m  [\033[32m░░░░░░░░░░\033[0m] --%%" "$model"
 fi
+
+[ -n "$branch" ] && printf "  \033[35m%s\033[0m" "$branch"
