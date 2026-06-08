@@ -29,8 +29,8 @@ Default approach: three-level checks (Existence → Substance → Wiring).
 ## Three-Level Verification
 
 - **Level 1 — Existence:** `[EXISTS]` / `[MISSING]` with expected path.
-- **Level 2 — Substance:** `[SUBSTANTIVE]` / `[STUB]` / `[PARTIAL]` with `file:line`. Scan for stubs, placeholder throws, empty catches, TODO/FIXME.
-- **Level 3 — Wiring:** `[WIRED]` / `[ORPHANED]` / `[PARTIAL]` with `file:line`. Check imports, routes, middleware, handlers, config.
+- **Level 2 — Substance:** `[SUBSTANTIVE]` / `[STUB]` / `[PARTIAL]` with `file:line`.
+- **Level 3 — Wiring:** `[WIRED]` / `[ORPHANED]` / `[PARTIAL]` with `file:line`.
 
 ## Output
 

@@ -1,38 +1,31 @@
 # Review Response Templates
 
-## Local Changes / Single Files Template
+## Severity (shared)
+
+- **Blocking** — must fix before merge (correctness, security, data loss)
+- **Non-blocking** — should fix (design, clarity, maintainability)
+- **Optional** — nice to have
+
+Every finding references `file:line`. Use a `diff` block for concrete suggestions.
+
+## Local Changes / Single Files
 
 ```markdown
 ## Review Summary
 
 **Verdict**: Approve | Request Changes | Needs Discussion
 
----
+### Blocking
+1. **[Title]** — `file:line` — [problem and fix]
 
-### Critical Issues (Must Fix)
+### Non-blocking
+1. **[Title]** — `file:line` — [suggestion]
 
-1. **[Issue Title]** — `file:line`
-   - **Problem**: [Description]
-   - **Impact**: [Why this matters]
-   - **Fix**:
-   ```diff
-   - current code
-   + suggested code
-   ```
-
-### Important Suggestions (Should Fix)
-
-1. **[Title]** — `file:line`
-   - **Current**: [What exists]
-   - **Suggested**: [What to change]
-   - **Reason**: [Why improve]
-
-### Minor Improvements (Could Fix)
-
-1. **[Improvement]** — `file:line` — [Brief suggestion]
+### Optional
+- [Idea]
 ```
 
-## Pull Request Review Template
+## Pull Request Review
 
 ```markdown
 ## Pull Request Review
@@ -42,47 +35,32 @@
 **Base**: [base-branch] ← [head-branch]
 **Files Changed**: [count] | **+[additions]** / **-[deletions]**
 
----
-
 ### Summary
-
 [2-3 sentence summary of what this PR does and why]
 
 ### Impact
-
 **Blast Radius**: [Low | Medium | High]
 
 | File | Type | Risk | Key Changes |
 |------|------|------|-------------|
 | `src/api/users.ts` | Core Logic | Medium | New endpoint |
 
-### Review Findings
+### Findings
 
-#### Must Address (Blocking)
+#### Blocking
+1. **[Title]** — `file:line` — [problem and fix]
 
-1. **[Issue]** — `file:line`
-   - **Problem**: [Description]
-   - **Suggestion**:
-   ```diff
-   - current
-   + suggested
-   ```
+#### Non-blocking
+1. **[Title]** — `file:line` — [suggestion]
 
-#### Should Address (Non-blocking)
-
-1. **[Issue]** — `file:line` — [Brief suggestion]
-
-#### Consider (Optional)
-
-- [Improvement idea]
+#### Optional
+- [Idea]
 
 ### Testing
-
 [Coverage added/missing — e.g., "Unit tests cover happy path; integration not tested."]
 
 **Verdict**: Approve | Request Changes | Needs Discussion
 
 ### Follow-up
-
 1. [Action item]
 ```
