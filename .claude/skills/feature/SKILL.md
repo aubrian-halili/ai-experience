@@ -2,7 +2,7 @@
 name: feature
 description: >-
   Implement an approved plan (e.g., "implement the plan", "build the feature", "start working on it")
-  through test-driven milestones, then automatically run /verify → /review and stop so the user can inspect the diff before manually running /commit and /pr.
+  through test-driven milestones, then gate completion on /verify PASS and /review clean before handing off to the user for /commit and /pr.
   Requires an approved plan in .planning/STATE.md containing a Jira ticket ID; offers to branch off main if needed.
   Not for: planning (use /plan); not for: creating tickets (use /jira).
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *, acli *), TaskCreate, TaskUpdate, TaskList
@@ -47,18 +47,10 @@ For each milestone:
 
 ### 4. Verify, review, hand off
 
-A feature is **only 100% complete** when all four Definition-of-Done gates pass. Do not declare completion until every box is ticked.
+Run `/verify`, then `/review`. A feature is complete only when:
+- `/verify` returns **PASS** (not PARTIAL/FAIL/SKIP)
+- `/review` returns no High-severity or correctness findings
 
-**Definition of Done**
-
-- [ ] **DoD-1 — STATE.md exists:** `.planning/STATE.md` is present (already enforced by Gate 1).
-- [ ] **DoD-2 — Jira ticket recorded:** ticket ID is present in `.planning/STATE.md` (already enforced by Gate 2).
-- [ ] **DoD-3 — `/verify` passes:** run `/verify` against the plan's Definition of Done. Required outcome: **PASS**. `PARTIAL`, `FAIL`, or `SKIP` blocks completion — address findings and re-run.
-- [ ] **DoD-4 — `/review` passes:** run `/review` on the local changes. Required outcome: no blocking findings (High-severity or correctness issues). Address blocking findings and re-run; non-blocking findings should be surfaced to the user but do not block hand-off.
-
-**Hand-off message (only after all four gates pass):**
-
-> "Implementation complete — DoD-1 (STATE.md) ✓, DoD-2 (Jira ticket <ID>) ✓, DoD-3 (/verify PASS) ✓, DoD-4 (/review clean) ✓. Review the working-tree diff, then run `/commit` to commit and `/pr` to open the pull request when ready."
-
-**If any gate fails:** report which gate(s) failed with `file:line` evidence and stop. Do not say "implementation complete."
+If either fails, report the failing gate with `file:line` evidence and stop.
+On success, tell the user the gates passed and to run `/commit` then `/pr`.
 
