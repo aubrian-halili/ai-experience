@@ -2,7 +2,7 @@
 name: feature
 description: >-
   Implement an approved plan (e.g., "implement the plan", "build the feature", "start working on it")
-  through test-driven milestones, then automatically run /verify → /review and stop so the user can inspect the diff before manually running /commit and /pr.
+  through test-driven milestones, then gate completion on /verify PASS and /review clean before handing off to the user for /commit and /pr.
   Requires an approved plan in .planning/STATE.md containing a Jira ticket ID; offers to branch off main if needed.
   Not for: planning (use /plan); not for: creating tickets (use /jira).
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *, acli *), TaskCreate, TaskUpdate, TaskList
@@ -47,7 +47,10 @@ For each milestone:
 
 ### 4. Verify, review, hand off
 
-Run `/verify` → `/review`, then tell the user:
+Run `/verify`, then `/review`. A feature is complete only when:
+- `/verify` returns **PASS** (not PARTIAL/FAIL/SKIP)
+- `/review` returns no High-severity or correctness findings
 
-> "Implementation complete. Review the working-tree diff, then run `/commit` to commit and `/pr` to open the pull request when ready."
+If either fails, report the failing gate with `file:line` evidence and stop.
+On success, tell the user the gates passed and to run `/commit` then `/pr`.
 

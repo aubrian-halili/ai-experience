@@ -5,6 +5,7 @@ description: >-
   "check for stubs, TODOs, or orphaned code", "is this wired up",
   or references a plan's acceptance criteria to verify against.
   Three-level (Existence, Substance, Wiring) check with file:line evidence. Use after /feature.
+  Acts as a completion gate in the feature workflow — a PASS is required before a feature is considered complete.
   Not for: code quality review (use /review); not for: addressing PR feedback (use /receiving-review).
 argument-hint: "[plan file, feature name, or acceptance criteria]"
 allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Glob
@@ -28,8 +29,8 @@ Default approach: three-level checks (Existence → Substance → Wiring).
 ## Three-Level Verification
 
 - **Level 1 — Existence:** `[EXISTS]` / `[MISSING]` with expected path.
-- **Level 2 — Substance:** `[SUBSTANTIVE]` / `[STUB]` / `[PARTIAL]` with `file:line`. Scan for stubs, placeholder throws, empty catches, TODO/FIXME.
-- **Level 3 — Wiring:** `[WIRED]` / `[ORPHANED]` / `[PARTIAL]` with `file:line`. Check imports, routes, middleware, handlers, config.
+- **Level 2 — Substance:** `[SUBSTANTIVE]` / `[STUB]` / `[PARTIAL]` with `file:line`.
+- **Level 3 — Wiring:** `[WIRED]` / `[ORPHANED]` / `[PARTIAL]` with `file:line`.
 
 ## Output
 
