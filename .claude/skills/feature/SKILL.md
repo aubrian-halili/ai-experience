@@ -47,7 +47,18 @@ For each milestone:
 
 ### 4. Verify, review, hand off
 
-Run `/verify` → `/review`, then tell the user:
+A feature is **only 100% complete** when all four Definition-of-Done gates pass. Do not declare completion until every box is ticked.
 
-> "Implementation complete. Review the working-tree diff, then run `/commit` to commit and `/pr` to open the pull request when ready."
+**Definition of Done**
+
+- [ ] **DoD-1 — STATE.md exists:** `.planning/STATE.md` is present (already enforced by Gate 1).
+- [ ] **DoD-2 — Jira ticket recorded:** ticket ID is present in `.planning/STATE.md` (already enforced by Gate 2).
+- [ ] **DoD-3 — `/verify` passes:** run `/verify` against the plan's Definition of Done. Required outcome: **PASS**. `PARTIAL`, `FAIL`, or `SKIP` blocks completion — address findings and re-run.
+- [ ] **DoD-4 — `/review` passes:** run `/review` on the local changes. Required outcome: no blocking findings (High-severity or correctness issues). Address blocking findings and re-run; non-blocking findings should be surfaced to the user but do not block hand-off.
+
+**Hand-off message (only after all four gates pass):**
+
+> "Implementation complete — DoD-1 (STATE.md) ✓, DoD-2 (Jira ticket <ID>) ✓, DoD-3 (/verify PASS) ✓, DoD-4 (/review clean) ✓. Review the working-tree diff, then run `/commit` to commit and `/pr` to open the pull request when ready."
+
+**If any gate fails:** report which gate(s) failed with `file:line` evidence and stop. Do not say "implementation complete."
 

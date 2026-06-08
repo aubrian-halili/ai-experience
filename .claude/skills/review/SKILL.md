@@ -4,6 +4,7 @@ description: >-
   User asks for "code review", "review this PR", "review my changes",
   "review PR #123", "is this ready to merge", "refactor this", "clean up this code",
   "reduce complexity", mentions "SOLID", "code smells", or "technical debt".
+  Acts as DoD-4 gate in the feature workflow — must return no blocking (High-severity or correctness) findings before a feature is considered complete.
   Not for: verifying completeness against a plan (use /verify).
   Not for: addressing PR review feedback (use /receiving-review).
 argument-hint: "[file, PR number, URL, or component to review] [--refactor]"
