@@ -28,13 +28,20 @@ ultrathink
 
 ### 1. Pre-flight
 
-- Refuse if the working tree is dirty (`git status --porcelain` non-empty) — stop and report. Checkout would clobber uncommitted work.
+- Refuse if the working tree is dirty (`git status --porcelain` non-empty) — stop and report.
 - `gh pr view <number> --json state,isDraft,author,labels,headRefName,title,body`
 - **Stop conditions:** draft PR → report and stop; bot author (e.g. `dependabot`, `renovate`) → report and stop.
 
-### 2. Checkout
+### 2. Fetch PR locally
 
-- `gh pr checkout <number>` — checks out the PR head locally so the diff and `git blame` are available to both passes. Record the base branch from `gh pr view` for the diff range.
+Pull the PR head into a local branch so the diff and `git blame` are available to both passes. Record the base branch from `gh pr view` for the diff range.
+
+- If `pr-<number>` already exists locally:
+  - Fetch the latest PR head without updating the local branch: `git fetch origin "pull/<number>/head"`.
+  - Check for local-only commits: `git log FETCH_HEAD..pr-<number> --oneline`. If any exist, stop and report — do not overwrite local work.
+  - Check if behind: `git log pr-<number>..FETCH_HEAD --oneline`. If empty, the branch is up to date; skip to checkout. Otherwise fast-forward: `git fetch origin "pull/<number>/head:pr-<number>"`.
+- Otherwise: `git fetch origin "pull/<number>/head:pr-<number>"` — creates a non-tracking local branch.
+- Then: `git checkout pr-<number>`.
 
 ### 3. Derive requirements
 
@@ -47,7 +54,7 @@ ultrathink
 Dispatch both passes concurrently — **one message, two `Agent` calls**:
 
 - **Verify agent** — "Follow `.claude/skills/verify/SKILL.md` to a PASS/PARTIAL/FAIL/SKIP verdict, checking the checked-out branch against these acceptance criteria: <derived requirements>. Diff range `<base>..HEAD`. Return the verdict with `file:line` evidence."
-- **Review agent** — "Follow `.claude/skills/review/SKILL.md` to review the diff on the currently checked-out branch (diff range `<base>..HEAD`). Skip its PR pre-flight and checkout — the branch is already current. Return findings grouped by severity with `file:line`."
+- **Review agent** — "Follow `.claude/skills/review/SKILL.md` to review the diff on the current branch (diff range `<base>..HEAD`). Return findings grouped by severity with `file:line`."
 
 Combine both into one verdict using `@references/templates.md`.
 

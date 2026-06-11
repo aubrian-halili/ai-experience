@@ -8,8 +8,8 @@ description: >-
   Not for: end-to-end PR review or merge-readiness (use /gate, which checks out + verifies + reviews).
   Not for: verifying completeness against a plan (use /verify).
   Not for: addressing PR review feedback (use /receiving-review).
-argument-hint: "[file, PR number, URL, or component to review] [--refactor]"
-allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent
+argument-hint: "[file or component to review] [--refactor]"
+allowed-tools: Bash(git *), Read, Grep, Glob, Agent
 ---
 
 **Current branch:** !`git branch --show-current`
@@ -31,38 +31,4 @@ For large scopes (>10 files), dispatch `code-quality-reviewer` and `security-sca
 
 ## Process
 
-### 1. Pre-flight (PR only)
-
-Screen PR eligibility:
-```bash
-gh pr view <number> --json state,isDraft,author,labels,headRefName
-```
-
-**Stop conditions:**
-- PR is a draft → report and stop
-- PR author is a bot (e.g., `dependabot`, `renovate`) → report and stop
-
-**Fetch PR locally** (required for `git blame`):
-- Refuse if working tree is dirty (`git status --porcelain` non-empty).
-- If `suggestions/pr-<number>` already exists locally:
-  - Fetch the latest PR head without updating the local branch: `git fetch origin "pull/<number>/head"`.
-  - Check for local-only commits: `git log FETCH_HEAD..suggestions/pr-<number> --oneline`. If any exist, stop and report — do not overwrite local work.
-  - Check if behind: `git log suggestions/pr-<number>..FETCH_HEAD --oneline`. If empty, branch is up to date; skip to checkout. Otherwise, fast-forward update: `git fetch origin "pull/<number>/head:suggestions/pr-<number>"`.
-- Otherwise: `git fetch origin "pull/<number>/head:suggestions/pr-<number>"` — this creates a non-tracking local branch.
-- Then: `git checkout suggestions/pr-<number>`.
-
-### 2. Analyze Local Changes (Local only)
-
-Present findings using the Local Changes template from `@references/templates.md`.
-
-### 3. Analyze Pull Request (PR only)
-
-```bash
-gh pr view <number> --json title,body,author,baseRefName,headRefName,files,additions,deletions,changedFiles
-gh pr diff <number>
-gh pr view <number> --json reviews,comments
-```
-
-> **Important:** Run `gh pr diff` exactly as shown — it does not support `-- <file>` path filtering or any additional arguments.
-
-Present findings using the Pull Request Review template from `@references/templates.md`.
+Review the diff on the current branch (`origin/main..HEAD`, or `HEAD~1..HEAD` when there is no upstream). The branch is assumed already checked out — `/gate` fetches PRs locally before dispatching this skill, so this skill never fetches or checks out anything itself. Present findings using the template from `@references/templates.md`.

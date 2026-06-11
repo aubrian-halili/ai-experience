@@ -1,6 +1,6 @@
 # Gate Verdict Template
 
-Severity vocabulary is shared with `/review`: **Blocking** (correctness, security, data loss) · **Non-blocking** (design, clarity, maintainability) · **Optional**. Every finding references `file:line`.
+Severity vocabulary and the `file:line` evidence rule are defined in `/review`'s `references/templates.md` (Severity section) — reuse them here.
 
 ```markdown
 ## Gate Result — [PR #<n> "<title>" | feature <name>]
