@@ -1,12 +1,13 @@
 ---
 name: verify
 description: >-
-  User asks "did I finish everything", "verify this is done", "am I done",
-  "check for stubs, TODOs, or orphaned code", "is this wired up",
+  Standalone completeness check. User asks "did I finish everything", "verify this is done",
+  "am I done", "check for stubs, TODOs, or orphaned code", "is this wired up",
   or references a plan's acceptance criteria to verify against.
-  Three-level (Existence, Substance, Wiring) check with file:line evidence. Use after /feature.
-  Acts as a completion gate in the feature workflow — a PASS is required before a feature is considered complete.
-  Not for: code quality review (use /review); not for: addressing PR feedback (use /receiving-review).
+  Three-level (Existence, Substance, Wiring) check with file:line evidence.
+  The completeness building block of /gate.
+  Not for: end-to-end PR review or merge-readiness (use /gate); code quality review (use /review);
+  not for: addressing PR feedback (use /receiving-review).
 argument-hint: "[plan file, feature name, or acceptance criteria]"
 allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Glob
 ---
