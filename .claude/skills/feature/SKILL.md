@@ -47,10 +47,8 @@ For each milestone:
 
 ### 4. Verify, review, hand off
 
-Run `/verify`, then `/review`. A feature is complete only when:
-- `/verify` returns **PASS** (not PARTIAL/FAIL/SKIP)
-- `/review` returns no High-severity or correctness findings
+Invoke `/gate` (feature mode — no PR argument). It runs completeness verification against `.planning/STATE.md` and the code review **in parallel** and emits one verdict. A feature is complete only when `/gate` returns **READY** (VERIFY **PASS** and no Blocking/correctness findings).
 
-If either fails, report the failing gate with `file:line` evidence and stop.
-On success, tell the user the gates passed and to run `/commit` then `/pr`.
+If `/gate` returns **BLOCKED**, report the blockers with `file:line` evidence and stop.
+On success, tell the user the gate passed and to run `/commit` then `/pr`.
 

@@ -1,10 +1,11 @@
 ---
 name: review
 description: >-
-  User asks for "code review", "review this PR", "is this ready to merge",
-  "refactor this", "clean up this code", "reduce complexity",
-  or mentions "SOLID", "code smells", or "technical debt".
-  Acts as a completion gate in the feature workflow — must return no High-severity or correctness findings before a feature is considered complete.
+  Quality-focused code review of local changes, a component, or a single file.
+  User asks for "code review", "review this code", "refactor this", "clean up this code",
+  "reduce complexity", or mentions "SOLID", "code smells", or "technical debt".
+  The quality building block of /gate.
+  Not for: end-to-end PR review or merge-readiness (use /gate, which checks out + verifies + reviews).
   Not for: verifying completeness against a plan (use /verify).
   Not for: addressing PR review feedback (use /receiving-review).
 argument-hint: "[file, PR number, URL, or component to review] [--refactor]"
