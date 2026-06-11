@@ -6,7 +6,7 @@
 - **Non-blocking** — should fix (design, clarity, maintainability)
 - **Optional** — nice to have
 
-Every finding references `file:line`. Use a `diff` block for concrete suggestions.
+Every finding references `file:line`.
 
 ## Review Output
 

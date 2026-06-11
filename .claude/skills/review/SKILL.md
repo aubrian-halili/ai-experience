@@ -31,4 +31,4 @@ For large scopes (>10 files), dispatch `code-quality-reviewer` and `security-sca
 
 ## Process
 
-Review the diff on the current branch (`origin/main..HEAD`, or `HEAD~1..HEAD` when there is no upstream). The branch is assumed already checked out — `/gate` fetches PRs locally before dispatching this skill, so this skill never fetches or checks out anything itself. Present findings using the template from `@references/templates.md`.
+Review the diff on the current branch. Operate on the already-checked-out branch; never fetch or checkout. Present findings using the template from `@references/templates.md`.
