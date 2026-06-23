@@ -45,7 +45,7 @@ You will be assigned one of these categories per invocation:
 
 ## Output Format
 
-Return findings as a structured list, prioritized by severity (Critical first). Group repeated patterns across files under one finding rather than reporting line-by-line. Only report findings you are confident about (>= 80% confidence).
+Return findings as a structured list, prioritized by severity (Critical first). Only report findings you are confident about (>= 80% confidence).
 
 ```
 ### Finding: [Brief title]

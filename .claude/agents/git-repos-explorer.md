@@ -45,4 +45,4 @@ Return one structured report:
 - [Conventions, shared contracts, or gotchas relevant to reusing this in the current repo]
 ```
 
-Surface a finding once with the canonical reference rather than listing every match. If no relevant cross-repo code exists, say so explicitly and state which repos/terms you searched — do not pad the report.
+If no relevant cross-repo code exists, say so explicitly and state which repos/terms you searched — do not pad the report.

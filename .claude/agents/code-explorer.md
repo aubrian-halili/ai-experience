@@ -47,5 +47,4 @@ Return a structured exploration report:
 
 ## Rules
 
-- Do not scan files outside your assigned scope unless following an import chain
-- When you encounter a pattern, note it once with examples rather than listing every instance
+- Follow import chains beyond your assigned scope when they're load-bearing for the topic
