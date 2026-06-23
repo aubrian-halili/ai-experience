@@ -12,6 +12,8 @@ allowed-tools: Bash(gh *)
 
 Layered repository exploration and code searching across the Qred GitHub organization.
 
+> **Planning-time research?** For grounding a `/plan` in how other Qred repos solve a problem, the `git-repos-explorer` agent runs this same read-only search workflow non-interactively and returns a structured Essential References report. This skill is for interactive, ad-hoc browsing.
+
 ## Guardrails
 
 **Read-only and informational operations only.** Refuse any mutating `gh` subcommand (write, delete, close, merge, edit, transfer, archive) and explain why.

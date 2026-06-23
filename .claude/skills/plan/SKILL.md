@@ -29,7 +29,9 @@ disable-model-invocation: true
 
 Launch `code-explorer` with the goal as its topic. Also launch `database-explorer` in parallel (with a research question derived from the goal) if any of these hold: the goal names a table or domain entity; the Jira body contains "migration", "schema", or "model"; or `code-explorer` returns files under `*/migrations/*`, `*/models/*`, or ORM schema paths.
 
-Pass both the **Essential Files** list from `code-explorer` and the **Essential Tables** list from `database-explorer` (when present) into every `code-architect` agent in §3.
+Launch `git-repos-explorer` in parallel **only when** the goal needs grounding outside this repo: it names another Qred service or repo; it integrates with a shared Qred library or contract; or the relevant prior art is expected to live in another repo rather than locally. Skip it for self-contained, in-repo work — cross-repo search is slower and is unnecessary by default.
+
+Pass the **Essential Files** list from `code-explorer`, the **Essential Tables** list from `database-explorer` (when present), and the **Essential References** list from `git-repos-explorer` (when present) into every `code-architect` agent in §3.
 
 ### 3. Architecture Comparison
 
