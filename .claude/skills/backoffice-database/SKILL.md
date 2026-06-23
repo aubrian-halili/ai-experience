@@ -4,7 +4,7 @@ description: >-
   User asks to "query the database", "show tables", "list schemas", "describe table",
   "inspect table", "run a SQL query", "database schema", or mentions "backoffice", "Aurora", or "postgres".
   Read-only by default (transactions forced read-only); defaults to the qred_se_db / public schema.
-  Not for: writing application code or migrations (use /feature); not for: browsing schema-related application code (use /qred-repo).
+  Not for: writing application code or migrations (use /feature); not for: browsing schema-related application code (use /git-repos).
 argument-hint: "[database or table name, or SQL query]"
 allowed-tools: Bash(PGPASSWORD=*)
 disable-model-invocation: true

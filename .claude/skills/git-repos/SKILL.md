@@ -1,5 +1,5 @@
 ---
-name: qred-repo
+name: git-repos
 description: >-
   User asks to "browse a Qred repo", "search code across Qred repos", "list Qred repos",
   "find <term> in <repo>", "view PR/issue in <repo>", or "read a file from a Qred repo".
