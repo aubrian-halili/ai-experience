@@ -53,8 +53,8 @@ Pull the PR head into a local branch so the diff and `git blame` are available t
 
 Dispatch both passes concurrently — **one message, two `Agent` calls**:
 
-- **Verify agent** — "Follow `.claude/skills/verify/SKILL.md` to a PASS/PARTIAL/FAIL/SKIP verdict, checking the checked-out branch against these acceptance criteria: <derived requirements>. Diff range `<base>..HEAD`. Return the verdict with `file:line` evidence."
-- **Review agent** — "Follow `.claude/skills/review/SKILL.md` to review the diff on the current branch (diff range `<base>..HEAD`). Return findings grouped by severity with `file:line`."
+- **Verify agent** — "Read the skill at `~/.claude/skills/verify/SKILL.md` (expand `~` to your home directory; this is a user-level path, NOT relative to the repo working directory) and follow it to a PASS/PARTIAL/FAIL/SKIP verdict, checking the checked-out branch against these acceptance criteria: <derived requirements>. Diff range `<base>..HEAD`. Return the verdict with `file:line` evidence."
+- **Review agent** — "Read the skill at `~/.claude/skills/review/SKILL.md` (expand `~` to your home directory; this is a user-level path, NOT relative to the repo working directory) and follow it — including dispatching its specialized review passes (`code-explorer` for sibling divergence, `code-architect` for realignment, etc.) — to review the diff on the current branch (diff range `<base>..HEAD`). Return findings grouped by severity with `file:line`."
 
 Combine both into one verdict using `@references/templates.md`.
 
@@ -62,9 +62,9 @@ Combine both into one verdict using `@references/templates.md`.
 
 Requirements source = the **Definition of Done / Observable Truths** in `.planning/STATE.md`. No checkout (already on the feature branch).
 
-Dispatch the same two passes in parallel:
-- **Verify agent** — follow `.claude/skills/verify/SKILL.md` against `.planning/STATE.md`.
-- **Review agent** — follow `.claude/skills/review/SKILL.md` on the diff vs `origin/main`.
+Dispatch the same two passes in parallel (paths are user-level — expand `~`, do NOT resolve relative to the repo working directory):
+- **Verify agent** — read and follow `~/.claude/skills/verify/SKILL.md` against `.planning/STATE.md`.
+- **Review agent** — read and follow `~/.claude/skills/review/SKILL.md` (including its specialized review passes) on the diff vs `origin/main`.
 
 Then emit the combined verdict.
 
