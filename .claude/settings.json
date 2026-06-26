@@ -59,6 +59,6 @@
   "effortLevel": "high",
   "theme": "light",
   "skipAutoPermissionPrompt": true,
-  "defaultMode": "acceptEdits",
+  "defaultMode": "auto",
   "tui": "fullscreen"
 }

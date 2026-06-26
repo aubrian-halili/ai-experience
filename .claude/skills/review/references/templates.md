@@ -2,11 +2,9 @@
 
 ## Severity
 
-- **Blocking** — must fix before merge (correctness, security, data loss)
-- **Non-blocking** — should fix (design, clarity, maintainability)
+- **Blocking** — must fix before merge
+- **Non-blocking** — should fix
 - **Optional** — nice to have
-
-Every finding references `file:line`.
 
 ## Review Output
 
@@ -26,6 +24,11 @@ Every finding references `file:line`.
 
 ### Optional
 - [Idea]
+
+### Pattern Alignment
+[From code-explorer + code-architect. For each unjustified divergence:]
+1. **[Title]** — divergent `file:line` vs sibling `file:line` — [how it departs] → [code-architect realignment suggestion]
+[If none: "No unjustified divergence from existing siblings."]
 
 ### Testing
 [Coverage added/missing — e.g., "Unit tests cover happy path; integration not tested."]
