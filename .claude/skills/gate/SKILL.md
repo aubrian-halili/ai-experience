@@ -28,7 +28,7 @@ ultrathink
 
 ### 1. Pre-flight
 
-- Refuse if the working tree is dirty (`git status --porcelain` non-empty) — stop and report.
+- Refuse if the working tree is dirty (see **Working tree** above) — stop and report.
 - `gh pr view <number> --json state,isDraft,author,labels,headRefName,title,body`
 - **Stop conditions:** draft PR → report and stop; bot author (e.g. `dependabot`, `renovate`) → report and stop.
 
@@ -37,10 +37,10 @@ ultrathink
 Pull the PR head into a local branch so the diff and `git blame` are available to both passes. Record the base branch from `gh pr view` for the diff range.
 
 - If `pr-<number>` already exists locally:
-  - Fetch the latest PR head without updating the local branch: `git fetch origin "pull/<number>/head"`.
+  - `git fetch origin "pull/<number>/head"`.
   - Check for local-only commits: `git log FETCH_HEAD..pr-<number> --oneline`. If any exist, stop and report — do not overwrite local work.
-  - Check if behind: `git log pr-<number>..FETCH_HEAD --oneline`. If empty, the branch is up to date; skip to checkout. Otherwise fast-forward: `git fetch origin "pull/<number>/head:pr-<number>"`.
-- Otherwise: `git fetch origin "pull/<number>/head:pr-<number>"` — creates a non-tracking local branch.
+  - Check if behind: `git log pr-<number>..FETCH_HEAD --oneline`. If empty, skip to checkout. Otherwise fast-forward: `git fetch origin "pull/<number>/head:pr-<number>"`.
+- Otherwise: `git fetch origin "pull/<number>/head:pr-<number>"`.
 - Then: `git checkout pr-<number>`.
 
 ### 3. Derive requirements
@@ -53,8 +53,8 @@ Pull the PR head into a local branch so the diff and `git blame` are available t
 
 Dispatch both passes concurrently — **one message, two `Agent` calls**:
 
-- **Verify agent** — "Follow `.claude/skills/verify/SKILL.md` to a PASS/PARTIAL/FAIL/SKIP verdict, checking the checked-out branch against these acceptance criteria: <derived requirements>. Diff range `<base>..HEAD`. Return the verdict with `file:line` evidence."
-- **Review agent** — "Follow `.claude/skills/review/SKILL.md` to review the diff on the current branch (diff range `<base>..HEAD`). Return findings grouped by severity with `file:line`."
+- **Verify agent** — "Read the skill at `~/.claude/skills/verify/SKILL.md` (a user-level path — resolve against $HOME, NOT the repo working directory) and follow it to a PASS/PARTIAL/FAIL/SKIP verdict, checking the checked-out branch against these acceptance criteria: <derived requirements>. Diff range `<base>..HEAD`. Return the verdict with `file:line` evidence."
+- **Review agent** — "Read the skill at `~/.claude/skills/review/SKILL.md` (a user-level path — resolve against $HOME, NOT the repo working directory) and follow it — including dispatching its specialized review passes (`code-explorer` for sibling divergence, `code-architect` for realignment, etc.) — to review the diff on the current branch (diff range `<base>..HEAD`). Return findings grouped by severity with `file:line`."
 
 Combine both into one verdict using `@references/templates.md`.
 
@@ -62,9 +62,9 @@ Combine both into one verdict using `@references/templates.md`.
 
 Requirements source = the **Definition of Done / Observable Truths** in `.planning/STATE.md`. No checkout (already on the feature branch).
 
-Dispatch the same two passes in parallel:
-- **Verify agent** — follow `.claude/skills/verify/SKILL.md` against `.planning/STATE.md`.
-- **Review agent** — follow `.claude/skills/review/SKILL.md` on the diff vs `origin/main`.
+Dispatch the same two passes in parallel (paths are user-level — resolve against $HOME, NOT the repo working directory):
+- **Verify agent** — read and follow `~/.claude/skills/verify/SKILL.md` against `.planning/STATE.md`.
+- **Review agent** — read and follow `~/.claude/skills/review/SKILL.md` (including its specialized review passes) on the diff vs `origin/main`.
 
 Then emit the combined verdict.
 
