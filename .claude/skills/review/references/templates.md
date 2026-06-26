@@ -27,6 +27,11 @@ Every finding references `file:line`.
 ### Optional
 - [Idea]
 
+### Pattern Alignment
+[From code-explorer + code-architect. For each unjustified divergence:]
+1. **[Title]** — divergent `file:line` vs sibling `file:line` — [how it departs] → [code-architect realignment suggestion]
+[If none: "No unjustified divergence from existing siblings."]
+
 ### Testing
 [Coverage added/missing — e.g., "Unit tests cover happy path; integration not tested."]
 ```
