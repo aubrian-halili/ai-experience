@@ -2,11 +2,9 @@
 
 ## Severity
 
-- **Blocking** — must fix before merge (correctness, security, data loss)
-- **Non-blocking** — should fix (design, clarity, maintainability)
+- **Blocking** — must fix before merge
+- **Non-blocking** — should fix
 - **Optional** — nice to have
-
-Every finding references `file:line`.
 
 ## Review Output
 

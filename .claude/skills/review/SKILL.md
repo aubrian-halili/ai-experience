@@ -43,4 +43,4 @@ Stage 2 depends on `code-explorer`'s output:
 
 ## Process
 
-Review the diff on the current branch. Operate on the already-checked-out branch; never fetch or checkout. Run the Specialized Review Passes, fold `code-architect`'s realignment suggestions into the divergence findings, then present everything using the template from `@references/templates.md`.
+Review the diff on the current branch; never fetch or checkout. Run the Specialized Review Passes, fold `code-architect`'s realignment suggestions into the divergence findings, then present everything using the template from `@references/templates.md`.
