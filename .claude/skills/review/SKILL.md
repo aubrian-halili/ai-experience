@@ -17,32 +17,12 @@ allowed-tools: Bash(git *), Read, Grep, Glob, Agent
 
 ultrathink
 
-## Reporting Threshold
+You must be in a main loop with the `Agent` tool — the review fans out to subagents that cannot
+themselves spawn subagents (see the nesting rule in `~/.claude/skills/gate/references/passes.md`).
 
-Only report a finding where `git blame -L <start>,<end> <file>` confirms the issue is introduced by this change, not pre-existing.
+Review the local diff on the current branch — **never fetch or checkout**. Follow the specialized
+review passes in `~/.claude/skills/gate/references/passes.md` (Stage 1 concurrently, then Stage 2),
+scoped to `$ARGUMENTS` if a file/component is given. Pass `--refactor` for a Clean Code / SOLID pass
+with Edit suggestions.
 
-## Input Handling
-
-Pass `--refactor` to perform a Clean Code & SOLID-focused review with Edit suggestions (e.g., `src/auth/ --refactor`).
-
-## Specialized Review Passes
-
-> **Requires the `Agent` tool.** A nested agent cannot spawn its own subagents, so these passes must run from the main conversation loop. If you lack the `Agent` tool (e.g. you were spawned as a sub-agent), STOP and report that `/review` must be run from the main loop — do not perform the passes inline, which degrades them to a surface scan.
-
-Always dispatch these subagents. Stage 1 runs concurrently — **one message, parallel `Agent` calls**:
-
-- **`code-quality-reviewer`**
-- **`security-scanner`**
-- **`database-explorer`** — *only when the diff touches persisted data* (migrations, schema, ORM models, queries, named entities mapping to tables). Skip otherwise.
-- **`code-explorer`** — find 2-3 existing siblings of the same archetype as the changed code (e.g. another route handler, another migration, another React hook). Compare the new code against them and report **unjustified divergence** — where the new code departs from the established sibling pattern without a reason evident in the diff. For each divergence, return the sibling's pattern (`file:line`) and the divergent code (`file:line`). If no sibling exists (new/greenfield project, first of its archetype), say so.
-
-Stage 2 depends on `code-explorer`'s output:
-
-- **`code-architect`** — dispatch in all cases:
-  - **Divergences flagged** — one `code-architect` per divergence with the existing sibling pattern and the divergent code; it produces a concrete realignment suggestion.
-  - **No sibling exists** (new project, first of its archetype) — dispatch one `code-architect` with the new code and no prior pattern; it produces the recommended pattern from first principles for the code to follow and future siblings to match.
-  - **Siblings exist with no unjustified divergence** — skip; note that the new code aligns with established patterns.
-
-## Process
-
-Review the diff on the current branch; never fetch or checkout. Run the Specialized Review Passes, fold `code-architect`'s realignment suggestions into the divergence findings, then present everything using the template from `@references/templates.md`.
+Present everything using `~/.claude/skills/gate/references/templates.md`.
