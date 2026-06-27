@@ -17,8 +17,8 @@ allowed-tools: Bash(git *), Read, Grep, Glob, Agent
 
 ultrathink
 
-You must be in a main loop with the `Agent` tool — the review fans out to subagents that cannot
-themselves spawn subagents (see the nesting rule in `~/.claude/skills/gate/references/passes.md`).
+You must be in a main loop with the `Agent` tool — see the nesting rule in
+`~/.claude/skills/gate/references/passes.md`.
 
 Review the local diff on the current branch — **never fetch or checkout**. Follow the specialized
 review passes in `~/.claude/skills/gate/references/passes.md` (Stage 1 concurrently, then Stage 2),

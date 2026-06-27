@@ -16,6 +16,6 @@ allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Gl
 **Changed files:** !`git diff --name-only origin/main..HEAD 2>/dev/null || git diff --name-only HEAD~1..HEAD`
 
 Run the completeness procedure in `~/.claude/skills/gate/references/completeness.md` against
-`$ARGUMENTS` (or, if none, the current branch diff above). It is self-contained — no subagents.
+`$ARGUMENTS` (or, if none, the current branch diff above).
 
-Emit the three-level findings and a **PASS / PARTIAL / FAIL / SKIP** verdict with `file:line` evidence.
+Emit the three-level findings and the verdict it defines.

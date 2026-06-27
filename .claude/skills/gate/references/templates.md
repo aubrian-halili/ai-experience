@@ -4,11 +4,7 @@ Single source for severity vocabulary, the review output block, and the combined
 
 ## Severity
 
-- **Blocking** — must fix before merge
-- **Non-blocking** — should fix
-- **Optional** — nice to have
-
-Every finding cites `file:line` evidence.
+**Blocking** · **Non-blocking** · **Optional** — every finding cites `file:line` evidence.
 
 ## Review Output (`/review`, and the Quality section of `/gate`)
 

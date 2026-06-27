@@ -42,7 +42,7 @@ Pull the PR head into a local branch so the diff and `git blame` are available t
 
 - If `pr-<number>` already exists locally:
   - `git fetch origin "pull/<number>/head"`.
-  - Check for local-only commits: `git log FETCH_HEAD..pr-<number> --oneline`. If any exist, stop and report — do not overwrite local work.
+  - Check for local-only commits: `git log FETCH_HEAD..pr-<number> --oneline`. If any exist, stop and report.
   - Check if behind: `git log pr-<number>..FETCH_HEAD --oneline`. If empty, skip to checkout. Otherwise fast-forward: `git fetch origin "pull/<number>/head:pr-<number>"`.
 - Otherwise: `git fetch origin "pull/<number>/head:pr-<number>"`.
 - Then: `git checkout pr-<number>`.
@@ -59,7 +59,7 @@ Dispatch everything from **this (main) loop** in **one message** — never wrap 
 `Agent` call (see the nesting rule in `references/passes.md`). The diff range is `<base>..HEAD`.
 
 - **Completeness** — one `Agent` call following `references/completeness.md` against the derived
-  requirements. It is self-contained and never fans out, so nesting it is safe.
+  requirements (self-contained, safe to nest).
 - **Review — Stage 1** — dispatch the specialized passes from `references/passes.md` as individual
   `Agent` calls in this same message (`code-quality-reviewer`, `security-scanner`, `code-explorer`,
   and `database-explorer` only when the diff touches persisted data).
