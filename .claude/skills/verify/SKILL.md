@@ -15,27 +15,7 @@ allowed-tools: Bash(git *, npm test *, npx jest *, npx vitest *), Read, Grep, Gl
 **Current branch:** !`git branch --show-current`
 **Changed files:** !`git diff --name-only origin/main..HEAD 2>/dev/null || git diff --name-only HEAD~1..HEAD`
 
-## Input Handling
+Run the completeness procedure in `~/.claude/skills/gate/references/completeness.md` against
+`$ARGUMENTS` (or, if none, the current branch diff above).
 
-Default approach: three-level checks (Existence → Substance → Wiring).
-
-| Input | Approach |
-|-------|----------|
-| Plan file path | Extract observable truths |
-| Feature name | Discover feature scope |
-| Acceptance criteria | Parse criteria, map to code |
-| Directory | Anti-pattern scan + wiring check |
-| `"stubs"` / `"todos"` / `"placeholders"` | Focused scan across codebase |
-
-## Three-Level Verification
-
-- **Level 1 — Existence:** `[EXISTS]` / `[MISSING]` with expected path.
-- **Level 2 — Substance:** `[SUBSTANTIVE]` / `[STUB]` / `[PARTIAL]` with `file:line`.
-- **Level 3 — Wiring:** `[WIRED]` / `[ORPHANED]` / `[PARTIAL]` with `file:line`.
-
-## Output
-
-- **PASS** — all three levels verified with fresh `file:line` evidence
-- **PARTIAL** — exists and substantive but wiring incomplete or untested
-- **FAIL** — missing, stub, or orphaned
-- **SKIP** — could not verify
+Emit the three-level findings and the verdict it defines.

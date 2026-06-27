@@ -1,6 +1,40 @@
-# Gate Verdict Template
+# Templates
 
-Severity vocabulary and the `file:line` evidence rule are defined in `/review`'s `references/templates.md` (Severity section) — reuse them here.
+Single source for severity vocabulary, the review output block, and the combined gate verdict.
+
+## Severity
+
+**Blocking** · **Non-blocking** · **Optional** — every finding cites `file:line` evidence.
+
+## Review Output (`/review`, and the Quality section of `/gate`)
+
+```markdown
+## Review Summary
+
+**Verdict**: Approve | Request Changes | Needs Discussion
+
+### Impact
+**Blast Radius**: [Low | Medium | High]
+
+### Blocking
+1. **[Title]** — `file:line` — [problem and fix]
+
+### Non-blocking
+1. **[Title]** — `file:line` — [suggestion]
+
+### Optional
+- [Idea]
+
+### Pattern Alignment
+[From code-explorer + code-architect. For each unjustified divergence:]
+1. **[Title]** — divergent `file:line` vs sibling `file:line` — [how it departs] → [code-architect realignment suggestion]
+[If none: "No unjustified divergence from existing siblings."]
+
+### Testing
+[Coverage added/missing — e.g., "Unit tests cover happy path; integration not tested."]
+```
+
+## Gate Verdict (`/gate`)
 
 ```markdown
 ## Gate Result — [PR #<n> "<title>" | feature <name>]

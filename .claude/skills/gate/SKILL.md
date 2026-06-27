@@ -1,14 +1,15 @@
 ---
 name: gate
 description: >-
-  End-to-end completion gate. User asks to "review this PR", "is this ready to merge",
-  "check this PR / feature", or wants a feature gated before handoff.
+  End-to-end completion gate, and the canonical home of the completeness + quality checks.
+  User asks to "review this PR", "is this ready to merge", "check this PR / feature",
+  or wants a feature gated before handoff.
   Auto-checks-out the PR, derives requirements (PR description for PRs, .planning/STATE.md for features),
   then runs completeness verification and code review IN PARALLEL and emits one combined verdict.
   Not for: standalone completeness check (use /verify); standalone quality review of local code (use /review);
   addressing PR review feedback (use /receiving-review).
 argument-hint: "[PR number/URL, or nothing to gate the current feature]"
-allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Agent, AskUserQuestion
+allowed-tools: Bash(git *, gh *, npm test *, npx jest *, npx vitest *), Read, Grep, Glob, Agent, AskUserQuestion
 ---
 
 **Current branch:** !`git branch --show-current`
@@ -24,6 +25,9 @@ ultrathink
 | (none) + `.planning/STATE.md` exists | **Feature** | `.planning/STATE.md` Definition of Done |
 | (none) + no `.planning/STATE.md` | Ask the user which PR number or feature to gate, then re-enter |
 
+All `references/...` paths below are relative to this skill directory. When invoked at user level,
+resolve them against `~/.claude/skills/gate/references/...` ($HOME, not the repo working directory).
+
 ## PR mode
 
 ### 1. Pre-flight
@@ -38,7 +42,7 @@ Pull the PR head into a local branch so the diff and `git blame` are available t
 
 - If `pr-<number>` already exists locally:
   - `git fetch origin "pull/<number>/head"`.
-  - Check for local-only commits: `git log FETCH_HEAD..pr-<number> --oneline`. If any exist, stop and report — do not overwrite local work.
+  - Check for local-only commits: `git log FETCH_HEAD..pr-<number> --oneline`. If any exist, stop and report.
   - Check if behind: `git log pr-<number>..FETCH_HEAD --oneline`. If empty, skip to checkout. Otherwise fast-forward: `git fetch origin "pull/<number>/head:pr-<number>"`.
 - Otherwise: `git fetch origin "pull/<number>/head:pr-<number>"`.
 - Then: `git checkout pr-<number>`.
@@ -51,29 +55,34 @@ Pull the PR head into a local branch so the diff and `git blame` are available t
 
 ### 4. Gate (parallel)
 
-Dispatch both passes concurrently — **one message, two `Agent` calls**:
+Dispatch everything from **this (main) loop** in **one message** — never wrap the review in a single
+`Agent` call (see the nesting rule in `references/passes.md`). The diff range is `<base>..HEAD`.
 
-- **Verify agent** — "Read the skill at `~/.claude/skills/verify/SKILL.md` (a user-level path — resolve against $HOME, NOT the repo working directory) and follow it to a PASS/PARTIAL/FAIL/SKIP verdict, checking the checked-out branch against these acceptance criteria: <derived requirements>. Diff range `<base>..HEAD`. Return the verdict with `file:line` evidence."
-- **Review agent** — "Read the skill at `~/.claude/skills/review/SKILL.md` (a user-level path — resolve against $HOME, NOT the repo working directory) and follow it — including dispatching its specialized review passes (`code-explorer` for sibling divergence, `code-architect` for realignment, etc.) — to review the diff on the current branch (diff range `<base>..HEAD`). Return findings grouped by severity with `file:line`."
+- **Completeness** — one `Agent` call following `references/completeness.md` against the derived
+  requirements (self-contained, safe to nest).
+- **Review — Stage 1** — dispatch the specialized passes from `references/passes.md` as individual
+  `Agent` calls in this same message (`code-quality-reviewer`, `security-scanner`, `code-explorer`,
+  and `database-explorer` only when the diff touches persisted data).
 
-Combine both into one verdict using `@references/templates.md`.
+Then **Review — Stage 2** (depends on `code-explorer`): dispatch `code-architect` per
+`references/passes.md` and fold the realignment suggestions into the divergence findings.
+
+Combine completeness + all review findings into one verdict using `references/templates.md`.
 
 ## Feature mode
 
 Requirements source = the **Definition of Done / Observable Truths** in `.planning/STATE.md`. No checkout (already on the feature branch).
 
-Dispatch the same two passes in parallel (paths are user-level — resolve against $HOME, NOT the repo working directory):
-- **Verify agent** — read and follow `~/.claude/skills/verify/SKILL.md` against `.planning/STATE.md`.
-- **Review agent** — read and follow `~/.claude/skills/review/SKILL.md` (including its specialized review passes) on the diff vs `origin/main`.
+Dispatch using the **same topology as §4**, with two deltas: requirements come from `.planning/STATE.md` (completeness runs `references/completeness.md` against it), and the diff range is `origin/main..HEAD`.
 
 Then emit the combined verdict.
 
 ## Combined verdict
 
-- **READY** — VERIFY is **PASS** *and* REVIEW has no Blocking or correctness findings.
+- **READY** — completeness is **PASS** *and* review has no Blocking or correctness findings.
 - **BLOCKED** — anything else. List exactly what blocks, each with `file:line`.
 
 ## Related Skills
 
-- `/verify`, `/review` — the building blocks this skill runs in parallel; invoke them directly for a single dimension.
+- `/verify`, `/review` — thin shims over `references/completeness.md` and `references/passes.md`; invoke them directly for a single dimension.
 - `/receiving-review` — after the gate, to address reviewer feedback.
