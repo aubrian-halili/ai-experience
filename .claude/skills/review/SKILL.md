@@ -27,6 +27,8 @@ Pass `--refactor` to perform a Clean Code & SOLID-focused review with Edit sugge
 
 ## Specialized Review Passes
 
+> **Requires the `Agent` tool.** These passes MUST be dispatched as real subagents. If you are running without the `Agent` tool — e.g. you were spawned as a sub-agent by another skill — you CANNOT fan out, and a nested agent cannot spawn its own subagents. In that case STOP and report that `/review` must be run from the main conversation loop; do **not** silently perform the passes inline, which degrades them to a surface scan that misses cross-file sibling divergence and DB-schema issues. (Callers like `/gate` must dispatch these passes from the main loop — never by wrapping `/review` in one agent.)
+
 Always dispatch these subagents. Stage 1 runs concurrently — **one message, parallel `Agent` calls**:
 
 - **`code-quality-reviewer`** — type safety, error handling, test coverage, performance, documentation.
