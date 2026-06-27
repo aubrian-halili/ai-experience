@@ -53,10 +53,12 @@ Pull the PR head into a local branch so the diff and `git blame` are available t
 
 > **Do NOT nest the review fan-out.** A spawned agent cannot spawn its own subagents. If you wrap `/review` in a single `Agent` call, its Specialized Review Passes (`code-quality-reviewer`, `security-scanner`, `code-explorer`, `database-explorer`, `code-architect`) silently collapse into one inline scan — which misses cross-file sibling divergence and DB-schema issues (e.g. an inlined query that duplicates an existing repository, or a missing `WHERE isactive` filter). The review passes MUST be dispatched from **this (main) loop**, where the `Agent` tool is available. Only `verify` may be nested, because it is self-contained and never fans out.
 
+All `~/.claude/...` paths below are user-level — resolve them against $HOME, not the repo working directory.
+
 Dispatch concurrently from the main loop — **one message** containing all of:
 
-- **Verify** (one nested `Agent` call) — "Read and follow the skill at `~/.claude/skills/verify/SKILL.md` (a user-level path — resolve against $HOME, NOT the repo working directory) to a PASS/PARTIAL/FAIL/SKIP verdict, checking the checked-out branch against these acceptance criteria: <derived requirements>. Diff range `<base>..HEAD`. Return the verdict with `file:line` evidence."
-- **Review — Stage 1 passes** — read `~/.claude/skills/review/SKILL.md` (resolve against $HOME) yourself, then dispatch ITS "Specialized Review Passes" as individual `Agent` calls in this same message (do NOT wrap them in one agent):
+- **Verify** (one nested `Agent` call) — "Read and follow the skill at `~/.claude/skills/verify/SKILL.md` to a PASS/PARTIAL/FAIL/SKIP verdict, checking the checked-out branch against these acceptance criteria: <derived requirements>. Diff range `<base>..HEAD`. Return the verdict with `file:line` evidence."
+- **Review — Stage 1 passes** — read `~/.claude/skills/review/SKILL.md` yourself, then dispatch ITS "Specialized Review Passes" as individual `Agent` calls in this same message:
   - `code-quality-reviewer` — type safety, error handling, test coverage, performance, documentation.
   - `security-scanner` — OWASP injection, auth/access, crypto, config.
   - `code-explorer` — find 2-3 existing siblings of the changed code's archetype; report unjustified divergence with `file:line` for both the sibling pattern and the divergent code.
@@ -71,9 +73,7 @@ Combine verify + all review findings into one verdict using `@references/templat
 
 Requirements source = the **Definition of Done / Observable Truths** in `.planning/STATE.md`. No checkout (already on the feature branch).
 
-Dispatch using the **same topology as §4** — verify nested, review passes fanned out from the main loop (never wrap the review fan-out in one agent). Paths are user-level — resolve against $HOME, NOT the repo working directory:
-- **Verify** (one nested `Agent` call) — read and follow `~/.claude/skills/verify/SKILL.md` against `.planning/STATE.md`.
-- **Review — Stage 1 + Stage 2** — dispatch the review skill's Specialized Review Passes (`code-quality-reviewer`, `security-scanner`, `code-explorer`, and `database-explorer` when the diff touches persisted data), then `code-architect` per divergence — all from the main loop, on the diff vs `origin/main`.
+Dispatch using the **same topology as §4**, with two deltas: requirements come from `.planning/STATE.md` (Verify reads `~/.claude/skills/verify/SKILL.md` against it), and the diff range is `origin/main..HEAD`.
 
 Then emit the combined verdict.
 
