@@ -49,7 +49,7 @@ For each milestone:
 
 After milestones are implemented, format the changed files with Prettier before gating:
 - If Prettier is available (`npx prettier --version`), run `npx prettier --write` on changed files matching `*.{ts,tsx,js,jsx,json,md}`.
-- If Prettier is not available, skip silently — do not add it as a dependency.
+- If Prettier is not available, skip the format step — do not install it.
 
 ### 5. Verify, review, hand off
 
