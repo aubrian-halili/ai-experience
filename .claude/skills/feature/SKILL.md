@@ -45,7 +45,13 @@ For each milestone:
   - Worker brief must specify: remove orphaned imports/vars caused by the change, but leave pre-existing dead code alone.
 - **Sequential milestones** — implement inline, in order.
 
-### 4. Verify, review, hand off
+### 4. Format
+
+After milestones are implemented, format the changed files with Prettier before gating:
+- If Prettier is available (`npx prettier --version`), run `npx prettier --write` on changed files matching `*.{ts,tsx,js,jsx,json,md}`.
+- If Prettier is not available, skip the format step — do not install it.
+
+### 5. Verify, review, hand off
 
 Invoke `/gate` (feature mode — no PR argument). It runs completeness verification against `.planning/STATE.md` and the code review **in parallel** and emits one verdict. A feature is complete only when `/gate` returns **READY** (VERIFY **PASS** and no Blocking/correctness findings).
 

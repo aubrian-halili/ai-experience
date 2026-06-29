@@ -13,45 +13,6 @@
     "opusplan"
   ],
   "allowedMcpServers": [],
-  "hooks": {
-    "PostCompact": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Context was compacted. If a .planning/STATE.md file exists, re-read it. Run TaskList to recover in-progress task context. If tasks show a skill was active (e.g., /feature, /verify, /review), re-read that skill's SKILL.md file from .claude/skills/<name>/SKILL.md to restore the exact gates, Iron Laws, and process steps before continuing."
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/check-commit-jira.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/check-branch-jira.sh"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/auto-format.sh"
-          }
-        ]
-      }
-    ]
-  },
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/scripts/statusline.sh"
