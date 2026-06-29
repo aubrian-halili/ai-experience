@@ -11,16 +11,18 @@
 
 ```text
 .claude/
-├── agents/          # 5 reusable subagent definitions
-├── skills/          # 15 specialized workflow skills
+├── agents/          # 7 reusable subagent definitions
+├── skills/          # 13 specialized workflow skills
 ├── rules/           # Modular instruction files
+├── scripts/         # Shell scripts (e.g. statusline.sh)
 └── settings.json    # Project-wide settings
 ```
 
 ## Common Tasks
 
-- **Creating PRs**: Use `/pr` skill for auto-generated titles/descriptions
-- **Code review**: Use `/review` skill for multi-dimensional analysis
+- **Planning work**: Use `/plan` skill to decompose, scope, and compare approaches before implementation
+- **Implementing**: Use `/feature` skill to build an approved plan through test-driven milestones
+- **Gating completion**: Use `/gate` skill for end-to-end merge-readiness (checkout + verify + review)
 
 ## Testing
 
@@ -30,7 +32,7 @@
 ## Architecture Decisions
 
 - Skills follow the `SKILL.md + references/` pattern
-- Frontmatter defines metadata (name, description, tools, context)
+- Frontmatter defines metadata (`name`, `description`, `allowed-tools`, `argument-hint`)
 - Reference materials split into separate files for maintainability
 - Skills integrate via cross-references, not direct dependencies
 
