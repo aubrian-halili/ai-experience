@@ -48,13 +48,20 @@ gh pr view $PR_NUMBER --json reviews,comments
 
 If any feedback is ambiguous, ask the user before implementing.
 
-### 3. Verify Suggestions Against Codebase
+### 3. Verify Before Implementing
 
-**YAGNI check** — grep for actual usage before implementing "proper" abstractions a reviewer suggests:
-```bash
-grep -r "<SuggestedName>" --include="*.ts" --include="*.tsx" src/
-```
-If the suggested addition has zero consumers → push back with evidence.
+Not every comment is correct. **Triage each, then verify its factual claim against the codebase before changing anything.** Confirmed → implement; refuted → push back with the evidence (§4).
+
+> Dispatch verification agents from **this (main) loop**, in **one message** so they run concurrently. A spawned agent cannot spawn its own subagents — if you are one (no `Agent` tool), report that and verify inline instead.
+
+| Comment makes a claim about… | Verify with | Concrete question to pass |
+|------------------------------|-------------|---------------------------|
+| **Persisted data** — schema, column type/nullability, indexes, soft-delete/filtering, migrations | `database-explorer` | "Does `r_client_score` have an `isactive` column, and how do sibling repositories filter it?" |
+| **Existing patterns** — "this doesn't match how we do X elsewhere" | `code-explorer` | "Find the sibling the reviewer cites and confirm the new code actually diverges." |
+| **Security / correctness / perf** — injection, auth, N+1, error handling | `security-scanner` / `code-quality-reviewer` | The cited `file:line` and the specific risk claimed. |
+| **Unneeded abstraction (YAGNI)** | grep — no agent | `grep -r "<SuggestedName>" --include="*.ts" --include="*.tsx" src/` — zero consumers → push back. |
+
+**Scope check** — before accepting blame, confirm the comment targets code *this PR introduced*: `git blame -L <start>,<end> <file>`. If the line is pre-existing, note it as out of scope rather than fixing it here.
 
 ### 4. Reply to Review Threads
 
@@ -69,7 +76,8 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 
 **Reply guidelines:**
 - One reply per thread — batch related changes into a single response
-- Examples: "Fixed — renamed to `calculateTotal` and updated callers in `OrderService`" / "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit" / "Tracked as follow-up — out of scope for this PR"
+- Back every push-back with the §3 evidence: "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit" / "Confirmed — `isactive` exists and the sibling repo filters on it (database-explorer), so I added the filter" / "Out of scope — `git blame` shows this line predates the PR; tracking as a follow-up"
+- Other examples: "Fixed — renamed to `calculateTotal` and updated callers in `OrderService`"
 
 ### 5. Verify PR state after pushing
 
