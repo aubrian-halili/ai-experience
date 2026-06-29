@@ -12,8 +12,6 @@ allowed-tools: Bash(git *, gh *), Read, Grep, Glob, Write, Edit, Agent, Skill
 **Current branch:** !`git branch --show-current`
 **Open PR:** !`gh pr view --json number,url,title --template '#{{.number}} {{.title}} — {{.url}}'`
 
-Process, evaluate, and implement code review feedback.
-
 ## Input Handling
 
 | Input | Intent | Approach |
@@ -44,13 +42,9 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments --paginate
 gh pr view $PR_NUMBER --json reviews,comments
 ```
 
-### 2. Clarify Before Implementing
+### 2. Verify Before Implementing
 
-If any feedback is ambiguous, ask the user before implementing.
-
-### 3. Verify Before Implementing
-
-Not every comment is correct. **Triage each, then verify its factual claim against the codebase before changing anything.** Confirmed → implement; refuted → push back with the evidence (§4).
+**Triage each comment, then verify its factual claim against the codebase before changing anything.** Confirmed → implement; refuted → push back with the evidence (§3).
 
 > Dispatch verification agents from **this (main) loop**, in **one message** so they run concurrently. A spawned agent cannot spawn its own subagents — if you are one (no `Agent` tool), report that and verify inline instead.
 
@@ -63,7 +57,7 @@ Not every comment is correct. **Triage each, then verify its factual claim again
 
 **Scope check** — before accepting blame, confirm the comment targets code *this PR introduced*: `git blame -L <start>,<end> <file>`. If the line is pre-existing, note it as out of scope rather than fixing it here.
 
-### 4. Reply to Review Threads
+### 3. Reply to Review Threads
 
 Draft replies for user approval before posting.
 
@@ -76,10 +70,9 @@ gh api repos/{owner}/{repo}/pulls/$PR_NUMBER/comments/$COMMENT_ID/replies \
 
 **Reply guidelines:**
 - One reply per thread — batch related changes into a single response
-- Back every push-back with the §3 evidence: "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit" / "Confirmed — `isactive` exists and the sibling repo filters on it (database-explorer), so I added the filter" / "Out of scope — `git blame` shows this line predates the PR; tracking as a follow-up"
-- Other examples: "Fixed — renamed to `calculateTotal` and updated callers in `OrderService`"
+- Back every push-back with the §2 evidence: "Keeping as-is — `FooInterface` has no other implementors (grep confirms), so the abstraction adds complexity without benefit" / "Confirmed — `isactive` exists and the sibling repo filters on it (database-explorer), so I added the filter" / "Out of scope — `git blame` shows this line predates the PR; tracking as a follow-up"
 
-### 5. Verify PR state after pushing
+### 4. Verify PR state after pushing
 
 ```bash
 gh pr view $PR_NUMBER --json state,reviewDecision,statusCheckRollup
