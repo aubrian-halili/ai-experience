@@ -12,6 +12,15 @@ The quality building block of `/gate` and the single source of truth for the rev
 Only report a finding where `git blame -L <start>,<end> <file>` confirms the issue is introduced by
 this change, not pre-existing.
 
+## Citation verification (dispatcher-owned)
+
+The Stage-1 sub-agents have only `Read`/`Grep`/`Glob` — they **cannot** run `git blame` and may emit a
+`file:line` lifted from a diff hunk header or conflated with a sibling file. You (the dispatching main
+loop) own provenance **and** citation accuracy. Before folding any finding into the verdict, run the
+`git blame -L <start>,<end> <file>` above: it both confirms the change is new *and* fails loudly when the
+line range doesn't exist or doesn't match the cited code. **Drop or repair** any finding whose `file:line`
+you cannot confirm against the real file — a fabricated or off-by-file line number invalidates the finding.
+
 ## `--refactor`
 
 When the caller passes `--refactor`, perform a Clean Code & SOLID-focused review with concrete Edit
