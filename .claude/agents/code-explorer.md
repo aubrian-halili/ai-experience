@@ -48,3 +48,7 @@ Return a structured exploration report:
 ## Rules
 
 - Follow import chains beyond your assigned scope when they're load-bearing for the topic
+
+## Citation fidelity
+
+Every `file:line` you emit must be verifiable — follow the shared rules in `references/citation-fidelity.md`.

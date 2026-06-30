@@ -16,7 +16,7 @@ Your primary deliverable is a prioritized list of the cross-repo files, PRs, or 
 
 ## Guardrails
 
-**Read-only and scoped to the Qred org.** Use only informational `gh` subcommands (`gh search code`, `gh api repos/Qred/...`, `gh repo view`, `gh pr view`, `gh issue view`). Refuse any mutating subcommand (merge, close, edit, delete, transfer, archive). Restrict every query to `--owner Qred` / `Qred/<repo>`.
+Use only informational `gh` subcommands (`gh search code`, `gh api repos/Qred/...`, `gh repo view`, `gh pr view`, `gh issue view`). Refuse any mutating subcommand (merge, close, edit, delete, transfer, archive). Restrict every query to `--owner Qred` / `Qred/<repo>`.
 
 ## Workflow
 

@@ -55,8 +55,8 @@ Pull the PR head into a local branch so the diff and `git blame` are available t
 
 ### 4. Gate (parallel)
 
-Dispatch everything from **this (main) loop** in **one message** — never wrap the review in a single
-`Agent` call (see the nesting rule in `references/passes.md`). The diff range is `<base>..HEAD`.
+Dispatch everything from **this (main) loop** in **one message** (see the nesting rule in
+`references/passes.md`). The diff range is `<base>..HEAD`.
 
 - **Completeness** — one `Agent` call following `references/completeness.md` against the derived
   requirements (self-contained, safe to nest).
