@@ -68,3 +68,7 @@ For each component:
 - Always ground recommendations in existing codebase patterns — cite `file:line` references
 - When recommending new abstractions, justify them with concrete complexity that warrants them
 - Each step in the build sequence must produce a compilable/runnable state
+
+## Citation fidelity
+
+Follow the shared rules in `references/citation-fidelity.md` (resolve against the agents directory: `.claude/agents/references/citation-fidelity.md`, or `~/.claude/agents/...` at user level). Every `file:line` you emit must be verifiable.
