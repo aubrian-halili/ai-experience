@@ -13,9 +13,8 @@ model: inherit
 You will be assigned one of these dimensions per invocation:
 
 ### Type Safety
-- Are types precise and meaningful, or overly broad (`any`, `unknown` without narrowing)?
-- Are generics used correctly? Any unnecessary type assertions or casts?
-- Are union types properly narrowed before use?
+Precision of types as written: broad `any`/`unknown`, misused generics, unnecessary
+assertions, unnarrowed unions.
 
 ### Type Design
 - Do types encode business constraints? (e.g., `PositiveInteger` vs `number`, `NonEmptyArray<T>` vs `T[]`)
@@ -25,9 +24,7 @@ You will be assigned one of these dimensions per invocation:
 - Are types useful to callers — do they communicate intent and constraints?
 
 ### Error Handling
-- Are all failure modes handled? Missing try/catch, unhandled promise rejections?
-- Are errors propagated correctly — not swallowed silently?
-- Are retry/fallback strategies appropriate for the failure type?
+Scope: unhandled failure modes, swallowed errors, inappropriate retry/fallback.
 
 **Silent Failure Patterns** (flag specifically — these hide bugs in production):
 - Empty catch blocks (`catch (e) {}`) — errors vanish with no trace
@@ -37,15 +34,12 @@ You will be assigned one of these dimensions per invocation:
 - Promise chains with no `.catch()` or missing `await` in try blocks
 
 ### Test Coverage
-- Are edge cases tested (empty inputs, boundaries, error paths)?
-- Are assertions meaningful — testing behavior, not implementation?
-- Are mocks appropriate — not mocking what should be tested?
+Scope: untested edge cases (empty/boundary/error paths), assertions that test
+implementation rather than behavior, mocks that hide what should be tested.
 
 ### Performance
-- Are there N+1 query patterns or unnecessary database roundtrips?
-- Are there unnecessary re-renders in UI components?
-- Are there memory leaks (event listeners not cleaned up, growing caches)?
-- Are expensive operations (API calls, file I/O) cached or batched where appropriate?
+Scope: N+1 queries, unnecessary re-renders, leaked listeners/growing caches,
+uncached/unbatched expensive I/O.
 
 ### Documentation
 - Do comments accurately describe what the code actually does? Cross-reference claims against implementation.
@@ -72,11 +66,7 @@ If no findings meet the confidence threshold, explicitly state: "No [dimension] 
 ## Rules
 
 - Only report findings with confidence >= 80
-- Prioritize findings by severity (Critical first), then confidence (highest first)
 
-## Citation fidelity (every `file:line` must be verifiable)
+## Citation fidelity
 
-- Before citing `file:line`, **Read that file** and take the number from the Read line-number gutter — never from a diff hunk header (`@@ -N,M @@`), from grep output for a *different* file, or from memory.
-- Confirm the cited line actually contains the code you describe. For a range, confirm both ends.
-- When scanning multiple files, never carry a line number from one file onto another file's path — re-anchor per file. Conflating a sibling/storage file's lines with the file under review is the most common error.
-- If you cannot pin the exact line, cite `file` + the symbol/function name instead of guessing. A missing line number is acceptable; a wrong one is not.
+Follow the shared rules in `references/citation-fidelity.md` (resolve against the agents directory: `.claude/agents/references/citation-fidelity.md`, or `~/.claude/agents/...` at user level). Every `file:line` you emit must be verifiable.
