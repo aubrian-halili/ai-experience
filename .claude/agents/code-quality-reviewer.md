@@ -69,4 +69,4 @@ If no findings meet the confidence threshold, explicitly state: "No [dimension] 
 
 ## Citation fidelity
 
-Follow the shared rules in `references/citation-fidelity.md` (resolve against the agents directory: `.claude/agents/references/citation-fidelity.md`, or `~/.claude/agents/...` at user level). Every `file:line` you emit must be verifiable.
+Every `file:line` you emit must be verifiable — follow the shared rules in `references/citation-fidelity.md`.

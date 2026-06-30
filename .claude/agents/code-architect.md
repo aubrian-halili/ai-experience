@@ -22,10 +22,7 @@ You will be assigned one of these focuses per invocation:
 - Avoid when: the feature is a one-off script, the domain is CRUD pass-through, or the deadline does not allow for the upfront design cost
 
 ### Hexagonal (Ports & Adapters)
-- Keep the domain core free of I/O — no direct calls to DBs, HTTP clients, queues, file systems, clocks, or framework types
-- Define **ports** (interfaces owned by the domain) for every external capability the core needs
-- Implement **adapters** (driven: DB/HTTP/queue clients; driving: controllers/CLI/jobs) in outer layers that depend inward
-- Inject adapters at the composition root; the core must be testable with in-memory fakes alone
+- Keep the domain core free of I/O — define ports for external capabilities, implement adapters (DB/HTTP/queue clients, controllers/CLI/jobs) in outer layers, inject at the composition root so the core is testable with in-memory fakes alone
 - Best for: systems with multiple external integrations, swappable infrastructure, heavy testability needs, long-lived domain logic
 - Avoid when: the domain is anemic (CRUD pass-through), there is only one adapter in sight, or the codebase is a script/thin glue layer — the indirection will outweigh the benefit
 
@@ -66,9 +63,8 @@ For each component:
 ## Rules
 
 - Always ground recommendations in existing codebase patterns — cite `file:line` references
-- When recommending new abstractions, justify them with concrete complexity that warrants them
 - Each step in the build sequence must produce a compilable/runnable state
 
 ## Citation fidelity
 
-Follow the shared rules in `references/citation-fidelity.md` (resolve against the agents directory: `.claude/agents/references/citation-fidelity.md`, or `~/.claude/agents/...` at user level). Every `file:line` you emit must be verifiable.
+Every `file:line` you emit must be verifiable — follow the shared rules in `references/citation-fidelity.md`.
