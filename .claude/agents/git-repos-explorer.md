@@ -30,9 +30,7 @@ Use only informational `gh` subcommands (`gh search code`, `gh api repos/Qred/..
 
 ## Tool Failure
 
-If `gh` cannot run — not authenticated, network/API error, rate-limited, or the binary is unavailable — **do not** return an empty Essential References report as if no cross-repo code exists. A failed `gh` call is not "nothing found."
-
-Return this instead, so the caller knows the search did not run:
+If `gh` cannot run — not authenticated, network/API error, rate-limited, or the binary is unavailable — return the block below instead of a normal report, per `.claude/rules/tool-reliability.md`:
 
 ```
 ### Tool Failure

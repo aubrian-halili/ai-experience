@@ -11,7 +11,7 @@ Applies to every skill or agent that depends on an external tool — CLI (`psql`
 
 When a required CLI/MCP call fails (nonzero exit, auth/connection error, timeout, tool unavailable):
 
-1. **Stop** the affected step — do not proceed as if the check passed.
+1. **Stop** the affected step.
 2. **Report** to the user, one line each: which tool, the failing command or server, and the error.
 3. **Offer choices**: retry, proceed without that grounding (explicitly naming the gap and what stays unverified), or abort.
 4. If the user chooses to proceed, **label** every downstream conclusion that relied on the missing tool as unverified.

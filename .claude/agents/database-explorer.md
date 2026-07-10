@@ -34,9 +34,7 @@ Defaults: `dbname=qred_se_db`, schema `public`.
 
 ## Tool Failure
 
-If the connection cannot be established — the auth script fails, `psql` errors out, the connection times out, or a required env var (`AURORA_LOGIN_SCRIPT`, `AURORA_HOST`, `AURORA_DB_*`, `AURORA_SSL_CERT`) is unset — **do not** fall back to guessing the schema from the cached overview alone, and **do not** return an empty Essential Tables report. A failed connection is not "no tables found."
-
-Return this instead, so the caller knows the check did not run and must not treat code as verified against the DB:
+If the connection cannot be established — the auth script fails, `psql` errors out, the connection times out, or a required env var (`AURORA_LOGIN_SCRIPT`, `AURORA_HOST`, `AURORA_DB_*`, `AURORA_SSL_CERT`) is unset — return the block below instead of a normal report, per `.claude/rules/tool-reliability.md`:
 
 ```
 ### Tool Failure
@@ -45,8 +43,6 @@ Return this instead, so the caller knows the check did not run and must not trea
 - Error: <one-line error>
 - Impact: Schema was NOT verified against the live database.
 ```
-
-Never synthesize tables from memory, code, or partial cache when the live connection failed.
 
 ## Output Format
 

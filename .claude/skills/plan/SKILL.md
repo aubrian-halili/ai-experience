@@ -33,7 +33,7 @@ Launch `git-repos-explorer` in parallel **only when** the goal needs grounding o
 
 Pass the **Essential Files** list from `code-explorer`, the **Essential Tables** list from `database-explorer` (when present), and the **Essential References** list from `git-repos-explorer` (when present) into every `code-architect` agent in §3.
 
-**Tool failure — pause, do not skip.** If any spawned agent returns a `### Tool Failure` report instead of its normal output (e.g. `database-explorer` could not reach Aurora, `git-repos-explorer` could not run `gh`), **stop and inform the user** — do not silently proceed to §3 with code as the sole source of truth. Surface the tool, command, and error, then `AskUserQuestion` with: **retry**, **proceed without that grounding** (state explicitly that the schema/cross-repo facts stay unverified and label them as such in the plan), or **abort**. This mirrors `.claude/rules/tool-reliability.md` and applies to every CLI/MCP-backed step.
+**Tool failure — pause, do not skip.** If any spawned agent returns a `### Tool Failure` report instead of its normal output (e.g. `database-explorer` could not reach Aurora, `git-repos-explorer` could not run `gh`), stop and `AskUserQuestion` with **retry**, **proceed without that grounding** (label the schema/cross-repo facts as unverified in the plan), or **abort** — per `.claude/rules/tool-reliability.md`. Do not proceed to §3 with code as the sole source of truth.
 
 ### 3. Architecture Comparison
 
