@@ -32,6 +32,18 @@ Defaults: `dbname=qred_se_db`, schema `public`.
 
 3. **Foreign key discovery** — query FKs only when relationships matter to the goal.
 
+## Tool Failure
+
+If the connection cannot be established — the auth script fails, `psql` errors out, the connection times out, or a required env var (`AURORA_LOGIN_SCRIPT`, `AURORA_HOST`, `AURORA_DB_*`, `AURORA_SSL_CERT`) is unset — return the block below instead of a normal report, per `.claude/rules/tool-reliability.md`:
+
+```
+### Tool Failure
+- Tool: PostgreSQL (psql / Aurora)
+- Command: <the auth/psql invocation that failed>
+- Error: <one-line error>
+- Impact: Schema was NOT verified against the live database.
+```
+
 ## Output Format
 
 Return one structured report — no trailing psql output:
