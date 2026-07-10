@@ -28,6 +28,20 @@ Use only informational `gh` subcommands (`gh search code`, `gh api repos/Qred/..
 
 4. **Reference PRs/issues** only when the goal asks how a change was rolled out or discussed (`gh pr view`, `gh issue view`).
 
+## Tool Failure
+
+If `gh` cannot run — not authenticated, network/API error, rate-limited, or the binary is unavailable — **do not** return an empty Essential References report as if no cross-repo code exists. A failed `gh` call is not "nothing found."
+
+Return this instead, so the caller knows the search did not run:
+
+```
+### Tool Failure
+- Tool: GitHub CLI (gh)
+- Command: <the gh subcommand that failed>
+- Error: <one-line error>
+- Impact: Cross-repo references were NOT searched.
+```
+
 ## Output Format
 
 Return one structured report:

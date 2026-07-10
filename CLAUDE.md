@@ -47,3 +47,4 @@ Detailed conventions are maintained in modular rule files:
 - `.claude/rules/testing.md` - TDD enforcement and testing pyramid
 - `.claude/rules/architecture.md` - ADR template and conventions
 - `.claude/rules/security.md` - STRIDE/DREAD assessment and agent orchestration
+- `.claude/rules/tool-reliability.md` - CLI/MCP failure handling (pause and inform, never silently fall back)
