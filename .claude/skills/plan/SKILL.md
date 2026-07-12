@@ -23,7 +23,7 @@ disable-model-invocation: true
 2. **Check for existing `.planning/STATE.md`**. If found, ask the user a binary choice: **resume** or **start over**.
    - **resume** → continue from the phase marked current
    - **start over** → **do not** back up or overwrite the file yet (backup happens in §5)
-3. **Draft the Plan section** (DoD + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure.
+3. **Draft the Plan section** (DoD + Out of Scope + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure — note the vertical-slice requirement the template defines for phases.
 
 ### 2. Codebase Research
 
@@ -46,7 +46,8 @@ Present results using the Architecture Comparison Template.
 
 ### 4. Plan Review
 
-Present DoD, phases, and chosen architecture, then ask the user to approve before persisting.
+1. **Resolve open decisions first.** Before presenting the plan, surface the 3-5 judgment calls the research and architecture comparison did not settle on their own — data model, error-handling strategy, migration/rollout approach, boundary placement. Present each as a question with 2-3 options and their trade-offs, grounded in `file:line` from the research, then `AskUserQuestion` to get answers. Fold the answers into the phases and Key Decisions. (Skip under the small-scope gate.)
+2. **Then present** DoD, Out of Scope, phases (as vertical slices), and chosen architecture, and ask the user to approve before persisting.
 
 ### 5. Persist *(after approval)*
 
@@ -54,3 +55,7 @@ Present DoD, phases, and chosen architecture, then ask the user to approve befor
 2. `Write` `.planning/STATE.md` using the drafted Plan section and initialize the State Progress table.
 3. `TaskCreate` per phase with the phase goal as subject and observable truths as description; set `addBlockedBy` to match the phase dependency graph.
 4. Report the STATE.md path and the created task list.
+
+## When to Go Back
+
+If §3 architecture comparison reveals the codebase research missed a load-bearing area — an integration, constraint, or entity the plan would depend on — loop back to §2 (and re-launch the relevant explorer) before §4, rather than drafting phases on an incomplete picture.

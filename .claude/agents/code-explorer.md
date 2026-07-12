@@ -48,6 +48,7 @@ Return a structured exploration report:
 ## Rules
 
 - Follow import chains beyond your assigned scope when they're load-bearing for the topic
+- **Documentarian boundary** — describe what exists. Do not propose solutions, improvements, refactors, or "should"/"could" recommendations. Surfacing an architectural approach is `code-architect`'s job; your report stays factual so the design work downstream isn't biased by it.
 
 ## Citation fidelity
 
