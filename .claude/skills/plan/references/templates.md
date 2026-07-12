@@ -47,7 +47,21 @@ Observable truths that must be TRUE when this goal is complete:
 
 ---
 
+### Out of Scope
+
+Explicit boundaries — things a reader might assume are included but are NOT, to prevent scope creep during implementation:
+
+- [What we are deliberately NOT doing, and why]
+
+---
+
 ### Phase Breakdown
+
+> **Vertical slices, not horizontal layers.** Each phase must cross every layer it needs
+> (migration → service → API → UI) and be independently verifiable on its own. Do NOT
+> split work into horizontal layers (Phase 1: all migrations, Phase 2: all services…).
+> Order phases so that if a later phase is dropped, the earlier phases still deliver
+> standalone value.
 
 #### Phase N: [Name]
 **Goal**: [What this phase achieves]

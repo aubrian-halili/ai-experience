@@ -34,6 +34,7 @@ If on `main` or `master`, offer to create a feature branch per git conventions u
 ### 2. Design
 
 - Break down each plan phase into incremental milestones using `@references/templates.md`.
+- **Preserve the plan's vertical slicing.** Each milestone should keep its phase shippable end-to-end (schema → logic → interface for that slice); do not split a phase into a horizontal layer that leaves it half-wired until a later milestone.
 
 ### 3. Implement
 
@@ -44,6 +45,8 @@ For each milestone:
 - **Independent milestones** — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria.
   - Worker brief must specify: remove orphaned imports/vars caused by the change, but leave pre-existing dead code alone.
 - **Sequential milestones** — implement inline, in order.
+
+**Optional checkpoint commits.** Only if the user has asked for per-phase commits: after a phase's milestones pass their own verification, commit that phase on the feature branch (message per git conventions) so phases stay independently revertable and survive a context reset. Otherwise do not commit here — the default hand-off to `/commit` in §5 stands (per governance, commit only when the user asks).
 
 ### 4. Format
 
@@ -57,4 +60,8 @@ Invoke `/gate` (feature mode — no PR argument). It runs completeness verificat
 
 If `/gate` returns **BLOCKED**, report the blockers with `file:line` evidence and stop.
 On success, tell the user the gate passed and to run `/commit` then `/pr`.
+
+## When to Go Back
+
+Adapt small mismatches in place (the plan says `fooService`, the code has `foosService`). But if implementation reveals the plan is *structurally* wrong — a phase can't be sliced as planned, a dependency or API the plan assumed doesn't exist, or the chosen architecture doesn't fit — stop and tell the user to re-run `/plan` rather than improvising around a broken foundation. A `/gate` **BLOCKED** that stems from the plan being wrong (not a locally fixable defect) is the same signal.
 
