@@ -63,5 +63,5 @@ On success, tell the user the gate passed and to run `/commit` then `/pr`.
 
 ## When to Go Back
 
-Adapt small mismatches in place (the plan says `fooService`, the code has `foosService`). But if implementation reveals the plan is *structurally* wrong — a phase can't be sliced as planned, a dependency or API the plan assumed doesn't exist, or the chosen architecture doesn't fit — stop and tell the user to re-run `/plan` rather than improvising around a broken foundation. A `/gate` **BLOCKED** that stems from the plan being wrong (not a locally fixable defect) is the same signal.
+If implementation reveals the plan is *structurally* wrong — a phase can't be sliced as planned, a dependency or API the plan assumed doesn't exist, or the chosen architecture doesn't fit — stop and tell the user to re-run `/plan` rather than improvising around a broken foundation. A `/gate` **BLOCKED** that stems from the plan being wrong (not a locally fixable defect) is the same signal.
 

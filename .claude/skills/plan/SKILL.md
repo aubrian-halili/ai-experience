@@ -23,7 +23,7 @@ disable-model-invocation: true
 2. **Check for existing `.planning/STATE.md`**. If found, ask the user a binary choice: **resume** or **start over**.
    - **resume** → continue from the phase marked current
    - **start over** → **do not** back up or overwrite the file yet (backup happens in §5)
-3. **Draft the Plan section** (DoD + Out of Scope + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure. **Each phase must be a vertical slice** — crossing every layer it needs (migration → service → API → UI) and independently verifiable — not a horizontal layer. Order phases so that dropping a later phase still leaves earlier phases standalone-valuable.
+3. **Draft the Plan section** (DoD + Out of Scope + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure — note the vertical-slice requirement the template defines for phases.
 
 ### 2. Codebase Research
 
