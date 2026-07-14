@@ -52,7 +52,6 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
 1. **Check for duplicates** — use `acli jira workitem search --jql` to search for tickets with a similar summary; surface any matches before proceeding
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
-   - For rich formatting, pass an ADF JSON document via `--description-file <FILE>` instead of `--description`
    - **Do NOT pass `--priority` or other unsupported flags** — only `--project`, `--type`, `--summary`, and `--description`/`--description-file` are valid
    - Description template:
      ```
