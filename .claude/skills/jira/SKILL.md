@@ -52,7 +52,7 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
 1. **Check for duplicates** — use `acli jira workitem search --jql` to search for tickets with a similar summary; surface any matches before proceeding
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
-   - **Only these four flags are supported** — do NOT pass `--priority` or any other flags
+   - **Do NOT pass `--priority` or other unsupported flags** — only `--project`, `--type`, `--summary`, and `--description`/`--description-file` are valid
    - Description template:
      ```
      ## Summary
@@ -72,7 +72,7 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
      ## Suggested Priority
      <Critical|High|Medium|Low> — <brief justification>
      ```
-   - Note: acli passes `--description` as plain text (no markdown rendering in Jira).
+   - Note: `--description` accepts plain text or Atlassian Document Format (ADF). Plain text (including the markdown template above) is stored verbatim without rendering; for rendered headings, lists, and links, supply an ADF JSON document via `--description-file`.
 
 ### 4. Present Manifest
 
