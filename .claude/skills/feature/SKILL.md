@@ -54,13 +54,8 @@ After milestones are implemented, format the changed files with the project's ow
 
 **Detect, in this order (first match wins):**
 1. **Project scripts** — check `package.json` for a `format`, `lint:fix`, or `lint` script (or the equivalent in a `Makefile`/`justfile`). Prefer these; they encode the project's intended config and file globs.
-2. **Config files** — infer the tool from config present at the repo root:
-   - Biome — `biome.json` / `biome.jsonc` → `npx biome format --write` (and `npx biome lint --write` if configured)
-   - Prettier — `.prettierrc*`, `prettier.config.*`, or a `prettier` key in `package.json` → `npx prettier --write`
-   - ESLint — `.eslintrc*` or `eslint.config.*` → `npx eslint --fix`
-   - Ruff (Python) — `ruff.toml` or a `[tool.ruff]` table in `pyproject.toml` → `ruff format` / `ruff check --fix`
-   - Other ecosystems — use the idiomatic formatter (e.g. `gofmt`/`go fmt`, `cargo fmt`, `rustfmt`) when its config or manifest is present.
-3. **Verify availability** before running (e.g. `npx prettier --version`, `ruff --version`). Run the tool only on the changed files, scoped to the extensions it handles.
+2. **Config files** — if no script exists, infer the tool from formatter/linter config at the repo root (e.g. `biome.json`, `.prettierrc*`, `.eslintrc*`, `ruff.toml`/`[tool.ruff]`, or an ecosystem manifest) and run that tool's idiomatic format/fix command.
+3. **Verify availability** before running. Run the tool only on the changed files, scoped to the extensions it handles.
 
 If no formatter/linter is detected or the detected tool is not available, skip the format step — do not install or configure one.
 
