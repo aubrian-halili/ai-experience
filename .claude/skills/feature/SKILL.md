@@ -50,9 +50,14 @@ For each milestone:
 
 ### 4. Format
 
-After milestones are implemented, format the changed files with Prettier before gating:
-- If Prettier is available (`npx prettier --version`), run `npx prettier --write` on changed files matching `*.{ts,tsx,js,jsx,json,md}`.
-- If Prettier is not available, skip the format step — do not install it.
+After milestones are implemented, format the changed files with the project's own formatter/linter before gating. Detect what the project uses — do not assume Prettier.
+
+**Detect, in this order (first match wins):**
+1. **Project scripts** — check `package.json` for a `format`, `lint:fix`, or `lint` script (or the equivalent in a `Makefile`/`justfile`). Prefer these; they encode the project's intended config and file globs.
+2. **Config files** — if no script exists, infer the tool from formatter/linter config at the repo root (e.g. `biome.json`, `.prettierrc*`, `.eslintrc*`, `ruff.toml`/`[tool.ruff]`, or an ecosystem manifest) and run that tool's idiomatic format/fix command.
+3. **Verify availability** before running. Run the tool only on the changed files, scoped to the extensions it handles.
+
+If no formatter/linter is detected or the detected tool is not available, skip the format step — do not install or configure one.
 
 ### 5. Verify, review, hand off
 
