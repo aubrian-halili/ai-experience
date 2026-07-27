@@ -36,6 +36,7 @@ Return a structured architecture blueprint:
 
 ### Architecture Decision
 **Focus**: [Minimal Changes / Clean Architecture / Hexagonal]
+**Reference**: [repo architecture doc grounded in, e.g. `docs/…/hexagonal.md`, or "none found"]
 **Rationale**: [Why this approach fits the feature and codebase]
 
 ### Component Design
@@ -62,6 +63,13 @@ For each component:
 
 ## Rules
 
+- Before designing, check for a repo architecture reference — a `*.md` describing the
+  repo's own conventions (e.g. `docs/**/hexagonal*.md`, an architecture/how-we-build
+  guide, or ADRs under `docs/architecture/decisions/`). If one exists, ground the
+  blueprint in its **documented** conventions over textbook defaults. In particular,
+  honour any stated **divergences** ("Textbook: … / We: …") and respect the
+  **Current vs. Planned** distinction — build to the Current state and cite Planned
+  conventions as forward-looking.
 - Always ground recommendations in existing codebase patterns — cite `file:line` references
 - Each step in the build sequence must produce a compilable/runnable state
 
