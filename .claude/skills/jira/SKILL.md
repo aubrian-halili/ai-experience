@@ -49,7 +49,7 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
 
 ### 3. Create Tickets
 
-1. **Check for duplicates** — launch one `jira-explorer` agent with the drafted ticket summaries and the project key as its research question. It sweeps several JQL terms and returns **Related Work** rows flagged `possible duplicate`. Surface those matches (and the terms it swept) to the user before proceeding. If it returns a `### Tool Failure`, stop and offer **retry**, **create anyway** (stating that duplicate detection did not run), or **abort** — per `.claude/rules/tool-reliability.md`; never create tickets while silently skipping the scan.
+1. **Check for duplicates** — launch one `jira-explorer` agent with the drafted ticket summaries and the project key as its research question. Surface any `possible duplicate` matches it reports (and the terms it swept) to the user before proceeding. If it returns a `### Tool Failure`, stop and offer **retry**, **create anyway** (stating that duplicate detection did not run), or **abort** — per `.claude/rules/tool-reliability.md`.
 2. **Create via acli** (or generate copy-ready content if unavailable):
    - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
    - **Do NOT pass `--priority` or other unsupported flags** — only `--project`, `--type`, `--summary`, and `--description`/`--description-file` are valid

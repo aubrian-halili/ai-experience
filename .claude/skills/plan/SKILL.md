@@ -31,7 +31,7 @@ Launch `code-explorer` with the goal as its topic. Also launch `database-explore
 
 Launch `git-repos-explorer` in parallel **only when** the goal needs grounding outside this repo: it names another Qred service or repo; it integrates with a shared Qred library or contract; or the relevant prior art is expected to live in another repo rather than locally. Skip it for self-contained, in-repo work — cross-repo search is slower and is unnecessary by default.
 
-Launch `jira-explorer` in parallel **only when** §1 has not already run it and the goal needs ticket grounding: it names a ticket or epic surfaced during research, or the work plausibly overlaps tickets that already exist. Skip it when §1 already produced an Essential Ticket Context report, or when the goal has no Jira origin at all.
+Launch `jira-explorer` in parallel **only when** §1 has not already run it and the goal needs ticket grounding: it names a ticket or epic surfaced during research, or the work plausibly overlaps tickets that already exist. Skip it when the goal has no Jira origin at all.
 
 Pass the **Essential Files** list from `code-explorer`, the **Essential Tables** list from `database-explorer` (when present), the **Essential References** list from `git-repos-explorer` (when present), and the **Acceptance Criteria** and **Scope Boundaries** from `jira-explorer` (when present) into every `code-architect` agent in §3.
 
