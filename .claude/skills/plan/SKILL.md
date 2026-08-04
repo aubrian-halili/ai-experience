@@ -19,7 +19,7 @@ disable-model-invocation: true
 
 ### 1. Pre-flight
 
-1. **If a Jira ticket ID is found in `$ARGUMENTS`**: fetch it via `acli jira workitem view <TICKET_ID>`.
+1. **If a Jira ticket ID or epic is found in `$ARGUMENTS`**: launch `jira-explorer` with the ticket ID(s) and the goal as its research question. Treat the returned **Acceptance Criteria** and **Scope Boundaries** as the requirements baseline for the DoD and Out of Scope sections in §1.3 — do not restate them from memory of the argument text. If it returns a `### Tool Failure`, apply the tool-failure rule in §2 before drafting.
 2. **Check for existing `.planning/STATE.md`**. If found, ask the user a binary choice: **resume** or **start over**.
    - **resume** → continue from the phase marked current
    - **start over** → **do not** back up or overwrite the file yet (backup happens in §5)
@@ -31,9 +31,11 @@ Launch `code-explorer` with the goal as its topic. Also launch `database-explore
 
 Launch `git-repos-explorer` in parallel **only when** the goal needs grounding outside this repo: it names another Qred service or repo; it integrates with a shared Qred library or contract; or the relevant prior art is expected to live in another repo rather than locally. Skip it for self-contained, in-repo work — cross-repo search is slower and is unnecessary by default.
 
-Pass the **Essential Files** list from `code-explorer`, the **Essential Tables** list from `database-explorer` (when present), and the **Essential References** list from `git-repos-explorer` (when present) into every `code-architect` agent in §3.
+Launch `jira-explorer` in parallel **only when** §1 has not already run it and the goal needs ticket grounding: it names a ticket or epic surfaced during research, or the work plausibly overlaps tickets that already exist. Skip it when §1 already produced an Essential Ticket Context report, or when the goal has no Jira origin at all.
 
-**Tool failure — pause, do not skip.** If any spawned agent returns a `### Tool Failure` report instead of its normal output (e.g. `database-explorer` could not reach Aurora, `git-repos-explorer` could not run `gh`), stop and `AskUserQuestion` with **retry**, **proceed without that grounding** (label the schema/cross-repo facts as unverified in the plan), or **abort** — per `.claude/rules/tool-reliability.md`. Do not proceed to §3 with code as the sole source of truth.
+Pass the **Essential Files** list from `code-explorer`, the **Essential Tables** list from `database-explorer` (when present), the **Essential References** list from `git-repos-explorer` (when present), and the **Acceptance Criteria** and **Scope Boundaries** from `jira-explorer` (when present) into every `code-architect` agent in §3.
+
+**Tool failure — pause, do not skip.** If any spawned agent returns a `### Tool Failure` report instead of its normal output (e.g. `database-explorer` could not reach Aurora, `git-repos-explorer` could not run `gh`, `jira-explorer` could not run `acli`), stop and `AskUserQuestion` with **retry**, **proceed without that grounding** (label the schema, cross-repo, or requirements facts as unverified in the plan), or **abort** — per `.claude/rules/tool-reliability.md`. Do not proceed to §3 with code as the sole source of truth.
 
 ### 3. Architecture Comparison
 

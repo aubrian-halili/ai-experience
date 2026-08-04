@@ -11,7 +11,7 @@
 
 ```text
 .claude/
-├── agents/          # 7 reusable subagent definitions
+├── agents/          # 8 reusable subagent definitions
 ├── skills/          # 13 specialized workflow skills
 ├── rules/           # Modular instruction files
 ├── scripts/         # Shell scripts (e.g. statusline.sh)
