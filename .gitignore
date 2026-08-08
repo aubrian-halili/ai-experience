@@ -21,6 +21,11 @@ build/
 coverage/
 *.log
 
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
 # Environment
 .env
 .env.local
