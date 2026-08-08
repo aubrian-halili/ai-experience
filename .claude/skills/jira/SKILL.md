@@ -69,7 +69,7 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
    ## Suggested Priority
    <Critical|High|Medium|Low> — <brief justification>
    ```
-   Write it to `.planning/tickets/<n>.md` — the same directory the plan lives in, so drafts stay reviewable and re-runnable. `acli` stores plain text **verbatim**, so a markdown file passed straight through renders as literal `##` and `-` characters in Jira — always convert it first (next step).
+   Write it to `.planning/tickets/<n>.md`, alongside the plan in `.planning/`, so drafts stay reviewable and re-runnable. `acli` stores plain text **verbatim** — a markdown file passed straight through renders as literal `##` and `-` characters in Jira.
 
    **Stay inside the supported constructs** — headings, `- ` bullets, paragraphs, `` `inline code` ``, and `[label](url)` links. No `**bold**`, `*italic*`, `~~strike~~`, `__underline__`, or raw HTML; wrap file paths, commands, and globs in backticks so `*` characters inside them are treated as literal.
 
@@ -80,18 +80,15 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
      [--label <l>] [--parent <ID>] [--field customfield_XXXXX=<points>] \
      > .planning/tickets/<n>.json
    ```
-   The converter **exits 1 on anything it does not support** rather than emitting a document that renders wrongly — code fences, tables, ordered lists, nested bullets, blockquotes, malformed headings, and the inline markdown listed above.
+   The converter exits 1 rather than emitting a document that renders wrongly, with the reason on stderr. Run it with `--help` for the full flag list; use `--adf-only` when you need a bare ADF document for `--description-file` (e.g. editing an existing item's description).
 
-   Payload keys are exactly those of `acli jira workitem create --generate-json`; only supplied keys are emitted. Use `--adf-only` instead when you need a bare ADF document for `--description-file` (e.g. editing an existing item's description).
-
-   If it exits non-zero, **stop** and offer **fix the description**, **create with plain-text `--description`** (stating that the ticket body will not render), or **abort** — per `.claude/rules/tool-reliability.md`. Never fall back silently.
-
-4. **Create via acli** (or emit the rendered markdown as copy-ready content if unavailable):
-   - Run `acli jira workitem create --from-json .planning/tickets/<n>.json`
-   - `--from-json` carries the whole work item, so **no other flags are needed** — project, type, summary, description, labels, and parent all come from the file
    - **Story points** need the project's custom field ID, which varies per Jira site. Discover it once with `acli jira workitem view <EXISTING-ID> --fields '*all' --json` — `--json` alone returns only the default field set (`key,issuetype,summary,status,assignee,description`) and shows no custom fields at all. Pass it as `--field customfield_XXXXX=<points>`. If the ID is unknown, **omit points rather than guessing** and tell the user they need setting manually.
    - **`--parent`** maps to acli's `parentIssueId`, which its schema documents as sub-task only. Passing an epic as the parent of a Story or Task is untested — if creation fails on it, retry without `--parent` and tell the user to link the epic in Jira.
-   - **Do NOT pass `--priority`** — it is not a valid flag, and priority stays as the "Suggested Priority" section in the description
+
+   On non-zero exit, apply `.claude/rules/tool-reliability.md` — the proceed option here is creating with a plain-text `--description`, stating that the ticket body will not render.
+
+4. **Create via acli**:
+   - Run `acli jira workitem create --from-json .planning/tickets/<n>.json` — the file carries the whole work item, so pass no other flags; in particular **not `--priority`**, which is not a valid flag (priority stays as the "Suggested Priority" section in the description)
 
 ### 4. Present Manifest
 
