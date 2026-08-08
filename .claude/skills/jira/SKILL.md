@@ -7,7 +7,7 @@ description: >-
   Defaults to project UN (overridable); uses acli when available, otherwise emits copy-ready content.
   Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature); not for: transitioning or editing existing tickets.
 argument-hint: "[PROJECT]"
-allowed-tools: Read, Agent, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version)
+allowed-tools: Read, Write, Agent, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version, python3 .claude/skills/jira/scripts/build-workitem.py *)
 disable-model-invocation: true
 ---
 
@@ -50,29 +50,45 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
 ### 3. Create Tickets
 
 1. **Check for duplicates** — launch one `jira-explorer` agent with the drafted ticket summaries and the project key as its research question. Surface any `possible duplicate` matches it reports (and the terms it swept) to the user before proceeding. If it returns a `### Tool Failure`, stop and offer **retry**, **create anyway** (stating that duplicate detection did not run), or **abort** — per `.claude/rules/tool-reliability.md`.
-2. **Create via acli** (or generate copy-ready content if unavailable):
-   - Run `acli jira workitem create --project <KEY> --type <TYPE> --summary "<SUMMARY>" --description "<DESC>"`
-   - **Do NOT pass `--priority` or other unsupported flags** — only `--project`, `--type`, `--summary`, and `--description`/`--description-file` are valid
-   - Description template:
-     ```
-     ## Summary
-     <1–2 sentence problem statement from the phase goal>
+2. **Write the description** — one file per ticket, using this template verbatim:
+   ```
+   ## Summary
+   <1–2 sentence problem statement from the phase goal>
 
-     ## Acceptance Criteria
-     - <observable truth 1>
-     - <observable truth 2>
+   ## Acceptance Criteria
+   - <observable truth 1>
+   - <observable truth 2>
 
-     ## Technical Details
-     - Files: <paths>
-     - Verification: <commands>
+   ## Technical Details
+   - Files: `<paths>`
+   - Verification: `<commands>`
 
-     ## Dependencies
-     - <blocking ticket title or "None">
+   ## Dependencies
+   - <blocking ticket title or "None">
 
-     ## Suggested Priority
-     <Critical|High|Medium|Low> — <brief justification>
-     ```
-   - Note: `--description` accepts plain text or Atlassian Document Format (ADF). Plain text (including the markdown template above) is stored verbatim without rendering; for rendered headings, lists, and links, supply an ADF JSON document via `--description-file`.
+   ## Suggested Priority
+   <Critical|High|Medium|Low> — <brief justification>
+   ```
+   Write it to a temp path (e.g. `/tmp/jira-<n>.md`). `acli` stores plain text **verbatim**, so a markdown file passed straight through renders as literal `##` and `-` characters in Jira — always convert it first (next step).
+
+3. **Build the work item payload** — the description becomes ADF, wrapped in the JSON shape `acli` expects:
+   ```bash
+   python3 .claude/skills/jira/scripts/build-workitem.py /tmp/jira-<n>.md \
+     --project <KEY> --type <TYPE> --summary "<SUMMARY>" \
+     [--label <l>] [--parent <ID>] [--field customfield_XXXXX=<points>] \
+     > /tmp/jira-<n>.json
+   ```
+   The markdown→ADF converter supports only the constructs the template above produces — headings, `- ` bullets, paragraphs, `` `inline code` ``, and `[label](url)` links — and **exits 1 on anything else** (code fences, tables, ordered lists, nested bullets, blockquotes, malformed headings) rather than emitting a document that renders wrongly. Keep the description within those constructs.
+
+   Payload keys are exactly those of `acli jira workitem create --generate-json`; only supplied keys are emitted. Use `--adf-only` instead when you need a bare ADF document for `--description-file` (e.g. editing an existing item's description).
+
+   If it exits non-zero, **stop** and offer **fix the description**, **create with plain-text `--description`** (stating that the ticket body will not render), or **abort** — per `.claude/rules/tool-reliability.md`. Never fall back silently.
+
+4. **Create via acli** (or emit the rendered markdown as copy-ready content if unavailable):
+   - Run `acli jira workitem create --from-json /tmp/jira-<n>.json`
+   - `--from-json` carries the whole work item, so **no other flags are needed** — project, type, summary, description, labels, and parent all come from the file
+   - **Story points** need the project's custom field ID, which varies per Jira site. Discover it once with `acli jira workitem view <EXISTING-ID> --json` and pass it as `--field customfield_XXXXX=<points>`. If the ID is unknown, **omit points rather than guessing** and tell the user they need setting manually.
+   - **Do NOT pass `--priority`** — it is not a valid flag, and priority stays as the "Suggested Priority" section in the description
 
 ### 4. Present Manifest
 
