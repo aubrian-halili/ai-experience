@@ -7,7 +7,7 @@ description: >-
   Defaults to project UN (overridable); uses acli when available, otherwise emits copy-ready content.
   Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature); not for: transitioning or editing existing tickets.
 argument-hint: "[PROJECT]"
-allowed-tools: Read, Write, Agent, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version, python3 .claude/skills/jira/scripts/build-workitem.py *)
+allowed-tools: Read, Write(.planning/STATE.md), Write(.planning/tickets/*.md), Edit(.planning/STATE.md), Agent, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version, python3 .claude/skills/jira/scripts/build-workitem.py *)
 disable-model-invocation: true
 ---
 
@@ -69,25 +69,28 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
    ## Suggested Priority
    <Critical|High|Medium|Low> — <brief justification>
    ```
-   Write it to a temp path (e.g. `/tmp/jira-<n>.md`). `acli` stores plain text **verbatim**, so a markdown file passed straight through renders as literal `##` and `-` characters in Jira — always convert it first (next step).
+   Write it to `.planning/tickets/<n>.md` — the same directory the plan lives in, so drafts stay reviewable and re-runnable. `acli` stores plain text **verbatim**, so a markdown file passed straight through renders as literal `##` and `-` characters in Jira — always convert it first (next step).
+
+   **Stay inside the supported constructs** — headings, `- ` bullets, paragraphs, `` `inline code` ``, and `[label](url)` links. No `**bold**`, `*italic*`, `~~strike~~`, `__underline__`, or raw HTML; wrap file paths, commands, and globs in backticks so `*` characters inside them are treated as literal.
 
 3. **Build the work item payload** — the description becomes ADF, wrapped in the JSON shape `acli` expects:
    ```bash
-   python3 .claude/skills/jira/scripts/build-workitem.py /tmp/jira-<n>.md \
+   python3 .claude/skills/jira/scripts/build-workitem.py .planning/tickets/<n>.md \
      --project <KEY> --type <TYPE> --summary "<SUMMARY>" \
      [--label <l>] [--parent <ID>] [--field customfield_XXXXX=<points>] \
-     > /tmp/jira-<n>.json
+     > .planning/tickets/<n>.json
    ```
-   The markdown→ADF converter supports only the constructs the template above produces — headings, `- ` bullets, paragraphs, `` `inline code` ``, and `[label](url)` links — and **exits 1 on anything else** (code fences, tables, ordered lists, nested bullets, blockquotes, malformed headings) rather than emitting a document that renders wrongly. Keep the description within those constructs.
+   The converter **exits 1 on anything it does not support** rather than emitting a document that renders wrongly — code fences, tables, ordered lists, nested bullets, blockquotes, malformed headings, and the inline markdown listed above.
 
    Payload keys are exactly those of `acli jira workitem create --generate-json`; only supplied keys are emitted. Use `--adf-only` instead when you need a bare ADF document for `--description-file` (e.g. editing an existing item's description).
 
    If it exits non-zero, **stop** and offer **fix the description**, **create with plain-text `--description`** (stating that the ticket body will not render), or **abort** — per `.claude/rules/tool-reliability.md`. Never fall back silently.
 
 4. **Create via acli** (or emit the rendered markdown as copy-ready content if unavailable):
-   - Run `acli jira workitem create --from-json /tmp/jira-<n>.json`
+   - Run `acli jira workitem create --from-json .planning/tickets/<n>.json`
    - `--from-json` carries the whole work item, so **no other flags are needed** — project, type, summary, description, labels, and parent all come from the file
-   - **Story points** need the project's custom field ID, which varies per Jira site. Discover it once with `acli jira workitem view <EXISTING-ID> --json` and pass it as `--field customfield_XXXXX=<points>`. If the ID is unknown, **omit points rather than guessing** and tell the user they need setting manually.
+   - **Story points** need the project's custom field ID, which varies per Jira site. Discover it once with `acli jira workitem view <EXISTING-ID> --fields '*all' --json` — `--json` alone returns only the default field set (`key,issuetype,summary,status,assignee,description`) and shows no custom fields at all. Pass it as `--field customfield_XXXXX=<points>`. If the ID is unknown, **omit points rather than guessing** and tell the user they need setting manually.
+   - **`--parent`** maps to acli's `parentIssueId`, which its schema documents as sub-task only. Passing an epic as the parent of a Story or Task is untested — if creation fails on it, retry without `--parent` and tell the user to link the epic in Jira.
    - **Do NOT pass `--priority`** — it is not a valid flag, and priority stays as the "Suggested Priority" section in the description
 
 ### 4. Present Manifest

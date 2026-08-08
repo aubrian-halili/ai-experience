@@ -12,6 +12,12 @@ than emitting a document that renders wrongly in Jira:
   '`code`'        -> inline text carrying a code mark
   '[label](url)'  -> inline text carrying a link mark
 
+Rejection covers both block constructs (code fences, tables, ordered lists, nested
+bullets, blockquotes) and inline markdown ADF has no mark for here ('**bold**',
+'__x__', '~~strike~~', '*italic*', raw HTML). Inline checks skip anything already
+inside a code span, so `src/**/*.ts` in backticks is fine. Single underscores are
+NOT treated as italic — snake_case identifiers are far more common in ticket text.
+
 Usage:
   build-workitem.py DESCRIPTION.md --project UN --type Task --summary "..." \
       [--label a --label b] [--parent UN-1] [--assignee me@x.com] \
@@ -31,12 +37,19 @@ import argparse
 import json
 import re
 import sys
+from typing import Any, NoReturn
+
+Json = dict[str, Any]
 
 MAX_HEADING_LEVEL = 6
 
+HEADING = re.compile(r"^(#{1,6})\s+(.*)$")
+BULLET = re.compile(r"^-\s+(.*)$")
 INLINE = re.compile(r"`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)\)")
 
-UNSUPPORTED = [
+# Block constructs the template never produces. Emitting a best-effort ADF node for
+# these would quietly change what the ticket says, so they are refused instead.
+UNSUPPORTED_BLOCK: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"^\s*(```|~~~)"), "code fence"),
     (re.compile(r"^\s*\|"), "table"),
     (re.compile(r"^\s*>"), "blockquote"),
@@ -45,58 +58,78 @@ UNSUPPORTED = [
     (re.compile(r"^\s+\S"), "indented line (nested lists are not supported)"),
 ]
 
+# Inline markdown with no ADF mark in this converter. Checked only against plain
+# segments — text already claimed by a code span is exempt — because without this
+# the markers survive into the document and Jira renders them as literal characters,
+# which is the exact failure this script exists to prevent.
+UNSUPPORTED_INLINE: list[tuple[re.Pattern[str], str]] = [
+    (re.compile(r"\*\*"), "bold ('**')"),
+    (re.compile(r"__"), "bold or italic ('__')"),
+    (re.compile(r"~~"), "strikethrough ('~~')"),
+    (re.compile(r"\*\S[^*]*\*"), "italic ('*') — wrap globs in backticks"),
+    (re.compile(r"</?[a-zA-Z][^>]*>"), "raw HTML tag"),
+]
 
-def fail(lineno, message):
+
+def fail(lineno: int, message: str) -> NoReturn:
     sys.stderr.write(f"build-workitem: line {lineno}: {message}\n")
     sys.exit(1)
 
 
-def inline_nodes(text, lineno):
+def text_node(text: str, marks: list[Json], lineno: int) -> Json:
+    """Build an ADF text node verbatim, for content that is literal by definition."""
+    if not text:
+        fail(lineno, "empty text node is invalid ADF")
+    node: Json = {"type": "text", "text": text}
+    if marks:
+        node["marks"] = marks
+    return node
+
+
+def checked_text_node(text: str, marks: list[Json], lineno: int) -> Json:
+    """Build a text node from prose, refusing markdown that would render literally."""
+    if "`" in text:
+        fail(lineno, "unclosed inline code span")
+    for pattern, label in UNSUPPORTED_INLINE:
+        if pattern.search(text):
+            fail(lineno, f"unsupported inline markdown: {label}")
+    return text_node(text, marks, lineno)
+
+
+def inline_nodes(text: str, lineno: int) -> list[Json]:
     """Split a line into ADF text nodes, applying code and link marks."""
-    nodes = []
+    nodes: list[Json] = []
     cursor = 0
     for match in INLINE.finditer(text):
         plain = text[cursor : match.start()]
         if plain:
-            nodes.append(text_node(plain, [], lineno))
+            nodes.append(checked_text_node(plain, [], lineno))
         code, label, href = match.groups()
         if code is not None:
             nodes.append(text_node(code, [{"type": "code"}], lineno))
         else:
-            nodes.append(text_node(label, [{"type": "link", "attrs": {"href": href}}], lineno))
+            link = {"type": "link", "attrs": {"href": href}}
+            nodes.append(checked_text_node(label, [link], lineno))
         cursor = match.end()
 
     tail = text[cursor:]
     if tail:
-        nodes.append(text_node(tail, [], lineno))
-
-    for node in nodes:
-        if "`" in node["text"] and not node.get("marks"):
-            fail(lineno, "unclosed inline code span")
+        nodes.append(checked_text_node(tail, [], lineno))
 
     if not nodes:
         fail(lineno, "no text content")
     return nodes
 
 
-def text_node(text, marks, lineno):
-    if not text:
-        fail(lineno, "empty text node is invalid ADF")
-    node = {"type": "text", "text": text}
-    if marks:
-        node["marks"] = marks
-    return node
+def parse(lines: list[str]) -> Json:
+    content: list[Json] = []
+    paragraph: list[tuple[str, int]] = []  # buffered plain lines, joined into one
+    bullets: list[tuple[str, int]] = []  # buffered '- ' items as (text, lineno)
 
-
-def parse(lines):
-    content = []
-    paragraph = []  # buffered plain-text lines, joined into one paragraph
-    bullets = []  # buffered '- ' items as (text, lineno)
-
-    def flush():
+    def flush() -> None:
         nonlocal paragraph, bullets
         if paragraph:
-            nodes = []
+            nodes: list[Json] = []
             for text, lineno in paragraph:
                 if nodes:
                     nodes.append({"type": "text", "text": " "})
@@ -111,7 +144,10 @@ def parse(lines):
                         {
                             "type": "listItem",
                             "content": [
-                                {"type": "paragraph", "content": inline_nodes(text, lineno)}
+                                {
+                                    "type": "paragraph",
+                                    "content": inline_nodes(text, lineno),
+                                }
                             ],
                         }
                         for text, lineno in bullets
@@ -127,13 +163,17 @@ def parse(lines):
             flush()
             continue
 
-        for pattern, label in UNSUPPORTED:
+        for pattern, label in UNSUPPORTED_BLOCK:
             if pattern.match(line):
                 fail(index, f"unsupported construct: {label}")
 
-        heading = re.match(r"^(#{1,6})\s+(.*)$", line)
+        heading = HEADING.match(line)
         if heading:
             flush()
+            # Jira renders the work item title as the document's top-level heading, so
+            # every description heading shifts down one level: the template's '##'
+            # becomes ADF level 3 and stays subordinate to the title instead of
+            # competing with it.
             level = min(len(heading.group(1)) + 1, MAX_HEADING_LEVEL)
             text = heading.group(2).strip()
             if not text:
@@ -150,7 +190,7 @@ def parse(lines):
         if line.startswith("#"):
             fail(index, "malformed heading: expected '#' markers, a space, then text")
 
-        bullet = re.match(r"^-\s+(.*)$", line)
+        bullet = BULLET.match(line)
         if bullet:
             if paragraph:
                 flush()
@@ -173,24 +213,47 @@ def parse(lines):
     return {"version": 1, "type": "doc", "content": content}
 
 
-def custom_field(raw):
-    """Parse a --field customfield_10016=5 argument. Numbers stay numbers."""
+def custom_field(raw: str) -> tuple[str, Any]:
+    """Parse a `--field customfield_10016=5` argument.
+
+    Values opening with '{' or '[' are parsed as JSON, because some Jira custom fields
+    take structured values — acli's own --generate-json template shows the
+    `{"value": "..."}` shape. Anything else becomes a number when it parses as one and
+    a plain string otherwise, so a field whose legitimate value is the word "true" is
+    not silently coerced into a boolean.
+    """
     key, sep, value = raw.partition("=")
-    if not sep or not key.strip():
+    key = key.strip()
+    if not sep or not key:
         raise argparse.ArgumentTypeError(f"expected KEY=VALUE, got {raw!r}")
+
     value = value.strip()
-    try:
-        return key.strip(), json.loads(value)
-    except json.JSONDecodeError:
-        return key.strip(), value
+    if value[:1] in ("{", "["):
+        try:
+            return key, json.loads(value)
+        except json.JSONDecodeError as error:
+            raise argparse.ArgumentTypeError(
+                f"invalid JSON value for {key}: {error}"
+            ) from error
+
+    for cast in (int, float):
+        try:
+            return key, cast(value)
+        except ValueError:
+            continue
+    return key, value
 
 
-def build_args():
+def build_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="build-workitem.py", description=__doc__, allow_abbrev=False
     )
-    parser.add_argument("description", nargs="?", help="description markdown file (default: stdin)")
-    parser.add_argument("--adf-only", action="store_true", help="emit the bare ADF document")
+    parser.add_argument(
+        "description", nargs="?", help="description markdown file (default: stdin)"
+    )
+    parser.add_argument(
+        "--adf-only", action="store_true", help="emit the bare ADF document"
+    )
     parser.add_argument("--project", help="project key, e.g. UN")
     parser.add_argument("--type", help="work item type, case sensitive, e.g. Task")
     parser.add_argument("--summary", help="work item summary/title")
@@ -209,23 +272,33 @@ def build_args():
 
     args = parser.parse_args()
 
+    exclusive = (
+        "project",
+        "type",
+        "summary",
+        "parent",
+        "assignee",
+        "reporter",
+        "label",
+        "field",
+    )
     if args.adf_only:
-        conflicts = [
-            name
-            for name in ("project", "type", "summary", "parent", "assignee", "reporter")
-            if getattr(args, name)
-        ] + (["label"] if args.label else []) + (["field"] if args.field else [])
+        conflicts = [f"--{name}" for name in exclusive if getattr(args, name)]
         if conflicts:
-            parser.error(f"--adf-only cannot be combined with: {', '.join('--' + c for c in conflicts)}")
+            parser.error(f"--adf-only cannot be combined with: {', '.join(conflicts)}")
     else:
-        missing = [f"--{n}" for n in ("project", "type", "summary") if not getattr(args, n)]
+        required = ("project", "type", "summary")
+        missing = [f"--{name}" for name in required if not getattr(args, name)]
         if missing:
-            parser.error(f"missing required argument(s): {', '.join(missing)} (or pass --adf-only)")
+            parser.error(
+                f"missing required argument(s): {', '.join(missing)} "
+                "(or pass --adf-only)"
+            )
 
     return args
 
 
-def main():
+def main() -> None:
     args = build_args()
 
     if args.description:
@@ -237,7 +310,7 @@ def main():
     adf = parse(lines)
 
     if args.adf_only:
-        payload = adf
+        payload: Json = adf
     else:
         payload = {
             "projectKey": args.project,
