@@ -43,8 +43,10 @@ If on `main` or `master`, offer to create a feature branch per git conventions u
 
 For each milestone:
 - **Independent milestones** — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria.
-  - Worker brief must specify: remove orphaned imports/vars caused by the change, but leave pre-existing dead code alone.
+  - Worker brief must specify: remove orphaned imports/vars caused by the change, but leave pre-existing dead code alone; and apply the comment discipline below.
 - **Sequential milestones** — implement inline, in order.
+
+**Comment discipline.** Do not narrate the change (`// added for UN-1234`, `// new logic`) or label self-evident structure (`// imports`, `// constructor`, banner separators). Remove redundant or now-stale comments only on lines the milestone already changes — leave unrelated pre-existing comments alone, same as pre-existing dead code.
 
 **Optional checkpoint commits.** Only if the user has asked for per-phase commits: after a phase's milestones pass their own verification, commit that phase on the feature branch (message per git conventions) so phases stay independently revertable and survive a context reset. Otherwise do not commit here — the default hand-off to `/commit` in §5 stands (per governance, commit only when the user asks).
 
