@@ -45,6 +45,26 @@ Limit output to 50 rows with a truncation notice for larger result sets.
 
 If `@references/database-overview.md` exists, present its cached data directly instead of re-querying. The cached file contains databases, schemas, and table names only — no column-level detail. If the user wants column detail for a specific table, proceed to the **Table Schema** workflow.
 
+## Schema Is Truth, Data Is Not
+
+The connection targets `ENV=test`, so every row is seeded or hand-made test data.
+
+| Source | Trust | How to report it |
+|--------|-------|------------------|
+| Structure — columns, types, nullability, constraints, indexes, FKs, enum types | Authoritative | State as fact |
+| Rows — values, counts, distributions | Not authoritative | State as an observation from the test environment, with the caveat attached |
+
+When something looks inconsistent — an orphan row, an unexpected NULL, a status no code path writes, a duplicate a constraint should have blocked — **stop and verify with the user**. Do not assume the data is correct, and do not quietly reconcile it by rewriting the query, widening a filter, or reinterpreting what a column means.
+
+Before asking, gather just enough to make the question answerable:
+
+1. **Quantify it** — `COUNT(*)` of the anomaly against the table total, `GROUP BY` for value distribution, `MIN/MAX` on a timestamp column to date it. One stray row reads very differently from 90% of the table.
+2. **Check the constraint** — query `information_schema.table_constraints` / `pg_constraint` to see whether the DB actually forbids what you found. If the schema permits it, it is not a violation.
+
+Then ask the user in one message: what you found, the numbers, whether the schema forbids it, and the question itself — is this expected test data, or a real inconsistency worth pursuing? Wait for the answer before drawing any conclusion from those rows.
+
+Never propose a data fix, backfill, or migration on the strength of a test-environment anomaly alone. Say what would need checking in production instead.
+
 ## Related
 
 For planning-time schema research, the `plan` skill spawns the `database-explorer` agent, which reuses this skill's connection pattern and cached overview to return a structured Essential Tables report to `code-architect` agents.
