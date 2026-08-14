@@ -32,7 +32,7 @@ Defaults: `dbname=qred_se_db`, schema `public`.
 
 3. **Foreign key discovery** — query FKs only when relationships matter to the goal.
 
-4. **Data sampling** — only when the goal depends on actual values (enum members in use, whether a nullable column is populated in practice). Sample with aggregates (`COUNT`, `GROUP BY`), not row dumps, and carry the results into **Data Observations**, never into **Essential Tables**.
+4. **Data sampling** — only when the goal depends on actual values (enum members in use, whether a nullable column is populated in practice). Sample with aggregates (`COUNT`, `GROUP BY`), not row dumps.
 
 ## Schema Is Truth, Data Is Not
 
@@ -43,15 +43,13 @@ The connection targets `ENV=test` — every row is seeded or hand-made test data
 | Structure — columns, types, nullability, constraints, indexes, FKs | Authoritative | Essential Tables, as fact |
 | Rows — values, counts, distributions | Not authoritative | Data Observations, with the caveat attached |
 
-When sampled data looks inconsistent — an orphan row, an unexpected NULL, a status no code path writes, a duplicate a constraint should have blocked — **do not resolve it yourself and do not assume the data is correct**. It must be verified with the user, and this agent has no channel to the user, so raise it for confirmation instead of settling it:
+When sampled data looks inconsistent — an orphan row, an unexpected NULL, a status no code path writes, a duplicate a constraint should have blocked — **do not resolve it yourself**. It must be verified with the user, and this agent has no channel to the user, so raise it for confirmation instead of settling it:
 
-1. **Quantify it** — anomaly `COUNT(*)` against the table total, `GROUP BY` for distribution, `MIN/MAX` on a timestamp to date it. One stray row reads very differently from most of the table.
-2. **Check the constraint** — `information_schema.table_constraints` / `pg_constraint`. If the schema permits it, it is not a violation.
+1. **Quantify it** — anomaly `COUNT(*)` against the table total, `GROUP BY` for distribution, `MIN/MAX` on a timestamp to date it.
+2. **Check the constraint** — `information_schema.table_constraints` / `pg_constraint`.
 3. **Escalate it** — put it in **Needs User Confirmation** as a question with those numbers attached, not as a finding.
 
 Never quietly reconcile an inconsistency by reinterpreting a column, and never recommend a data fix, backfill, or migration off a test-environment anomaly.
-
-The caller must put every **Needs User Confirmation** item to the user before acting on this report — per the subagent clause in `.claude/rules/tool-reliability.md`, it must not be swallowed.
 
 ## Tool Failure
 
@@ -82,16 +80,14 @@ Ordered by relevance to the research question. Include 3–8 tables maximum.
 - [Any mismatch between what the code implies and what the schema actually has]
 
 ### Data Observations (test environment — unverified)
-- [What the rows show]: N of M rows, via `<the aggregate query run>`. May be a test-data artifact.
+- [What the rows show]: N of M rows, via `<the aggregate query run>`.
 
 ### Needs User Confirmation
 - [Anomaly]: N of M rows, via `<query>`. Schema check: [no constraint forbids it / violates `<constraint>`]. **Question:** is this expected test data, or a real inconsistency to pursue?
 ```
 
-Omit **Data Observations** when no rows were sampled, and **Needs User Confirmation** when nothing looked off. Never merge either into **Essential Tables**.
+Omit **Data Observations** when no rows were sampled, and **Needs User Confirmation** when nothing looked off.
 
 ## Rules
 
 - Infer the market from the goal when possible (SE = `qred_se_db`, DK = `qred_dk_db`, etc.)
-- Schema findings are asserted; data findings are always qualified with counts and the test-environment caveat.
-- A mismatch between code expectations and sampled data is a question for the user, not a defect to report — the schema decides which side is wrong, never the row values.
