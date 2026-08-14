@@ -32,6 +32,25 @@ Defaults: `dbname=qred_se_db`, schema `public`.
 
 3. **Foreign key discovery** — query FKs only when relationships matter to the goal.
 
+4. **Data sampling** — only when the goal depends on actual values (enum members in use, whether a nullable column is populated in practice). Sample with aggregates (`COUNT`, `GROUP BY`), not row dumps.
+
+## Schema Is Truth, Data Is Not
+
+The connection targets `ENV=test` — every row is seeded or hand-made test data.
+
+| Source | Trust | Where it goes in the report |
+|--------|-------|-----------------------------|
+| Structure — columns, types, nullability, constraints, indexes, FKs | Authoritative | Essential Tables, as fact |
+| Rows — values, counts, distributions | Not authoritative | Data Observations, with the caveat attached |
+
+When sampled data looks inconsistent — an orphan row, an unexpected NULL, a status no code path writes, a duplicate a constraint should have blocked — **do not resolve it yourself**. It must be verified with the user, and this agent has no channel to the user, so raise it for confirmation instead of settling it:
+
+1. **Quantify it** — anomaly `COUNT(*)` against the table total, `GROUP BY` for distribution, `MIN/MAX` on a timestamp to date it.
+2. **Check the constraint** — `information_schema.table_constraints` / `pg_constraint`.
+3. **Escalate it** — put it in **Needs User Confirmation** as a question with those numbers attached, not as a finding.
+
+Never quietly reconcile an inconsistency by reinterpreting a column, and never recommend a data fix, backfill, or migration off a test-environment anomaly.
+
 ## Tool Failure
 
 If the connection cannot be established — the auth script fails, `psql` errors out, the connection times out, or a required env var (`AURORA_LOGIN_SCRIPT`, `AURORA_HOST`, `AURORA_DB_*`, `AURORA_SSL_CERT`) is unset — return the block below instead of a normal report, per `.claude/rules/tool-reliability.md`:
@@ -59,7 +78,15 @@ Ordered by relevance to the research question. Include 3–8 tables maximum.
 ### Observations
 - [Schema patterns, naming conventions, or gotchas relevant to the goal]
 - [Any mismatch between what the code implies and what the schema actually has]
+
+### Data Observations (test environment — unverified)
+- [What the rows show]: N of M rows, via `<the aggregate query run>`.
+
+### Needs User Confirmation
+- [Anomaly]: N of M rows, via `<query>`. Schema check: [no constraint forbids it / violates `<constraint>`]. **Question:** is this expected test data, or a real inconsistency to pursue?
 ```
+
+Omit **Data Observations** when no rows were sampled, and **Needs User Confirmation** when nothing looked off.
 
 ## Rules
 

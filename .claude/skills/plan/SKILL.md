@@ -35,6 +35,8 @@ Launch `jira-explorer` in parallel **only when** §1 has not already run it and 
 
 Pass the **Essential Files** list from `code-explorer`, the **Essential Tables** list from `database-explorer` (when present), the **Essential References** list from `git-repos-explorer` (when present), and the **Acceptance Criteria** and **Scope Boundaries** from `jira-explorer` (when present) into every `code-architect` agent in §3.
 
+**Unconfirmed data — ask before planning on it.** If `database-explorer` returns a `### Needs User Confirmation` section, put each item to the user with `AskUserQuestion` before §3. Do not pass it to `code-architect` as fact and do not resolve it yourself — per the subagent clause in `.claude/rules/tool-reliability.md`, it must not be swallowed.
+
 **Tool failure — pause, do not skip.** If any spawned agent returns a `### Tool Failure` report instead of its normal output (e.g. `database-explorer` could not reach Aurora, `git-repos-explorer` could not run `gh`, `jira-explorer` could not run `acli`), stop and `AskUserQuestion` with **retry**, **proceed without that grounding** (label the schema, cross-repo, or requirements facts as unverified in the plan), or **abort** — per `.claude/rules/tool-reliability.md`. Do not proceed to §3 with code as the sole source of truth.
 
 ### 3. Architecture Comparison
