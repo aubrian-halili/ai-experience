@@ -17,9 +17,9 @@
     "type": "command",
     "command": "bash ~/.claude/scripts/statusline.sh"
   },
-  "effortLevel": "xhigh",
+  "effortLevel": "medium",
+  "tui": "fullscreen",
   "theme": "light",
   "skipAutoPermissionPrompt": true,
-  "defaultMode": "auto",
-  "tui": "fullscreen"
+  "defaultMode": "auto"
 }
