@@ -83,7 +83,7 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
    The converter exits 1 rather than emitting a document that renders wrongly, with the reason on stderr. Run it with `--help` for the full flag list; use `--adf-only` when you need a bare ADF document for `--description-file` (e.g. editing an existing item's description).
 
    - **Story points** need the project's custom field ID, which varies per Jira site. Discover it once with `acli jira workitem view <EXISTING-ID> --fields '*all' --json` — `--json` alone returns only the default field set (`key,issuetype,summary,status,assignee,description`) and shows no custom fields at all. Pass it as `--field customfield_XXXXX=<points>`. If the ID is unknown, **omit points rather than guessing** and tell the user they need setting manually.
-   - **`--parent`** maps to acli's `parentIssueId`, which its schema documents as sub-task only. Passing an epic as the parent of a Story or Task is untested — if creation fails on it, retry without `--parent`, then add a `Relates` link to the epic in step 5 and tell the user the epic **parent** field still needs setting in Jira (a link is not epic parentage).
+   - **`--parent`** maps to acli's `parentIssueId`, which its schema documents as sub-task only. Passing an epic as the parent of a Story or Task is untested — if creation fails on it, retry without `--parent`, then add a `Relates` link to the epic in **Link Dependencies** and tell the user the epic **parent** field still needs setting in Jira (a link is not epic parentage).
 
    On non-zero exit, apply `.claude/rules/tool-reliability.md` — the proceed option here is creating with a plain-text `--description`, stating that the ticket body will not render.
 
@@ -96,25 +96,29 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
      > .planning/tickets/bulk.json
    acli jira workitem create-bulk --from-json .planning/tickets/bulk.json --yes
    ```
-   `create-bulk` uses a **different schema** from `create` (`issueType` not `type`, `label` not `labels`) and supports only seven fields. `build-bulk.py` does the translation and **exits 1 rather than dropping a field** — a ticket carrying story points (`additionalAttributes`) or a `reporter` cannot be bulk-created, so create those individually via the default path and bulk the rest.
+   `create-bulk` uses a **different schema** from `create` and supports only seven fields. `build-bulk.py` does the translation and **exits 1 rather than dropping a field** — a ticket carrying story points or a `reporter` cannot be bulk-created, and the error names the offending file and the remedy.
 
    **Verify the render once per project.** acli's create-bulk schema does not document the `description` field, so ADF handling on this path is unconfirmed. On the first bulk run against a project, check one result with `acli jira workitem view <NEW-KEY> --fields description --json`: if the description came back as a plain string instead of an ADF doc, the bodies rendered as literal `##` and `-`. Repair each with `build-workitem.py --adf-only` piped to `acli jira workitem edit --key <KEY> --description-file <file> --yes`, and use the per-ticket path for the rest of the run.
 
-5. **Link dependencies** — the "Depends On" column resolves to real Jira links once every ticket has an ID:
-   ```bash
-   cat > .planning/tickets/links.json <<'EOF'
-   [
-     { "outwardIssue": "UN-1234", "inwardIssue": "UN-1235", "type": "Blocks" }
-   ]
-   EOF
-   acli jira workitem link create --from-json .planning/tickets/links.json --yes
-   ```
-   - **Direction matters**: `outwardIssue` **blocks** `inwardIssue`. If ticket B depends on A, then A is outward and B is inward.
-   - The payload is a bare JSON **array**, not an object — unlike every other `--from-json` file in this skill.
-   - Valid `--type` values come from `acli jira workitem link type`; this skill uses `Blocks` for dependencies and `Relates` for the epic fallback in step 3. There is no link type for epic parentage.
-   - Skip the step entirely when no ticket depends on another. On failure, report it and leave the tickets in place — the links are additive, so the user can add them in Jira without redoing creation.
+### 4. Link Dependencies
 
-### 4. Present Manifest
+The "Depends On" column resolves to real Jira links once every ticket has an ID:
+
+```bash
+cat > .planning/tickets/links.json <<'EOF'
+[
+  { "outwardIssue": "UN-1234", "inwardIssue": "UN-1235", "type": "Blocks" }
+]
+EOF
+acli jira workitem link create --from-json .planning/tickets/links.json --yes
+```
+
+- **Direction matters**: if ticket B depends on A, then A is `outwardIssue` and B is `inwardIssue`.
+- The payload is a bare JSON array — unlike every other `--from-json` file in this skill.
+- Valid `--type` values come from `acli jira workitem link type`; this skill uses `Blocks` for dependencies and `Relates` for the epic fallback in **Create Tickets**. There is no link type for epic parentage.
+- The links are additive, so on failure leave the created tickets in place — the user can add links in Jira without redoing creation.
+
+### 5. Present Manifest
 
 Output the manifest and store it in `.planning/STATE.md` under a `## Tickets` section:
 
@@ -123,4 +127,4 @@ Output the manifest and store it in `.planning/STATE.md` under a `## Tickets` se
 | UN-1234 | ... | UN-1234-short-description | — |
 | UN-1235 | ... | UN-1235-short-description | UN-1234 |
 
-`Blocked By` reflects the links actually created in step 5 — leave a `—` where none were, and note any link that failed so the user knows to add it manually.
+`Blocked By` reflects the links actually created in **Link Dependencies**.

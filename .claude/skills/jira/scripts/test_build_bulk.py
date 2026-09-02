@@ -5,8 +5,6 @@ Runs two ways, because this repo has no test runner installed:
 
     python3 .claude/skills/jira/scripts/test_build_bulk.py   # zero dependencies
     pytest .claude/skills/jira/scripts/test_build_bulk.py    # if pytest is present
-
-Both collect the same `test_*` functions and the same plain asserts.
 """
 
 import json
@@ -40,7 +38,6 @@ def workitem(**overrides: Any) -> dict[str, Any]:
 
 
 def run_cli(*payloads: dict[str, Any]) -> subprocess.CompletedProcess[str]:
-    """Write each payload to its own temp file and run the script over them."""
     with tempfile.TemporaryDirectory() as directory:
         paths = []
         for index, payload in enumerate(payloads, start=1):

@@ -46,7 +46,6 @@ BULK_KEYS = {
 
 REQUIRED_KEYS = ("projectKey", "type", "summary")
 
-# Why each unsupported field matters, so the error tells the user what to do about it.
 UNSUPPORTED_REASON = {
     "additionalAttributes": "custom fields (e.g. story points) are not part of the "
     "create-bulk schema",
