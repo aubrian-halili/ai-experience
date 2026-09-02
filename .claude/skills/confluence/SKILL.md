@@ -15,9 +15,9 @@ disable-model-invocation: true
 
 All operations target `qredab.atlassian.net`. Prefer `--json` on all acli commands.
 
-**Pages are read-only** — acli exposes only `page view`; there is no `page create` or `page update`, so new and edited page content is delivered as Markdown plus an edit URL (Steps 3, 7).
+**Pages are read-only** — acli has no `page create` or `page update`, so new and edited page content is delivered as Markdown plus an edit URL (Steps 3, 7).
 
-**Blog posts may be created, as drafts only.** `acli confluence blog create` defaults to `--status current`, which **publishes immediately**. Always pass `--status draft`. Publishing (`--status current`) requires the user to say so explicitly in the current turn — never infer it from "create a blog post".
+**Blog posts may be created, as drafts only.** `acli confluence blog create` defaults to `--status current`, which **publishes immediately**. Always pass `--status draft`. Publishing requires the user to say so explicitly in the current turn — never infer it from "create a blog post".
 
 **Forbidden actions**: `space archive`, `space restore`, `space create`, `space update`.
 
@@ -46,8 +46,7 @@ Run `acli --version`; if unavailable, use Markdown-paste fallbacks (Steps 3, 7) 
 ### 2. View Page
 
 - Run `acli confluence page view --id <PAGE_ID> --body-format storage`
-- Key flags: `--body-format` (storage|atlas_doc_format|view), `--version <N>`, `--get-draft`, `--status` (comma-separated: current,draft,archived)
-- Include flags: `--include-labels`, `--include-direct-children` (child pages — the only way to walk a page tree), `--include-version` (detailed version object), `--include-versions` (version list), `--include-properties`, `--include-collaborators`, `--include-likes`, `--include-operations`, `--include-webresources`
+- `--status` takes a comma-separated list (current,draft,archived); `--include-direct-children` is the only way to walk a page tree. Other flags: `acli confluence page view --help`
 
 ### 3. Update Page (Fallback)
 
@@ -62,17 +61,15 @@ Run `acli --version`; if unavailable, use Markdown-paste fallbacks (Steps 3, 7) 
 ### 5. List / View Blogs
 
 - List: `acli confluence blog list --space-id <SPACE_ID>`
-  - Key flags: `--title` (filter by title), `--id` (comma-separated IDs), `--status` (comma-separated: current,deleted,trashed — note there is no `draft` here), `--space-id` (accepts comma-separated IDs), `--sort`, `--limit`/`-l` (default 25), `--cursor` (pagination token from a previous response's output — use it rather than raising `--limit` for large spaces), `--body-format` (storage|atlas_doc_format), `--csv`
+  - `--status` takes a comma-separated list of current,deleted,trashed — there is no `draft` here. `--limit` defaults to 25; page with `--cursor` (token from the previous response) rather than raising the limit.
 - View a specific post: `acli confluence blog view --id <BLOG_ID> --body-format view`
-  - Key flags: `--body-format` (default `view`; also storage|atlas_doc_format), `--draft`, `--version <N>`, `--status` (current|trashed|deleted|historical|draft, default current)
-  - `--include` accepts a comma-separated list of: `labels`, `properties`, `operations`, `likes`, `versions`, `version`, `favorited`, `webresources`, `collaborators`, or `all`
+  - `--body-format` defaults to `view`; `--status` defaults to `current` and accepts `draft`.
 
 ### 6. List Spaces
 
 - Run `acli confluence space list`
-- Key flags: `--type` (global|personal), `--keys` (comma-separated space keys), `--status` (current|archived, default current), `--limit`/`-l` (default 50), `--expand` (description|homepage|permissions)
-- View a specific space: `acli confluence space view --id <SPACE_ID>`
-  - Key flags: `--include-all` (everything below), `--icon`, `--labels`, `--permissions`, `--properties`, `--operations`, `--role-assignments` (EAP sites only), `--desc-format` (plain|view)
+- `--type` (global|personal), `--keys` (comma-separated space keys), `--limit` defaults to 50, `--status` defaults to `current`
+- View a specific space: `acli confluence space view --id <SPACE_ID>` (`--include-all` for every detail section)
 - Space IDs are numeric and differ from space keys. Resolve a key to an ID with `acli confluence space list --keys <KEY> --json` before any command taking `--space-id`.
 
 ### 7. Create Page (Fallback)
@@ -81,19 +78,14 @@ Run `acli --version`; if unavailable, use Markdown-paste fallbacks (Steps 3, 7) 
 
 ### 8. Create Blog Post (Draft)
 
-Unlike pages, blog posts can be created directly. Draft only — see **Guardrails**.
-
-1. **Resolve the space ID** — `acli confluence space list --keys <KEY> --json` (Step 6). `--space-id` takes the numeric ID, not the key.
-2. **Author the body in Confluence storage format (XHTML)** — not Markdown. `--body`/`--from-file` content is stored as given, so Markdown syntax renders as literal `##` and `-` characters, the same way it does for Jira descriptions. Write real tags: `<h2>`, `<p>`, `<ul><li>`, `<code>`, `<a href="…">`. Save it to `.confluence/<slug>.xhtml` so the draft stays reviewable and re-runnable.
-3. **Show the user the body and the target space, and get confirmation** before calling acli. This is an outward-facing write.
+1. **Resolve the space ID** (Step 6).
+2. **Author the body in Confluence storage format (XHTML)**, not Markdown — `--body`/`--from-file` content is stored as given, so Markdown syntax renders literally. Save it to `.confluence/<slug>.xhtml` so the draft stays reviewable and re-runnable.
+3. **Show the user the body and the target space, and get confirmation** before calling acli.
 4. **Create the draft**:
    ```bash
    acli confluence blog create --space-id <SPACE_ID> --title "<TITLE>" \
      --from-file .confluence/<slug>.xhtml --status draft --json
    ```
-   - Prefer `--from-file` over `--body` — it keeps XHTML out of the shell and off the command line.
-   - `--from-json <file>` takes a whole payload instead; `--generate-json` prints its expected structure.
-   - `--private` restricts the post to its creator. `--created-at` backdates it. Neither is needed for the normal path.
-5. **Report the draft** — read the ID and links straight from the `--json` response and give the user that URL rather than constructing one. State plainly that the post is a **draft** and that publishing is a separate step the user takes in Confluence (or by re-running with `--status current`, which requires their explicit go-ahead).
+5. **Report the draft** — read the ID and links straight from the `--json` response and give the user that URL rather than constructing one. Publishing is a separate step the user takes in Confluence (or by re-running with `--status current`, which requires their explicit go-ahead).
 
-On non-zero exit, apply `.claude/rules/tool-reliability.md` — the proceed option here is Step 7's paste fallback, stating that nothing was created in Confluence.
+On non-zero exit, nothing was created in Confluence — say so, and offer Step 7's paste fallback.
