@@ -7,7 +7,7 @@ description: >-
   Defaults to project UN (overridable); uses acli when available, otherwise emits copy-ready content.
   Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature); not for: transitioning or editing existing tickets.
 argument-hint: "[PROJECT]"
-allowed-tools: Read, Write(.planning/STATE.md), Write(.planning/tickets/*.md), Edit(.planning/STATE.md), Agent, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem update *, acli jira workitem edit *, acli jira workitem transition *, acli --version, python3 .claude/skills/jira/scripts/build-workitem.py *)
+allowed-tools: Read, Write(.planning/STATE.md), Write(.planning/tickets/*.md), Write(.planning/tickets/*.json), Edit(.planning/STATE.md), Agent, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem create-bulk *, acli jira workitem edit *, acli jira workitem link *, acli jira workitem transition *, acli --version, python3 .claude/skills/jira/scripts/build-workitem.py *, python3 .claude/skills/jira/scripts/build-bulk.py *)
 disable-model-invocation: true
 ---
 
@@ -83,18 +83,48 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
    The converter exits 1 rather than emitting a document that renders wrongly, with the reason on stderr. Run it with `--help` for the full flag list; use `--adf-only` when you need a bare ADF document for `--description-file` (e.g. editing an existing item's description).
 
    - **Story points** need the project's custom field ID, which varies per Jira site. Discover it once with `acli jira workitem view <EXISTING-ID> --fields '*all' --json` — `--json` alone returns only the default field set (`key,issuetype,summary,status,assignee,description`) and shows no custom fields at all. Pass it as `--field customfield_XXXXX=<points>`. If the ID is unknown, **omit points rather than guessing** and tell the user they need setting manually.
-   - **`--parent`** maps to acli's `parentIssueId`, which its schema documents as sub-task only. Passing an epic as the parent of a Story or Task is untested — if creation fails on it, retry without `--parent` and tell the user to link the epic in Jira.
+   - **`--parent`** maps to acli's `parentIssueId`, which its schema documents as sub-task only. Passing an epic as the parent of a Story or Task is untested — if creation fails on it, retry without `--parent`, then add a `Relates` link to the epic in **Link Dependencies** and tell the user the epic **parent** field still needs setting in Jira (a link is not epic parentage).
 
    On non-zero exit, apply `.claude/rules/tool-reliability.md` — the proceed option here is creating with a plain-text `--description`, stating that the ticket body will not render.
 
-4. **Create via acli**:
+4. **Create via acli** — one ticket at a time by default:
    - Run `acli jira workitem create --from-json .planning/tickets/<n>.json` — the file carries the whole work item, so pass no other flags; in particular **not `--priority`**, which is not a valid flag (priority stays as the "Suggested Priority" section in the description)
 
-### 4. Present Manifest
+   **Bulk path (4+ tickets, same project).** Offer `create-bulk` to collapse the loop into one call:
+   ```bash
+   python3 .claude/skills/jira/scripts/build-bulk.py .planning/tickets/*.json \
+     > .planning/tickets/bulk.json
+   acli jira workitem create-bulk --from-json .planning/tickets/bulk.json --yes
+   ```
+   `create-bulk` uses a **different schema** from `create` and supports only seven fields. `build-bulk.py` does the translation and **exits 1 rather than dropping a field** — a ticket carrying story points or a `reporter` cannot be bulk-created, and the error names the offending file and the remedy.
+
+   **Verify the render once per project.** acli's create-bulk schema does not document the `description` field, so ADF handling on this path is unconfirmed. On the first bulk run against a project, check one result with `acli jira workitem view <NEW-KEY> --fields description --json`: if the description came back as a plain string instead of an ADF doc, the bodies rendered as literal `##` and `-`. Repair each with `build-workitem.py --adf-only` piped to `acli jira workitem edit --key <KEY> --description-file <file> --yes`, and use the per-ticket path for the rest of the run.
+
+### 4. Link Dependencies
+
+The "Depends On" column resolves to real Jira links once every ticket has an ID:
+
+```bash
+cat > .planning/tickets/links.json <<'EOF'
+[
+  { "outwardIssue": "UN-1234", "inwardIssue": "UN-1235", "type": "Blocks" }
+]
+EOF
+acli jira workitem link create --from-json .planning/tickets/links.json --yes
+```
+
+- **Direction matters**: if ticket B depends on A, then A is `outwardIssue` and B is `inwardIssue`.
+- The payload is a bare JSON array — unlike every other `--from-json` file in this skill.
+- Valid `--type` values come from `acli jira workitem link type`; this skill uses `Blocks` for dependencies and `Relates` for the epic fallback in **Create Tickets**. There is no link type for epic parentage.
+- The links are additive, so on failure leave the created tickets in place — the user can add links in Jira without redoing creation.
+
+### 5. Present Manifest
 
 Output the manifest and store it in `.planning/STATE.md` under a `## Tickets` section:
 
-| Ticket ID | Summary | Branch Name |
-|-----------|---------|-------------|
-| UN-1234 | ... | UN-1234-short-description |
-| UN-1235 | ... | UN-1235-short-description |
+| Ticket ID | Summary | Branch Name | Blocked By |
+|-----------|---------|-------------|------------|
+| UN-1234 | ... | UN-1234-short-description | — |
+| UN-1235 | ... | UN-1235-short-description | UN-1234 |
+
+`Blocked By` reflects the links actually created in **Link Dependencies**.

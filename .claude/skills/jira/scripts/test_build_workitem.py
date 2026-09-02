@@ -271,7 +271,7 @@ def test_should_emit_acli_payload_keys_when_given_work_item_flags() -> None:
     )
     assert result.returncode == 0, result.stderr
     payload = json.loads(result.stdout)
-    # Keys verified against `acli jira workitem create --generate-json` (acli 1.3.22).
+    # Keys verified against `acli jira workitem create --generate-json` (acli 1.3.36).
     assert set(payload) == {
         "projectKey",
         "type",
