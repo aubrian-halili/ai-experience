@@ -30,6 +30,10 @@ Single source for severity vocabulary, the review output block, and the combined
 1. **[Title]** — divergent `file:line` vs sibling `file:line` — [how it departs] → [code-architect realignment suggestion]
 [If none: "No unjustified divergence from existing siblings."]
 
+### Comment Noise
+[Comments added by this change that the code already says. Each: `file:line` — quoted comment → delete | shorter replacement.]
+[If none: "No redundant comments introduced."]
+
 ### Testing
 [Coverage added/missing — e.g., "Unit tests cover happy path; integration not tested."]
 ```

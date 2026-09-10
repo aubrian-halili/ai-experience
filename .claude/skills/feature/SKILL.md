@@ -48,7 +48,7 @@ For each milestone:
 
 **Comment discipline.** Do not narrate the change (`// added for UN-1234`, `// new logic`) or label self-evident structure (`// imports`, `// constructor`, banner separators). Remove redundant or now-stale comments only on lines the milestone already changes — leave unrelated pre-existing comments alone, same as pre-existing dead code.
 
-**Optional checkpoint commits.** Only if the user has asked for per-phase commits: after a phase's milestones pass their own verification, commit that phase on the feature branch (message per git conventions) so phases stay independently revertable and survive a context reset. Otherwise do not commit here — the default hand-off to `/commit` in §5 stands (per governance, commit only when the user asks).
+**Optional checkpoint commits.** Only if the user has asked for per-phase commits: after a phase's milestones pass their own verification, commit that phase on the feature branch (message per git conventions) so phases stay independently revertable and survive a context reset. Otherwise do not commit here — the default hand-off to `/commit` in §6 stands (per governance, commit only when the user asks).
 
 ### 4. Format
 
@@ -61,7 +61,25 @@ After milestones are implemented, format the changed files with the project's ow
 
 If no formatter/linter is detected or the detected tool is not available, skip the format step — do not install or configure one.
 
-### 5. Verify, review, hand off
+### 5. Comment sweep
+
+Before gating, re-read the comments this branch introduced — `git diff origin/main..HEAD` and look at
+added or modified comment lines only — and delete the ones that earn nothing:
+
+- Restates the code (`// increment counter` above `counter += 1`; a docstring repeating the signature).
+- Narrates the change (`// added for UN-1234`, `// new logic`, `// was: ...`, commented-out code).
+- Labels self-evident structure (`// imports`, `// constructor`, banner separators).
+- Duplicates an explanation already given nearby, or repeats it per branch of the same `if`.
+- Is stale — describes behavior a later milestone changed.
+
+Keep anything the code cannot say: *why* a decision was made, a non-obvious constraint or workaround,
+a ticket/RFC link, a footgun warning, or contract details in an API docstring (units, ranges, raised
+errors, side effects). When in doubt, keep it.
+
+Scope is the same as the comment discipline in §3: only comments on lines this branch touched. Leave
+unrelated pre-existing comments alone.
+
+### 6. Verify, review, hand off
 
 Invoke `/gate` (feature mode — no PR argument). It runs completeness verification against `.planning/STATE.md` and the code review **in parallel** and emits one verdict. A feature is complete only when `/gate` returns **READY** (VERIFY **PASS** and no Blocking/correctness findings).
 
