@@ -31,7 +31,8 @@ suggestions (e.g. `src/auth/ --refactor`).
 Give every pass the diff range (`<base>..HEAD`, default `origin/main..HEAD`) and point it at the
 branch being reviewed.
 
-- **`code-quality-reviewer`** — type safety, error handling, test coverage, performance, documentation.
+- **`code-quality-reviewer`** — type safety, error handling, test coverage, performance,
+  documentation, and comment noise (see **Comment noise** below).
 - **`security-scanner`** — OWASP injection, auth/access, crypto, config.
 - **`code-explorer`** — find 2-3 existing siblings of the same archetype as the changed code (e.g.
   another route handler, another migration, another React hook). Compare the new code against them
@@ -43,6 +44,27 @@ branch being reviewed.
   models, raw/ORM queries, named entities mapping to tables). Pass it the concrete schema questions
   the diff raises (e.g. "does `r_client_score` have an `isactive` column, and how does the sibling
   repository filter it?"). Skip otherwise and note the skip in the verdict.
+
+## Comment noise
+
+Covers only comments **added or modified by the diff**; pre-existing comments on untouched lines are
+out of scope.
+
+Flag a comment when it earns nothing the code does not already say:
+
+- **Narrates the change** — `// added for UN-1234`, `// new logic`, `// was: ...`, commented-out code
+  left behind.
+- **Duplicates a nearby comment** — the same explanation on the caller and the callee, or once per
+  branch of the same `if`.
+- **Is stale** — describes behavior the diff changed, or references a renamed/removed symbol.
+- **Restates the code or labels self-evident structure** — `// increment counter`, `// imports`,
+  banner separators.
+
+When in doubt, keep the comment.
+
+Report each as **Non-blocking** with `file:line`, the comment text, and `delete` or a shorter
+replacement — except a *stale* comment that misdescribes current behavior, which is Blocking when it
+would mislead a maintainer.
 
 ## Stage 2 — depends on `code-explorer`
 
