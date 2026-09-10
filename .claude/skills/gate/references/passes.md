@@ -31,9 +31,8 @@ suggestions (e.g. `src/auth/ --refactor`).
 Give every pass the diff range (`<base>..HEAD`, default `origin/main..HEAD`) and point it at the
 branch being reviewed.
 
-- **`code-quality-reviewer`** — type safety, error handling, test coverage, performance, documentation.
-- **Comment noise** — a second `code-quality-reviewer` call scoped to the comments the diff adds or
-  touches, following **Comment noise** below.
+- **`code-quality-reviewer`** — type safety, error handling, test coverage, performance,
+  documentation, and comment noise (see **Comment noise** below).
 - **`security-scanner`** — OWASP injection, auth/access, crypto, config.
 - **`code-explorer`** — find 2-3 existing siblings of the same archetype as the changed code (e.g.
   another route handler, another migration, another React hook). Compare the new code against them
@@ -48,28 +47,24 @@ branch being reviewed.
 
 ## Comment noise
 
-Reviews only comments **added or modified by the diff** (the Reporting Threshold applies — confirm
-with `git blame`). Pre-existing comments on untouched lines are out of scope.
+Covers only comments **added or modified by the diff**; pre-existing comments on untouched lines are
+out of scope.
 
 Flag a comment when it earns nothing the code does not already say:
 
-- **Restates the code** — `// increment counter` above `counter += 1`; a docstring that repeats the
-  signature and its type hints.
 - **Narrates the change** — `// added for UN-1234`, `// new logic`, `// was: ...`, commented-out code
   left behind.
-- **Labels self-evident structure** — `// imports`, `// constructor`, `// helpers`, banner separators.
-- **Duplicates a nearby comment** — the same explanation repeated on the caller and the callee, or
-  once per branch of the same `if`.
+- **Duplicates a nearby comment** — the same explanation on the caller and the callee, or once per
+  branch of the same `if`.
 - **Is stale** — describes behavior the diff changed, or references a renamed/removed symbol.
+- **Restates the code or labels self-evident structure** — `// increment counter`, `// imports`,
+  banner separators.
 
-Do **not** flag a comment that carries information the code cannot: *why* a design decision was made,
-a non-obvious constraint or workaround, a link to a ticket/RFC/spec, a warning about a footgun, or an
-API docstring that documents contract details (units, ranges, raised errors, side effects) beyond the
-signature. When in doubt, keep the comment — deleting real context is worse than one redundant line.
+When in doubt, keep the comment.
 
 Report each as **Non-blocking** with `file:line`, the comment text, and `delete` or a shorter
-replacement. Comment noise is never Blocking on its own; a *stale* comment that misdescribes current
-behavior may be Blocking when it would mislead a maintainer.
+replacement — except a *stale* comment that misdescribes current behavior, which is Blocking when it
+would mislead a maintainer.
 
 ## Stage 2 — depends on `code-explorer`
 
