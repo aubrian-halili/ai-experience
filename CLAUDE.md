@@ -23,7 +23,7 @@
 - **Planning work**: Use `/plan` skill to decompose, scope, and compare approaches before implementation
 - **Implementing**: Use `/feature` skill to build an approved plan through test-driven milestones
 - **Gating completion**: Use `/gate` skill for end-to-end merge-readiness (checkout + verify + review)
-- **Confirming a result**: Use `/audit` skill to re-derive an answer or finished task independently and reconcile it claim by claim
+- **Confirming a result**: Use `/cross-check` skill to re-derive an answer or finished task independently and reconcile it claim by claim
 
 ## Testing
 
