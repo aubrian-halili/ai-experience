@@ -31,6 +31,10 @@ Select template by flags:
 
 Include **every section, checkbox, and line** of the selected template verbatim — do not summarize. Fill dynamic sections from commit history; tick only items that apply.
 
+`${ATLASSIAN_HOST}` in a template is a placeholder, not literal text: substitute the value of the
+`ATLASSIAN_HOST` environment variable before writing the PR body. If it is unset, ask for the
+Atlassian tenant rather than emitting the placeholder or guessing a hostname.
+
 ### 3. Preview Content
 
 Show the generated PR title and full body to the user and wait for explicit approval before pushing.

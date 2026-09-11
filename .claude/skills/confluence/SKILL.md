@@ -3,7 +3,7 @@ name: confluence
 description: >-
   User asks to "view a Confluence page", "find/search a page", "list spaces", "search blogs",
   "read Confluence", or wants to draft/preview a new or updated Confluence page, or publish a blog post.
-  Scoped to qredab.atlassian.net; pages are read-only via acli (create/update are delivered as Markdown + an edit URL fallback),
+  Scoped to the Atlassian tenant in $ATLASSIAN_HOST; pages are read-only via acli (create/update are delivered as Markdown + an edit URL fallback),
   blog posts can be created directly as drafts.
   Not for: Jira ticket management (use /jira); not for: syncing local repo docs like CLAUDE.md (use /doc-sync).
 argument-hint: "[view <page-id> | update <page-id> | search <query> | blogs <space-id> | blog <title> | spaces]"
@@ -13,7 +13,9 @@ disable-model-invocation: true
 
 ## Guardrails
 
-All operations target `qredab.atlassian.net`. Prefer `--json` on all acli commands.
+All operations target the Atlassian tenant named by the `ATLASSIAN_HOST` environment
+variable. Substitute its value wherever `${ATLASSIAN_HOST}` appears below; if it is unset,
+say so and ask for the tenant rather than guessing. Prefer `--json` on all acli commands.
 
 **Pages are read-only** — acli has no `page create` or `page update`, so new and edited page content is delivered as Markdown plus an edit URL (Steps 3, 7).
 
@@ -51,12 +53,12 @@ Run `acli --version`; if unavailable, use Markdown-paste fallbacks (Steps 3, 7) 
 ### 3. Update Page (Fallback)
 
 - First, fetch current page content: `acli confluence page view --id <PAGE_ID> --body-format storage`
-- Output: Markdown diff summary + full updated content + edit URL: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/edit-v2/<PAGE_ID>`
+- Output: Markdown diff summary + full updated content + edit URL: `https://${ATLASSIAN_HOST}/wiki/spaces/<SPACE>/pages/edit-v2/<PAGE_ID>`
 
 ### 4. Search
 
 - For blog content: `acli confluence blog list --space-id <SPACE_ID> --title "<query>"`
-- For page content: acli has no page-search command — suggest Confluence web search: `https://qredab.atlassian.net/wiki/search?text=<query>`
+- For page content: acli has no page-search command — suggest Confluence web search: `https://${ATLASSIAN_HOST}/wiki/search?text=<query>`
 
 ### 5. List / View Blogs
 
@@ -74,7 +76,7 @@ Run `acli --version`; if unavailable, use Markdown-paste fallbacks (Steps 3, 7) 
 
 ### 7. Create Page (Fallback)
 
-- Output: full page content in Markdown format + direct link to create: `https://qredab.atlassian.net/wiki/spaces/<SPACE>/pages/create`
+- Output: full page content in Markdown format + direct link to create: `https://${ATLASSIAN_HOST}/wiki/spaces/<SPACE>/pages/create`
 
 ### 8. Create Blog Post (Draft)
 

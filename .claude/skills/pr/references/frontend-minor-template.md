@@ -7,7 +7,7 @@
 - Bullet points from commit messages
 
 ## Jira
-[<TICKET-ID>](https://qredab.atlassian.net/browse/<TICKET-ID>)
+[<TICKET-ID>](https://${ATLASSIAN_HOST}/browse/<TICKET-ID>)
 
 ## Breaking Changes
 - None / List breaking changes
@@ -54,6 +54,6 @@
 - [ ] This change does not seem to have any potential risks to expose data
 
 - [ ] I have come up with relevant scenarios to test and stated them in a comment of this PR
-- [ ] I have reviewed the Qred scorecard results and acted on them
+- [ ] I have reviewed the scorecard results and acted on them
 - [ ] I have reviewed for any relevant security exposures or changes
 ```

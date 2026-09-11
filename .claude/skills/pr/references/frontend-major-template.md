@@ -7,7 +7,7 @@
 - Bullet points from commit messages
 
 ## Jira
-[<TICKET-ID>](https://qredab.atlassian.net/browse/<TICKET-ID>)
+[<TICKET-ID>](https://${ATLASSIAN_HOST}/browse/<TICKET-ID>)
 
 ## Breaking Changes
 - None / List breaking changes
@@ -42,7 +42,7 @@
 - [ ] Documented any breaking changes or migration steps
 - [ ] Rollback strategy prepared and documented <!-- can be feature flagging or purely rollback instructions -->
 - [ ] I have extracted relevant tests from internal task/ticket/discovery in Ticket ID section
-- [ ] I have reviewed the Qred scorecard results and acted on them
+- [ ] I have reviewed the scorecard results and acted on them
 - [ ] I used agentic / vibe-coding for (only choose one)
   - [ ] for mainly building this feature
   - [ ] for partly building this feature
