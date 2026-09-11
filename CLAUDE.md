@@ -27,8 +27,9 @@
 
 ## Testing
 
-- No automated test suite currently — manual verification only
+- No automated test suite for skill *behavior* — manual verification only
 - Test skills in real scenarios before committing
+- `.claude/scripts/check-skill-contracts.sh` lints skill *structure* (frontmatter fields, `name:` vs directory, `Not for:` clause, reference-path resolution including cross-skill ones, orphaned reference files). Run it after adding, renaming, or moving a skill or a `references/` file
 
 ## Architecture Decisions
 
