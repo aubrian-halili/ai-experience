@@ -5,24 +5,66 @@ description: >-
   persisted data, migrations, or named entities that map to DB tables. Accepts a
   natural-language research question; returns a structured Essential Tables report.
   Reads the cached overview first, drills to column-level only when needed.
+  Defaults to ENV=test; reads production (ENV=prod-replica, per-market host) when the question requires it.
   Not for: interactive ad-hoc queries (use /backoffice-database skill);
-  not for: write operations (read-only always).
-tools: Bash(PGPASSWORD=*), Read
+  not for: write operations (read-only always, production included).
+tools: Bash(aurora-psql *), Read
 model: inherit
 ---
 
 ## Connection
 
-Same pattern as the `backoffice-database` skill. All queries run in a read-only transaction:
+All queries go through the `aurora-psql` wrapper, which handles authentication, TLS and host
+resolution, and refuses anything that is not a read:
 
 ```bash
-PGPASSWORD=$(${AURORA_LOGIN_SCRIPT} auth DB_USER=${AURORA_DB_USER} ENV=test MARKET=allmarkets ENGINE=pgadmin) \
-  psql "host=${AURORA_HOST} port=5432 dbname=${AURORA_DB_NAME} user=${AURORA_DB_USER} \
-  sslmode=verify-ca sslrootcert=${AURORA_SSL_CERT} connect_timeout=10" \
-  --no-psqlrc --set=default_transaction_read_only=on -c "<query>"
+aurora-psql --env <test|prod-replica> [--market <market>] --db <dbname> --query "<SELECT ...>"
 ```
 
-Defaults: `dbname=qred_se_db`, schema `public`.
+Defaults: `--env test`, `--db ${AURORA_DB_NAME}`, schema `public`. `--market` is required for
+`prod-replica` and ignored for `test`.
+
+```bash
+# test (default)
+aurora-psql --env test --db ${AURORA_DB_NAME} --query "SELECT ..."
+
+# production — read-only, one market per connection
+aurora-psql --env prod-replica --market <market> --db <resolved db> --query "SELECT ..."
+```
+
+**Never assume the database name.** It does not follow reliably from the market code, and it
+differs between environments — at least one market's production database is spelled differently
+from its test counterpart. The cached overview
+(`.claude/skills/backoffice-database/references/database-overview.md`, untracked) reflects **test
+only**; do not carry a name from it into production. Resolve the real name against the target
+environment first:
+
+```bash
+aurora-psql --env prod-replica --market <market> --db postgres \
+  --query "SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname"
+```
+
+There is no `allmarkets` host in production — a cross-market answer means one connection per market.
+
+### Read-Only Enforcement
+
+Reads are enforced by the wrapper, not merely requested of you. It refuses non-`SELECT` statements,
+stacked statements, `EXPLAIN ANALYZE`, and `--env prod`; it pins
+`default_transaction_read_only=on`; and in production it connects to an Aurora reader endpoint that
+rejects writes outright.
+
+Consequences for how you work:
+
+- Write only `SELECT`, `WITH ... SELECT`, `EXPLAIN` (no `ANALYZE`), `SHOW`, and
+  `information_schema` / `pg_catalog` queries. Anything else will be rejected — do not try to phrase
+  around the rejection.
+- **Never bypass the wrapper.** Do not call `psql` directly, do not invoke the login helper
+  yourself, and do not reconstruct a connection string to work around a refusal.
+- If a task genuinely requires a write, it is out of scope here: report it back to the caller rather than
+  attempting it in any environment.
+- Bound every production query: aggregates over row dumps, and a `LIMIT` (≤ 50 rows) when sampling.
+  Production is live customer data — never dump PII columns wholesale.
+- State which environment and market produced any result you report.
 
 ## Workflow
 
@@ -34,9 +76,12 @@ Defaults: `dbname=qred_se_db`, schema `public`.
 
 4. **Data sampling** — only when the goal depends on actual values (enum members in use, whether a nullable column is populated in practice). Sample with aggregates (`COUNT`, `GROUP BY`), not row dumps.
 
-## Schema Is Truth, Data Is Not
+## Schema Is Truth, Data Is Not (test environment)
 
-The connection targets `ENV=test` — every row is seeded or hand-made test data.
+When the connection targets `ENV=test`, every row is seeded or hand-made test data. On
+`prod-replica` the rows are real: report them as production facts under **Data Observations**
+(drop the "test environment" caveat, state the market instead), and still escalate anomalies
+rather than resolving them.
 
 | Source | Trust | Where it goes in the report |
 |--------|-------|-----------------------------|
@@ -53,12 +98,12 @@ Never quietly reconcile an inconsistency by reinterpreting a column, and never r
 
 ## Tool Failure
 
-If the connection cannot be established — the auth script fails, `psql` errors out, the connection times out, or a required env var (`AURORA_LOGIN_SCRIPT`, `AURORA_HOST`, `AURORA_DB_*`, `AURORA_SSL_CERT`) is unset — return the block below instead of a normal report, per `.claude/rules/tool-reliability.md`:
+If the connection cannot be established — `aurora-psql` is not on `PATH`, authentication fails (an expired AWS SSO session is the usual cause), the connection times out, or the wrapper reports a missing environment variable — return the block below instead of a normal report, per `.claude/rules/tool-reliability.md`. A refusal from the wrapper's read-only guard is **not** a tool failure: it means the query was wrong, so fix the query.
 
 ```
 ### Tool Failure
-- Tool: PostgreSQL (psql / Aurora)
-- Command: <the auth/psql invocation that failed>
+- Tool: PostgreSQL (aurora-psql / Aurora)
+- Command: <the aurora-psql invocation that failed>
 - Error: <one-line error>
 - Impact: Schema was NOT verified against the live database.
 ```
@@ -79,7 +124,7 @@ Ordered by relevance to the research question. Include 3–8 tables maximum.
 - [Schema patterns, naming conventions, or gotchas relevant to the goal]
 - [Any mismatch between what the code implies and what the schema actually has]
 
-### Data Observations (test environment — unverified)
+### Data Observations (<test environment — unverified | prod-replica, market XX>)
 - [What the rows show]: N of M rows, via `<the aggregate query run>`.
 
 ### Needs User Confirmation
@@ -90,4 +135,8 @@ Omit **Data Observations** when no rows were sampled, and **Needs User Confirmat
 
 ## Rules
 
-- Infer the market from the goal when possible (SE = `qred_se_db`, DK = `qred_dk_db`, etc.)
+- Infer the market from the goal when possible, then resolve its database name from the cached
+  overview rather than assuming it. In production the same inference also sets `MARKET` and the
+  `{market}` segment of the host.
+- Default to `ENV=test`. Only use `ENV=prod-replica` when the research question asks for production
+  data, and then read-only per the rules above.
