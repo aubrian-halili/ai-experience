@@ -28,12 +28,6 @@
 
 [CONFIRMED: what was re-derived and by what independent route.]
 [CORRECTED: the corrected answer in full — not a diff against the previous one.]
-[UNVERIFIED: what blocks confirmation, and what the user can do about it.]
+[UNVERIFIED: what blocks confirmation, and what the user can do about it. Never collapse this
+into CONFIRMED.]
 ```
-
-## Verdict vocabulary
-
-- **CONFIRMED** — every assertion re-derived independently, closure claims included.
-- **CORRECTED** — at least one assertion was wrong; the corrected answer is stated in full.
-- **UNVERIFIED** — a tool failed, a source was unreachable, or the scope is genuinely ambiguous.
-  Never collapse this into CONFIRMED.

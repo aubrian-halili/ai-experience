@@ -1,7 +1,7 @@
 # Failure Modes
 
 The recurring ways a confident answer turns out wrong. Each entry is a hunt to run, not a caution to
-recite. Run the ones that apply to the claim's type (see §2 of `SKILL.md`).
+recite.
 
 ## Single-vector undercount
 
@@ -16,8 +16,6 @@ The original answer searched one term and stopped. Re-search with:
 - **Indirect paths** — generated clients, dynamic dispatch, registries populated at import time,
   string-keyed factories.
 
-A member found by only one of these vectors is still a member.
-
 ## Boundary ambiguity
 
 The count changes depending on an unstated rule. Name the rule explicitly and report the count under
@@ -28,15 +26,9 @@ dead; production vs test fixtures and mocks; one integration per vendor vs per e
 
 - The cited `file:line` no longer says what the answer claimed — re-read it rather than trusting the
   quote.
-- The evidence came from a summary, a comment, or a README instead of the code. Documentation
-  describes intent; code describes behavior. Prefer the code and note the divergence.
+- The evidence came from a summary, a comment, or a README instead of the code. Re-derive it from
+  the code and note any divergence.
 - The branch moved. Confirm which revision the evidence was read at.
-
-## Tool failure read as a negative
-
-A timeout, auth error, missing binary, or empty-but-errored command is **not** an empty result. If a
-search or CLI call failed anywhere in the original derivation, every conclusion downstream of it is
-unverified. See `.claude/rules/tool-reliability.md`.
 
 ## Closure asserted but never tested
 
@@ -47,10 +39,4 @@ fifth member if one existed.
 ## Question drift
 
 The answer resolves a nearby but different question — how many integrations *are configured* vs *are
-called*, what the code *should* do vs *does*. Re-read the user's original wording and check the
-answer against it verbatim.
-
-## Confident specificity
-
-An exact number, version, path, or name that no cited evidence pins down. Specificity is a claim
-like any other; unsourced, it is unverified.
+called*, what the code *should* do vs *does*.

@@ -76,14 +76,3 @@ the answer, use `AskUserQuestion`.
 ## 5. Verdict
 
 Emit the block in `references/templates.md`.
-
-Never close with a bare "confirmed". State what was re-derived, by what independent route, and what
-remains unverified — including the case where everything checked out.
-
-If the audit corrected the answer, give the **corrected answer in full** as the final word, so the
-user does not have to reassemble it from the diff between two responses.
-
-## Related Skills
-
-- `/verify` — completeness of code against a plan; use it for Change / edit claims.
-- `/review`, `/gate` — quality of a diff, and merge-readiness.
