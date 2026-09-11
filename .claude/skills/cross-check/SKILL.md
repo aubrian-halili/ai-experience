@@ -1,25 +1,25 @@
 ---
-name: audit
+name: cross-check
 description: >-
-  Audits an answer or a completed task for correctness and completeness by re-deriving it
+  Cross-checks an answer or a completed task for correctness and completeness by re-deriving it
   independently. User asks "double check that", "are you sure", "verify your answer",
   "did you miss anything", "review the result", or wants the previous response confirmed.
-  Also the self-audit pass to run unprompted after answering a question whose answer is an
+  Also the self-check pass to run unprompted after answering a question whose answer is an
   enumeration, a count, or a factual claim about the codebase.
   Re-answers the original question from scratch in a fresh context, then reconciles claim by claim.
   Not for: code completeness against a plan (use /verify); code quality of a diff (use /review);
   merge-readiness of a PR or feature (use /gate).
-argument-hint: "[the claim or answer to audit, or nothing to audit the previous response]"
+argument-hint: "[the claim or answer to cross-check, or nothing to cross-check the previous response]"
 allowed-tools: Bash(git *, gh *, rg *), Read, Grep, Glob, Agent, AskUserQuestion
 ---
 
 ultrathink
 
-Audit the answer named in `$ARGUMENTS`, or — if empty — the most recent substantive answer or
+Cross-check the answer named in `$ARGUMENTS`, or — if empty — the most recent substantive answer or
 completed task in this conversation.
 
 `references/...` paths are relative to this skill directory. When invoked at user level, resolve
-them against `~/.claude/skills/audit/references/...` ($HOME, not the repo working directory).
+them against `~/.claude/skills/cross-check/references/...` ($HOME, not the repo working directory).
 
 ## 1. Extract the claim set
 
@@ -32,14 +32,14 @@ evidence starts as **unverified**, never as correct.
 
 ## 2. Classify the answer type
 
-| Type | What the audit must prove | Primary failure |
+| Type | What the cross-check must prove | Primary failure |
 |------|---------------------------|-----------------|
 | **Enumeration / count** | The set is closed — nothing outside it qualifies | Undercount from a single search vector |
 | **Factual lookup** | The cited source says it, and is current | Stale or misread evidence |
 | **Explanation / causal** | The mechanism holds at every step | A plausible step nobody traced |
 | **Change / edit** | The change is present, correct, and wired | Reported-done but partial |
 
-For **Change / edit**, delegate to `/verify` instead of re-deriving — that is its job — and audit
+For **Change / edit**, delegate to `/verify` instead of re-deriving — that is its job — and cross-check
 only the surrounding claims.
 
 ## 3. Re-derive independently
