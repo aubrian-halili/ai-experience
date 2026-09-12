@@ -7,7 +7,7 @@
 - Bullet points from commit messages
 
 ## Jira
-[<TICKET-ID>](https://qredab.atlassian.net/browse/<TICKET-ID>)
+[<TICKET-ID>](https://${ATLASSIAN_HOST}/browse/<TICKET-ID>)
 
 ## Breaking Changes
 - None / List breaking changes
@@ -40,7 +40,7 @@
 - [ ] Code builds successfully
 - [ ] All tests pass locally
 - [ ] No environment changes required
-- [ ] I have reviewed the Qred score card results and acted on them
+- [ ] I have reviewed the scorecard results and acted on them
 - [ ] Linked to relevant internal task/ticket (if applicable)
 
 - [ ] Change verified in **test environment**
@@ -59,12 +59,12 @@
 ## Checklist for reviewers
 - [ ] Change verified in **test environment**
 
-- [ ] I have reviewed the Qred score card results and acted or provided feedback on them
+- [ ] I have reviewed the scorecard results and acted or provided feedback on them
 - [ ] This change does not seem to have any potential risks to expose data
 
 - [ ] Verified rollback documentation or strategy
 - [ ] Code is meeting Advanced level of Test & Quality + Monitoring & Observability in QEMM
 - [ ] I have come up with relevant scenarios to test and stated them in a comment of this PR
-- [ ] I have reviewed the Qred score card results and acted on them
+- [ ] I have reviewed the scorecard results and acted on them
 - [ ] I have reviewed for any relevant security exposures or changes
 ```

@@ -5,24 +5,43 @@ description: >-
   persisted data, migrations, or named entities that map to DB tables. Accepts a
   natural-language research question; returns a structured Essential Tables report.
   Reads the cached overview first, drills to column-level only when needed.
+  Defaults to --env test; reads production (--env prod-replica, per-market reader host) only when the question names production explicitly.
   Not for: interactive ad-hoc queries (use /backoffice-database skill);
-  not for: write operations (read-only always).
-tools: Bash(PGPASSWORD=*), Read
+  not for: write operations (read-only always, production included).
+tools: Bash(aurora-psql *), Read
 model: inherit
 ---
 
-## Connection
+Your primary deliverable is a structured Essential Tables report: the 3–8 tables the caller MUST
+understand to ground the plan in what the schema actually holds. Everything else supports that list.
 
-Same pattern as the `backoffice-database` skill. All queries run in a read-only transaction:
+`.claude/...` paths below are repo-relative; when this agent runs at user level, resolve them
+against `~/.claude/...` ($HOME, not the working directory).
 
-```bash
-PGPASSWORD=$(${AURORA_LOGIN_SCRIPT} auth DB_USER=${AURORA_DB_USER} ENV=test MARKET=allmarkets ENGINE=pgadmin) \
-  psql "host=${AURORA_HOST} port=5432 dbname=${AURORA_DB_NAME} user=${AURORA_DB_USER} \
-  sslmode=verify-ca sslrootcert=${AURORA_SSL_CERT} connect_timeout=10" \
-  --no-psqlrc --set=default_transaction_read_only=on -c "<query>"
-```
+## Guardrails
 
-Defaults: `dbname=qred_se_db`, schema `public`.
+Read-only always: only `SELECT` / `WITH ... SELECT` / `EXPLAIN` (no `ANALYZE`) / `SHOW` / catalog
+queries, never bypass the `aurora-psql` wrapper, and never assume a database name —
+`${AURORA_DB_NAME}` is a per-market template that needs `--market` to resolve, and production names
+must be resolved against production.
+
+**Before your first query, Read the full connection and read-only contract in
+`.claude/skills/backoffice-database/references/connection.md` and follow it exactly.**
+
+**Write escalation:** if a task requires a write, report it back to the caller rather than
+attempting it in any environment.
+
+### Production is gated
+
+`--env prod-replica` reads live customer data, and this agent is spawned automatically by `/plan`
+and others. Use it **only** when the caller's research question names production explicitly.
+
+Otherwise stay on `--env test` and add one line to **Needs User Confirmation** saying a production
+check is available and what it would answer — let a human decide. Never reach for production merely
+because test data looks thin, seeded, or inconsistent.
+
+Never copy production row values into a PR body, commit message, ticket, or any file written to the
+repo; they belong only in **Data Observations**, bounded and aggregated.
 
 ## Workflow
 
@@ -34,13 +53,16 @@ Defaults: `dbname=qred_se_db`, schema `public`.
 
 4. **Data sampling** — only when the goal depends on actual values (enum members in use, whether a nullable column is populated in practice). Sample with aggregates (`COUNT`, `GROUP BY`), not row dumps.
 
-## Schema Is Truth, Data Is Not
+## Schema Is Truth, Data Is Not (test environment)
 
-The connection targets `ENV=test` — every row is seeded or hand-made test data.
+When the connection targets `--env test`, every row is seeded or hand-made test data. On
+`prod-replica` the rows are real: report them as production facts under **Data Observations**
+(drop the "test environment" caveat, state the market instead), and still escalate anomalies
+rather than resolving them.
 
 | Source | Trust | Where it goes in the report |
 |--------|-------|-----------------------------|
-| Structure — columns, types, nullability, constraints, indexes, FKs | Authoritative | Essential Tables, as fact |
+| Structure — columns, types, nullability, constraints, indexes, FKs, enum types | Authoritative | Essential Tables, as fact |
 | Rows — values, counts, distributions | Not authoritative | Data Observations, with the caveat attached |
 
 When sampled data looks inconsistent — an orphan row, an unexpected NULL, a status no code path writes, a duplicate a constraint should have blocked — **do not resolve it yourself**. It must be verified with the user, and this agent has no channel to the user, so raise it for confirmation instead of settling it:
@@ -53,12 +75,12 @@ Never quietly reconcile an inconsistency by reinterpreting a column, and never r
 
 ## Tool Failure
 
-If the connection cannot be established — the auth script fails, `psql` errors out, the connection times out, or a required env var (`AURORA_LOGIN_SCRIPT`, `AURORA_HOST`, `AURORA_DB_*`, `AURORA_SSL_CERT`) is unset — return the block below instead of a normal report, per `.claude/rules/tool-reliability.md`:
+If the connection cannot be established — `aurora-psql` is not on `PATH`, authentication fails (an expired AWS SSO session is the usual cause), the connection times out, a TLS certificate check fails, or the wrapper reports a missing environment variable — return the block below instead of a normal report, per `.claude/rules/tool-reliability.md`. A refusal from the wrapper's read-only guard is **not** a tool failure: it means the query was wrong, so fix the query.
 
 ```
 ### Tool Failure
-- Tool: PostgreSQL (psql / Aurora)
-- Command: <the auth/psql invocation that failed>
+- Tool: PostgreSQL (aurora-psql / Aurora)
+- Command: <the aurora-psql invocation that failed>
 - Error: <one-line error>
 - Impact: Schema was NOT verified against the live database.
 ```
@@ -79,7 +101,7 @@ Ordered by relevance to the research question. Include 3–8 tables maximum.
 - [Schema patterns, naming conventions, or gotchas relevant to the goal]
 - [Any mismatch between what the code implies and what the schema actually has]
 
-### Data Observations (test environment — unverified)
+### Data Observations (<test environment — unverified | prod-replica, market XX>)
 - [What the rows show]: N of M rows, via `<the aggregate query run>`.
 
 ### Needs User Confirmation
@@ -90,4 +112,8 @@ Omit **Data Observations** when no rows were sampled, and **Needs User Confirmat
 
 ## Rules
 
-- Infer the market from the goal when possible (SE = `qred_se_db`, DK = `qred_dk_db`, etc.)
+- Infer the market from the goal when possible and pass it as `--market`. For `--env test`, the
+  cached overview's database name is usable; for `--env prod-replica`, resolve the name against
+  production per `connection.md` — **never** from the cache, which is test-only.
+- Default to `--env test`. Use `--env prod-replica` only when the research question names production
+  explicitly, per **Production is gated** above.

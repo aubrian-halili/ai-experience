@@ -7,7 +7,7 @@
         {
             "type": "aws-sam",
             "request": "direct-invoke",
-            "name": "Invoke Lambda (TypeScript)",
+            "name": "Invoke Lambda (TypeScript) — template, fill in the handler and payload paths",
             "preLaunchTask": "build",
             "aws": {
                 "credentials": "profile:test",
@@ -16,13 +16,13 @@
             "invokeTarget": {
                 "target": "code",
                 "projectRoot": "${workspaceFolder}/dist",
-                "lambdaHandler": "lambdas/api/application/accept-offer/index.handler"
+                "lambdaHandler": "lambdas/<area>/<feature>/index.handler"
             },
             "lambda": {
                 "runtime": "nodejs22.x",
                 "memoryMb": 2048,
                 "payload": {
-                    "path": ".localenv/payload/accept-offer.json"
+                    "path": ".localenv/payload/<event>.json"
                 },
                 "environmentVariables": {
                     "ENVIRONMENT": "test",

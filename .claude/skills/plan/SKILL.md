@@ -29,7 +29,9 @@ disable-model-invocation: true
 
 Launch `code-explorer` with the goal as its topic. Also launch `database-explorer` in parallel (with a research question derived from the goal) if any of these hold: the goal names a table or domain entity; the Jira body contains "migration", "schema", or "model"; or `code-explorer` returns files under `*/migrations/*`, `*/models/*`, or ORM schema paths.
 
-Launch `git-repos-explorer` in parallel **only when** the goal needs grounding outside this repo: it names another Qred service or repo; it integrates with a shared Qred library or contract; or the relevant prior art is expected to live in another repo rather than locally. Skip it for self-contained, in-repo work — cross-repo search is slower and is unnecessary by default.
+`database-explorer` reads the **test** database. It reaches production only when the research question you give it names production explicitly, so do not phrase one that way unless the user has asked for production data — planning rarely needs it, and production is live customer data.
+
+Launch `git-repos-explorer` in parallel **only when** the goal needs grounding outside this repo: it names another service or repo in the org; it integrates with a shared library or contract; or the relevant prior art is expected to live in another repo rather than locally. Skip it for self-contained, in-repo work — cross-repo search is slower and is unnecessary by default.
 
 Launch `jira-explorer` in parallel **only when** §1 has not already run it and the goal needs ticket grounding: it names a ticket or epic surfaced during research, or the work plausibly overlaps tickets that already exist. Skip it when the goal has no Jira origin at all.
 

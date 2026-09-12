@@ -7,7 +7,7 @@ description: >-
   offers to transition the linked Jira ticket to "In Review".
   Not for: reviewing an existing PR (use /review); not for: addressing PR review feedback (use /receiving-review).
 argument-hint: "[optional: --major, --fe, --ready, target branch, or PR title]"
-allowed-tools: Bash(git branch *, git log *, git diff *, git show *, git status *, git rev-list *, git push *, git fetch *, git remote *, gh repo *, gh pr *, acli *), Read, Grep, Glob
+allowed-tools: Bash(git branch *, git log *, git diff *, git show *, git status *, git rev-list *, git push *, git fetch *, git remote *, gh repo *, gh pr *, acli *, printenv ATLASSIAN_HOST), Read, Grep, Glob
 disable-model-invocation: true
 ---
 
@@ -30,6 +30,11 @@ Select template by flags:
 | `--fe --major` | @references/frontend-major-template.md   |
 
 Include **every section, checkbox, and line** of the selected template verbatim — do not summarize. Fill dynamic sections from commit history; tick only items that apply.
+
+`${ATLASSIAN_HOST}` in a template is a placeholder, not literal text: resolve it with
+`printenv ATLASSIAN_HOST` and substitute the value before writing the PR body — including in the
+preview shown at Step 3, so the user never approves a body containing the literal placeholder. If it
+prints nothing, ask for the Atlassian tenant rather than guessing a hostname.
 
 ### 3. Preview Content
 
