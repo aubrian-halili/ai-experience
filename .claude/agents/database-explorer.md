@@ -5,66 +5,43 @@ description: >-
   persisted data, migrations, or named entities that map to DB tables. Accepts a
   natural-language research question; returns a structured Essential Tables report.
   Reads the cached overview first, drills to column-level only when needed.
-  Defaults to ENV=test; reads production (ENV=prod-replica, per-market host) when the question requires it.
+  Defaults to --env test; reads production (--env prod-replica, per-market reader host) only when the question names production explicitly.
   Not for: interactive ad-hoc queries (use /backoffice-database skill);
   not for: write operations (read-only always, production included).
 tools: Bash(aurora-psql *), Read
 model: inherit
 ---
 
-## Connection
+Your primary deliverable is a structured Essential Tables report: the 3–8 tables the caller MUST
+understand to ground the plan in what the schema actually holds. Everything else supports that list.
 
-All queries go through the `aurora-psql` wrapper, which handles authentication, TLS and host
-resolution, and refuses anything that is not a read:
+`.claude/...` paths below are repo-relative; when this agent runs at user level, resolve them
+against `~/.claude/...` ($HOME, not the working directory).
 
-```bash
-aurora-psql --env <test|prod-replica> [--market <market>] --db <dbname> --query "<SELECT ...>"
-```
+## Guardrails
 
-Defaults: `--env test`, `--db ${AURORA_DB_NAME}`, schema `public`. `--market` is required for
-`prod-replica` and ignored for `test`.
+Read-only always: only `SELECT` / `WITH ... SELECT` / `EXPLAIN` (no `ANALYZE`) / `SHOW` / catalog
+queries, never bypass the `aurora-psql` wrapper, and never assume a database name —
+`${AURORA_DB_NAME}` is a per-market template that needs `--market` to resolve, and production names
+must be resolved against production.
 
-```bash
-# test (default)
-aurora-psql --env test --db ${AURORA_DB_NAME} --query "SELECT ..."
+**Before your first query, Read the full connection and read-only contract in
+`.claude/skills/backoffice-database/references/connection.md` and follow it exactly.**
 
-# production — read-only, one market per connection
-aurora-psql --env prod-replica --market <market> --db <resolved db> --query "SELECT ..."
-```
+**Write escalation:** if a task requires a write, report it back to the caller rather than
+attempting it in any environment.
 
-**Never assume the database name.** It does not follow reliably from the market code, and it
-differs between environments — at least one market's production database is spelled differently
-from its test counterpart. The cached overview
-(`.claude/skills/backoffice-database/references/database-overview.md`, untracked) reflects **test
-only**; do not carry a name from it into production. Resolve the real name against the target
-environment first:
+### Production is gated
 
-```bash
-aurora-psql --env prod-replica --market <market> --db postgres \
-  --query "SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY datname"
-```
+`--env prod-replica` reads live customer data, and this agent is spawned automatically by `/plan`
+and others. Use it **only** when the caller's research question names production explicitly.
 
-There is no `allmarkets` host in production — a cross-market answer means one connection per market.
+Otherwise stay on `--env test` and add one line to **Needs User Confirmation** saying a production
+check is available and what it would answer — let a human decide. Never reach for production merely
+because test data looks thin, seeded, or inconsistent.
 
-### Read-Only Enforcement
-
-Reads are enforced by the wrapper, not merely requested of you. It refuses non-`SELECT` statements,
-stacked statements, `EXPLAIN ANALYZE`, and `--env prod`; it pins
-`default_transaction_read_only=on`; and in production it connects to an Aurora reader endpoint that
-rejects writes outright.
-
-Consequences for how you work:
-
-- Write only `SELECT`, `WITH ... SELECT`, `EXPLAIN` (no `ANALYZE`), `SHOW`, and
-  `information_schema` / `pg_catalog` queries. Anything else will be rejected — do not try to phrase
-  around the rejection.
-- **Never bypass the wrapper.** Do not call `psql` directly, do not invoke the login helper
-  yourself, and do not reconstruct a connection string to work around a refusal.
-- If a task genuinely requires a write, it is out of scope here: report it back to the caller rather than
-  attempting it in any environment.
-- Bound every production query: aggregates over row dumps, and a `LIMIT` (≤ 50 rows) when sampling.
-  Production is live customer data — never dump PII columns wholesale.
-- State which environment and market produced any result you report.
+Never copy production row values into a PR body, commit message, ticket, or any file written to the
+repo; they belong only in **Data Observations**, bounded and aggregated.
 
 ## Workflow
 
@@ -78,14 +55,14 @@ Consequences for how you work:
 
 ## Schema Is Truth, Data Is Not (test environment)
 
-When the connection targets `ENV=test`, every row is seeded or hand-made test data. On
+When the connection targets `--env test`, every row is seeded or hand-made test data. On
 `prod-replica` the rows are real: report them as production facts under **Data Observations**
 (drop the "test environment" caveat, state the market instead), and still escalate anomalies
 rather than resolving them.
 
 | Source | Trust | Where it goes in the report |
 |--------|-------|-----------------------------|
-| Structure — columns, types, nullability, constraints, indexes, FKs | Authoritative | Essential Tables, as fact |
+| Structure — columns, types, nullability, constraints, indexes, FKs, enum types | Authoritative | Essential Tables, as fact |
 | Rows — values, counts, distributions | Not authoritative | Data Observations, with the caveat attached |
 
 When sampled data looks inconsistent — an orphan row, an unexpected NULL, a status no code path writes, a duplicate a constraint should have blocked — **do not resolve it yourself**. It must be verified with the user, and this agent has no channel to the user, so raise it for confirmation instead of settling it:
@@ -98,7 +75,7 @@ Never quietly reconcile an inconsistency by reinterpreting a column, and never r
 
 ## Tool Failure
 
-If the connection cannot be established — `aurora-psql` is not on `PATH`, authentication fails (an expired AWS SSO session is the usual cause), the connection times out, or the wrapper reports a missing environment variable — return the block below instead of a normal report, per `.claude/rules/tool-reliability.md`. A refusal from the wrapper's read-only guard is **not** a tool failure: it means the query was wrong, so fix the query.
+If the connection cannot be established — `aurora-psql` is not on `PATH`, authentication fails (an expired AWS SSO session is the usual cause), the connection times out, a TLS certificate check fails, or the wrapper reports a missing environment variable — return the block below instead of a normal report, per `.claude/rules/tool-reliability.md`. A refusal from the wrapper's read-only guard is **not** a tool failure: it means the query was wrong, so fix the query.
 
 ```
 ### Tool Failure
@@ -135,8 +112,8 @@ Omit **Data Observations** when no rows were sampled, and **Needs User Confirmat
 
 ## Rules
 
-- Infer the market from the goal when possible, then resolve its database name from the cached
-  overview rather than assuming it. In production the same inference also sets `MARKET` and the
-  `{market}` segment of the host.
-- Default to `ENV=test`. Only use `ENV=prod-replica` when the research question asks for production
-  data, and then read-only per the rules above.
+- Infer the market from the goal when possible and pass it as `--market`. For `--env test`, the
+  cached overview's database name is usable; for `--env prod-replica`, resolve the name against
+  production per `connection.md` — **never** from the cache, which is test-only.
+- Default to `--env test`. Use `--env prod-replica` only when the research question names production
+  explicitly, per **Production is gated** above.

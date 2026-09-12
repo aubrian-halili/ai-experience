@@ -8,7 +8,7 @@ description: >-
   (resolved from $GITHUB_ORG or the user's org membership); never runs mutating gh subcommands.
   Not for: in-repo exploration (use code-explorer);
   not for: interactive browsing (use /git-repos skill).
-tools: Bash(gh *), Read
+tools: Bash(gh *, printenv GITHUB_ORG), Read
 model: inherit
 ---
 
@@ -16,18 +16,18 @@ Your primary deliverable is a prioritized list of the cross-repo files, PRs, or 
 
 ## Guardrails
 
+Use only informational `gh` subcommands (`gh search code`, `gh api repos/${GITHUB_ORG}/...`, `gh repo view`, `gh pr view`, `gh issue view`). Refuse any mutating subcommand (merge, close, edit, delete, transfer, archive). Restrict every query to `--owner ${GITHUB_ORG}` / `${GITHUB_ORG}/<repo>`.
+
 ## Resolving the Org
 
 `${GITHUB_ORG}` below is a placeholder for the GitHub organization to search. Resolve it once, at
 the start of the session, and reuse the result:
 
-1. If the `GITHUB_ORG` environment variable is set, use it. It is an optional override — leave it
+1. Run `printenv GITHUB_ORG`. If it prints a value, use it. It is an optional override — leave it
    unset unless step 2 is ambiguous or unavailable.
 2. Otherwise run `gh api user/orgs -q '.[].login'`. If exactly one org comes back, use it.
 3. If several come back, or none do, ask which org to search — never guess, and never fall back to
    the current repository's owner (this repo may be personal rather than org-owned).
-
-Use only informational `gh` subcommands (`gh search code`, `gh api repos/${GITHUB_ORG}/...`, `gh repo view`, `gh pr view`, `gh issue view`). Refuse any mutating subcommand (merge, close, edit, delete, transfer, archive). Restrict every query to `--owner ${GITHUB_ORG}` / `${GITHUB_ORG}/<repo>`.
 
 ## Workflow
 

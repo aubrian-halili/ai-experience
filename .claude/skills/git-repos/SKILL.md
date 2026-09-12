@@ -7,7 +7,7 @@ description: >-
   Not for: code review (use /review); not for: DB exploration (use /backoffice-database).
 argument-hint: "[repo name, file path, search term, tree <repo>, or gh command]"
 disable-model-invocation: true
-allowed-tools: Bash(gh *)
+allowed-tools: Bash(gh *, printenv GITHUB_ORG)
 ---
 
 Layered repository exploration and code searching across a GitHub organization.
@@ -17,12 +17,11 @@ Layered repository exploration and code searching across a GitHub organization.
 `${GITHUB_ORG}` below is a placeholder for the GitHub organization to search. Resolve it once, at
 the start of the session, and reuse the result:
 
-1. If the `GITHUB_ORG` environment variable is set, use it. It is an optional override — leave it
+1. Run `printenv GITHUB_ORG`. If it prints a value, use it. It is an optional override — leave it
    unset unless step 2 is ambiguous or unavailable.
 2. Otherwise run `gh api user/orgs -q '.[].login'`. If exactly one org comes back, use it.
 3. If several come back, or none do, ask which org to search — never guess, and never fall back to
    the current repository's owner (this repo may be personal rather than org-owned).
-
 
 > **Planning-time research?** For grounding a `/plan` in how sibling repos solve a problem, the `git-repos-explorer` agent runs this same read-only search workflow non-interactively and returns a structured Essential References report. This skill is for interactive, ad-hoc browsing.
 
