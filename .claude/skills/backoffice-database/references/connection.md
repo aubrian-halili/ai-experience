@@ -27,14 +27,18 @@ aurora-psql --env prod-replica --market <market> --db <resolved db> --query "SEL
 | Variable | Required | Used for |
 |----------|----------|----------|
 | `AURORA_DB_NAME` | yes | Per-market database-name **template**, e.g. `qred_{market}_db` |
-| `AURORA_HOST` | yes | Test host |
+| `AURORA_HOST` | yes | Test reader host — the Aurora `cluster-ro` endpoint |
 | `AURORA_HOST_PROD` | for `prod-replica` | Production reader host template, with a `{market}` segment |
-| `AURORA_SSLMODE` | no | Overrides `sslmode`; see **TLS** below |
+| `AURORA_SSLMODE` | no | Overrides `sslmode`; leave unset — see **TLS** below |
 
 `${AURORA_DB_NAME}` is a template, not a finished name: the wrapper substitutes `{market}` from
 `--market`. Passing it **without** `--market` is refused rather than silently resolved, so supply
 `--market` on test queries too. If the variable is unset, ask the user for the database name — do
 not guess one or drop `--db`.
+
+The template is **test-shaped**. Production spells names differently and holds several databases per
+market, so a substituted name is a test starting point only — never carry it into `prod-replica`.
+Resolve production names against the environment, per the next section.
 
 ## Resolving the database name
 
@@ -58,8 +62,8 @@ There is no `allmarkets` host in production — a cross-market answer means one 
 Reads are enforced by the wrapper, not merely requested of you. It refuses any statement outside the
 read set below, plus stacked statements, `EXPLAIN ANALYZE` / `ANALYSE`, and `--env prod`; it sets
 `default_transaction_read_only=on` as a **server** parameter via `PGOPTIONS`; it bounds every session
-with `statement_timeout=30s`; and for `prod-replica` it asserts the host is an Aurora `cluster-ro`
-reader endpoint before connecting, rather than assuming it.
+with `statement_timeout=30s`; and in **both** environments it asserts the host is an Aurora
+`cluster-ro` reader endpoint before connecting, rather than assuming it.
 
 Consequences for how you work:
 
@@ -77,11 +81,15 @@ Consequences for how you work:
 
 ## TLS
 
-The wrapper defaults to `sslmode=verify-full`. Some hosts are CNAME aliases whose certificates name
-the underlying RDS endpoint; those fail the handshake until DNS and certificates line up, and
-`AURORA_SSLMODE=verify-ca` is the deliberate, per-environment opt-out. If a connection fails on
-certificate hostname mismatch, report it as a tool failure and say the override exists — do not set
-it yourself.
+The wrapper uses `sslmode=verify-full`, so the connection cannot be redirected to another host.
+Both `AURORA_HOST` and `AURORA_HOST_PROD` are direct RDS hostnames covered by the server
+certificate, so nothing needs to be overridden: `AURORA_SSLMODE` should be unset.
+
+A certificate hostname mismatch therefore means something is wrong — typically that a host has been
+repointed at a CNAME alias whose certificate names the underlying RDS endpoint. Report it as a tool
+failure per `.claude/rules/tool-reliability.md`. Do **not** set `AURORA_SSLMODE=verify-ca` to get
+past it: that silently drops hostname verification for *every* environment, production included.
+Fixing the hostname is the correct resolution.
 
 ## Tool failure
 
