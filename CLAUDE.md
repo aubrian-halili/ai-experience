@@ -27,11 +27,11 @@ cannot connect and should report a tool failure rather than working around it
 | Requirement | Needed by | Notes |
 |-------------|-----------|-------|
 | `aurora-psql` on `PATH` | `/backoffice-database`, `database-explorer` | Read-only Aurora wrapper. Deliberately not committed — it carries the auth invocation, which stays out of a public repo. Currently at `~/.local/bin/aurora-psql` |
-| `AURORA_DB_NAME` | as above | Per-market database-name **template**, e.g. `qred_{market}_db`; needs `--market` to resolve |
-| `AURORA_HOST` | as above | Test host |
+| `AURORA_DB_NAME` | as above | Per-market database-name **template**, e.g. `qred_{market}_db`; needs `--market` to resolve. Test-shaped — production spells names differently and holds several databases per market, so resolve prod names against the environment |
+| `AURORA_HOST` | as above | Test **reader** host — the Aurora `cluster-ro` endpoint; the wrapper refuses a non-`cluster-ro` host |
 | `AURORA_HOST_PROD` | as above, for `--env prod-replica` | Production **reader** host template with a `{market}` segment; the wrapper refuses a non-`cluster-ro` host |
 | `AURORA_LOGIN_SCRIPT`, `AURORA_DB_USER`, `AURORA_SSL_CERT` | as above | Consumed by the wrapper only |
-| `AURORA_SSLMODE` | as above (optional) | Overrides `sslmode`; the wrapper defaults to `verify-full`. Set `verify-ca` for hosts that are CNAME aliases whose certificates name the underlying RDS endpoint |
+| `AURORA_SSLMODE` | as above (optional) | Overrides `sslmode`; the wrapper defaults to `verify-full`. Leave it **unset** — both endpoints are direct RDS hostnames that satisfy `verify-full`. It is a break-glass escape hatch, not a setting to reach for |
 | `ATLASSIAN_HOST` | `/confluence`, `/pr` | Atlassian tenant hostname. Both skills resolve it with `printenv ATLASSIAN_HOST` and ask if unset |
 | `GITHUB_ORG` | `/git-repos`, `git-repos-explorer` (optional) | Overrides the org; otherwise derived from `gh api user/orgs` |
 
