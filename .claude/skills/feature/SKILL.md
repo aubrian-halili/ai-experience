@@ -5,7 +5,7 @@ description: >-
   through test-driven milestones, then gate completion on /verify PASS and /review clean before handing off to the user for /commit and /pr.
   Requires an approved plan in .planning/STATE.md containing a Jira ticket ID; offers to branch off main if needed.
   Not for: planning (use /plan); not for: creating tickets (use /jira).
-allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *, acli *), TaskCreate, TaskUpdate, TaskList
+allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *, acli *)
 disable-model-invocation: true
 ---
 
@@ -38,8 +38,7 @@ If on `main` or `master`, offer to create a feature branch per git conventions u
 
 ### 3. Implement
 
-- Create a task per milestone with `TaskCreate`
-- Set task dependencies using `addBlockedBy` where phases depend on prior phases
+- Record the milestones in `.planning/STATE.md` — under the phase they belong to, as a checklist with each milestone's dependency noted. Update the State Progress table as each phase moves through `In Progress` → `Complete`. STATE.md is the tracker; do not rely on a task-tracking tool, which may not exist in the session.
 
 For each milestone:
 - **Independent milestones** — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria.
