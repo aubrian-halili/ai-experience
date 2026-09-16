@@ -7,7 +7,7 @@ description: >-
   Not for: implementing directly (use /feature).
   Not for: creating or managing Jira tickets (use /jira).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
-allowed-tools: Read, Grep, Glob, Write(.planning/STATE.md), Edit(.planning/STATE.md), Agent, Skill, AskUserQuestion, TaskCreate, TaskUpdate, TaskList, Bash(acli *)
+allowed-tools: Read, Grep, Glob, Write(.planning/STATE.md), Edit(.planning/STATE.md), Agent, Skill, AskUserQuestion, Bash(acli *)
 disable-model-invocation: true
 ---
 
@@ -59,8 +59,8 @@ Present results using the Architecture Comparison Template.
 
 1. If "start over" was chosen in §1, back up the prior `.planning/STATE.md` with a goal-derived name.
 2. `Write` `.planning/STATE.md` using the drafted Plan section and initialize the State Progress table.
-3. `TaskCreate` per phase with the phase goal as subject and observable truths as description; set `addBlockedBy` to match the phase dependency graph.
-4. Report the STATE.md path and the created task list.
+3. Seed the State Progress table with one row per phase — status `Pending`, and a note naming the phase's dependency (`None` or `Phase N-1`) so the dependency graph is readable from STATE.md alone. STATE.md is the tracker; do not rely on a task-tracking tool, which may not exist in the session.
+4. Report the STATE.md path and the phase list.
 
 ## When to Go Back
 
