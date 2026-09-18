@@ -19,7 +19,7 @@ Default project: `UN`. Override via `$ARGUMENTS` (e.g., `/jira PROJ`).
 
 ### Pre-flight
 
-1. **Check for plan**: Read `.planning/STATE.md` and extract each phase's goal, observable truths, dependencies, files to create/modify, and verification commands.
+1. **Check for plan**: Read `.planning/STATE.md` and extract each phase's goal, observable truths, and dependencies.
    - If the file does not exist or contains no `#### Phase` headings → **stop** and redirect:
      > "No approved plan found. Run `/plan` first to create an implementation plan, then come back to `/jira` to decompose it into tickets."
 2. **Check acli availability**: run `acli --version`; available → create directly via acli; unavailable → generate content for manual entry
@@ -35,14 +35,13 @@ Ask the user:
 > "Create one ticket per plan phase, or a single ticket covering all phases?"
 
 - **Per-phase**: proceed with one ticket per phase as below.
-- **Single ticket**: draft one Task whose summary reflects the overall plan goal, with acceptance criteria = union of all observable truths across phases, and technical details listing all files and verification commands.
+- **Single ticket**: draft one Task whose summary reflects the overall plan goal, with acceptance criteria = union of all observable truths across phases.
 
 ### 2. Draft & Confirm
 
 **If per-phase:** for each plan phase, draft a ticket:
 - **Type**: Task (default); Story if user-facing value
 - **Acceptance criteria**: each observable truth from the phase
-- **Technical details**: files to create/modify and verification commands from the phase
 - **Dependencies**: list blocking ticket titles (resolved to IDs after creation)
 
 Show as table — columns: #, Summary, Type, Story Points, Depends On — then ask the user to confirm, edit, or cancel.
@@ -58,10 +57,6 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
    ## Acceptance Criteria
    - <observable truth 1>
    - <observable truth 2>
-
-   ## Technical Details
-   - Files: `<paths>`
-   - Verification: `<commands>`
 
    ## Dependencies
    - <blocking ticket title or "None">
