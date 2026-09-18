@@ -34,11 +34,6 @@ Users cannot reset their password from the login screen.
 - A `Forgot password` link appears on the login screen
 - Submitting a known email sends a reset mail within 60s
 
-## Technical Details
-- Files: `src/auth/login.tsx`
-- Verification: `npm test -- auth`
-- Spec: [RFC 42](https://example.com/rfc42)
-
 ## Dependencies
 - None
 
@@ -151,8 +146,6 @@ def test_should_convert_every_section_when_given_the_full_template() -> None:
     assert kinds == [
         "heading",
         "paragraph",
-        "heading",
-        "bulletList",
         "heading",
         "bulletList",
         "heading",
