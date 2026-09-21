@@ -13,6 +13,8 @@ Thumbs.db
 CLAUDE.local.md
 .claude/settings.local.json
 .claude/skills/backoffice-database/references/database-overview.md
+# skills synced from claude.ai (machine-local, managed by Claude Code)
+.claude/skills/synced/
 
 # Node
 node_modules/
