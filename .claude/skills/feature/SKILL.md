@@ -40,6 +40,8 @@ If on `main` or `master`, offer to create a feature branch per git conventions u
 
 - Record the milestones in `.planning/STATE.md` — under the phase they belong to, as a checklist with each milestone's dependency noted. Update the State Progress table as each phase moves through `In Progress` → `Complete`. STATE.md is the tracker; do not rely on a task-tracking tool, which may not exist in the session.
 
+**Default scope — all phases.** Work the plan's phases in dependency order and implement *every* phase before moving on to §4, without pausing for approval between phases. Only narrow this when the user asks for it — e.g. "just phase 1", "stop after the API slice", or a resumed run that explicitly targets one phase. Pausing mid-plan is otherwise reserved for the hard stops: a scope divergence from the ticket (§1) or a structurally wrong plan (see *When to Go Back*).
+
 For each milestone:
 - **Independent milestones** — dispatch an `implementation-worker` agent with explicit file scope, goal, and acceptance criteria.
   - Worker brief must specify: remove orphaned imports/vars caused by the change, but leave pre-existing dead code alone; and apply the comment discipline below.
@@ -62,10 +64,10 @@ If no formatter/linter is detected or the detected tool is not available, skip t
 
 ### 5. Verify, review, hand off
 
-Invoke `/gate` (feature mode — no PR argument). It runs completeness verification against `.planning/STATE.md` and the code review **in parallel** and emits one verdict. A feature is complete only when `/gate` returns **READY** (VERIFY **PASS** and no Blocking/correctness findings).
+Once **all** in-scope phases are implemented and formatted, invoke `/gate` **once** (feature mode — no PR argument) for the whole set — not per phase. It runs completeness verification against `.planning/STATE.md` and the code review **in parallel** and emits one verdict. A feature is complete only when `/gate` returns **READY** (VERIFY **PASS** and no Blocking/correctness findings).
 
 If `/gate` returns **BLOCKED**, report the blockers with `file:line` evidence and stop.
-On success, tell the user the gate passed and to run `/commit` then `/pr`.
+On success, tell the user the gate passed and to run `/commit` then `/pr`. Do not commit on the user's behalf — `/commit` is theirs to invoke (the per-phase checkpoint commits in §3 remain opt-in).
 
 ## When to Go Back
 
