@@ -22,6 +22,10 @@ report() { printf '%s\n' "$1"; fail=1; }
 # clone and must not be reported as broken. Keep this list in sync with .gitignore.
 is_untracked_ref() { [ "$1" = "database-overview.md" ]; }
 
+# Directories under .claude/skills that are not skills of this repo: gitignored,
+# machine-local content that Claude Code syncs from claude.ai. Keep in sync with .gitignore.
+is_not_a_skill_dir() { [ "$1" = "synced" ]; }
+
 # Resolve every reference path in a file. $2 is the directory that unqualified
 # 'references/x.md' paths resolve against (the owning skill's dir, or .claude/agents).
 check_refs() {
@@ -48,10 +52,13 @@ check_refs() {
     rm -f "$errs"
 }
 
+checked=0
 for dir in "$SKILLS"/*/; do
     skill=$(basename "$dir")
+    is_not_a_skill_dir "$skill" && continue
     md="${dir}SKILL.md"
     [ -f "$md" ] || { report "$skill: no SKILL.md"; continue; }
+    checked=$((checked + 1))
 
     # --- frontmatter: the block between the first two '---' lines ---
     fm=$(awk 'NR==1 && $0!="---"{exit} NR>1 && $0=="---"{exit} NR>1' "$md")
@@ -99,10 +106,11 @@ done
 # --- orphans: a reference file no SKILL.md resolves to is dead weight or a typo elsewhere ---
 for f in "$SKILLS"/*/references/*.md "$AGENTS"/references/*.md; do
     [ -e "$f" ] || continue
+    is_not_a_skill_dir "$(basename "$(dirname "$(dirname "$f")")")" && continue
     grep -qxF "$f" "$used" || report "$f  orphaned — no SKILL.md references it"
 done
 
 if [ "$fail" -eq 0 ]; then
-    echo "skill contracts OK ($(ls -d "$SKILLS"/*/ | wc -l | tr -d ' ') skills)"
+    echo "skill contracts OK ($checked skills)"
 fi
 exit "$fail"
