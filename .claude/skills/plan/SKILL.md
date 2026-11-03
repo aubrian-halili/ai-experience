@@ -3,7 +3,7 @@ name: plan
 description: >-
   User asks to "plan", "break down", "decompose", "scope this work",
   "compare approaches", "trade-offs", "pros and cons", "brainstorm",
-  or references a Jira epic needing implementation steps. Use before /feature.
+  or references a Jira epic needing implementation steps. Use before /jira and /feature.
   Not for: implementing directly (use /feature).
   Not for: creating or managing Jira tickets (use /jira).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
@@ -21,7 +21,7 @@ disable-model-invocation: true
 
 1. **If a Jira ticket ID or epic is found in `$ARGUMENTS`**: launch `jira-explorer` with the ticket ID(s) and the goal as its research question. Treat the returned **Acceptance Criteria** and **Scope Boundaries** as the requirements baseline for the DoD and Out of Scope sections in §1.3 — do not restate them from memory of the argument text. If it returns a `### Tool Failure`, apply the tool-failure rule in §2 before drafting.
 2. **Check for existing `.planning/STATE.md`**. If found, ask the user a binary choice: **resume** or **start over**.
-   - **resume** → continue from the phase marked current
+   - **resume** → load the existing Plan section as the draft and continue at §4 Plan Review
    - **start over** → **do not** back up or overwrite the file yet (backup happens in §5)
 3. **Draft the Plan section** (DoD + Out of Scope + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure — note the vertical-slice requirement the template defines for phases.
 
@@ -29,7 +29,7 @@ disable-model-invocation: true
 
 Launch `code-explorer` with the goal as its topic. Also launch `database-explorer` in parallel (with a research question derived from the goal) if any of these hold: the goal names a table or domain entity; the Jira body contains "migration", "schema", or "model"; or `code-explorer` returns files under `*/migrations/*`, `*/models/*`, or ORM schema paths.
 
-`database-explorer` reads the **test** database. It reaches production only when the research question you give it names production explicitly, so do not phrase one that way unless the user has asked for production data — planning rarely needs it, and production is live customer data.
+Do not name production in a `database-explorer` research question unless the user asked for production data — that phrasing is what makes it leave the test database.
 
 Launch `git-repos-explorer` in parallel **only when** the goal needs grounding outside this repo: it names another service or repo in the org; it integrates with a shared library or contract; or the relevant prior art is expected to live in another repo rather than locally. Skip it for self-contained, in-repo work — cross-repo search is slower and is unnecessary by default.
 
@@ -39,16 +39,16 @@ Pass the **Essential Files** list from `code-explorer`, the **Essential Tables**
 
 **Unconfirmed data — ask before planning on it.** If `database-explorer` returns a `### Needs User Confirmation` section, put each item to the user with `AskUserQuestion` before §3. Do not pass it to `code-architect` as fact and do not resolve it yourself — per the subagent clause in `.claude/rules/tool-reliability.md`, it must not be swallowed.
 
-**Tool failure — pause, do not skip.** If any spawned agent returns a `### Tool Failure` report instead of its normal output (e.g. `database-explorer` could not reach Aurora, `git-repos-explorer` could not run `gh`, `jira-explorer` could not run `acli`), stop and `AskUserQuestion` with **retry**, **proceed without that grounding** (label the schema, cross-repo, or requirements facts as unverified in the plan), or **abort** — per `.claude/rules/tool-reliability.md`. Do not proceed to §3 with code as the sole source of truth.
+**Tool failure — pause, do not skip.** If any spawned agent returns `### Tool Failure`, apply `.claude/rules/tool-reliability.md` via `AskUserQuestion`; on **proceed**, label the affected schema, cross-repo, or requirements facts as unverified in the plan. Do not proceed to §3 with code as the sole source of truth.
 
 ### 3. Architecture Comparison
 
 Launch 2-3 `code-architect` agents in parallel, each with a different focus:
-- **Minimal Changes** (include for Medium+ complexity)
+- **Minimal Changes**
 - **Clean Architecture**
 - **Hexagonal** (include when the feature crosses ≥2 external integrations, requires swappable infrastructure, or domain logic is expected to outlive the current stack — skip for CRUD endpoints, scripts, and single-adapter flows)
 
-Present results using the Architecture Comparison Template.
+Present results using the Architecture Comparison Template in `references/templates.md`.
 
 ### 4. Plan Review
 
@@ -58,9 +58,8 @@ Present results using the Architecture Comparison Template.
 ### 5. Persist *(after approval)*
 
 1. If "start over" was chosen in §1, back up the prior `.planning/STATE.md` with a goal-derived name.
-2. `Write` `.planning/STATE.md` using the drafted Plan section and initialize the State Progress table.
-3. Seed the State Progress table with one row per phase — status `Pending`, and a note naming the phase's dependency (`None` or `Phase N-1`) so the dependency graph is readable from STATE.md alone. STATE.md is the tracker; do not rely on a task-tracking tool, which may not exist in the session.
-4. Report the STATE.md path and the phase list.
+2. `Write` `.planning/STATE.md` using the drafted Plan section, seeding the State Progress table with one row per phase — status `Pending`, and a note naming the phase's dependency (`None` or `Phase N-1`) so the dependency graph is readable from STATE.md alone. STATE.md is the tracker; do not rely on a task-tracking tool, which may not exist in the session.
+3. Report the STATE.md path and the phase list.
 
 ## When to Go Back
 

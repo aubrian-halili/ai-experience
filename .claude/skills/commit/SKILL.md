@@ -22,4 +22,8 @@ Commit messages must follow `<JIRA-ID> <type>(<scope>): <description>` — extra
 
 ### 1. Analyze & Present for Review
 
-Present the proposed commit message to the user for review and confirmation before proceeding.
+Draft the message from `git diff --staged` (if nothing is staged, show `git status` and ask what to stage). Use `$ARGUMENTS` as the message or scope when given. Present the proposed message and wait for confirmation.
+
+### 2. Commit
+
+Commit only after explicit confirmation.

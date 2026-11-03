@@ -5,8 +5,6 @@ it is safe to run inline or as a single nested `Agent` call.
 
 ## Input Handling
 
-Default approach: three-level checks (Existence → Substance → Wiring).
-
 | Input | Approach |
 |-------|----------|
 | Plan file path | Extract observable truths |

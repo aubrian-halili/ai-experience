@@ -39,4 +39,5 @@ fifth member if one existed.
 ## Question drift
 
 The answer resolves a nearby but different question — how many integrations *are configured* vs *are
-called*, what the code *should* do vs *does*.
+called*, what the code *should* do vs *does*. Restate the original question verbatim and check each
+assertion answers it.

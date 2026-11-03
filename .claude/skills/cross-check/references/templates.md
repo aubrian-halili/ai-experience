@@ -3,7 +3,7 @@
 ## Cross-check Output (`/cross-check`)
 
 ```markdown
-## Double-check — [the question or claim cross-checked]
+## Cross-check — [the question or claim cross-checked]
 
 **Answer type**: Enumeration/count | Factual lookup | Explanation | Change/edit
 **Independent route**: [how the re-derivation reached its answer — the search vectors used]

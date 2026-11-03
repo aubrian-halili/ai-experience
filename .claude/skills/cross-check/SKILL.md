@@ -49,9 +49,9 @@ Dispatch one `Agent` (`Explore` or `general-purpose`) with **the original questi
 **Never include the original answer, its count, or its member list in the agent's prompt.** An agent
 shown the answer confirms the answer. Ask it to answer from scratch and report its search vectors.
 
-For enumerations, instruct the agent to widen deliberately: alternate naming conventions, config and
-infrastructure declarations (not just code), indirect or generated call paths, dependency manifests,
-and disabled or commented-out members. Require `file:line` for every member it returns.
+For enumerations, give the agent the search vectors under **Single-vector undercount** in
+`references/failure-modes.md`, plus disabled or commented-out members. Require `file:line` for every
+member it returns.
 
 Run the claim-specific hunts in `references/failure-modes.md` in the same message where they are
 independent of the re-derivation.
@@ -65,8 +65,7 @@ Compare the fresh derivation against the claim set from §1, assertion by assert
 - **Fresh result has members the original missed** → the original was wrong. State the new total.
 - **Original has members the fresh result missed** → do not average the two. Resolve which is right
   by reading the disputed `file:line` directly.
-- **A tool or search failed** → **unverified**, never "nothing found". Report the failure per
-  `.claude/rules/tool-reliability.md` and name what stays unconfirmed.
+- **A tool or search failed** → **unverified**; handle per `.claude/rules/tool-reliability.md`.
 
 Also surface any **scope assumption** the original answer made silently — what counted as "an API
 integration", which directories were in scope, whether tests and vendored code counted. A count is

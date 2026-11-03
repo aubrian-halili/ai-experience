@@ -7,11 +7,9 @@ description: >-
   Defaults to project UN (overridable); uses acli when available, otherwise emits copy-ready content.
   Not for: mentioning a Jira ticket ID as context for other work (use /plan or /feature); not for: transitioning or editing existing tickets.
 argument-hint: "[PROJECT]"
-allowed-tools: Read, Write(.planning/STATE.md), Write(.planning/tickets/*.md), Write(.planning/tickets/*.json), Edit(.planning/STATE.md), Agent, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem create-bulk *, acli jira workitem edit *, acli jira workitem link *, acli jira workitem transition *, acli --version, python3 .claude/skills/jira/scripts/build-workitem.py *, python3 .claude/skills/jira/scripts/build-bulk.py *)
+allowed-tools: Read, Write(.planning/STATE.md), Write(.planning/tickets/*.md), Write(.planning/tickets/*.json), Edit(.planning/STATE.md), Agent, Bash(acli jira workitem search *, acli jira workitem view *, acli jira workitem create *, acli jira workitem create-bulk *, acli jira workitem edit *, acli jira workitem link *, acli --version, python3 .claude/skills/jira/scripts/build-workitem.py *, python3 .claude/skills/jira/scripts/build-bulk.py *)
 disable-model-invocation: true
 ---
-
-**Current branch:** !`git branch --show-current`
 
 ## Input Handling
 
@@ -22,7 +20,7 @@ Default project: `UN`. Override via `$ARGUMENTS` (e.g., `/jira PROJ`).
 1. **Check for plan**: Read `.planning/STATE.md` and extract each phase's goal, observable truths, and dependencies.
    - If the file does not exist or contains no `#### Phase` headings → **stop** and redirect:
      > "No approved plan found. Run `/plan` first to create an implementation plan, then come back to `/jira` to decompose it into tickets."
-2. **Check acli availability**: run `acli --version`; available → create directly via acli; unavailable → generate content for manual entry
+2. **Check acli availability**: run `acli --version`; available → create directly via acli; unavailable → tell the user, then output the §2 table and each §3 description file for manual entry and skip §3 steps 1, 3–4 and §4
 
 ---
 
@@ -115,11 +113,11 @@ acli jira workitem link create --from-json .planning/tickets/links.json --yes
 
 ### 5. Present Manifest
 
-Output the manifest and store it in `.planning/STATE.md` under a `## Tickets` section:
+Output the manifest and store it in `.planning/STATE.md` under the existing `### Tickets` heading:
 
-| Ticket ID | Summary | Branch Name | Blocked By |
-|-----------|---------|-------------|------------|
-| UN-1234 | ... | UN-1234-short-description | — |
-| UN-1235 | ... | UN-1235-short-description | UN-1234 |
+| Ticket ID | Summary | Branch Name | Blocked By | Status | PR |
+|-----------|---------|-------------|------------|--------|----|
+| UN-1234 | ... | UN-1234-short-description | — | Open | — |
+| UN-1235 | ... | UN-1235-short-description | UN-1234 | Open | — |
 
 `Blocked By` reflects the links actually created in **Link Dependencies**.
