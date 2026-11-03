@@ -10,15 +10,12 @@ disable-model-invocation: true
 allowed-tools: Bash(gh *, printenv GITHUB_ORG)
 ---
 
-Layered repository exploration and code searching across a GitHub organization.
-
 ## Resolving the Org
 
 `${GITHUB_ORG}` below is a placeholder for the GitHub organization to search. Resolve it once, at
 the start of the session, and reuse the result:
 
-1. Run `printenv GITHUB_ORG`. If it prints a value, use it. It is an optional override — leave it
-   unset unless step 2 is ambiguous or unavailable.
+1. Run `printenv GITHUB_ORG`. If it prints a value, use it.
 2. Otherwise run `gh api user/orgs -q '.[].login'`. If exactly one org comes back, use it.
 3. If several come back, or none do, ask which org to search — never guess, and never fall back to
    the current repository's owner (this repo may be personal rather than org-owned).
@@ -27,7 +24,7 @@ the start of the session, and reuse the result:
 
 ## Guardrails
 
-**Read-only and informational operations only.** Refuse any mutating `gh` subcommand (write, delete, close, merge, edit, transfer, archive) and explain why.
+**Read-only and informational operations only.** Refuse any mutating `gh` subcommand (merge, close, edit, delete, transfer, archive, create) — including pass-through commands — and explain why. `gh api` is GET-only: no `-X`/`--method` other than GET, and no `-f`/`-F` fields (they switch the request to POST). Scope every command to `${GITHUB_ORG}` — `--owner ${GITHUB_ORG}`, `--repo ${GITHUB_ORG}/<repo>`, a `repos/${GITHUB_ORG}/...` API path, or `gh repo list ${GITHUB_ORG}`.
 
 ## Input Handling
 
@@ -48,8 +45,8 @@ the start of the session, and reuse the result:
 ### Direct Operations
 
 - **List repos:** `gh repo list ${GITHUB_ORG} --limit 30 --no-archived --json name,description,url,isArchived,pushedAt`
-- **List PRs/issues:** `gh pr list` / `gh issue list` with relevant `--json` fields
-- **View PR/issue:** `gh pr view` / `gh issue view` with relevant `--json` fields
+- **List PRs/issues:** `gh pr list` / `gh issue list` with `--repo ${GITHUB_ORG}/<repo>` and relevant `--json` fields
+- **View PR/issue:** `gh pr view <n>` / `gh issue view <n>` with `--repo ${GITHUB_ORG}/<repo>` and relevant `--json` fields
 
 ### Layered Exploration Workflow
 

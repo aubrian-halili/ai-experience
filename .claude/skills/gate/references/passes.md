@@ -7,19 +7,13 @@ The quality building block of `/gate` and the single source of truth for the rev
 > review must be run from the main loop — do **not** perform the passes inline, which collapses them
 > into a surface scan and misses cross-file divergence and DB-schema issues.
 
-## Reporting Threshold
+## Provenance and citations (dispatcher-owned)
 
-Only report a finding where `git blame -L <start>,<end> <file>` confirms the issue is introduced by
-this change, not pre-existing.
-
-## Citation verification (dispatcher-owned)
-
-The Stage-1 sub-agents have only `Read`/`Grep`/`Glob` — they **cannot** run `git blame` and may emit a
-`file:line` lifted from a diff hunk header or conflated with a sibling file. You (the dispatching main
-loop) own provenance **and** citation accuracy. Before folding any finding into the verdict, run the
-`git blame -L <start>,<end> <file>` above: it both confirms the change is new *and* fails loudly when the
-line range doesn't exist or doesn't match the cited code. **Drop or repair** any finding whose `file:line`
-you cannot confirm against the real file — a fabricated or off-by-file line number invalidates the finding.
+Stage-1 sub-agents have only `Read`/`Grep`/`Glob` — they cannot run `git blame` and may cite a
+`file:line` lifted from a diff hunk header or a sibling file. Before folding any finding into the
+verdict, run `git blame -L <start>,<end> <file>`: report the finding only if the lines are introduced
+by this change (lines shown as `Not Committed Yet` count), and **drop or repair** any finding whose
+range doesn't exist or doesn't match the cited code.
 
 ## `--refactor`
 
@@ -28,12 +22,15 @@ suggestions (e.g. `src/auth/ --refactor`).
 
 ## Stage 1 — concurrent (one message, parallel `Agent` calls)
 
-Give every pass the diff range (`<base>..HEAD`, default `origin/main..HEAD`) and point it at the
-branch being reviewed.
+Give every pass the diff the caller sets — `<base>..HEAD` from `/gate`; for `/review`, the working
+tree against `origin/main` (`git diff origin/main`, committed + staged + unstaged, plus untracked
+files) — and point it at the branch being reviewed.
 
-- **`code-quality-reviewer`** — type safety, error handling, test coverage, performance,
-  documentation, and comment noise (see **Comment noise** below).
-- **`security-scanner`** — OWASP injection, auth/access, crypto, config.
+- **`code-quality-reviewer`** — one call per dimension (the agent takes one per invocation): type
+  safety, error handling, test coverage, performance, documentation; the documentation call also
+  applies **Comment noise** below.
+- **`security-scanner`** — one call per threat category (the agent takes one per invocation):
+  Injection & Input, Auth & Access, Data & Crypto, Config & Dependencies.
 - **`code-explorer`** — find 2-3 existing siblings of the same archetype as the changed code (e.g.
   another route handler, another migration, another React hook). Compare the new code against them
   and report **unjustified divergence** — where the new code departs from the established sibling
@@ -68,7 +65,7 @@ would mislead a maintainer.
 
 ## Stage 2 — depends on `code-explorer`
 
-- **`code-architect`** — dispatch in all cases:
+- **`code-architect`** (focus: Minimal Changes) — by `code-explorer`'s result:
   - **Divergences flagged** — one `code-architect` per divergence (concurrently) with the existing
     sibling pattern and the divergent code; it produces a concrete realignment suggestion.
   - **No sibling exists** — dispatch one `code-architect` with the new code and no prior pattern; it

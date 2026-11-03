@@ -5,9 +5,9 @@ description: >-
   or mentions "pull request" in context of creating one.
   Opens as draft by default (pass --ready for ready-for-review); supports --major and --fe to pick the PR body template;
   offers to transition the linked Jira ticket to "In Review".
-  Not for: reviewing an existing PR (use /review); not for: addressing PR review feedback (use /receiving-review).
+  Not for: reviewing an existing PR (use /gate); not for: addressing PR review feedback (use /receiving-review).
 argument-hint: "[optional: --major, --fe, --ready, target branch, or PR title]"
-allowed-tools: Bash(git branch *, git log *, git diff *, git show *, git status *, git rev-list *, git push *, git fetch *, git remote *, gh repo *, gh pr *, acli *, printenv ATLASSIAN_HOST), Read, Grep, Glob
+allowed-tools: Bash(git branch *, git log *, git diff *, git show *, git status *, git rev-list *, git push *, git fetch *, git remote *, gh repo *, gh pr *, acli *, printenv ATLASSIAN_HOST), Read, Grep, Glob, Edit(.planning/STATE.md)
 disable-model-invocation: true
 ---
 
@@ -17,7 +17,7 @@ disable-model-invocation: true
 ## Process
 
 ### 1. Pre-flight
-Parse `$ARGUMENTS` for `--major`, `--fe`, `--ready`.
+Parse `$ARGUMENTS` for `--major`, `--fe`, `--ready`; treat a remaining branch name as the base (default `main`) and any remaining text as the PR title.
 
 ### 2. Prepare Body
 Select template by flags:
@@ -47,4 +47,4 @@ Push branch and create PR as **draft** unless `--ready` is passed.
 
 ### 5. Record completion
 
-If `.planning/STATE.md` exists and the Jira ID from the current branch matches an entry in it, update that entry: mark the ticket complete with the current timestamp and the URL of the PR just created. If no STATE.md or no matching entry, skip silently.
+If `.planning/STATE.md` exists and the Jira ID from the current branch matches an entry in it, update that row of the Tickets table: set Status to `Complete <ISO timestamp>` and PR to the URL just created. If no STATE.md or no matching entry, skip silently.

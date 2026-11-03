@@ -1,7 +1,7 @@
 ---
 name: gate
 description: >-
-  End-to-end completion gate, and the canonical home of the completeness + quality checks.
+  End-to-end completion gate for a PR or a planned feature.
   User asks to "review this PR", "is this ready to merge", "check this PR / feature",
   or wants a feature gated before handoff.
   Auto-checks-out the PR, derives requirements (PR description for PRs, .planning/STATE.md for features),
@@ -34,18 +34,14 @@ resolve them against `~/.claude/skills/gate/references/...` ($HOME, not the repo
 
 - Refuse if the working tree is dirty (see **Working tree** above) — stop and report.
 - `gh pr view <number> --json state,isDraft,author,labels,headRefName,title,body`
-- **Stop conditions:** draft PR → report and stop; bot author (e.g. `dependabot`, `renovate`) → report and stop.
+- **Stop conditions** (report and stop): `state` is not `OPEN`; draft PR; bot author (e.g. `dependabot`, `renovate`).
 
 ### 2. Fetch PR locally
 
 Pull the PR head into a local branch so the diff and `git blame` are available to both passes. Record the base branch from `gh pr view` for the diff range.
 
-- If `pr-<number>` already exists locally:
-  - `git fetch origin "pull/<number>/head"`.
-  - Check for local-only commits: `git log FETCH_HEAD..pr-<number> --oneline`. If any exist, stop and report.
-  - Check if behind: `git log pr-<number>..FETCH_HEAD --oneline`. If empty, skip to checkout. Otherwise fast-forward: `git fetch origin "pull/<number>/head:pr-<number>"`.
-- Otherwise: `git fetch origin "pull/<number>/head:pr-<number>"`.
-- Then: `git checkout pr-<number>`.
+- If `pr-<number>` already exists locally: `git fetch origin "pull/<number>/head"`, then `git log FETCH_HEAD..pr-<number> --oneline` — any local-only commits → stop and report.
+- `git fetch origin "pull/<number>/head:pr-<number>"` (creates, fast-forwards, or no-ops), then `git checkout pr-<number>`. If already on `pr-<number>`, use `git merge --ff-only FETCH_HEAD` instead — git refuses to fetch into the checked-out branch.
 
 ### 3. Derive requirements
 
@@ -64,22 +60,17 @@ Dispatch everything from **this (main) loop** in **one message** (see the nestin
   `Agent` calls in this same message (`code-quality-reviewer`, `security-scanner`, `code-explorer`,
   and `database-explorer` only when the diff touches persisted data).
 
-Then **Review — Stage 2** (depends on `code-explorer`): dispatch `code-architect` per
-`references/passes.md` and fold the realignment suggestions into the divergence findings.
+Then **Review — Stage 2** per `references/passes.md` (depends on `code-explorer`).
 
 Combine completeness + all review findings into one verdict using `references/templates.md`.
 
 ## Feature mode
 
-Requirements source = the **Definition of Done / Observable Truths** in `.planning/STATE.md`. No checkout (already on the feature branch).
-
-Dispatch using the **same topology as §4**, with two deltas: requirements come from `.planning/STATE.md` (completeness runs `references/completeness.md` against it), and the diff range is `origin/main..HEAD`.
-
-Then emit the combined verdict.
+No checkout (already on the feature branch). Dispatch using the **same topology as §4**, with two deltas: completeness runs `references/completeness.md` against the **Definition of Done / Observable Truths** in `.planning/STATE.md`, and the diff range is `origin/main..HEAD`.
 
 ## Combined verdict
 
-- **READY** — completeness is **PASS** *and* review has no Blocking or correctness findings.
+- **READY** — completeness is **PASS** *and* review has no Blocking findings (see Severity in `references/templates.md`).
 - **BLOCKED** — anything else. List exactly what blocks, each with `file:line`.
 
 ## Related Skills

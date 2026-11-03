@@ -7,7 +7,7 @@ description: >-
   returns a structured Essential Ticket Context report. Read-only — never creates,
   edits, or transitions a work item.
   Not for: creating tickets from a plan (use /jira);
-  not for: transitioning or editing tickets (use /jira or /pr).
+  not for: transitioning or editing tickets (/pr offers the "In Review" transition).
 tools: Bash(acli jira workitem view *, acli jira workitem search *), Read
 model: inherit
 ---

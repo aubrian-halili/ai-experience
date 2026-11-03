@@ -2,7 +2,7 @@
 name: confluence
 description: >-
   User asks to "view a Confluence page", "find/search a page", "list spaces", "search blogs",
-  "read Confluence", or wants to draft/preview a new or updated Confluence page, or publish a blog post.
+  "read Confluence", or wants to draft/preview a new or updated Confluence page, or draft a blog post.
   Scoped to the Atlassian tenant in $ATLASSIAN_HOST; pages are read-only via acli (create/update are delivered as Markdown + an edit URL fallback),
   blog posts can be created directly as drafts.
   Not for: Jira ticket management (use /jira); not for: syncing local repo docs like CLAUDE.md (use /doc-sync).
@@ -44,7 +44,7 @@ Determine operation intent from `$ARGUMENTS`:
 
 ### 1. Pre-flight
 
-Run `acli --version`; if unavailable, use Markdown-paste fallbacks (Steps 3, 7) and skip Step 8.
+Run `acli --version`; if unavailable, stop and report it per `.claude/rules/tool-reliability.md`. Only Step 7 (and Step 3 from content the user pastes) can proceed without acli, and only if the user chooses to.
 
 ### 2. View Page
 
@@ -89,6 +89,6 @@ Run `acli --version`; if unavailable, use Markdown-paste fallbacks (Steps 3, 7) 
    acli confluence blog create --space-id <SPACE_ID> --title "<TITLE>" \
      --from-file .confluence/<slug>.xhtml --status draft --json
    ```
-5. **Report the draft** — read the ID and links straight from the `--json` response and give the user that URL rather than constructing one. Publishing is a separate step the user takes in Confluence (or by re-running with `--status current`, which requires their explicit go-ahead).
+5. **Report the draft** — read the ID and links straight from the `--json` response and give the user that URL rather than constructing one. Publishing is a separate step the user takes in Confluence (or a `--status current` re-run — see Guardrails).
 
-On non-zero exit, nothing was created in Confluence — say so, and offer Step 7's paste fallback.
+On non-zero exit, nothing was created in Confluence — say so, and offer to retry; the body stays in `.confluence/<slug>.xhtml`.

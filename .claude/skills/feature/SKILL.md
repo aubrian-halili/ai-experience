@@ -2,7 +2,7 @@
 name: feature
 description: >-
   Implement an approved plan (e.g., "implement the plan", "build the feature", "start working on it")
-  through test-driven milestones, then gate completion on /verify PASS and /review clean before handing off to the user for /commit and /pr.
+  through test-driven milestones, then gate completion with /gate (READY) before handing off to the user for /commit and /pr.
   Requires an approved plan in .planning/STATE.md containing a Jira ticket ID; offers to branch off main if needed.
   Not for: planning (use /plan); not for: creating tickets (use /jira).
 allowed-tools: Read, Grep, Glob, Write, Edit, Agent, Skill, Bash(npm *, npx *, node *, git *, make *, acli *)
@@ -21,7 +21,7 @@ Check if `.planning/STATE.md` exists.
 - If found → load it.
 
 **Gate 2 — Jira ticket ID in STATE.md:**
-Extract the Jira ticket ID from `.planning/STATE.md`.
+Extract the Jira ticket ID(s) from the Tickets section of `.planning/STATE.md`. If there are several, ask which one this run targets (it names the branch).
 - If no ticket ID is found → stop and instruct the user to run `/jira` to record one, then re-run.
 
 **Gate 3 — Branch check:**
@@ -58,13 +58,11 @@ After milestones are implemented, format the changed files with the project's ow
 **Detect, in this order (first match wins):**
 1. **Project scripts** — check `package.json` for a `format`, `lint:fix`, or `lint` script (or the equivalent in a `Makefile`/`justfile`). Prefer these; they encode the project's intended config and file globs.
 2. **Config files** — if no script exists, infer the tool from formatter/linter config at the repo root (e.g. `biome.json`, `.prettierrc*`, `.eslintrc*`, `ruff.toml`/`[tool.ruff]`, or an ecosystem manifest) and run that tool's idiomatic format/fix command.
-3. **Verify availability** before running. Run the tool only on the changed files, scoped to the extensions it handles.
-
-If no formatter/linter is detected or the detected tool is not available, skip the format step — do not install or configure one.
+Verify the tool is available before running it, and run it only on the changed files, scoped to the extensions it handles. If no formatter/linter is detected or the detected tool is not available, skip the format step — do not install or configure one.
 
 ### 5. Verify, review, hand off
 
-Invoke `/gate` **once** for the whole set (feature mode — no PR argument), not per phase. It runs completeness verification against `.planning/STATE.md` and the code review **in parallel** and emits one verdict. A feature is complete only when `/gate` returns **READY** (VERIFY **PASS** and no Blocking/correctness findings).
+Invoke `/gate` **once** for the whole set (feature mode — no PR argument), not per phase. It runs completeness verification against `.planning/STATE.md` and the code review **in parallel** and emits one verdict. A feature is complete only when `/gate` returns **READY** (VERIFY **PASS** and no Blocking findings).
 
 If `/gate` returns **BLOCKED**, report the blockers with `file:line` evidence and stop.
 On success, tell the user the gate passed and to run `/commit` then `/pr`.

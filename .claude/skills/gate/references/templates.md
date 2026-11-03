@@ -4,9 +4,10 @@ Single source for severity vocabulary, the review output block, and the combined
 
 ## Severity
 
-**Blocking** · **Non-blocking** · **Optional** — every finding cites `file:line` evidence.
+**Blocking** · **Non-blocking** · **Optional** — every finding cites `file:line` evidence. Map agent
+severities: Critical/High or any correctness bug → Blocking; Medium → Non-blocking; Low/Note → Optional.
 
-## Review Output (`/review`, and the Quality section of `/gate`)
+## Review Output (`/review`)
 
 ```markdown
 ## Review Summary

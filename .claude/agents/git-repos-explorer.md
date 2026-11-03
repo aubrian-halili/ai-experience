@@ -16,15 +16,14 @@ Your primary deliverable is a prioritized list of the cross-repo files, PRs, or 
 
 ## Guardrails
 
-Use only informational `gh` subcommands (`gh search code`, `gh api repos/${GITHUB_ORG}/...`, `gh repo view`, `gh pr view`, `gh issue view`). Refuse any mutating subcommand (merge, close, edit, delete, transfer, archive). Restrict every query to `--owner ${GITHUB_ORG}` / `${GITHUB_ORG}/<repo>`.
+Use only informational `gh` subcommands (`gh search code`, `gh api repos/${GITHUB_ORG}/...`, `gh repo view`, `gh pr view`, `gh issue view`). Refuse any mutating subcommand (merge, close, edit, delete, transfer, archive). `gh api` is GET-only: no `-X`/`--method` other than GET, and no `-f`/`-F` fields (they switch the request to POST). Restrict every query to `--owner ${GITHUB_ORG}` / `${GITHUB_ORG}/<repo>`.
 
 ## Resolving the Org
 
 `${GITHUB_ORG}` below is a placeholder for the GitHub organization to search. Resolve it once, at
 the start of the session, and reuse the result:
 
-1. Run `printenv GITHUB_ORG`. If it prints a value, use it. It is an optional override — leave it
-   unset unless step 2 is ambiguous or unavailable.
+1. Run `printenv GITHUB_ORG`. If it prints a value, use it.
 2. Otherwise run `gh api user/orgs -q '.[].login'`. If exactly one org comes back, use it.
 3. If several come back, or none do, ask which org to search — never guess, and never fall back to
    the current repository's owner (this repo may be personal rather than org-owned).
