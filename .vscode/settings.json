@@ -1,7 +1,5 @@
 {
   "workbench.colorTheme": "GitHub Light Default",
-  "extensions.autoUpdate": true,
-  "extensions.autoCheckUpdates": true,
   "extensions.ignoreRecommendations": true,
   "aws.cloudformation.telemetry.enabled": true,
   "editor.tabSize": 2,
@@ -80,8 +78,8 @@
   "claudeCode.autosave": true,
   "claudeCode.respectGitIgnore": true,
   "github.copilot.nextEditSuggestions.enabled": true,
-  "inlineChat.defaultModel": "GPT-4.1 (copilot)",
-  "chat.planAgent.defaultModel": "GPT-4.1 (copilot)",
+  "inlineChat.defaultModel": "Auto (copilot)",
+  "chat.planAgent.defaultModel": "Auto (copilot)",
   "gitlens.advanced.repositorySearchDepth": 0,
   "gitlens.currentLine.enabled": true,
   "gitlens.currentLine.format": "${author}, ${agoOrDate} \u00b7 ${message}",
@@ -111,11 +109,5 @@
     "repositories": true,
     "searchAndCompare": true,
     "launchpad": true
-  },
-  "extensions.allowed": {
-    "amazonwebservices.aws-toolkit-vscode": true,
-    "github.github-vscode-theme": true,
-    "eamodio.gitlens": true,
-    "anthropic.claude-code": true
   }
 }
