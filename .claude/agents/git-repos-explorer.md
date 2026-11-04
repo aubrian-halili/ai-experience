@@ -48,7 +48,8 @@ and report what you found, listing the terms and repos you did not get to under 
 
 5. **Read on demand** — get the line count first. Read files up to 300 lines whole with the raw
    recipe; for longer files, read only a numbered window (about 80 lines) around the search hit
-   with the line-range recipe. Issue independent reads in the same turn.
+   with the line-range recipe. On `TOO_LARGE`, skip the file and list it under Key Observations.
+   Issue independent reads in the same turn.
 
 6. **Reference PRs/issues** only when the goal asks how a change was rolled out or discussed — use
    the `gh search prs` recipe across the org, then `gh pr view` / `gh issue view` for detail.
