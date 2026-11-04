@@ -24,17 +24,17 @@ Your primary deliverable is the requirements baseline the caller MUST plan again
 **When the input names one or more ticket IDs:**
 
 1. **View each ticket** — `acli jira workitem view <KEY>` for the summary, description, status, type, and acceptance criteria.
-2. **Traverse one hop out**, only where the input's goal depends on it:
-   - Parent epic → `acli jira workitem view <EPIC_KEY>` for the scope the ticket sits inside.
-   - Children of an epic → `acli jira workitem search --jql "parent = <EPIC_KEY> ORDER BY created ASC"` to find siblings that already cover part of the work.
-   - Blocking / blocked-by links named in the ticket body → view those keys.
+2. **Traverse one hop out**, only where the input's goal depends on it. Plain-text `view` omits `parent` and `issuelinks` even when requested, so fetch them explicitly:
+   - Linked tickets → `acli jira workitem search --jql 'issue in linkedIssues("<KEY>")' --csv --fields key,issuetype,status,summary` — one call returns every link; view a linked key only when its summary is not enough.
+   - Parent epic → `acli jira workitem view <KEY> --fields parent --json` for the epic key, then `acli jira workitem view <EPIC_KEY>` for the scope the ticket sits inside.
+   - Children of an epic → `acli jira workitem search --jql "parent = <EPIC_KEY> ORDER BY created ASC" --csv --fields key,status,summary --limit 50` to find siblings that already cover part of the work.
    - Stop at one hop; cap total views at ~8 tickets.
 
 **When the input describes proposed work (duplicate scan):**
 
-1. **Derive 2–4 distinct search terms** from the work description — prefer domain nouns over verbs.
-2. **Sweep per term** — `acli jira workitem search --jql "project = <KEY> AND summary ~ \"<term>\" ORDER BY created DESC"`. Add `AND statusCategory != Done` only when the caller cares about open work; closed near-duplicates are usually the most useful hit.
-3. **View only the plausible matches** (~5 maximum) to judge overlap. A summary-level term match is a candidate, not a duplicate.
+1. **Derive 2–4 distinct search terms per work item** (per drafted ticket when the caller passes several) — prefer domain nouns over verbs.
+2. **Sweep once per work item**, OR-ing its terms: `acli jira workitem search --jql "project = <KEY> AND (summary ~ \"<term1>\" OR summary ~ \"<term2>\") ORDER BY created DESC" --csv --fields key,status,summary --limit 50`. If exactly 50 rows return, the sweep was truncated — narrow the terms and rerun, and report the truncation if it persists. Add `AND statusCategory != Done` only when the caller cares about open work; closed near-duplicates are usually the most useful hit.
+3. **View only the plausible matches** (~5 maximum per sweep) to judge overlap. A summary-level term match is a candidate, not a duplicate.
 
 Both modes can apply at once — a ticket ID plus a request to check for overlap. Run the views first, then derive sweep terms from what the ticket actually says.
 
@@ -77,7 +77,7 @@ Return one structured report — no trailing raw `acli` output:
 | `UN-1200` | parent epic / sibling in epic / blocks / blocked by / possible duplicate | Done | [summary] | [what it constrains, or how much it overlaps] |
 
 ### Key Observations
-- [Requirement gaps, contradictions between description and comments, stale status vs. reality, scope creep beyond the epic, overlap severity]
+- [Requirement gaps, stale status vs. reality, scope creep beyond the epic, overlap severity]
 ```
 
 Omit sections that have nothing to report rather than padding them. If the input was a duplicate scan and nothing overlaps, say so explicitly and list the JQL terms you swept — a clean scan is only trustworthy if the caller can see its breadth.

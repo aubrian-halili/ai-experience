@@ -20,7 +20,7 @@ Default project: `UN`. Override via `$ARGUMENTS` (e.g., `/jira PROJ`).
 1. **Check for plan**: Read `.planning/STATE.md` and extract each phase's goal, observable truths, and dependencies.
    - If the file does not exist or contains no `#### Phase` headings → **stop** and redirect:
      > "No approved plan found. Run `/plan` first to create an implementation plan, then come back to `/jira` to decompose it into tickets."
-2. **Check acli availability**: run `acli --version`; available → create directly via acli; unavailable → tell the user, then output the §2 table and each §3 description file for manual entry and skip §3 steps 1, 3–4 and §4
+2. **Check acli availability**: run `acli --version`. If unavailable, tell the user and switch to **manual mode**: do §1–2, write the §3 description files and output them with the §2 table for manual entry. Skip the duplicate check, payload build, creation, and §4. In §5, ask the user for the IDs they created; if they don't have them yet, leave `### Tickets` unchanged rather than writing placeholder IDs.
 
 ---
 
@@ -40,14 +40,14 @@ Ask the user:
 **If per-phase:** for each plan phase, draft a ticket:
 - **Type**: Task (default); Story if user-facing value
 - **Acceptance criteria**: each observable truth from the phase
-- **Dependencies**: list blocking ticket titles (resolved to IDs after creation)
+- **Dependencies**: list blocking ticket titles (resolved to IDs in §4)
 
-Show as table — columns: #, Summary, Type, Story Points, Depends On — then ask the user to confirm, edit, or cancel.
+Show as table — columns: #, Summary, Type, Depends On — then ask the user to confirm, edit, or cancel.
 
 ### 3. Create Tickets
 
-1. **Check for duplicates** — launch one `jira-explorer` agent with the drafted ticket summaries and the project key as its research question. Surface any `possible duplicate` matches it reports (and the terms it swept) to the user before proceeding. If it returns a `### Tool Failure`, stop and offer **retry**, **create anyway** (stating that duplicate detection did not run), or **abort** — per `.claude/rules/tool-reliability.md`.
-2. **Write the description** — one file per ticket, using this template verbatim:
+1. **Check for duplicates** — launch one `jira-explorer` agent with the project key and the drafted ticket summaries as its research question, asking for one duplicate sweep per ticket. Surface any `possible duplicate` matches (and the terms it swept), and for each flagged ticket ask whether to **skip** it (use the existing key in §4 and the manifest) or **create anyway**. On a `### Tool Failure`, apply `.claude/rules/tool-reliability.md`; "proceed" means create anyway, stating that duplicate detection did not run.
+2. **Write the description** to `.planning/tickets/<n>.md`, using this template verbatim:
    ```
    ## Summary
    <1–2 sentence problem statement from the phase goal>
@@ -62,53 +62,49 @@ Show as table — columns: #, Summary, Type, Story Points, Depends On — then a
    ## Suggested Priority
    <Critical|High|Medium|Low> — <brief justification>
    ```
-   Write it to `.planning/tickets/<n>.md`, alongside the plan in `.planning/`, so drafts stay reviewable and re-runnable. `acli` stores plain text **verbatim** — a markdown file passed straight through renders as literal `##` and `-` characters in Jira.
-
    **Stay inside the supported constructs** — headings, `- ` bullets, paragraphs, `` `inline code` ``, and `[label](url)` links. No `**bold**`, `*italic*`, `~~strike~~`, `__underline__`, or raw HTML; wrap file paths, commands, and globs in backticks so `*` characters inside them are treated as literal.
 
-3. **Build the work item payload** — the description becomes ADF, wrapped in the JSON shape `acli` expects:
+3. **Build the work item payload** — `acli` stores plain text verbatim (raw markdown renders as literal `##` and `-`), so convert the description to ADF:
    ```bash
    python3 .claude/skills/jira/scripts/build-workitem.py .planning/tickets/<n>.md \
      --project <KEY> --type <TYPE> --summary "<SUMMARY>" \
-     [--label <l>] [--parent <ID>] [--field customfield_XXXXX=<points>] \
+     [--label <l>] [--parent <ID>] \
      > .planning/tickets/<n>.json
    ```
-   The converter exits 1 rather than emitting a document that renders wrongly, with the reason on stderr. Run it with `--help` for the full flag list; use `--adf-only` when you need a bare ADF document for `--description-file` (e.g. editing an existing item's description).
+   - **`--parent`** maps to acli's `parentIssueId`, which its schema documents as sub-task only. Passing an epic as the parent of a Story or Task is untested — if creation fails on it, retry without `--parent`, then add a `Relates` link to the epic in §4 and tell the user the epic **parent** field still needs setting in Jira (a link is not epic parentage).
 
-   - **Story points** need the project's custom field ID, which varies per Jira site. Discover it once with `acli jira workitem view <EXISTING-ID> --fields '*all' --json` — `--json` alone returns only the default field set (`key,issuetype,summary,status,assignee,description`) and shows no custom fields at all. Pass it as `--field customfield_XXXXX=<points>`. If the ID is unknown, **omit points rather than guessing** and tell the user they need setting manually.
-   - **`--parent`** maps to acli's `parentIssueId`, which its schema documents as sub-task only. Passing an epic as the parent of a Story or Task is untested — if creation fails on it, retry without `--parent`, then add a `Relates` link to the epic in **Link Dependencies** and tell the user the epic **parent** field still needs setting in Jira (a link is not epic parentage).
-
-   On non-zero exit, apply `.claude/rules/tool-reliability.md` — the proceed option here is creating with a plain-text `--description`, stating that the ticket body will not render.
+   On non-zero exit (reason on stderr), apply `.claude/rules/tool-reliability.md` — the proceed option here is creating with a plain-text `--description`, stating that the ticket body will not render.
 
 4. **Create via acli** — one ticket at a time by default:
-   - Run `acli jira workitem create --from-json .planning/tickets/<n>.json` — the file carries the whole work item, so pass no other flags; in particular **not `--priority`**, which is not a valid flag (priority stays as the "Suggested Priority" section in the description)
+   - Run `acli jira workitem create --from-json .planning/tickets/<n>.json` with no other flags — in particular **not `--priority`**, which is not a valid flag (priority stays as the "Suggested Priority" section in the description).
 
-   **Bulk path (4+ tickets, same project).** Offer `create-bulk` to collapse the loop into one call:
+   **Bulk path (4+ tickets, same project).** Offer `create-bulk` to collapse the loop into one call. List this run's payload files explicitly — a glob also matches `links.json`, `bulk.json`, and leftovers from earlier runs:
    ```bash
-   python3 .claude/skills/jira/scripts/build-bulk.py .planning/tickets/*.json \
+   python3 .claude/skills/jira/scripts/build-bulk.py \
+     .planning/tickets/1.json .planning/tickets/2.json ... \
      > .planning/tickets/bulk.json
    acli jira workitem create-bulk --from-json .planning/tickets/bulk.json --yes
    ```
-   `create-bulk` uses a **different schema** from `create` and supports only seven fields. `build-bulk.py` does the translation and **exits 1 rather than dropping a field** — a ticket carrying story points or a `reporter` cannot be bulk-created, and the error names the offending file and the remedy.
+   `build-bulk.py` refuses any ticket carrying a custom field (`--field`) or a `reporter`, since `create-bulk` would silently drop them; follow the remedy its error names.
 
-   **Verify the render once per project.** acli's create-bulk schema does not document the `description` field, so ADF handling on this path is unconfirmed. On the first bulk run against a project, check one result with `acli jira workitem view <NEW-KEY> --fields description --json`: if the description came back as a plain string instead of an ADF doc, the bodies rendered as literal `##` and `-`. Repair each with `build-workitem.py --adf-only` piped to `acli jira workitem edit --key <KEY> --description-file <file> --yes`, and use the per-ticket path for the rest of the run.
+   **Verify the render once per project.** ADF handling on the bulk path is unconfirmed. After the first bulk run against a project, run `acli jira workitem view <NEW-KEY> --fields description --json`: if the description is a plain string instead of an ADF doc, the bodies rendered as literal `##` and `-`. Repair each with `build-workitem.py --adf-only` piped to `acli jira workitem edit --key <KEY> --description-file <file> --yes`, and use the per-ticket path for the rest of the run.
 
 ### 4. Link Dependencies
 
-The "Depends On" column resolves to real Jira links once every ticket has an ID:
+Once every ticket has an ID, write `.planning/tickets/links.json` (Write tool) as a bare array, then create the links:
 
-```bash
-cat > .planning/tickets/links.json <<'EOF'
+```json
 [
   { "outwardIssue": "UN-1234", "inwardIssue": "UN-1235", "type": "Blocks" }
 ]
-EOF
+```
+
+```bash
 acli jira workitem link create --from-json .planning/tickets/links.json --yes
 ```
 
 - **Direction matters**: if ticket B depends on A, then A is `outwardIssue` and B is `inwardIssue`.
-- The payload is a bare JSON array — unlike every other `--from-json` file in this skill.
-- Valid `--type` values come from `acli jira workitem link type`; this skill uses `Blocks` for dependencies and `Relates` for the epic fallback in **Create Tickets**. There is no link type for epic parentage.
+- Use `Blocks` for dependencies and `Relates` for the epic fallback in §3; if a type is rejected, list valid ones with `acli jira workitem link type`.
 - The links are additive, so on failure leave the created tickets in place — the user can add links in Jira without redoing creation.
 
 ### 5. Present Manifest
@@ -120,4 +116,4 @@ Output the manifest and store it in `.planning/STATE.md` under the existing `###
 | UN-1234 | ... | UN-1234-short-description | — | Open | — |
 | UN-1235 | ... | UN-1235-short-description | UN-1234 | Open | — |
 
-`Blocked By` reflects the links actually created in **Link Dependencies**.
+`Blocked By` reflects the links actually created in §4.

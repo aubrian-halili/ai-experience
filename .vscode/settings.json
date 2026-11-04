@@ -55,7 +55,7 @@
   "terminal.integrated.shellIntegration.decorationsEnabled": "both",
   "terminal.integrated.cursorStyle": "block",
   "terminal.integrated.enableMultiLinePasteWarning": "never",
-  "terminal.integrated.sendKeybindingsToShell": true,
+  "terminal.integrated.sendKeybindingsToShell": false,
   "terminal.integrated.tabs.hideCondition": "never",
   "terminal.integrated.defaultProfile.osx": "zsh",
   "terminal.integrated.enableVisualBell": true,
