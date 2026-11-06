@@ -70,7 +70,7 @@ Logs and traces are production data and may contain customer PII.
 ### Output discipline
 
 - **Project every call.** Use `--query` (JMESPath) to return only the fields you use, and
-  `--output text` or `--output table` for lists. Never print raw full JSON of a describe call.
+  `--output text` or `--output table` for lists.
 - `--max-items` with `--output text` appends a pagination-token line (`None` when there is no next
   page). Ignore it — it is not a resource. A real token means the list was capped: say so.
 - **Reuse within the session.** Do not re-list log groups, clusters, or functions you already have.
@@ -99,8 +99,7 @@ aws-ro logs describe-log-groups --log-group-name-prefix /aws/lambda/<name> \
 aws-ro logs describe-log-groups --log-group-name-pattern <fragment> \
   --query 'logGroups[].logGroupName' --output text
 
-# Recent events, human-readable. No cap flag exists — use only with a narrow --filter-pattern
-# (request ID, exact error string); otherwise use filter-log-events below
+# Recent events, human-readable — narrow --filter-pattern only (no cap flag)
 aws-ro logs tail <log-group> --since 30m --format short --filter-pattern '"ERROR"'
 
 # Filtered events in an exact window, capped

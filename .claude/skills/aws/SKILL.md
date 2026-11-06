@@ -15,19 +15,16 @@ disable-model-invocation: true
 
 ## Access
 
-Read-only always: every call goes through `aws-ro`, never `aws` directly; the profile defaults to
-`prod`; and a wrapper refusal (exit `3`) means the request is out of scope, not that another route
-should be tried.
+Read-only always: every call goes through `aws-ro`, never `aws` directly. A wrapper refusal
+(exit `3`) means the request is out of scope, not that another route should be tried. If a task
+requires a change, say what it would be and point the user at the AWS console, CDK, or the CI/CD
+pipeline — never attempt it.
 
-Before the first call, read the full access and read-only contract in
-`@references/access-and-guardrails.md` and follow it exactly — the allowlist, production data
-handling, the **Efficient querying** recipes, and tool failure.
+Before the first call, read the full contract in `@references/access-and-guardrails.md` and
+follow it exactly.
 
 Start each session with `aws-ro sts get-caller-identity` and state the account and role you are
-reading from. Switch profile only when the user names another environment (`--profile test`).
-
-**Write escalation:** if a task requires a change, say what the change would be and point the user
-at the AWS console, CDK, or the CI/CD pipeline. Never attempt it.
+reading from.
 
 ## Input Handling
 
@@ -44,12 +41,13 @@ at the AWS console, CDK, or the CI/CD pipeline. Never attempt it.
 ## Layered Workflow
 
 Each layer ends by presenting its result and offering the next step. Go deeper only when the user
-picks a target — never widen the time window or pull more events on your own initiative.
+picks a target, and ask before widening the time window, raising the event cap, or reading another
+log group.
 
 ### Layer 1: Locate
 
 Resolve the name to exact resources: log groups by prefix or pattern, the ECS service or Lambda
-function, its alarms. If several candidates match, list them and ask which one.
+function, its alarms.
 
 ### Layer 2: Status
 
@@ -61,10 +59,8 @@ group.
 
 ### Layer 3: Logs
 
-Default window: the **last 30 minutes**, capped at 50 events. Use `filter-log-events --max-items 50`
-for raw events and Logs Insights `stats` for counts and trends. `logs tail` has no cap flag — use it
-only with a narrow `--filter-pattern` (a request ID or exact error string) where the match count is
-inherently small.
+Default window: the **last 30 minutes**, capped at 50 events — `filter-log-events` for raw events,
+Logs Insights `stats` for counts and trends.
 
 Present events as a compact timeline (time, level, one-line message); group repeats as
 `N× <message template>` rather than printing each:
@@ -76,11 +72,9 @@ prod · 123456789012 · eu-west-1 · /aws/lambda/payments-api · last 30m · fil
 — 13 events (cap 50, not reached)
 ```
 
-Ask before widening the window, raising the cap, or reading another log group.
-
 ## Related Skills
 
-- `aws-explorer` agent (spawned by `/plan`) — the same read-only contract, run non-interactively for planning or
-  debugging research; shares `references/access-and-guardrails.md`.
+- `aws-explorer` agent (spawned by `/plan`) — the same read-only contract, run non-interactively
+  for planning or debugging research.
 - `/backoffice-database` — when the question is about persisted data rather than runtime behavior.
 - `/git-repos` — to read the service code or CDK stack behind a resource you found here.
