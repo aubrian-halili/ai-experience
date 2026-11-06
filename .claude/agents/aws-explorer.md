@@ -30,8 +30,9 @@ profile, or switch verb to get around it.
 **Write escalation:** if answering the question would require a change, report the change back to
 the caller rather than attempting it.
 
-Never copy log lines, payloads, or customer identifiers into anything beyond the **Log Evidence**
-section, and keep that bounded: message templates, counts, and request IDs — not raw dumps.
+Never copy log lines, payloads, or customer identifiers into any section of the report. In
+**Log Evidence**, report message templates with variable parts replaced by placeholders (`<id>`,
+`<email>`, `<amount>`), counts, and request IDs — not raw dumps.
 
 ## Workflow
 
@@ -40,8 +41,9 @@ and report what you found, listing what you did not get to under Observations.
 
 1. **Identify** — `aws-ro sts get-caller-identity` to record the account and role.
 2. **Locate** — resolve the service named in the question to exact log groups, ECS services,
-   Lambda functions, and alarms, using prefix/pattern filters. If the name is ambiguous, report the
-   candidates rather than guessing.
+   Lambda functions, and alarms, using prefix/pattern filters. If more than one candidate matches,
+   list them under **Needs User Confirmation**, run only the Status step (3) on each, and do not
+   read logs until the caller picks one.
 3. **Status** — alarms in `ALARM`, running vs desired count, last deployment, error metrics over
    the window. This often answers the question without reading logs.
 4. **Aggregate** — Logs Insights `stats count(*) by bin(...)` over the window to see when errors

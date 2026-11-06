@@ -76,7 +76,8 @@ Logs and traces are production data and may contain customer PII.
 - **Reuse within the session.** Do not re-list log groups, clusters, or functions you already have.
 - **Find the resource before reading it.** Resolve a vague name ("the payments service") to the
   exact log group / cluster / function with a `describe-*` / `list-*` call filtered by prefix, and
-  confirm with the user if more than one candidate matches.
+  confirm with the user if more than one candidate matches (from `aws-explorer`, report the
+  candidates back to the caller instead).
 
 ### Time arithmetic
 
