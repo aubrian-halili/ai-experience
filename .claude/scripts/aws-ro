@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+#
+# aws-ro — read-only AWS CLI access for Claude Code skills and agents.
+#
+# Usage: aws-ro [--profile <name>] [--region <region>] [--dry-run] <service> <operation> [args...]
+#
+# Defaults to the `prod` profile. The wrapper is the enforcement layer, not a convention: the
+# profile's IAM role may well permit writes, so every call is checked here before `aws` runs.
+#
+#   1. Operation allowlist — only read verbs (describe-*, list-*, get-*, batch-get-*, plus a few
+#      named read operations such as `logs filter-log-events`). Everything else is refused.
+#   2. Denylist on top — reads that return secrets or mint credentials (get-secret-value,
+#      ecr get-login-password, sts get-session-token, ...) and data-plane reads that pull customer
+#      records (s3api get-object, dynamodb get-item, ...) are refused even though they "read".
+#   3. Flag guard — no --endpoint-url, no second --profile, no --with-decryption,
+#      no --include-value(s), no `logs tail --follow`.
+#   4. Environment pinning — inherited AWS_* credential and endpoint variables are dropped, so the
+#      call runs as the named profile and nothing else.
+#
+# --dry-run prints the command that would run instead of running it (used to test the guard).
+set -euo pipefail
+
+readonly DEFAULT_PROFILE="prod"
+
+die() { printf 'aws-ro: %s\n' "$1" >&2; exit 2; }
+refuse() { printf 'aws-ro: REFUSED (read-only guard): %s\n' "$1" >&2; exit 3; }
+
+profile="$DEFAULT_PROFILE"
+region=""
+dry_run=0
+
+# Wrapper-level options come first, before the service name.
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --profile)  [ $# -ge 2 ] || die "--profile needs a value"; profile=$2; shift 2 ;;
+        --region)   [ $# -ge 2 ] || die "--region needs a value"; region=$2; shift 2 ;;
+        --dry-run)  dry_run=1; shift ;;
+        -h|--help)  sed -n '3,5p' "$0"; exit 0 ;;
+        -*)         die "unknown wrapper option '$1' (put CLI options after <service> <operation>)" ;;
+        *)          break ;;
+    esac
+done
+
+[ $# -ge 2 ] || die "usage: aws-ro [--profile <name>] [--region <r>] <service> <operation> [args...]"
+service=$1
+operation=$2
+shift 2
+
+[[ "$profile" =~ ^[A-Za-z0-9._-]+$ ]] || die "invalid profile name '$profile'"
+[ -z "$region" ] || [[ "$region" =~ ^[a-z]{2}(-[a-z]+)+-[0-9]$ ]] || die "invalid region '$region'"
+
+# --- 1. services that are never reachable, whatever the verb ---------------------------------
+# `configure get` would match the get-* rule and print stored keys; the others manage sessions
+# or credentials rather than reading infrastructure.
+case "$service" in
+    configure|sso|sso-oidc|login|logout|history|cloudshell|ecs-exec)
+        refuse "service '$service' manages credentials or sessions" ;;
+    sts)
+        [ "$operation" = "get-caller-identity" ] \
+            || refuse "only 'sts get-caller-identity' is allowed (other sts calls mint credentials)" ;;
+esac
+
+# --- 2. explicit denylist: reads that leak secrets, mint credentials, or pull customer data ----
+case "$service $operation" in
+    "secretsmanager get-secret-value"|"secretsmanager batch-get-secret-value"|\
+    "ecr get-login-password"|"ecr get-authorization-token"|"ecr get-download-url-for-layer"|\
+    "ecr-public get-login-password"|"ecr-public get-authorization-token"|\
+    "codeartifact get-authorization-token"|"eks get-token"|\
+    "ec2 get-password-data"|"lambda get-function"|\
+    "cognito-identity get-credentials-for-identity"|"cognito-identity get-id"|\
+    "cognito-identity get-open-id-token"|"cognito-identity get-open-id-token-for-developer-identity"|\
+    "appsync list-api-keys"|"iam get-credential-report"|"redshift get-cluster-credentials"|\
+    "redshift get-cluster-credentials-with-iam"|"redshift-serverless get-credentials"|\
+    "kms get-parameters-for-import"|"sso get-role-credentials")
+        refuse "'$service $operation' returns secrets or credentials" ;;
+    "s3api get-object"|"s3api get-object-torrent"|"dynamodb get-item"|"dynamodb batch-get-item"|\
+    "kinesis get-records"|"kinesis get-shard-iterator"|"dynamodbstreams get-records"|\
+    "glacier get-job-output"|"athena get-query-results")
+        refuse "'$service $operation' reads customer data records, not infrastructure state" ;;
+esac
+
+# --- 3. operation allowlist --------------------------------------------------------------------
+allowed=0
+case "$operation" in
+    describe-*|list-*|get-*|batch-get-*) allowed=1 ;;
+esac
+case "$service $operation" in
+    "s3 ls"|"logs tail"|"logs filter-log-events"|"logs start-query"|"logs stop-query"|\
+    "cloudtrail lookup-events"|"resourcegroupstaggingapi get-resources"|\
+    "resource-groups search-resources"|"xray batch-get-traces")
+        allowed=1 ;;
+esac
+[ "$allowed" = 1 ] || refuse "'$service $operation' is not a read operation"
+
+# --- 4. flag guard -----------------------------------------------------------------------------
+for arg in "$@"; do
+    case "$arg" in
+        --profile|--profile=*)
+            refuse "pass --profile before <service> so the wrapper sees it" ;;
+        --endpoint-url|--endpoint-url=*)
+            refuse "--endpoint-url is not allowed" ;;
+        --with-decryption)
+            refuse "--with-decryption would reveal SecureString values" ;;
+        --include-value|--include-values)
+            refuse "--include-value(s) would reveal API key values" ;;
+        --follow|-f)
+            [ "$service $operation" != "logs tail" ] || refuse "'logs tail --follow' never returns; use --since instead" ;;
+    esac
+done
+
+# --- 5. run, with the environment pinned to the named profile ----------------------------------
+cmd=(aws --profile "$profile")
+[ -z "$region" ] || cmd+=(--region "$region")
+cmd+=("$service" "$operation" "$@")
+
+if [ "$dry_run" = 1 ]; then
+    printf '%q ' "${cmd[@]}"; printf '\n'
+    exit 0
+fi
+
+command -v aws >/dev/null 2>&1 || die "aws CLI not found on PATH"
+
+# Per-service overrides (AWS_ENDPOINT_URL_<SERVICE>) are dropped too, so no call is redirected.
+unset_args=(-u AWS_ACCESS_KEY_ID -u AWS_SECRET_ACCESS_KEY -u AWS_SESSION_TOKEN -u AWS_SECURITY_TOKEN
+            -u AWS_PROFILE -u AWS_DEFAULT_PROFILE)
+for var in $(compgen -e | grep '^AWS_ENDPOINT_URL' || true); do unset_args+=(-u "$var"); done
+
+exec env "${unset_args[@]}" AWS_PAGER="" "${cmd[@]}"
