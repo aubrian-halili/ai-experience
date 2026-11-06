@@ -32,6 +32,8 @@ cannot connect and should report a tool failure rather than working around it
 | `AURORA_HOST_PROD` | as above, for `--env prod-replica` | Production **reader** host template with a `{market}` segment; the wrapper refuses a non-`cluster-ro` host |
 | `AURORA_LOGIN_SCRIPT`, `AURORA_DB_USER`, `AURORA_SSL_CERT` | as above | Consumed by the wrapper only |
 | `AURORA_SSLMODE` | as above (optional) | Overrides `sslmode`; the wrapper defaults to `verify-full`. Leave it **unset** — both endpoints are direct RDS hostnames that satisfy `verify-full`. It is a break-glass escape hatch, not a setting to reach for |
+| `aws-ro` on `PATH` | `/aws`, `aws-explorer` | Read-only AWS CLI wrapper, committed at `.claude/scripts/aws-ro`. Install with `ln -s ~/.claude/scripts/aws-ro ~/.local/bin/aws-ro`. Defaults to the `prod` profile, whose IAM role is **not** read-only — the wrapper's allowlist is the guard, so never bypass it |
+| AWS SSO session for `prod` | as above | `aws sso login --profile prod`; an expired session is a tool failure, not an empty result |
 | `ATLASSIAN_HOST` | `/confluence`, `/pr` | Atlassian tenant hostname. Both skills resolve it with `printenv ATLASSIAN_HOST` and ask if unset |
 | `GITHUB_ORG` | `/git-repos`, `git-repos-explorer` (optional) | Overrides the org; otherwise derived from `gh api user/orgs` |
 

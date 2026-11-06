@@ -35,11 +35,13 @@ Launch `git-repos-explorer` in parallel **only when** the goal needs grounding o
 
 Launch `jira-explorer` in parallel **only when** §1 has not already run it and the goal needs ticket grounding: it names a ticket or epic surfaced during research, or the work plausibly overlaps tickets that already exist. Skip it when the goal has no Jira origin at all.
 
-Pass the **Essential Files** list from `code-explorer`, the **Essential Tables** list from `database-explorer` (when present), the **Essential References** list from `git-repos-explorer` (when present), and the **Acceptance Criteria** and **Scope Boundaries** from `jira-explorer` (when present) into every `code-architect` agent in §3.
+Launch `aws-explorer` in parallel **only when** the goal needs evidence from a deployed environment: it is a bug or incident in a running service; it names a log group, alarm, Lambda function, or ECS service; or it hinges on runtime behavior (error rates, latency, throughput, a recent deploy). Skip it for greenfield or purely in-code work. It reads production (the `prod` profile) read-only; name a time or incident window in the research question when the goal gives one. Carry its findings into STATE.md as summaries — error templates, counts, resource names — never raw log lines or customer identifiers.
 
-**Unconfirmed data — ask before planning on it.** If `database-explorer` returns a `### Needs User Confirmation` section, put each item to the user with `AskUserQuestion` before §3. Do not pass it to `code-architect` as fact and do not resolve it yourself — per the subagent clause in `.claude/rules/tool-reliability.md`, it must not be swallowed.
+Pass the **Essential Files** list from `code-explorer`, the **Essential Tables** list from `database-explorer` (when present), the **Essential References** list from `git-repos-explorer` (when present), the **Acceptance Criteria** and **Scope Boundaries** from `jira-explorer` (when present), and the **Essential Resources** and **Log Evidence** from `aws-explorer` (when present) into every `code-architect` agent in §3.
 
-**Tool failure — pause, do not skip.** If any spawned agent returns `### Tool Failure`, apply `.claude/rules/tool-reliability.md` via `AskUserQuestion`; on **proceed**, label the affected schema, cross-repo, or requirements facts as unverified in the plan. Do not proceed to §3 with code as the sole source of truth.
+**Unconfirmed data — ask before planning on it.** If `database-explorer` or `aws-explorer` returns a `### Needs User Confirmation` section, put each item to the user with `AskUserQuestion` before §3. Do not pass it to `code-architect` as fact and do not resolve it yourself — per the subagent clause in `.claude/rules/tool-reliability.md`, it must not be swallowed.
+
+**Tool failure — pause, do not skip.** If any spawned agent returns `### Tool Failure`, apply `.claude/rules/tool-reliability.md` via `AskUserQuestion`; on **proceed**, label the affected schema, cross-repo, requirements, or runtime facts as unverified in the plan. Do not proceed to §3 with code as the sole source of truth.
 
 ### 3. Architecture Comparison
 
