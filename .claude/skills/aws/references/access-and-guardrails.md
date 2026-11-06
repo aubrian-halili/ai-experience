@@ -56,8 +56,8 @@ Consequences for how you work:
 Logs and traces are production data and may contain customer PII.
 
 - **Bound every call.** Logs: always pass a time window (`--start-time` / `--since`) and a cap
-  (`--limit` or `--max-items`, ≤ 50 events). List calls: `--max-items 50`. Never dump a whole log
-  group or stream.
+  (`--limit` or `--max-items`, ≤ 50 events). `logs tail` accepts no cap, so use it only with a
+  narrow `--filter-pattern`. List calls: `--max-items 50`. Never dump a whole log group or stream.
 - **Aggregate before you sample.** For "how often / since when" questions, use Logs Insights
   `stats count(*) by bin(5m)` rather than pulling raw events.
 - **Never copy log lines, request payloads, or customer identifiers into a PR body, commit message,
@@ -99,7 +99,8 @@ aws-ro logs describe-log-groups --log-group-name-prefix /aws/lambda/<name> \
 aws-ro logs describe-log-groups --log-group-name-pattern <fragment> \
   --query 'logGroups[].logGroupName' --output text
 
-# Recent events, human-readable (bounded by --since; add --filter-pattern to narrow)
+# Recent events, human-readable. No cap flag exists — use only with a narrow --filter-pattern
+# (request ID, exact error string); otherwise use filter-log-events below
 aws-ro logs tail <log-group> --since 30m --format short --filter-pattern '"ERROR"'
 
 # Filtered events in an exact window, capped
