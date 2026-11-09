@@ -13,26 +13,21 @@ allowed-tools: Read, AskUserQuestion
 ---
 
 Turn this session's work into a Slack message the user can paste as-is. `$ARGUMENTS` may name the
-audience, the channel, or the version ("technical"). Worked examples live in `references/examples.md`
-(relative to this skill directory; at user level, `~/.claude/skills/summarize/references/examples.md`).
+audience, the channel, or the version ("technical"). Worked examples: `references/examples.md`
+(at user level, `~/.claude/skills/summarize/references/examples.md`).
 
 ## 1. Gather
 
-Review the **whole** session, not just the last few turns. Collect:
+Review the **whole** session, not just the last few turns. Besides the content for §4, capture what
+was ruled out, decisions made, and open questions.
 
-- The original problem or question
-- What was checked, and what was ruled out
-- Findings
-- The **outcome**: root cause, recommendation, answer, or "not yet known"
-- Decisions made, and open questions
-- Next steps, each with owner and date where the session gave them
+**Facts come only from the session.** Tag every finding **confirmed** (seen in evidence this session)
+or **likely** (inferred, not verified), and never upgrade *likely* to *confirmed* — or phrase a
+suspicion as a cause — for a cleaner story. Never invent numbers, owners, dates, or causes; state the
+gap instead ("Owner: TBD", "impact not yet measured").
 
-Tag every finding **confirmed** (seen in evidence this session) or **likely** (inferred, not
-verified). Never invent details — no made-up numbers, owners, dates, or causes.
-
-Assumptions are allowed only about *form* (audience, scope, which thread to cover) — never about
-*facts*. When a fact is missing, say so in the message: "Owner: TBD", "impact not yet measured".
-Ask (`AskUserQuestion`) only when it blocks — e.g. the session has no substantive work, or it covers
+Assumptions are allowed only about *form* (audience, scope, which thread to cover). Ask
+(`AskUserQuestion`) only when it blocks — e.g. the session has no substantive work, or it covers
 several unrelated topics with no clear main one. Otherwise pick the dominant thread and note that
 choice as an assumption.
 
@@ -46,8 +41,8 @@ The shape of the TL;DR depends on what kind of work it was:
 | **Research / comparison** | The recommendation, or "no clear winner" | One bullet per option: key trade-off | The decision itself |
 | **In progress** (no conclusion yet) | Status: "still investigating", plus what is known so far | Grouped *Confirmed* / *Ruled out* / *Suspected* | Help, access, or info that unblocks |
 
-For **in progress**: never phrase a suspicion as a cause. Next steps must include the next check and
-when the next update will come (or "next update: TBD").
+For **in progress**, next steps must include the next check and when the next update will come
+(or "next update: TBD").
 
 ## 3. Choose the audience
 
@@ -65,10 +60,10 @@ reproduction steps, and fix details.
 Same sections for both versions, in this order. **Skip any section that would be empty** — never
 write "N/A".
 
-1. *TL;DR* — one sentence with the conclusion (or status, for in-progress)
+1. *TL;DR* — one sentence, shaped per §2
 2. *Context* — what happened or what was asked
 3. *Findings*
-4. *Impact* — who or what is affected, and how much. Use real numbers only; otherwise "not yet measured"
+4. *Impact* — who or what is affected, and how much
 5. *Next steps* — action, owner, date
 6. *Asks / decisions needed*
 
@@ -77,7 +72,7 @@ write "N/A".
 - `*bold*` (single asterisks) for section labels — not `**bold**`
 - `•` or `-` for bullets; `<https://url|link text>` for links
 - **No** `#` headers, **no** tables — Slack doesn't render them
-- `` `inline code` `` and ```` ``` ```` code blocks **only in the technical version**
+- `` `inline code` `` and ```` ``` ```` code blocks: technical version only
 - `@mentions` only for names or handles the user gave; otherwise write the role ("payments team")
   or "Owner: TBD"
 - **Length:** keep the non-technical main post under ~150 words. If it runs long — common for
@@ -92,13 +87,10 @@ in **both** versions — unless the user explicitly says to keep them. Replace w
 placeholder (`<redacted-host>`, "a customer"). Repo, PR, and ticket links may stay in the technical
 version; they are not secrets.
 
-Note what was removed in the assumptions line (§8) — the category, never the value.
-
 ## 7. Tone
 
-Neutral, factual, blame-free. Describe systems and events, not people: "the certificate wasn't
-renewed", not "X forgot to renew it". Be explicit about certainty — use "confirmed" and "likely"
-deliberately, and never upgrade one to the other for a cleaner story.
+Blame-free: describe systems and events, not people — "the certificate wasn't renewed", not
+"X forgot to renew it".
 
 ## 8. Output
 
@@ -106,7 +98,7 @@ deliberately, and never upgrade one to the other for a cleaner story.
    blocks inside a technical post don't break the copyable block. For a split post, use one block for
    the main post and one for the thread reply, each with a one-word label above it.
 2. One line: `Assumptions: …` — audience chosen, thread covered, anything missing (TBD owners/dates),
-   anything redacted. Write `Assumptions: none` if there are none.
+   and the *category* of anything redacted (never the value). Write `Assumptions: none` if there are none.
 3. One line offering to switch audience (technical ↔ non-technical) or length (shorter / split /
    single post).
 
