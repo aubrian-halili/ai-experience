@@ -1,13 +1,13 @@
 ---
 name: plan
 description: >-
-  User asks to "plan", "break down", "decompose", "scope this work",
-  "compare approaches", "trade-offs", "pros and cons", "brainstorm",
-  or references a Jira epic needing implementation steps. Use before /jira and /feature.
+  Turns a goal, epic, or Jira ticket into a researched plan of vertical-slice phases, saved to
+  .planning/STATE.md for /jira and /feature to pick up. Use to "plan", "break down", "decompose",
+  or "scope" work before implementing it.
   Not for: implementing directly (use /feature).
   Not for: creating or managing Jira tickets (use /jira).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
-allowed-tools: Read, Grep, Glob, Write(.planning/STATE.md), Write(.planning/STATE-*.md), Edit(.planning/STATE.md), Agent, AskUserQuestion, Bash(acli *)
+allowed-tools: Read, Grep, Glob, Write(.planning/STATE.md), Write(.planning/STATE-*.md), Edit(.planning/STATE.md), Agent, AskUserQuestion
 disable-model-invocation: true
 ---
 
@@ -15,54 +15,51 @@ disable-model-invocation: true
 
 > **Small-scope gate:** Decide after §1, from the goal plus a quick Grep/Glob. When the change clearly touches ≤3 files with no new integration points, skip §2, §3, and §4.1 and record the approach as Minimal Changes. If scope is unclear, do not apply the gate.
 
-> **Terminal state.** `.planning/STATE.md` is the only deliverable. After §5, end the turn. **Never** invoke, suggest-then-run, or auto-chain into `/jira` or `/feature` — the user invokes the next skill explicitly.
+> **Terminal state.** `.planning/STATE.md` is the only deliverable. After §5, end the turn — never invoke or auto-chain into `/jira` or `/feature`.
 
 ### 1. Pre-flight
 
-1. **If `$ARGUMENTS` is empty and the conversation does not state a goal**, ask for one with `AskUserQuestion` before launching any agent.
-2. **If a Jira ticket ID or epic is found in `$ARGUMENTS`**: launch `jira-explorer` with the ticket ID(s) and the goal as its research question. Treat the returned **Acceptance Criteria** and **Scope Boundaries** as the requirements baseline for the DoD and Out of Scope sections in §1.4 — do not restate them from memory of the argument text. If it returns a `### Tool Failure`, apply the tool-failure rule in §2 before drafting.
-3. **Check for existing `.planning/STATE.md`**. If found, ask the user a binary choice: **resume** or **start over**.
-   - **resume** → load the existing Plan section as the draft and continue at §4 Plan Review
-   - **start over** → **do not** back up or overwrite the file yet (backup happens in §5)
-4. **Draft the Plan section** (DoD + Out of Scope + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure — note the vertical-slice requirement the template defines for phases.
+1. If `$ARGUMENTS` is empty and the conversation states no goal, ask for one with `AskUserQuestion` before launching any agent.
+2. If `$ARGUMENTS` names a Jira ticket or epic, launch `jira-explorer` with the ticket ID(s) and the goal. Its **Acceptance Criteria** and **Scope Boundaries** are the baseline for DoD and Out of Scope — do not restate them from the argument text.
+3. If `.planning/STATE.md` exists, ask: **resume** or **start over**.
+   - **resume** → load its Plan section as the draft and continue at §4
+   - **start over** → do not back up or overwrite it yet (§5 does)
+4. Draft the Plan section (DoD, Out of Scope, Phase Breakdown) from the Session State Template in `@references/templates.md`.
 
 ### 2. Codebase Research
 
-Launch `code-explorer` with the goal as its topic. Also launch `database-explorer` in parallel (with a research question derived from the goal) if any of these hold: the goal names a table or domain entity; the Jira body contains "migration", "schema", or "model"; or `code-explorer` returns files under `*/migrations/*`, `*/models/*`, or ORM schema paths.
+Launch `code-explorer` with the goal as its topic. In parallel, launch:
 
-Do not name production in a `database-explorer` research question unless the user asked for production data — that phrasing is what makes it leave the test database.
+- **`database-explorer`** — when the goal names a table or domain entity, the Jira body mentions "migration", "schema", or "model", or `code-explorer` returns files under `*/migrations/*`, `*/models/*`, or ORM schema paths. Do not mention production in its research question unless the user asked for production data — that wording is what moves it off the test database.
+- **`git-repos-explorer`** — only when the goal needs grounding outside this repo: another org service, a shared library or contract, or prior art in another repo.
+- **`jira-explorer`** — only if §1 did not run it, and research surfaces a ticket or epic or the work plausibly overlaps existing tickets.
+- **`aws-explorer`** — only when the goal depends on a deployed environment: a bug or incident in a running service, a named log group / alarm / Lambda / ECS service, or runtime behavior (error rates, latency, a recent deploy). Name the time or incident window in the question when the goal gives one. Record its findings in STATE.md as summaries only — never log lines or customer identifiers.
 
-Launch `git-repos-explorer` in parallel **only when** the goal needs grounding outside this repo: it names another service or repo in the org; it integrates with a shared library or contract; or the relevant prior art is expected to live in another repo rather than locally. Skip it for self-contained, in-repo work — cross-repo search is slower and is unnecessary by default.
+Hand every §3 `code-architect` the **Essential Files** from `code-explorer`, plus whatever the others returned: **Essential Tables**, **Essential References**, **Acceptance Criteria** / **Scope Boundaries**, **Essential Resources** / **Log Evidence**.
 
-Launch `jira-explorer` in parallel **only when** §1 has not already run it and the goal needs ticket grounding: it names a ticket or epic surfaced during research, or the work plausibly overlaps tickets that already exist. Skip it when the goal has no Jira origin at all.
-
-Launch `aws-explorer` in parallel **only when** the goal needs evidence from a deployed environment: it is a bug or incident in a running service; it names a log group, alarm, Lambda function, or ECS service; or it hinges on runtime behavior (error rates, latency, throughput, a recent deploy). Skip it for greenfield or purely in-code work. It reads production (the `prod` profile) read-only; name a time or incident window in the research question when the goal gives one. Carry its findings into STATE.md as summaries — error templates, counts, resource names — never raw log lines or customer identifiers.
-
-Pass the **Essential Files** list from `code-explorer`, the **Essential Tables** list from `database-explorer` (when present), the **Essential References** list from `git-repos-explorer` (when present), the **Acceptance Criteria** and **Scope Boundaries** from `jira-explorer` (when present), and the **Essential Resources** and **Log Evidence** from `aws-explorer` (when present) into every `code-architect` agent in §3.
-
-**Unconfirmed data — ask before planning on it.** If `database-explorer` or `aws-explorer` returns a `### Needs User Confirmation` section, put each item to the user with `AskUserQuestion` before §3. Do not pass it to `code-architect` as fact and do not resolve it yourself — per the subagent clause in `.claude/rules/tool-reliability.md`, it must not be swallowed.
-
-**Tool failure — pause, do not skip.** If any spawned agent returns `### Tool Failure`, apply `.claude/rules/tool-reliability.md` via `AskUserQuestion`; on **proceed**, label the affected schema, cross-repo, requirements, or runtime facts as unverified in the plan. Do not proceed to §3 with code as the sole source of truth.
+**Before §3, for every agent's report (including §1's `jira-explorer`):**
+- `### Needs User Confirmation` → put each item to the user with `AskUserQuestion`. Never pass it to `code-architect` as fact or resolve it yourself.
+- `### Tool Failure` → handle per `.claude/rules/tool-reliability.md` via `AskUserQuestion`; on **proceed**, mark the affected facts unverified in the plan.
 
 ### 3. Design
 
-Launch **one** `code-architect` with focus **Existing Patterns**: design the feature using the conventions the codebase already follows, and return any genuine **Design Forks** — points where the codebase does not settle the choice — with `file:line` evidence. Do not fan out into competing style blueprints by default; in an established codebase the style is already decided, and discarded blueprints are the most expensive part of planning.
+Launch **one** `code-architect` with focus **Existing Patterns** — no competing style blueprints by default.
 
-Launch a **second** `code-architect` in parallel with focus **Hexagonal** only when the feature crosses ≥2 external integrations, requires swappable infrastructure, or domain logic is expected to outlive the current stack — skip for CRUD endpoints, scripts, and single-adapter flows. This is the one case where a different style changes the outcome.
+In parallel, add a **Hexagonal** `code-architect` only when the feature crosses ≥2 external integrations, needs swappable infrastructure, or its domain logic is expected to outlive the current stack.
 
-Present the result using the Design Approach Template in `references/templates.md`. Carry the returned Design Forks into §4.1 as candidate open decisions.
+Present the result with the Design Approach Template in `references/templates.md`.
 
 ### 4. Plan Review
 
-1. **Resolve open decisions first.** Before presenting the plan, surface up to 5 judgment calls the research and design did not settle on their own — starting from the Design Forks `code-architect` returned in §3, then data model, error-handling strategy, migration/rollout approach, boundary placement. Do not invent decisions to reach a count; if none remain, say so and go to §4.2. Present each as a question with 2-3 options and their trade-offs, grounded in `file:line` from the research, then `AskUserQuestion` to get answers. Fold the answers into the phases and Key Decisions.
-2. **Then present** DoD, Out of Scope, phases (as vertical slices), and the design approach, and ask the user to approve before persisting.
+1. **Resolve open decisions first.** Surface up to 5 judgment calls that research and design left open — starting from §3's Design Forks, then data model, error handling, migration/rollout, boundary placement. Do not invent decisions to reach a count; if none remain, say so. Ask each with `AskUserQuestion`, 2–3 options whose trade-offs cite `file:line`, and fold the answers into the phases and Key Decisions.
+2. **Then present** DoD, Out of Scope, phases, and the design approach, and get the user's approval.
 
 ### 5. Persist *(after approval)*
 
-1. If "start over" was chosen in §1, back up the prior `.planning/STATE.md` to `.planning/STATE-<goal-slug>-<YYYY-MM-DD>.md`, using the prior file's **Goal** for the slug.
-2. `Write` `.planning/STATE.md` using the drafted Plan section, seeding the State Progress table with one row per phase — status `Pending`, and a note naming the phase's dependency (`None` or `Phase N-1`) so the dependency graph is readable from STATE.md alone. STATE.md is the tracker; do not rely on a task-tracking tool, which may not exist in the session.
+1. If "start over" was chosen, back up the prior file to `.planning/STATE-<goal-slug>-<YYYY-MM-DD>.md`, slugging the prior file's **Goal**.
+2. `Write` `.planning/STATE.md`, seeding State Progress with one row per phase: status `Pending`, and a note naming its dependency (`None` or `Phase N-1`). Track progress in STATE.md, not a task-tracking tool.
 3. Report the STATE.md path and the phase list.
 
 ## When to Go Back
 
-If the §3 design reveals the codebase research missed a load-bearing area — an integration, constraint, or entity the plan would depend on — loop back to §2 (and re-launch the relevant explorer) before §4, rather than drafting phases on an incomplete picture.
+If §3 reveals that research missed a load-bearing integration, constraint, or entity, loop back to §2 and re-launch the relevant explorer before §4.
