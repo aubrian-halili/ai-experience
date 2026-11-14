@@ -1,16 +1,23 @@
 # Plan Templates
 
-## Architecture Comparison Template
+## Design Approach Template
 
 ```markdown
-### Architecture Options
+### Design Approach
 
-| Dimension | Minimal Changes | Clean Architecture | Hexagonal |
-|-----------|----------------|-------------------|-----------|
-| Files changed | [count] | [count] | [count] |
-| New abstractions | [list or "none"] | [list] | [ports + adapters list] |
-| Risk | [assessment] | [assessment] | [assessment] |
-| Best when | [conditions] | [conditions] | ≥2 external integrations, swappable infra, long-lived domain |
+**Follows**: [existing pattern(s) the design builds on, with file:line]
+**Files changed**: [count] — **New abstractions**: [list or "none"]
+**Risk**: [assessment]
+
+**Design Forks** (carried into open decisions):
+- [Choice the codebase does not settle] — [options], evidence: [file:line]
+
+**Alternative considered** *(only when the Hexagonal architect ran)*:
+| Dimension | Existing Patterns | Hexagonal |
+|-----------|-------------------|-----------|
+| Files changed | [count] | [count] |
+| New abstractions | [list or "none"] | [ports + adapters list] |
+| Risk | [assessment] | [assessment] |
 
 **Recommendation**: [Approach] — [one sentence rationale]
 ```
@@ -109,7 +116,7 @@ Explicit boundaries — things a reader might assume are included but are NOT, t
 
 | Decision | Rationale | Date |
 |----------|-----------|------|
-| Architecture: [Minimal Changes / Clean Architecture / Hexagonal] | [Why this approach was chosen] | [When] |
+| Architecture: [Existing Patterns / Minimal Changes / Hexagonal] | [Why this approach was chosen] | [When] |
 
 ### Tickets *(populated by /jira)*
 

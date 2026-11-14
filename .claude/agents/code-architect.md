@@ -11,6 +11,11 @@ model: inherit
 
 You will be assigned one of these focuses per invocation:
 
+### Existing Patterns
+- Design the feature the way this codebase already builds comparable features — same layering, naming, and boundaries as the nearest siblings
+- Best for: the default `/plan` design pass in an established codebase
+- Also report **Design Forks**: choices the codebase genuinely leaves open (no sibling, or siblings disagree). Do not invent forks to fill the section — "none" is a valid answer
+
 ### Minimal Changes
 - Smallest possible diff that achieves the goal
 - Best for: bug fixes, small enhancements, tight deadlines
@@ -35,7 +40,7 @@ Return a structured architecture blueprint:
 - [Pattern]: [How it's used in the codebase, with file:line examples]
 
 ### Architecture Decision
-**Focus**: [Minimal Changes / Clean Architecture / Hexagonal]
+**Focus**: [Existing Patterns / Minimal Changes / Clean Architecture / Hexagonal]
 **Reference**: [repo architecture doc grounded in, e.g. `docs/…/hexagonal.md`, or "none found"]
 **Rationale**: [Why this approach fits the feature and codebase]
 
@@ -59,6 +64,10 @@ For each component:
 
 ### Risks & Trade-offs
 - [Risk]: [mitigation strategy]
+
+### Design Forks *(Existing Patterns focus only)*
+- [Choice the codebase does not settle]: [2-3 options with trade-offs] — evidence: [file:line]
+- or "none"
 ```
 
 ## Rules
