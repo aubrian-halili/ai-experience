@@ -67,7 +67,7 @@ Every Blocking, Non-blocking, and Optional entry below uses this shape:
 **Requirements source**: PR description | .planning/STATE.md | user-provided
 **Run**: first | re-run #<k> — **Gated at**: `<HEAD SHA>`
 **Sweep**: [re-runs only — the one-line pre-regate sweep report]
-**Passes skipped**: [re-runs: each skipped pass + reason; database-explorer skip on any run; or "none"]
+**Passes skipped / failed**: [re-runs: each skipped pass + reason; database-explorer skip on any run; any pass that failed to return a report; or "none"]
 
 ### Completeness — /verify
 **Result**: PASS | PARTIAL | FAIL | SKIP

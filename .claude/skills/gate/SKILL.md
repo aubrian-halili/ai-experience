@@ -23,25 +23,28 @@ ultrathink
 |-------|------|---------------------|
 | PR number or URL | **PR** | PR description (derived in §PR mode) |
 | (none) + `.planning/STATE.md` exists | **Feature** | `.planning/STATE.md` Definition of Done |
-| (none) + no `.planning/STATE.md` | Ask the user which PR number or feature to gate, then re-enter |
+| Anything else, or (none) + no `.planning/STATE.md` | Ask the user which PR number or feature to gate, then re-enter |
 
 When invoked at user level, resolve `references/...` against `~/.claude/skills/gate/references/`
 ($HOME, not the repo working directory).
 
 **Re-run** = this conversation already holds a gate verdict for the same PR or feature; otherwise
-it is a first run. Re-runs follow **Pre-regate sweep** below and **Re-runs** in `references/passes.md`.
+it is a first run. If that verdict's **Gated at** SHA is no longer in the conversation (e.g. after
+compaction), treat it as a first run. Re-runs follow **Pre-regate sweep** below and **Re-runs** in
+`references/passes.md`.
 
 ## PR mode
 
 ### 1. Pre-flight
 
-- Refuse if the working tree is dirty (see **Working tree** above) — stop and report.
+- Refuse if the working tree is dirty (see **Working tree** above) — stop and report. On a re-run,
+  uncommitted changes that are this session's fixes for the previous verdict are expected; keep them.
 - `gh pr view <number> --json state,isDraft,author,labels,baseRefName,headRefName,title,body`
 - **Stop conditions** (report and stop): `state` is not `OPEN`; draft PR; bot author (e.g. `dependabot`, `renovate`).
 
 ### 2. Fetch PR locally
 
-- If `pr-<number>` already exists locally: `git fetch origin "pull/<number>/head"`, then `git log FETCH_HEAD..pr-<number> --oneline` — any local-only commits → stop and report.
+- If `pr-<number>` already exists locally: `git fetch origin "pull/<number>/head"`, then `git log FETCH_HEAD..pr-<number> --oneline` — any local-only commits → stop and report, unless this is a re-run and they are this session's fixes: then skip the fast-forward and gate the local branch (if `FETCH_HEAD` also has commits the local branch lacks, stop and report the divergence).
 - `git fetch origin "pull/<number>/head:pr-<number>"` (creates, fast-forwards, or no-ops), then `git checkout pr-<number>`. If already on `pr-<number>`, use `git merge --ff-only FETCH_HEAD` instead — git refuses to fetch into the checked-out branch.
 - `git fetch origin <baseRefName>`; the diff range is `origin/<baseRefName>..HEAD`.
 
@@ -72,12 +75,16 @@ Combine completeness + the surviving review findings into one verdict using `ref
 
 ## Feature mode
 
-No checkout (already on the feature branch). Dispatch using the **same topology as §4–§5**, with two deltas: completeness runs `references/completeness.md` against the **Definition of Done / Observable Truths** in `.planning/STATE.md`, and the diff range is `origin/main..HEAD`.
+No checkout (already on the feature branch). Dispatch using the **same topology as §4–§5**, with two deltas: completeness runs `references/completeness.md` against the **Definition of Done / Observable Truths** in `.planning/STATE.md`, and the diff range is `origin/main..HEAD` plus uncommitted changes (run `git fetch origin main` first). If `STATE.md` has no Definition of Done or Observable Truths, apply the §3 sufficiency rule and ask.
 
 ## Combined verdict
 
 - **READY** — completeness is **PASS** *and* review has no Blocking findings (see Severity in `references/templates.md`).
 - **BLOCKED** — anything else. List exactly what blocks, each with `file:line`.
+
+A pass that errors, times out, or returns no report has **failed**, not come back clean: name it under
+**Passes skipped / failed**, and the verdict is BLOCKED until it is re-run or the user explicitly
+accepts the gap.
 
 Non-blocking and Optional findings **never** block and **never** require another gate run.
 
