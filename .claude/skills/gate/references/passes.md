@@ -15,10 +15,41 @@ verdict, run `git blame -L <start>,<end> <file>`: report the finding only if the
 by this change (lines shown as `Not Committed Yet` count), and **drop or repair** any finding whose
 range doesn't exist or doesn't match the cited code.
 
+Two exceptions keep a finding on older lines: the change made them **stale** (a comment or doc that
+now misdescribes behaviour the change altered), or the change **worsened** the risk there — then
+re-anchor the finding on the line in this change that worsens it. A dropped finding that still
+matters for go-live gets one line of context in the verdict, not a finding.
+
 ## `--refactor`
 
 When the caller passes `--refactor`, perform a Clean Code & SOLID-focused review with concrete Edit
 suggestions (e.g. `src/auth/ --refactor`).
+
+## What every pass returns
+
+Include this block verbatim in the brief to **every** Stage-1 and Stage-2 agent. It changes what a
+pass returns, not what it looks for.
+
+> For every finding, return `file:line`, the suggested fix, and:
+>
+> - **Impact** — what concretely goes wrong if it is not addressed: the scenario, the inputs or
+>   state, and who notices (a customer, on-call, a reviewer, or nobody). "Inconsistent with
+>   siblings" is not an impact; say what the inconsistency causes.
+> - **Likelihood** — how often that scenario occurs and under what conditions, with evidence where
+>   possible (code path, data, config).
+> - **Why in this change** — whether this change introduced the risk, made it worse, or merely sits
+>   next to it. Risks older than the change are context, not findings, unless the change worsened them.
+> - **Cost of the fix** — what the fix adds, and especially whether it adds a mechanism
+>   (transaction, error path, cache, outcome, helper) or only edits a doc, test or type. Name any
+>   written repo rule the fix must follow.
+> - **Confidence** — what you verified, and what you assume.
+>
+> **A finding that cannot state a concrete impact is dropped, not downgraded** — leave it out.
+> Severity follows from impact × likelihood: **Blocking** is a likely, concrete harm, a correctness
+> bug, or a broken written repo rule. Do not raise severity because a fix is easy, and do not lower
+> it because a fix is hard.
+
+The dispatcher drops any returned finding missing an Impact before it reaches the verdict.
 
 ## Stage 1 — concurrent (one message, parallel `Agent` calls)
 
@@ -59,9 +90,11 @@ Flag a comment when it earns nothing the code does not already say:
 
 When in doubt, keep the comment.
 
-Report each as **Non-blocking** with `file:line`, the comment text, and `delete` or a shorter
-replacement — except a *stale* comment that misdescribes current behavior, which is Blocking when it
-would mislead a maintainer.
+Report each with `file:line`, the comment text, `delete` or a shorter replacement, and the assessment
+above. A noise finding needs a concrete impact like any other (a duplicate that will drift from its
+twin, a narration that will outlive the ticket); one whose only cost is length is dropped. Severity
+is Non-blocking — except a *stale* comment that misdescribes current behavior, which is Blocking when
+it would mislead a maintainer.
 
 ## Stage 2 — depends on `code-explorer`
 
@@ -75,3 +108,23 @@ would mislead a maintainer.
 
 Fold `code-architect`'s realignment suggestions into the divergence findings, then present using
 `templates.md`.
+
+## Re-runs (targeted)
+
+A `/gate` re-run reviews the **fix diff** — `<previous Gated at SHA>..HEAD` plus uncommitted
+changes — and dispatches only the passes whose dimension that diff touches. **Completeness always
+runs**, against the full diff range.
+
+| Pass | Dispatch on a re-run only if the fix diff… |
+|------|---------------------------------------------|
+| `code-quality-reviewer` — type safety | changes a type, signature, or cast |
+| `code-quality-reviewer` — error handling | adds or changes a throw, catch, error path, retry, or log level |
+| `code-quality-reviewer` — test coverage | changes behaviour in source, or changes tests |
+| `code-quality-reviewer` — performance | touches a loop, query, I/O, or a hot path |
+| `code-quality-reviewer` — documentation | adds or changes a comment, docstring, or doc |
+| `security-scanner` (any category) | touches input handling, auth, logging, or config |
+| `code-explorer` → `code-architect` | adds a new function, file, or mechanism with siblings to compare |
+| `database-explorer` | touches persisted data (same trigger as Stage 1) |
+
+Name every skipped pass and the reason in the verdict (e.g. `security-scanner — fix touched only a
+doc comment`). When unsure whether the fix touches a dimension, dispatch it.
