@@ -43,19 +43,18 @@ Pass the **Essential Files** list from `code-explorer`, the **Essential Tables**
 
 **Tool failure — pause, do not skip.** If any spawned agent returns `### Tool Failure`, apply `.claude/rules/tool-reliability.md` via `AskUserQuestion`; on **proceed**, label the affected schema, cross-repo, requirements, or runtime facts as unverified in the plan. Do not proceed to §3 with code as the sole source of truth.
 
-### 3. Architecture Comparison
+### 3. Design
 
-Launch 2-3 `code-architect` agents in parallel, each with a different focus:
-- **Minimal Changes**
-- **Clean Architecture**
-- **Hexagonal** (include when the feature crosses ≥2 external integrations, requires swappable infrastructure, or domain logic is expected to outlive the current stack — skip for CRUD endpoints, scripts, and single-adapter flows)
+Launch **one** `code-architect` with focus **Existing Patterns**: design the feature using the conventions the codebase already follows, and return any genuine **Design Forks** — points where the codebase does not settle the choice — with `file:line` evidence. Do not fan out into competing style blueprints by default; in an established codebase the style is already decided, and discarded blueprints are the most expensive part of planning.
 
-Present results using the Architecture Comparison Template in `references/templates.md`.
+Launch a **second** `code-architect` in parallel with focus **Hexagonal** only when the feature crosses ≥2 external integrations, requires swappable infrastructure, or domain logic is expected to outlive the current stack — skip for CRUD endpoints, scripts, and single-adapter flows. This is the one case where a different style changes the outcome.
+
+Present the result using the Design Approach Template in `references/templates.md`. Carry the returned Design Forks into §4.1 as candidate open decisions.
 
 ### 4. Plan Review
 
-1. **Resolve open decisions first.** Before presenting the plan, surface the 3-5 judgment calls the research and architecture comparison did not settle on their own — data model, error-handling strategy, migration/rollout approach, boundary placement. Present each as a question with 2-3 options and their trade-offs, grounded in `file:line` from the research, then `AskUserQuestion` to get answers. Fold the answers into the phases and Key Decisions. (Skip under the small-scope gate.)
-2. **Then present** DoD, Out of Scope, phases (as vertical slices), and chosen architecture, and ask the user to approve before persisting.
+1. **Resolve open decisions first.** Before presenting the plan, surface the 3-5 judgment calls the research and design did not settle on their own — starting from the Design Forks `code-architect` returned in §3, then data model, error-handling strategy, migration/rollout approach, boundary placement. Present each as a question with 2-3 options and their trade-offs, grounded in `file:line` from the research, then `AskUserQuestion` to get answers. Fold the answers into the phases and Key Decisions. (Skip under the small-scope gate.)
+2. **Then present** DoD, Out of Scope, phases (as vertical slices), and the design approach, and ask the user to approve before persisting.
 
 ### 5. Persist *(after approval)*
 
@@ -65,4 +64,4 @@ Present results using the Architecture Comparison Template in `references/templa
 
 ## When to Go Back
 
-If §3 architecture comparison reveals the codebase research missed a load-bearing area — an integration, constraint, or entity the plan would depend on — loop back to §2 (and re-launch the relevant explorer) before §4, rather than drafting phases on an incomplete picture.
+If the §3 design reveals the codebase research missed a load-bearing area — an integration, constraint, or entity the plan would depend on — loop back to §2 (and re-launch the relevant explorer) before §4, rather than drafting phases on an incomplete picture.

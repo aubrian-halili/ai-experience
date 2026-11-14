@@ -7,7 +7,7 @@
 
 **Feature**: [Name]
 **Complexity**: [Low | Medium | High]
-**Architecture**: [Minimal Changes | Clean Architecture | Hexagonal] (from plan)
+**Architecture**: [Existing Patterns | Minimal Changes | Hexagonal] (from plan)
 
 ---
 
