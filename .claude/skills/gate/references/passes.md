@@ -91,8 +91,8 @@ Flag a comment when it earns nothing the code does not already say:
 When in doubt, keep the comment.
 
 Report each with `file:line`, the comment text, `delete` or a shorter replacement, and the assessment
-above. A noise finding needs a concrete impact like any other (a duplicate that will drift from its
-twin, a narration that will outlive the ticket); one whose only cost is length is dropped. Severity
+above. Its impact must be concrete (a duplicate that will drift from its twin, a narration that will
+outlive the ticket); one whose only cost is length is dropped. Severity
 is Non-blocking — except a *stale* comment that misdescribes current behavior, which is Blocking when
 it would mislead a maintainer.
 

@@ -4,18 +4,14 @@ Single source for severity vocabulary, the review output block, and the combined
 
 ## Severity
 
-**Blocking** · **Non-blocking** · **Optional** — every finding cites `file:line` evidence and carries
-the assessment from **What every pass returns** in `passes.md` (impact, likelihood, why in this
-change, cost of the fix, confidence). Severity follows from **impact × likelihood**, not from the
-agent's label:
+**Blocking** · **Non-blocking** · **Optional** — every finding cites `file:line` and uses the
+Finding shape below. Severity follows from **impact × likelihood**, not from the agent's label:
 
 - **Blocking** — a likely, concrete harm, a correctness bug, or a broken written repo rule.
 - **Non-blocking** — a concrete harm that is unlikely, or minor when it occurs.
 - **Optional** — a concrete but small improvement.
 
-Treat an agent's Critical/High/Medium/Low as input to that judgment, not as the answer. Do not raise
-severity because a fix is easy, nor lower it because a fix is hard. A finding with no concrete impact
-is dropped, not given a lower severity.
+Treat an agent's Critical/High/Medium/Low as input to that judgment, not as the answer.
 
 ## Finding
 
