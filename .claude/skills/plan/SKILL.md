@@ -7,23 +7,24 @@ description: >-
   Not for: implementing directly (use /feature).
   Not for: creating or managing Jira tickets (use /jira).
 argument-hint: "[goal, epic, Jira ticket, or feature description]"
-allowed-tools: Read, Grep, Glob, Write(.planning/STATE.md), Edit(.planning/STATE.md), Agent, Skill, AskUserQuestion, Bash(acli *)
+allowed-tools: Read, Grep, Glob, Write(.planning/STATE.md), Write(.planning/STATE-*.md), Edit(.planning/STATE.md), Agent, AskUserQuestion, Bash(acli *)
 disable-model-invocation: true
 ---
 
 ## Process
 
-> **Small-scope gate:** When scope is ≤3 files with no new integration points, skip §2 and §3 and default to Minimal Changes.
+> **Small-scope gate:** Decide after §1, from the goal plus a quick Grep/Glob. When the change clearly touches ≤3 files with no new integration points, skip §2, §3, and §4.1 and record the approach as Minimal Changes. If scope is unclear, do not apply the gate.
 
 > **Terminal state.** `.planning/STATE.md` is the only deliverable. After §5, end the turn. **Never** invoke, suggest-then-run, or auto-chain into `/jira` or `/feature` — the user invokes the next skill explicitly.
 
 ### 1. Pre-flight
 
-1. **If a Jira ticket ID or epic is found in `$ARGUMENTS`**: launch `jira-explorer` with the ticket ID(s) and the goal as its research question. Treat the returned **Acceptance Criteria** and **Scope Boundaries** as the requirements baseline for the DoD and Out of Scope sections in §1.3 — do not restate them from memory of the argument text. If it returns a `### Tool Failure`, apply the tool-failure rule in §2 before drafting.
-2. **Check for existing `.planning/STATE.md`**. If found, ask the user a binary choice: **resume** or **start over**.
+1. **If `$ARGUMENTS` is empty and the conversation does not state a goal**, ask for one with `AskUserQuestion` before launching any agent.
+2. **If a Jira ticket ID or epic is found in `$ARGUMENTS`**: launch `jira-explorer` with the ticket ID(s) and the goal as its research question. Treat the returned **Acceptance Criteria** and **Scope Boundaries** as the requirements baseline for the DoD and Out of Scope sections in §1.4 — do not restate them from memory of the argument text. If it returns a `### Tool Failure`, apply the tool-failure rule in §2 before drafting.
+3. **Check for existing `.planning/STATE.md`**. If found, ask the user a binary choice: **resume** or **start over**.
    - **resume** → load the existing Plan section as the draft and continue at §4 Plan Review
    - **start over** → **do not** back up or overwrite the file yet (backup happens in §5)
-3. **Draft the Plan section** (DoD + Out of Scope + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure — note the vertical-slice requirement the template defines for phases.
+4. **Draft the Plan section** (DoD + Out of Scope + Phase Breakdown) using the Session State Template from `@references/templates.md` as structure — note the vertical-slice requirement the template defines for phases.
 
 ### 2. Codebase Research
 
@@ -53,12 +54,12 @@ Present the result using the Design Approach Template in `references/templates.m
 
 ### 4. Plan Review
 
-1. **Resolve open decisions first.** Before presenting the plan, surface the 3-5 judgment calls the research and design did not settle on their own — starting from the Design Forks `code-architect` returned in §3, then data model, error-handling strategy, migration/rollout approach, boundary placement. Present each as a question with 2-3 options and their trade-offs, grounded in `file:line` from the research, then `AskUserQuestion` to get answers. Fold the answers into the phases and Key Decisions. (Skip under the small-scope gate.)
+1. **Resolve open decisions first.** Before presenting the plan, surface up to 5 judgment calls the research and design did not settle on their own — starting from the Design Forks `code-architect` returned in §3, then data model, error-handling strategy, migration/rollout approach, boundary placement. Do not invent decisions to reach a count; if none remain, say so and go to §4.2. Present each as a question with 2-3 options and their trade-offs, grounded in `file:line` from the research, then `AskUserQuestion` to get answers. Fold the answers into the phases and Key Decisions.
 2. **Then present** DoD, Out of Scope, phases (as vertical slices), and the design approach, and ask the user to approve before persisting.
 
 ### 5. Persist *(after approval)*
 
-1. If "start over" was chosen in §1, back up the prior `.planning/STATE.md` with a goal-derived name.
+1. If "start over" was chosen in §1, back up the prior `.planning/STATE.md` to `.planning/STATE-<goal-slug>-<YYYY-MM-DD>.md`, using the prior file's **Goal** for the slug.
 2. `Write` `.planning/STATE.md` using the drafted Plan section, seeding the State Progress table with one row per phase — status `Pending`, and a note naming the phase's dependency (`None` or `Phase N-1`) so the dependency graph is readable from STATE.md alone. STATE.md is the tracker; do not rely on a task-tracking tool, which may not exist in the session.
 3. Report the STATE.md path and the phase list.
 
