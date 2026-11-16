@@ -59,7 +59,7 @@ compaction), treat it as a first run. Re-runs follow **Pre-regate sweep** below 
 Dispatch everything from **this (main) loop** in **one message** (see the nesting rule in
 `references/passes.md`). On a re-run, dispatch only what **Re-runs** selects.
 
-- **Completeness** — one `Agent` call following `references/completeness.md` against the derived requirements.
+- **Completeness** — one `general-purpose` `Agent` call following `references/completeness.md`. Pass it the derived requirements **and the diff range from §2** (it otherwise defaults to `origin/main..HEAD`).
 - **Review — Stage 1** — the specialized passes from `references/passes.md` as individual `Agent`
   calls in this same message (`code-quality-reviewer`, `security-scanner`, `code-explorer`, and
   `database-explorer` only when the diff touches persisted data).
