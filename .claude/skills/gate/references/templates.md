@@ -15,7 +15,8 @@ Treat an agent's Critical/High/Medium/Low as input to that judgment, not as the 
 
 ## Finding
 
-Every Blocking, Non-blocking, and Optional entry below uses this shape:
+Every Non-blocking and Optional entry below uses this shape. A Blocking entry uses the extended
+**Blocking finding** shape that follows:
 
 ```markdown
 1. **[Title]** — `file:line` — [problem] → [fix]
@@ -26,7 +27,43 @@ Every Blocking, Non-blocking, and Optional entry below uses this shape:
    - Confidence: [verified … / assumed …]
 ```
 
+## Blocking finding (`/review` and `/gate`)
+
+A Blocking entry in the review output or the gate verdict must let the reader understand the defect
+and apply the fix without re-reading the diff or the pass's report. The dispatcher writes it **after
+reading the cited code itself**, in its own words — never paste the pass's wording. If the failure path does not hold
+up when traced in the code, the finding is not Blocking.
+
+~~~markdown
+1. **[Title]** — `file:line` — [one plain sentence: what goes wrong, and for whom]
+   - **What's wrong**: [2–4 plain sentences: what the code does now, what it should do, and why the
+     difference matters. Name the requirement or written repo rule it breaks, if any.]
+   - **Current code** (`file:start-end`):
+     ```<lang>
+     [the smallest excerpt that shows the defect — at most ~15 lines]
+     ```
+   - **How it fails**:
+     1. [starting input or state]
+     2. [each step through the code, with `file:line`]
+     3. [the observable result, and who notices]
+   - Impact: [scenario, inputs/state, who notices]
+   - Likelihood: [how often, under what conditions; evidence]
+   - Why in this change: introduced | worsened | adjacent (context only)
+   - **Fix**: [what to change and where, and why this is the smallest scope that removes the defect]
+     ```diff
+     [sketch of the change — at most ~15 lines; for a fix spanning files, a numbered step list instead]
+     ```
+   - Cost of the fix: [doc/test/type edit | adds mechanism: …]; [written rule it must follow, or "none found"]
+   - **Verify the fix**: [the test to add or command to run that fails today and passes after — file and case name]
+   - **Alternatives**: [only when there is a real choice between fixes: each option with its trade-off, and which to prefer; otherwise omit]
+   - Confidence: [verified … / assumed …]
+~~~
+
 ## Review Output (`/review`)
+
+**Verdict** rule: **Request Changes** = any Blocking finding. **Needs Discussion** = no Blocking
+finding, but one hinges on a requirement or design question only the user can settle. Otherwise
+**Approve**.
 
 ```markdown
 ## Review Summary
@@ -37,7 +74,7 @@ Every Blocking, Non-blocking, and Optional entry below uses this shape:
 **Blast Radius**: [Low | Medium | High]
 
 ### Blocking
-[Findings, in the Finding shape]
+[Findings, in the Blocking finding shape]
 
 ### Non-blocking
 [Findings, in the Finding shape]
@@ -75,7 +112,7 @@ Every Blocking, Non-blocking, and Optional entry below uses this shape:
 
 ### Quality — /review
 **Verdict**: Approve | Request Changes | Needs Discussion
-- **Blocking**: [findings in the Finding shape, or "none"]
+- **Blocking**: [findings in the Blocking finding shape, or "none"]
 
 ### Context
 [One line each for findings dropped by provenance that still matter for go-live, or "none".]
@@ -88,7 +125,8 @@ READY = completeness PASS and no Blocking findings. Non-blocking and Optional fi
 and never require another gate run.
 
 [If READY: state that completeness and quality both passed.]
-[If BLOCKED: numbered list of blockers — each the failing dimension + `file:line` + what to fix.]
+[If BLOCKED: numbered list of blockers — each the failing dimension + `file:line` + what to fix in
+one line, pointing to its full Blocking finding above (e.g. "see Blocking #2").]
 
 ### Since the last run
 - **Fixed**: [findings from the previous run that are now resolved, or "first run"]

@@ -19,8 +19,15 @@ allowed-tools: Bash(git *), Read, Grep, Glob, Agent
 ultrathink
 
 Review the working tree against `origin/main` — committed, staged, and unstaged changes plus
-untracked files — and **never fetch or checkout**. Follow the specialized review passes in
-`~/.claude/skills/gate/references/passes.md` (Stage 1 concurrently, then Stage 2), scoped to
-`$ARGUMENTS` if a file/component is given.
+untracked files — and **never fetch or checkout**. Run the review passes in
+`~/.claude/skills/gate/references/passes.md`.
 
-Present everything using `~/.claude/skills/gate/references/templates.md`.
+**Scope.** With no `$ARGUMENTS`, review the diff above, and run **Provenance and citations** from
+`passes.md` on every finding; if the diff and the untracked list are both empty, say there is
+nothing to review and stop. With a file or component in `$ARGUMENTS`, review that code **as it
+stands** — whole files, not only changed lines: use provenance only to confirm each cited range
+exists and matches the code, skip its introduced-by-this-change filter, and write
+`Why in this change: n/a (whole-file review)`.
+
+Present the result in the **Review Output** shape from `~/.claude/skills/gate/references/templates.md`,
+with every Blocking finding in that file's **Blocking finding** shape.
