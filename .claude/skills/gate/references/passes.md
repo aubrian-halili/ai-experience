@@ -64,9 +64,8 @@ the **Blocking finding** shape in `templates.md` — filling any detail the pass
 
 ## Stage 1 — concurrent (one message, parallel `Agent` calls)
 
-Give every pass the diff the caller sets — `<base>..HEAD` from `/gate`; for `/review`, the working
-tree against `origin/main` (`git diff origin/main`, committed + staged + unstaged, plus untracked
-files) — and point it at the branch being reviewed.
+Give every pass the diff the caller sets — `<base>..HEAD` from `/gate`; for `/review`, the scope its
+SKILL.md sets — and point it at the branch being reviewed.
 
 - **`code-quality-reviewer`** — one call per dimension (the agent takes one per invocation): type
   safety, error handling, test coverage, performance, documentation; the documentation call also

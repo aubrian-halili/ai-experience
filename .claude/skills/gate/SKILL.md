@@ -30,8 +30,7 @@ When invoked at user level, resolve `references/...` against `~/.claude/skills/g
 
 **Re-run** = this conversation already holds a gate verdict for the same PR or feature; otherwise
 it is a first run. If that verdict's **Gated at** SHA is no longer in the conversation (e.g. after
-compaction), treat it as a first run. Re-runs follow **Pre-regate sweep** below and **Re-runs** in
-`references/passes.md`.
+compaction), treat it as a first run. Run the **Pre-regate sweep** below before every re-run.
 
 ## PR mode
 
@@ -50,33 +49,27 @@ compaction), treat it as a first run. Re-runs follow **Pre-regate sweep** below 
 
 ### 3. Derive requirements
 
-- Read the PR `title` + `body`; extract the intended behavior / acceptance criteria.
-- **Sufficiency check** — the body is sufficient only if it states what the change should *do*: observable behavior, scope, or linked acceptance criteria. A bare title, "WIP", or an unfilled template is **not** sufficient.
+- Extract the requirements from the PR `title` + `body`. They are sufficient only if they state what
+  the change should *do*: observable behavior, scope, or linked acceptance criteria. A bare title,
+  "WIP", or an unfilled template is **not** sufficient.
 - If insufficient → ask via `AskUserQuestion` before proceeding. Never infer scope from the diff alone.
 
 ### 4. Gate (parallel)
 
 Dispatch everything from **this (main) loop** in **one message** (see the nesting rule in
-`references/passes.md`). On a re-run, dispatch only what **Re-runs** selects.
+`references/passes.md`). On a re-run, dispatch only what **Re-runs** in `references/passes.md` selects.
 
 - **Completeness** — one `general-purpose` `Agent` call following `references/completeness.md`. Pass it the derived requirements **and the diff range from §2** (it otherwise defaults to `origin/main..HEAD`).
-- **Review — Stage 1** — the specialized passes from `references/passes.md` as individual `Agent`
-  calls in this same message (`code-quality-reviewer`, `security-scanner`, `code-explorer`, and
-  `database-explorer` only when the diff touches persisted data).
+- **Review — Stage 1** — every Stage 1 pass from `references/passes.md`, as individual `Agent` calls in this same message.
 
 Then **Review — Stage 2** per `references/passes.md` (depends on `code-explorer`).
 
-### 5. Provenance (hard step — before the verdict)
+### 5. Provenance and verdict (hard step)
 
-Run **Provenance and citations** from `references/passes.md` on **every** finding. No finding
-enters the verdict unblamed.
-
-Then, for every finding that stays **Blocking**, read the cited code and write it in the
-**Blocking finding** shape from `references/templates.md` — what's wrong, current code, how it fails,
-fix sketch, and how to verify. A blocker the reader cannot act on without re-reading the diff is not
-finished.
-
-Combine completeness + the surviving review findings into one verdict using `references/templates.md`.
+Run **Provenance and citations** from `references/passes.md` on **every** finding before it enters
+the verdict. Write each finding that stays Blocking in the **Blocking finding** shape from
+`references/templates.md`, then combine completeness + the surviving review findings into one
+verdict using that file.
 
 ## Feature mode
 
@@ -84,14 +77,14 @@ No checkout (already on the feature branch). Dispatch using the **same topology 
 
 ## Combined verdict
 
-- **READY** — completeness is **PASS** *and* review has no Blocking findings (see Severity in `references/templates.md`).
-- **BLOCKED** — anything else. List exactly what blocks, each with `file:line`.
+- **READY** — completeness is **PASS** *and* review has no Blocking findings (see Severity in
+  `references/templates.md`). Non-blocking and Optional findings **never** block and **never**
+  require another gate run.
+- **BLOCKED** — anything else.
 
 A pass that errors, times out, or returns no report has **failed**, not come back clean: name it under
 **Passes skipped / failed**, and the verdict is BLOCKED until it is re-run or the user explicitly
 accepts the gap.
-
-Non-blocking and Optional findings **never** block and **never** require another gate run.
 
 ## Triage
 
@@ -109,9 +102,7 @@ stronger. The recommendation is one of:
 Each recommendation gets one sentence of reasoning that refers to the **impact**, not to the
 reviewer's wording. **Never offer "apply all"**, and never bundle triage items into the blocker fixes.
 
-## Fixing blockers
-
-Applies to whoever fixes after the verdict — this session included.
+## Fixing blockers (this session included)
 
 - Fix the defect at the **smallest scope** that removes it. Do not add a mechanism (transaction,
   error path, cache, outcome, helper) to fix a doc or a test.
