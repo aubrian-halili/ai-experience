@@ -61,6 +61,10 @@ up when traced in the code, the finding is not Blocking.
 
 ## Review Output (`/review`)
 
+**Verdict** rule: **Request Changes** = any Blocking finding. **Needs Discussion** = no Blocking
+finding, but one hinges on a requirement or design question only the user can settle. Otherwise
+**Approve**.
+
 ```markdown
 ## Review Summary
 

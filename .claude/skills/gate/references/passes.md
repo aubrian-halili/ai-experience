@@ -12,8 +12,9 @@ The quality building block of `/gate` and the single source of truth for the rev
 Stage-1 sub-agents have only `Read`/`Grep`/`Glob` — they cannot run `git blame` and may cite a
 `file:line` lifted from a diff hunk header or a sibling file. Before folding any finding into the
 verdict, run `git blame -L <start>,<end> <file>`: report the finding only if the lines are introduced
-by this change (lines shown as `Not Committed Yet` count), and **drop or repair** any finding whose
-range doesn't exist or doesn't match the cited code.
+by this change (lines shown as `Not Committed Yet` count, and so does every line of an untracked
+file — `git blame` cannot read those), and **drop or repair** any finding whose range doesn't exist
+or doesn't match the cited code.
 
 Two exceptions keep a finding on older lines: the change made them **stale** (a comment or doc that
 now misdescribes behaviour the change altered), or the change **worsened** the risk there — then
