@@ -71,6 +71,11 @@ Then **Review — Stage 2** per `references/passes.md` (depends on `code-explore
 Run **Provenance and citations** from `references/passes.md` on **every** finding. No finding
 enters the verdict unblamed.
 
+Then, for every finding that stays **Blocking**, read the cited code and write it in the
+**Blocking finding** shape from `references/templates.md` — what's wrong, current code, how it fails,
+fix sketch, and how to verify. A blocker the reader cannot act on without re-reading the diff is not
+finished.
+
 Combine completeness + the surviving review findings into one verdict using `references/templates.md`.
 
 ## Feature mode

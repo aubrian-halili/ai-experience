@@ -24,3 +24,5 @@ untracked files — and **never fetch or checkout**. Follow the specialized revi
 `$ARGUMENTS` if a file/component is given.
 
 Present everything using `~/.claude/skills/gate/references/templates.md`.
+For every finding that stays **Blocking**, read the cited code yourself and write it in that file's
+**Blocking finding** shape — what's wrong, current code, how it fails, fix sketch, and how to verify.

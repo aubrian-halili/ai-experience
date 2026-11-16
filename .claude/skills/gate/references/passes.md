@@ -44,12 +44,22 @@ pass returns, not what it looks for.
 >   written repo rule the fix must follow.
 > - **Confidence** — what you verified, and what you assume.
 >
+>
+> For a finding you would rate **Blocking**, also return:
+>
+> - **Failure path** — the starting input or state, each step through the code with `file:line`,
+>   and the observable result.
+> - **Fix sketch** — the change as a short diff, or a numbered step list when it spans files, plus
+>   the test or command that would fail today and pass after the fix.
+>
 > **A finding that cannot state a concrete impact is dropped, not downgraded** — leave it out.
 > Severity follows from impact × likelihood: **Blocking** is a likely, concrete harm, a correctness
 > bug, or a broken written repo rule. Do not raise severity because a fix is easy, and do not lower
 > it because a fix is hard.
 
-The dispatcher drops any returned finding missing an Impact before it reaches the verdict.
+The dispatcher drops any returned finding missing an Impact before it reaches the verdict. For every finding
+that stays Blocking, the dispatcher reads the cited code, traces the failure path itself, and writes
+the **Blocking finding** shape in `templates.md` — filling any detail the pass left out.
 
 ## Stage 1 — concurrent (one message, parallel `Agent` calls)
 
