@@ -9,7 +9,7 @@
 **Files changed**: [count] — **New abstractions**: [list or "none"]
 **Risk**: [assessment]
 
-**Design Forks** (carried into open decisions): [fork names, each briefed per the Decision Option Template below], or "none"
+**Design Forks** (carried into §4.1 open decisions): [fork names, one line each], or "none"
 
 **Alternative considered** *(only when the Hexagonal architect ran)*:
 | Dimension | Existing Patterns | Hexagonal |
@@ -26,16 +26,13 @@
 ## Decision Option Template
 
 Used for every `AskUserQuestion` in §4.1. Field names follow the Blocking finding shape in
-`.claude/skills/gate/references/templates.md`, so plans and reviews read the same way. The dialog
-may hide everything printed before it, so each question must stand on its own.
+`.claude/skills/gate/references/templates.md`, so plans and reviews read the same way.
 
 Write each option **after reading its cited code yourself**, in your own words — never paste the
 architect's fork table. If an option's claims do not hold up in the code, drop or correct it.
 
 **question** — the decision plus one sentence of context: what it affects and why the codebase
 does not settle it.
-
-**option `label`** — 1–5 words; append ` (Recommended)` to the recommended option and list it first.
 
 **option `description`** — one line: `Effort [S/M/L] · [N] files · [main trade-off]`.
 
@@ -101,10 +98,9 @@ Explicit boundaries — things a reader might assume are included but are NOT, t
 ### Phase Breakdown
 
 > **Vertical slices, not horizontal layers.** Each phase must cross every layer it needs
-> (migration → service → API → UI) and be independently verifiable on its own. Do NOT
-> split work into horizontal layers (Phase 1: all migrations, Phase 2: all services…).
-> Order phases so that if a later phase is dropped, the earlier phases still deliver
-> standalone value.
+> (migration → service → API → UI) and be independently verifiable — never "Phase 1: all
+> migrations, Phase 2: all services". Order phases so that if a later phase is dropped, the
+> earlier phases still deliver standalone value.
 
 #### Phase N: [Name]
 **Goal**: [What this phase achieves]
