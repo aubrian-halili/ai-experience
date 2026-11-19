@@ -51,7 +51,7 @@ Present the result with the Design Approach Template in `references/templates.md
 
 ### 4. Plan Review
 
-1. **Resolve open decisions first.** Surface up to 5 judgment calls that research and design left open — starting from §3's Design Forks, then data model, error handling, migration/rollout, boundary placement. Do not invent decisions to reach a count; if none remain, say so. Ask each with `AskUserQuestion`, 2–3 options whose trade-offs cite `file:line`, and fold the answers into the phases and Key Decisions.
+1. **Resolve open decisions first.** Surface up to 5 judgment calls that research and design left open — starting from §3's Design Forks, then data model, error handling, migration/rollout, boundary placement. Do not invent decisions to reach a count; if none remain, say so. Ask each with `AskUserQuestion`, using 2–3 options, each briefed with the Decision Option Template in `references/templates.md`. Read each option's cited code yourself before writing it up, in your own words — never relay the architect's fork table as-is. Every option carries a `preview` with what changes, affected areas, effort, impact, likelihood, reversibility, `file:line` evidence, and confidence, so the user can compare the options without the text printed before the dialog. If an option cannot be filled in that much detail, research it further before asking. Any fact that §2 marked unverified stays `assumed` under Confidence. Fold the answers into the phases and Key Decisions.
 2. **Then present** DoD, Out of Scope, phases, and the design approach, and get the user's approval.
 
 ### 5. Persist *(after approval)*

@@ -9,18 +9,54 @@
 **Files changed**: [count] — **New abstractions**: [list or "none"]
 **Risk**: [assessment]
 
-**Design Forks** (carried into open decisions):
-- [Choice the codebase does not settle] — [options], evidence: [file:line]
+**Design Forks** (carried into open decisions): [fork names, each briefed per the Decision Option Template below], or "none"
 
 **Alternative considered** *(only when the Hexagonal architect ran)*:
 | Dimension | Existing Patterns | Hexagonal |
 |-----------|-------------------|-----------|
 | Files changed | [count] | [count] |
+| Affected areas | [modules / layers] | [modules / layers] |
 | New abstractions | [list or "none"] | [ports + adapters list] |
+| Effort | [S/M/L] | [S/M/L] |
 | Risk | [assessment] | [assessment] |
 
 **Recommendation**: [Approach] — [one sentence rationale]
 ```
+
+## Decision Option Template
+
+Used for every `AskUserQuestion` in §4.1. Field names follow the Blocking finding shape in
+`.claude/skills/gate/references/templates.md`, so plans and reviews read the same way. The dialog
+may hide everything printed before it, so each question must stand on its own.
+
+Write each option **after reading its cited code yourself**, in your own words — never paste the
+architect's fork table. If an option's claims do not hold up in the code, drop or correct it.
+
+**question** — the decision plus one sentence of context: what it affects and why the codebase
+does not settle it.
+
+**option `label`** — 1–5 words; append ` (Recommended)` to the recommended option and list it first.
+
+**option `description`** — one line: `Effort [S/M/L] · [N] files · [main trade-off]`.
+
+**option `preview`**:
+
+~~~markdown
+- **What changes**: [1–2 plain sentences describing the option concretely]
+- **Affected areas** ([N] files; phases touched: [1, 3]):
+  - `path/to/file_a` — modify: [what]
+  - `path/to/module_b/` — new: [what]
+- **Effort**: [S/M/L] — [doc/test/type edit | adds mechanism: …]; [written rule it must follow, or "none found"]
+- **Impact**: [what this option enables or breaks, and who notices]
+- **Likelihood**: [how likely its main downside is to bite, under what conditions; evidence]
+- **Reversibility**: [easy | needs migration | hard to undo]
+- **Trade-off**: [what you gain vs. what you give up, vs. the other options]
+- **Evidence**: `file:line` [that grounds this option]
+- Confidence: [verified … / assumed …]
+~~~
+
+**Effort scale** (relative, never hours): **S** = ≤3 files, no new abstraction; **M** = 4–10
+files or one new abstraction; **L** = >10 files, a migration, or a new integration.
 
 ## Session State Template (.planning/STATE.md)
 

@@ -66,9 +66,20 @@ For each component:
 - [Risk]: [mitigation strategy]
 
 ### Design Forks *(Existing Patterns focus only)*
-- [Choice the codebase does not settle]: [2-3 options with trade-offs] — evidence: [file:line]
-- or "none"
+#### Fork: [Choice the codebase does not settle] — evidence: [file:line]
+| Option | What changes | Affected areas | Effort | Impact | Likelihood | Reversibility | Confidence |
+|--------|--------------|----------------|--------|--------|------------|---------------|------------|
+| [A] | [one line] | [files/modules, with count] | [S/M/L — mechanism added] | [what it enables/breaks] | [how likely the downside bites] | [easy / migration / hard] | [verified / assumed] |
+| [B] | ... | ... | ... | ... | ... | ... | ... |
+**Leaning**: [option] — [one-sentence reason], or "no preference"
+
+or "none"
 ```
+
+Size **Effort** relative to this plan, not in hours: **S** = ≤3 files, no new abstraction;
+**M** = 4–10 files or one new abstraction; **L** = >10 files, a migration, or a new
+integration. Every option must fill every column — a fork whose options cannot be sized is not
+yet understood, so research it further before reporting it.
 
 ## Rules
 
