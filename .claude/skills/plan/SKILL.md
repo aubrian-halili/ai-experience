@@ -19,12 +19,14 @@ disable-model-invocation: true
 
 ### 1. Pre-flight
 
-1. If `$ARGUMENTS` is empty and the conversation states no goal, ask for one with `AskUserQuestion` before launching any agent.
-2. If `$ARGUMENTS` names a Jira ticket or epic, launch `jira-explorer` with the ticket ID(s) and the goal. Its **Acceptance Criteria** and **Scope Boundaries** are the baseline for DoD and Out of Scope — do not restate them from the argument text.
-3. If `.planning/STATE.md` exists, ask: **resume** or **start over**.
-   - **resume** → load its Plan section as the draft and continue at §4
+Do steps 1–2 before launching any agent.
+
+1. If `.planning/STATE.md` exists, ask: **resume** or **start over**.
+   - **resume** → load its Plan section as the draft and continue at §4; skip the rest of §1
    - **start over** → do not back up or overwrite it yet (§5 does)
-4. Draft the Plan section (DoD, Out of Scope, Phase Breakdown) from the Session State Template in `@references/templates.md`.
+2. If `$ARGUMENTS` is empty and the conversation states no goal, ask for one with `AskUserQuestion`.
+3. If `$ARGUMENTS` names a Jira ticket or epic, launch `jira-explorer` with the ticket ID(s) and the goal. Its **Acceptance Criteria** and **Scope Boundaries** are the baseline for DoD and Out of Scope — do not restate them from the argument text.
+4. Draft the Plan section (DoD, Out of Scope, Phase Breakdown) from the Session State Template in `references/templates.md`.
 
 ### 2. Codebase Research
 
@@ -43,7 +45,7 @@ Hand every §3 `code-architect` the **Essential Files** from `code-explorer`, pl
 
 ### 3. Design
 
-Launch **one** `code-architect` with focus **Existing Patterns** — no competing style blueprints by default.
+Launch **one** `code-architect` with focus **Existing Patterns**.
 
 In parallel, add a **Hexagonal** `code-architect` only when the feature crosses ≥2 external integrations, needs swappable infrastructure, or its domain logic is expected to outlive the current stack.
 
@@ -51,13 +53,13 @@ Present the result with the Design Approach Template in `references/templates.md
 
 ### 4. Plan Review
 
-1. **Resolve open decisions first.** Surface up to 5 judgment calls that research and design left open — starting from §3's Design Forks, then data model, error handling, migration/rollout, boundary placement. Do not invent decisions to reach a count; if none remain, say so. Ask each with `AskUserQuestion`, 2–3 options whose trade-offs cite `file:line`, and fold the answers into the phases and Key Decisions.
+1. **Resolve open decisions first.** Surface up to 5 judgment calls that research and design left open — starting from §3's Design Forks, then data model, error handling, migration/rollout, boundary placement. Do not invent decisions to reach a count; if none remain, say so. Ask each with `AskUserQuestion`, using 2–3 options filled in per the Decision Option Template in `references/templates.md`. If an option cannot be filled in that much detail, research it further before asking. Any fact that §2 marked unverified stays `assumed` under Confidence. Fold the answers into the phases and Key Decisions.
 2. **Then present** DoD, Out of Scope, phases, and the design approach, and get the user's approval.
 
 ### 5. Persist *(after approval)*
 
 1. If "start over" was chosen, back up the prior file to `.planning/STATE-<goal-slug>-<YYYY-MM-DD>.md`, slugging the prior file's **Goal**.
-2. `Write` `.planning/STATE.md`, seeding State Progress with one row per phase: status `Pending`, and a note naming its dependency (`None` or `Phase N-1`). Track progress in STATE.md, not a task-tracking tool.
+2. `Write` `.planning/STATE.md`, seeding State Progress with one row per phase: status `Pending`, and a note naming its dependency (`None` or `Phase N-1`). On **resume**, `Edit` instead: replace the Plan section, append to Key Decisions, keep existing Progress rows as they are, and add `Pending` rows only for new phases.
 3. Report the STATE.md path and the phase list.
 
 ## When to Go Back
